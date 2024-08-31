@@ -15,10 +15,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const colorClass = 'bg-white dark:bg-black dark:text-white';
+  const borderClass = 'border-b border-slate-200 dark:border-stone-900';
+
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-white dark:bg-black dark:text-white`} >
-        <Navbar />
+      <body className={`${inter.className} ${colorClass}`} >
+        <Navbar colorClass={colorClass} />
         {children}
       </body>
     </html>

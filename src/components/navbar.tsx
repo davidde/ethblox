@@ -6,7 +6,11 @@ import DropdownLi from './dropdown-li';
 import ToggleIcons from './toggle-icons';
 
 
-export default function Navbar() {
+type Props = {
+  colorClass: string
+}
+
+export default function Navbar(props: Props) {
   const [isOpen, setisOpen] = useState(false);
 
   const toggleOpen = () => {
@@ -16,12 +20,14 @@ export default function Navbar() {
   return (
     <div className={`inline`}>
       <header className={`sticky top-0 z-50 border-b border-slate-200 dark:border-stone-900`}>
-        <nav className={`py-2.5 px-5 flex justify-between items-center gap-10 min-h-16`}>
+        <nav className={`${props.colorClass}` +
+                        ` py-2.5 px-5 flex justify-between items-center gap-10 min-h-16`}>
 
           <a href='#home' className={`text-3xl font-mono`}>EthBlox</a>
 
           {/* Responsive list, horizontal on desktop, vertical on mobile: */}
-          <ul className={`flex justify-between text-start` +
+          <ul className={`${props.colorClass}` +
+                         ` flex justify-between text-start` +
                          ` m-0 py-4 px-14 ease-in-out duration-500` +
                          // Mobile-only classes:
                          ` absolute flex-col gap-4 w-full left-0 -z-10` +
