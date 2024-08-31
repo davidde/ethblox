@@ -24,10 +24,10 @@ export default function Navbar() {
           <ul className={`flex justify-between text-start bg-blue-950` +
                          ` m-0 py-4 px-14 ease-in-out duration-500` +
                          // Mobile-only classes:
-                         ` absolute flex-col gap-4 w-full top-16 left-0 -z-10` +
+                         ` absolute flex-col gap-4 w-full left-0 -z-10` +
                          // Desktop-only classes:
-                         ` md:static md:flex-row md:gap-16 md:w-auto md:transform-none md:z-10` +
-                         `${isOpen ? '' : ' -translate-y-full'}`}>
+                         ` md:static md:flex-row md:gap-12 md:w-auto md:z-10` +
+                         `${isOpen ? ' top-16' : ' -top-96'}`}>
             {/* Show on mobile, not desktop: */}
             <li className='md:hidden pb-5'>
               <ToggleIcons />
