@@ -1,17 +1,23 @@
-import DarkModeToggle from './darkmode-toggle';
-import Image from 'next/image';
+"use client"
+
+import { useState } from 'react';
+import DarkmodeToggle from './darkmode-toggle';
+import EthNetworkToggle from './eth-network-toggle';
 
 
 export default function ToggleIcons() {
+  const [darkmode, setDarkmode] = useState<boolean>(false);
+
   return (
     <span className='flex flex-row justify-end'>
-      <DarkModeToggle className='w-6 cursor-pointer hover:text-sky-300' />
-      <Image
-          src='/ethereum-logo-light.svg'
-          width={16}
-          height={16}
-          alt='Ethereum Logo'
-          className='ml-5 cursor-pointer hover:invert-[0.65]'
+      <DarkmodeToggle
+        className='w-6 cursor-pointer hover:text-sky-300'
+        darkmode={darkmode}
+        setDarkmode={setDarkmode}
+      />
+      <EthNetworkToggle
+        className='ml-5 cursor-pointer hover:invert-[0.65]'
+        darkmode={darkmode}
       />
     </span>
   );

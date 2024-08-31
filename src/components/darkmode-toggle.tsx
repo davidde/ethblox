@@ -1,22 +1,24 @@
-"use client"
-
-import { useState } from 'react';
 import { SunIcon, MoonIcon } from "@heroicons/react/24/solid";
 
 type Props = {
-  className?: string
+  className?: string,
+  darkmode: boolean,
+  setDarkmode: (arg0: boolean) => void
 }
 
-export default function DarkModeToggle(props: Props) {
-  const [darkMode, setDarkMode] = useState<boolean>(false);
+export default function DarkmodeToggle(props: Props) {
+  const toggleTheme = () => {
+    props.setDarkmode(!props.darkmode);
+    document.documentElement.classList.toggle('dark');
+  }
 
   return (
     <button >
       {
-        darkMode ?
-        <MoonIcon className={props.className} />
+        props.darkmode ?
+        <MoonIcon className={props.className} onClick={toggleTheme} />
         :
-        <SunIcon className={props.className} />
+        <SunIcon className={props.className} onClick={toggleTheme} />
       }
     </button>
   );
