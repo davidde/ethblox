@@ -1,10 +1,12 @@
-"use client";
+'use client';
 
 import { useState } from 'react';
-import { Bars3Icon } from "@heroicons/react/24/solid";
+import { Bars3Icon } from '@heroicons/react/24/solid';
+import DropdownLi from './dropdown-li';
+import ToggleIcons from './toggle-icons';
 
 
-function Navbar() {
+export default function Navbar() {
   const [isOpen, setisOpen] = useState(false);
 
   const toggleOpen = () => {
@@ -18,34 +20,34 @@ function Navbar() {
 
           <a href='#home' className={`text-3xl font-sans`}>EthBlox</a>
 
-          <ul className={`flex justify-between items-center text-start bg-blue-950` +
-                         ` m-0 py-4 ease-in-out duration-500` +
+          {/* Responsive list, horizontal on desktop, vertical on mobile: */}
+          <ul className={`flex justify-between text-start bg-blue-950` +
+                         ` m-0 py-4 px-14 ease-in-out duration-500` +
                          // Mobile-only classes:
-                         ` absolute flex-col gap-4 w-full -top-28 left-0 -z-10` +
+                         ` absolute flex-col gap-4 w-full top-16 left-0 -z-10` +
                          // Desktop-only classes:
                          ` md:static md:flex-row md:gap-16 md:w-auto md:transform-none md:z-10` +
-                         `${isOpen ? ' translate-y-full' : ' -translate-y-full'}`}>
-            <li>
-              <a href='#home'>Home</a>
+                         `${isOpen ? '' : ' -translate-y-full'}`}>
+            {/* Show on mobile, not desktop: */}
+            <li className='md:hidden pb-5'>
+              <ToggleIcons />
             </li>
-            <li>
-              <a href='#home'>Catalog</a>
-            </li>
-            <li>
-              <a href='#home'>Products</a>
-            </li>
-            <li>
-              <a href='#home'>Contact</a>
-            </li>
+            <DropdownLi href='#home' title='Blockchain' />
+            <DropdownLi href='#home' title='Tokens' />
+            <DropdownLi href='#home' title='NFTs' />
+            <DropdownLi href='#home' title='Resources' />
           </ul>
 
           <div>
-            <Bars3Icon className="w-6 cursor-pointer md:hidden" onClick={toggleOpen} />
+            {/* Show on desktop, not mobile: */}
+            <span className='hidden md:inline'>
+              <ToggleIcons />
+            </span>
+            {/* Show on mobile, not desktop: */}
+            <Bars3Icon className='w-6 cursor-pointer md:hidden' onClick={toggleOpen} />
           </div>
         </nav>
       </header>
     </div>
   );
 }
-
-export default Navbar;
