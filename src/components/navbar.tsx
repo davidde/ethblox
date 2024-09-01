@@ -12,6 +12,7 @@ type Props = {
 
 export default function Navbar(props: Props) {
   const [isOpen, setisOpen] = useState(false);
+  const [darkmode, setDarkmode] = useState<boolean>(false);
 
   const toggleOpen = () => {
     setisOpen(!isOpen);
@@ -36,7 +37,10 @@ export default function Navbar(props: Props) {
                          `${isOpen ? ' top-16' : ' -top-96'}`}>
             {/* Show on mobile, not desktop: */}
             <li className='md:hidden pb-5'>
-              <ToggleIcons />
+              <ToggleIcons
+                darkmode={darkmode}
+                setDarkmode={setDarkmode}
+              />
             </li>
             <DropdownLi href='#home' title='Blockchain' />
             <DropdownLi href='#home' title='Tokens' />
@@ -47,7 +51,10 @@ export default function Navbar(props: Props) {
           <div>
             {/* Show on desktop, not mobile: */}
             <span className='hidden md:inline'>
-              <ToggleIcons />
+              <ToggleIcons
+                darkmode={darkmode}
+                setDarkmode={setDarkmode}
+              />
             </span>
             {/* Show on mobile, not desktop: */}
             <Bars3Icon className='w-6 cursor-pointer md:hidden' onClick={toggleOpen} />

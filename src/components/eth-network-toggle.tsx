@@ -1,5 +1,3 @@
-"use client"
-
 import Image from 'next/image';
 
 type Props = {
@@ -8,8 +6,6 @@ type Props = {
 }
 
 export default function EthNetworkToggle(props: Props) {
-  console.log("darkmode = ", props.darkmode);
-
   return (
     <Image
           src={`${ props.darkmode ? '/ethereum-logo-light.svg' : '/ethereum-logo.svg' }`}
