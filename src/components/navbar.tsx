@@ -7,11 +7,12 @@ import ToggleIcons from './toggle-icons';
 
 
 type Props = {
-  colorClass: string
+  colorClass: string,
+  borderClass: string
 }
 
 export default function Navbar(props: Props) {
-  const [isOpen, setisOpen] = useState(false);
+  const [isOpen, setisOpen] = useState(false); // Mobile only!
   const [darkmode, setDarkmode] = useState<boolean>(false);
 
   const toggleOpen = () => {
@@ -19,33 +20,24 @@ export default function Navbar(props: Props) {
   };
 
   return (
-    <div className={`inline`}>
-      <header className={`sticky top-0 z-50 border-b border-slate-200 dark:border-stone-900`}>
+    <section className={`inline`}>
+      <div className={ `sticky top-0 z-50 `}>
         <nav className={`${props.colorClass}` +
-                        ` py-2.5 px-5 flex justify-between items-center gap-10 min-h-16`}>
-
+                        ` ${props.borderClass}` +
+                        ` flex justify-between items-center gap-10` +
+                        ` absolute z-40 w-full py-2.5 px-5 min-h-16`
+        }>
           <a href='#home' className={`text-3xl font-mono`}>EthBlox</a>
 
-          {/* Responsive list, horizontal on desktop, vertical on mobile: */}
-          <ul className={`${props.colorClass}` +
-                         ` flex justify-between text-start` +
-                         ` m-0 py-4 px-14 ease-in-out duration-500` +
-                         // Mobile-only classes:
-                         ` absolute flex-col gap-4 w-full left-0 -z-10` +
-                         // Desktop-only classes:
-                         ` md:static md:flex-row md:gap-12 md:w-auto md:z-10` +
-                         `${isOpen ? ' top-16' : ' -top-96'}`}>
-            {/* Show on mobile, not desktop: */}
-            <li className='md:hidden pb-5'>
-              <ToggleIcons
-                darkmode={darkmode}
-                setDarkmode={setDarkmode}
-              />
-            </li>
-            <DropdownLi href='#home' title='Blockchain' />
-            <DropdownLi href='#home' title='Tokens' />
-            <DropdownLi href='#home' title='NFTs' />
-            <DropdownLi href='#home' title='Resources' />
+          {/* Responsive horizontal list desktop-only: */}
+          <ul className={` hidden justify-between text-start` +
+                        ` m-0 py-4 px-14 ease-in-out duration-500` +
+                        ` md:flex md:static md:flex-row md:gap-12 md:w-auto md:z-10`
+          }>
+              <DropdownLi href='#home' title='Blockchain' />
+              <DropdownLi href='#home' title='Tokens' />
+              <DropdownLi href='#home' title='NFTs' />
+              <DropdownLi href='#home' title='Resources' />
           </ul>
 
           <div>
@@ -57,10 +49,31 @@ export default function Navbar(props: Props) {
               />
             </span>
             {/* Show on mobile, not desktop: */}
-            <Bars3Icon className='w-6 cursor-pointer md:hidden' onClick={toggleOpen} />
+            <Bars3Icon className='w-6 cursor-pointer hover:text-sky-300 md:hidden' onClick={toggleOpen} />
           </div>
         </nav>
-      </header>
-    </div>
+
+        {/* Responsive vertical list mobile-only: */}
+        <nav className={`${props.colorClass}` +
+                        ` ${props.borderClass}` +
+                        ` md:hidden absolute w-full left-0` +
+                        ` transition-[top] ease-in-out duration-500` +
+                        `${isOpen ? ' top-16' : ' -top-96'}`} >
+          <ul className={` flex flex-col gap-4 justify-between text-start` +
+                        ` m-0 py-4 px-14`}>
+            <li className='pb-5'>
+              <ToggleIcons
+                darkmode={darkmode}
+                setDarkmode={setDarkmode}
+              />
+            </li>
+            <DropdownLi href='#home' title='Blockchain' />
+            <DropdownLi href='#home' title='Tokens' />
+            <DropdownLi href='#home' title='NFTs' />
+            <DropdownLi href='#home' title='Resources' />
+          </ul>
+        </nav>
+      </div>
+    </section>
   );
 }
