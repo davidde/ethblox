@@ -12,31 +12,37 @@ type Props = {
 
 export default function DarkmodeToggle(props: Props) {
   useEffect(() => {
-    if (localStorage.getItem('theme') === 'dark') {
+    if (localStorage.getItem('data-theme-dark')) {
       props.setDarkmode(true);
+      document.documentElement.setAttribute('data-theme-dark', '');
       document.documentElement.classList.add('dark');
     }
   });
 
   const toggleTheme = () => {
-    if (document.documentElement.classList.contains('dark')) {
+    if (document.documentElement.hasAttribute('data-theme-dark')) {
       props.setDarkmode(false);
+      document.documentElement.removeAttribute('data-theme-dark');
       document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+      localStorage.removeItem('data-theme-dark');
     } else {
       props.setDarkmode(true);
+      document.documentElement.setAttribute('data-theme-dark', '');
       document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
+      localStorage.setItem('data-theme-dark', 'true');
     }
   }
 
+  // This log somehow prevents light/dark mode from flickering on reload:
+  console.log('data-theme-dark = ', document.documentElement.hasAttribute('data-theme-dark'));
+
   return (
-    <button >
+    <button className={props.className} onClick={toggleTheme} >
       {
         props.darkmode ?
-        <MoonIcon className={props.className} onClick={toggleTheme} />
+        <MoonIcon />
         :
-        <SunIcon className={props.className} onClick={toggleTheme} />
+        <SunIcon />
       }
     </button>
   );

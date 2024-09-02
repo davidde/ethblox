@@ -21,7 +21,7 @@ export default function Navbar(props: Props) {
 
   return (
     <section className={`inline`}>
-      <div className={ `sticky top-0 z-50 `}>
+      <div className={`sticky top-0 z-50`}>
         <nav className={`${props.colorClass}` +
                         ` ${props.borderClass}` +
                         ` flex justify-between items-center gap-10` +
@@ -31,13 +31,13 @@ export default function Navbar(props: Props) {
 
           {/* Responsive horizontal list desktop-only: */}
           <ul className={` hidden justify-between text-start` +
-                        ` m-0 py-4 px-14 ease-in-out duration-500` +
-                        ` md:flex md:static md:flex-row md:gap-12 md:w-auto md:z-10`
+                         ` m-0 py-4 px-14 ease-in-out duration-500` +
+                         ` md:flex md:static md:flex-row md:gap-12 md:w-auto md:z-10`
           }>
-              <DropdownLi href='#home' title='Blockchain' />
-              <DropdownLi href='#home' title='Tokens' />
-              <DropdownLi href='#home' title='NFTs' />
-              <DropdownLi href='#home' title='Resources' />
+            <DropdownLi href='#home' title='Blockchain' />
+            <DropdownLi href='#home' title='Tokens' />
+            <DropdownLi href='#home' title='NFTs' />
+            <DropdownLi href='#home' title='Resources' />
           </ul>
 
           <div>
