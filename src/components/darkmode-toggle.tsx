@@ -15,7 +15,6 @@ export default function DarkmodeToggle(props: Props) {
     if (localStorage.getItem('data-theme-dark')) {
       props.setDarkmode(true);
       document.documentElement.setAttribute('data-theme-dark', '');
-      document.documentElement.classList.add('dark');
     }
   });
 
@@ -23,12 +22,10 @@ export default function DarkmodeToggle(props: Props) {
     if (document.documentElement.hasAttribute('data-theme-dark')) {
       props.setDarkmode(false);
       document.documentElement.removeAttribute('data-theme-dark');
-      document.documentElement.classList.remove('dark');
       localStorage.removeItem('data-theme-dark');
     } else {
       props.setDarkmode(true);
       document.documentElement.setAttribute('data-theme-dark', '');
-      document.documentElement.classList.add('dark');
       localStorage.setItem('data-theme-dark', 'true');
     }
   }

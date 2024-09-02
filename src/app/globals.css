@@ -6,6 +6,19 @@
   /* outline: 1px solid red; */
 }
 
+:root {
+  --main-bg-color: white;
+  --main-fg-color: black;
+  --border-color: rgb(226 232 240);
+  --hover-color: rgb(125 211 252);
+}
+
+[data-theme-dark] {
+  --main-bg-color: black;
+  --main-fg-color: white;
+  --border-color: rgb(28 25 23);
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

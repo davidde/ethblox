@@ -11,7 +11,7 @@ export default function ToggleIcons(props: Props) {
   return (
     <span className='flex flex-row justify-end'>
       <DarkmodeToggle
-        className='w-6 cursor-pointer hover:text-sky-300'
+        className='w-6 cursor-pointer hover:text-[var(--hover-color)]'
         darkmode={props.darkmode}
         setDarkmode={props.setDarkmode}
       />
