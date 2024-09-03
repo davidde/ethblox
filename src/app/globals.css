@@ -13,7 +13,7 @@
   --hover-color: rgb(125 211 252);
 }
 
-[data-theme-dark] {
+[data-theme='dark'] {
   --main-bg-color: black;
   --main-fg-color: white;
   --border-color: rgb(28 25 23);

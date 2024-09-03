@@ -8,7 +8,6 @@ import ToggleIcons from './toggle-icons';
 
 export default function Navbar() {
   const [isOpen, setisOpen] = useState(false); // Mobile only!
-  const [darkmode, setDarkmode] = useState<boolean>(false);
 
   const toggleOpen = () => {
     setisOpen(!isOpen);
@@ -38,10 +37,7 @@ export default function Navbar() {
           <div>
             {/* Show on desktop, not mobile: */}
             <span className='hidden md:inline'>
-              <ToggleIcons
-                darkmode={darkmode}
-                setDarkmode={setDarkmode}
-              />
+              <ToggleIcons />
             </span>
             {/* Show on mobile, not desktop: */}
             <Bars3Icon className='w-6 cursor-pointer hover:text-[var(--hover-color)] md:hidden' onClick={toggleOpen} />
@@ -57,10 +53,7 @@ export default function Navbar() {
           <ul className={` flex flex-col gap-4 justify-between text-start` +
                         ` m-0 py-4 px-14`}>
             <li className='pb-5'>
-              <ToggleIcons
-                darkmode={darkmode}
-                setDarkmode={setDarkmode}
-              />
+              <ToggleIcons />
             </li>
             <DropdownLi href='#home' title='Blockchain' />
             <DropdownLi href='#home' title='Tokens' />
