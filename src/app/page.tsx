@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { Alchemy, Network } from 'alchemy-sdk';
 import { useEffect, useState } from 'react';
@@ -24,7 +24,7 @@ export default function Home() {
   useEffect(() => {
     async function getBlockNumber() {
       try {
-        setBlockNumber(await alchemy.core.getBlockNumber());
+        // setBlockNumber(await alchemy.core.getBlockNumber());
       } catch (error) {
         console.log('getBlockNumber() error: ', error);
       }
