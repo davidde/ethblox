@@ -40,7 +40,7 @@ export default function Navbar() {
               <ToggleIcons />
             </span>
             {/* Show on mobile, not desktop: */}
-            <Bars3Icon className='w-6 cursor-pointer hover:text-[var(--hover-color)] md:hidden' onClick={toggleOpen} />
+            <Bars3Icon className='w-6 cursor-pointer hover:text-[var(--hover-fg-color)] md:hidden' onClick={toggleOpen} />
           </div>
         </nav>
 
