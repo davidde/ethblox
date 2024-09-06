@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar";
-import { ThemeProvider } from 'next-themes';
+import ContextProvider from "@/components/context-provider";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -20,10 +20,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} bg-[var(--main-bg-color)] text-[var(--main-fg-color)]`} >
-        <ThemeProvider>
+        <ContextProvider>
           <Navbar />
           {children}
-        </ThemeProvider>
+        </ContextProvider>
       </body>
     </html>
   );
