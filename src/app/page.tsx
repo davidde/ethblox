@@ -12,17 +12,17 @@ const networks = new Map([
 ]);
 
 export default function Home() {
-  const [blockNumber, setBlockNumber] = useState<number>();
   const { network } = useContext(NetworkContext);
 
-  // Refer to the README doc for more information about using API keys
-  // in client-side code. You should never do this in production level code!
-  const settings = {
+  // You should never expose your API key like this in production level code!
+  // See https://docs.alchemy.com/docs/best-practices-for-key-security-and-management,
+  // and https://docs.alchemy.com/docs/how-to-use-jwts-for-api-requests.
+  const alchemy = new Alchemy({
     apiKey: process.env.REACT_APP_ALCHEMY_API_KEY,
     network: networks.get(network),
-  };
+  });
 
-  const alchemy = new Alchemy(settings);
+  const [blockNumber, setBlockNumber] = useState<number>();
 
   useEffect(() => {
     async function getBlockNumber() {

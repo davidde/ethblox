@@ -16,7 +16,7 @@
 
 [data-theme='dark'] {
   --main-bg-color: black;
-  --main-fg-color: white;
+  --main-fg-color: rgb(196, 196, 196);
   --border-color: rgb(28 25 23);
   --hover-fg-color: rgb(141, 219, 255);
   --hover-bg-color: rgb(39 39 42);
