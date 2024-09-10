@@ -1,5 +1,3 @@
-import Image from 'next/image';
-import { useTheme } from 'next-themes';
 import { useState, useEffect, useContext } from 'react';
 import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from '@headlessui/react';
 import { NetworkContext } from "@/components/context-provider";
@@ -10,7 +8,6 @@ type Props = {
 }
 
 export default function EthNetworkToggle(props: Props) {
-  const { resolvedTheme } = useTheme();
   const [ mounted, setMounted ] = useState(false);
   const { network, setNetwork } = useContext(NetworkContext);
 
@@ -25,19 +22,11 @@ export default function EthNetworkToggle(props: Props) {
 
   return (
     <Listbox value={network} onChange={setNetwork}>
-      <ListboxButton>
-        <Image
-          src={ resolvedTheme === 'dark' ? '/ethereum-logo-light.svg' : '/ethereum-logo.svg' }
-          width={0}
-          height={0}
-          alt='Ethereum Logo'
-          className={props.className}
-        />
-      </ListboxButton>
+      <ListboxButton className={`${props.className} bg-[image:var(--eth-logo-url)] bg-contain bg-no-repeat bg-right`} />
       <ListboxOptions
         className='bg-[var(--main-bg-color)]
                    border-2 border-[var(--border-color)]
-                   rounded
+                   rounded-lg
                    z-50'
         anchor={{ to: 'bottom end',
                   gap: '.5rem'

@@ -12,6 +12,7 @@
   --border-color: rgb(226 232 240);
   --hover-fg-color: rgb(65, 195, 255);
   --hover-bg-color: rgb(239 246 255);
+  --eth-logo-url: url(/images/ethereum-logo-dark.svg);
 }
 
 [data-theme='dark'] {
@@ -20,6 +21,7 @@
   --border-color: rgb(28 25 23);
   --hover-fg-color: rgb(141, 219, 255);
   --hover-bg-color: rgb(39 39 42);
+  --eth-logo-url: url(/images/ethereum-logo-light.svg);
 }
 
 @layer utilities {
