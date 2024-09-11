@@ -1,8 +1,13 @@
-<svg width="1535" height="2500" viewBox="0 0 256 417" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid">
-  <path fill="#8C8C8C" d="M127.962 0L0 212.32l127.962 75.639V154.158z"/>
-  <path fill="#505050" d="M127.961 0l-2.795 9.5v275.668l2.795 2.79 127.962-75.638z"/>
-  <path fill="#424242" d="M0 212.32l127.96 75.638v-133.8z"/>
-  <path fill="#252525" d="M127.961 287.958l127.96-75.637-127.96-58.162z"/>
-  <path fill="#8C8C8C" d="M127.962 416.905v-104.72L0 236.585z"/>
-  <path fill="#3f3f40" d="M127.961 312.187l-1.575 1.92v98.199l1.575 4.6L256 236.587z"/>
+<svg width='1535' height='2500' viewBox='0 0 256 417' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='xMidYMid'>
+  <!-- Top Left + Right -->
+  <path fill='#8C8C8C' d='M127.962 0L0 212.32l127.962 75.639V154.158z'/>
+  <path fill='#343434' d='M127.961 0l0 9.5v275.668l0 3.0 126.362-76.538z'/>
+
+  <!-- Middle Left + Right -->
+  <path fill='#393939' d='M0 212.32l127.96 75.638v-133.8z'/>
+  <path fill='#141414' d='M128.000 288.258l126.96-76.00-127.06-58.162z'/>
+
+  <!-- Bottom Left + Right -->
+  <path fill='#8C8C8C' d='M127.962 416.905v-104.72L0 236.585z'/>
+  <path fill='#3C3C3B' d='M127.961 312.187l-0 1.92v98.199l0 4.6L256 236.587z'/>
 </svg>
