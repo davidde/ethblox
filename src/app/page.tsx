@@ -24,38 +24,39 @@ export default function Home() {
     network: networks.get(network),
   });
 
-  const [ethPrice, setEthPrice] = useState<{euro: string, usd: string}>();
+  const [ethPrice, setEthPrice] = useState<{eur: string, usd: string}>();
   const [blockNumber, setBlockNumber] = useState<Number>();
 
   useEffect(() => {
     let ignore = false;
 
-    async function getBlockNumber() {
-      try {
-        const blocknumber = await alchemy.core.getBlockNumber();
-
-        if (!ignore) {
-          setBlockNumber(blocknumber);
-        }
-      } catch (error) {
-        // console.log('getBlockNumber Error: ', error);
-      }
+    function getBlockNumber() {
+      alchemy.core.getBlockNumber()
+        .then(num => {
+          if (!ignore) setBlockNumber(num)
+        })
+        .catch(error => {
+          console.log('getBlockNumber() Error: ', error.message);
+        });
     }
-    async function getPrice() {
-      let request = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=eur,usd');
-      let response = await request.json();
-      let euro = response.ethereum.eur;
-      let usd = response.ethereum.usd;
-      if (!ignore) setEthPrice({ euro, usd });
+    function getPrice() {
+      fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=eur,usd')
+        .then(response => response.json())
+        .then(data => {
+          if (!ignore) setEthPrice(data.ethereum)
+        })
+        .catch(error => {
+          console.error('getPrice() Error: ', error.message);
+        });
     }
 
     getPrice();
-    // getBlockNumber();
+    getBlockNumber();
 
-    return () => {   // Cleanup function to ensure that a fetch that’s not relevant
-      ignore = true; // anymore does not keep affecting the application
-    };
-  });
+    // Return cleanup function to ensure that a fetch that’s not
+    // relevant anymore does not keep affecting the application:
+    return () => { ignore = true; };
+  }, []);
 
   return (
     <main className='flex flex-col min-h-screen p-2 md:p-8'>
@@ -86,7 +87,7 @@ export default function Home() {
             </div>
             <div className='ml-4'>
               <p className='text-xs tracking-wider text-[var(--grey-fg-color)]'>ETHER PRICE</p>
-              <p>{ ethPrice ? `€${ethPrice.euro} / $${ethPrice.usd}` : '' }</p>
+              <p>{ ethPrice ? `€${ethPrice.eur} / $${ethPrice.usd}` : '' }</p>
             </div>
           </div>
           <div className='flex mb-4'>
@@ -147,7 +148,7 @@ export default function Home() {
         <div className={`border-2 border-[var(--border-color)]
                         rounded-lg w-full md:w-[50%] p-1 md:p-3 mb-2`}>
           <h2>Latest Blocks</h2>
-          <p>Block Number: { `${blockNumber}` }</p>
+          <p>Block Number: { blockNumber ? `${blockNumber}` : '' }</p>
         </div>
         <div className={`border-2 border-[var(--border-color)]
                         rounded-lg w-full md:w-[45%] p-1 md:p-3 mb-2`}>
