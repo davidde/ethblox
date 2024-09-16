@@ -9,6 +9,7 @@
 :root {
   --main-bg-color: white;
   --main-fg-color: black;
+  --grey-fg-color: rgb(85, 81, 81);
   --border-color: rgb(226 232 240);
   --hover-fg-color: rgb(65, 195, 255);
   --hover-bg-color: rgb(239 246 255);
@@ -18,6 +19,7 @@
 [data-theme='dark'] {
   --main-bg-color: black;
   --main-fg-color: rgb(196, 196, 196);
+  --grey-fg-color: rgb(156, 151, 151);
   --border-color: rgb(28 25 23);
   --hover-fg-color: rgb(141, 219, 255);
   --hover-bg-color: rgb(39 39 42);

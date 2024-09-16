@@ -5,7 +5,7 @@ import { Alchemy, Network } from 'alchemy-sdk';
 import { useEffect, useState, useContext } from 'react';
 import { NetworkContext } from "@/components/context-provider";
 import { Input, Field, Label } from '@headlessui/react';
-import { GlobeAltIcon, Square3Stack3DIcon, ClockIcon, CubeIcon, DocumentTextIcon } from "@heroicons/react/24/solid";
+import { GlobeAltIcon, Square3Stack3DIcon, ClockIcon, CubeIcon, DocumentTextIcon } from "@heroicons/react/24/outline";
 
 
 const networks = new Map([
@@ -24,19 +24,33 @@ export default function Home() {
     network: networks.get(network),
   });
 
-  const [blockNumber, setBlockNumber] = useState<number>();
+  const [ethPrice, setEthPrice] = useState<{euro: string, usd: string}>();
+  const [blockNumber, setBlockNumber] = useState<Number>();
 
   useEffect(() => {
     let ignore = false;
 
     async function getBlockNumber() {
-      const blocknumber = await alchemy.core.getBlockNumber();
-      if (!ignore) {
-        setBlockNumber(blocknumber);
+      try {
+        const blocknumber = await alchemy.core.getBlockNumber();
+
+        if (!ignore) {
+          setBlockNumber(blocknumber);
+        }
+      } catch (error) {
+        // console.log('getBlockNumber Error: ', error);
       }
     }
+    async function getPrice() {
+      let request = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=eur,usd');
+      let response = await request.json();
+      let euro = response.ethereum.eur;
+      let usd = response.ethereum.usd;
+      if (!ignore) setEthPrice({ euro, usd });
+    }
 
-    getBlockNumber();
+    getPrice();
+    // getBlockNumber();
 
     return () => {   // Cleanup function to ensure that a fetch that’s not relevant
       ignore = true; // anymore does not keep affecting the application
@@ -62,39 +76,69 @@ export default function Home() {
         </span>
       </div>
 
-      <div className={`flex flex-col md:flex-row items-start justify-around
+      <div className={`flex flex-col md:flex-row items-center justify-between
                        border-2 border-[var(--border-color)]
                        rounded-lg w-full md:w-[90%] p-1 md:p-3 my-8 md:my-16`}>
-        <div className={``}>
-          <div className=''>
-            <p>ETHER PRICE</p>
-            <p>{  }</p>
+        <div>
+          <div className='flex mb-4'>
+            <div>
+              <div className={`w-8 h-8 bg-[image:var(--eth-logo-url)] bg-contain bg-no-repeat bg-center`} />
+            </div>
+            <div className='ml-4'>
+              <p className='text-xs tracking-wider text-[var(--grey-fg-color)]'>ETHER PRICE</p>
+              <p>{ ethPrice ? `€${ethPrice.euro} / $${ethPrice.usd}` : '' }</p>
+            </div>
           </div>
-          <div className=''>
-            <p>MARKET CAP</p>
-            <p>{  }</p>
+          <div className='flex mb-4'>
+            <div>
+              <GlobeAltIcon className='w-8 h-8' />
+            </div>
+            <div className='ml-4'>
+              <p className='text-xs tracking-wider text-[var(--grey-fg-color)]'>MARKET CAP</p>
+              <p>{  }</p>
+            </div>
           </div>
         </div>
 
-        <div className={``}>
-          <div className=''>
-            <p>TRANSACTIONS</p>
-            <p>{  }</p>
+        <div>
+          <div className='flex mb-4'>
+            <div>
+              <Square3Stack3DIcon className='w-8 h-8' />
+            </div>
+            <div className='ml-4'>
+              <p className='text-xs tracking-wider text-[var(--grey-fg-color)]'>TRANSACTIONS</p>
+              <p>{  }</p>
+            </div>
           </div>
-          <div className=''>
-            <p>MED GAS PRICE</p>
-            <p>{  }</p>
+          <div className='flex mb-4'>
+            <div>
+              <DocumentTextIcon className='w-8 h-8' />
+            </div>
+            <div className='ml-4'>
+              <p className='text-xs tracking-wider text-[var(--grey-fg-color)]'>MED GAS PRICE</p>
+              <p>{  }</p>
+            </div>
           </div>
         </div>
 
-        <div className={``}>
-          <div className=''>
-            <p>LAST FINALIZED BLOCK</p>
-            <p>{  }</p>
+        <div>
+          <div className='flex mb-4'>
+            <div>
+              <ClockIcon className='w-8 h-8' />
+            </div>
+            <div className='ml-4'>
+              <p className='text-xs tracking-wider text-[var(--grey-fg-color)]'>LAST FINALIZED BLOCK</p>
+              <p>{  }</p>
+            </div>
           </div>
-          <div className=''>
-            <p>LAST SAFE BLOCK</p>
-            <p>{  }</p>
+          <div className='flex mb-4'>
+            <div>
+              <CubeIcon className='w-8 h-8' />
+            </div>
+            <div className='ml-4'>
+              <p className='text-xs tracking-wider text-[var(--grey-fg-color)]'>LAST SAFE BLOCK</p>
+              <p>{  }</p>
+            </div>
           </div>
         </div>
       </div>
@@ -103,7 +147,7 @@ export default function Home() {
         <div className={`border-2 border-[var(--border-color)]
                         rounded-lg w-full md:w-[50%] p-1 md:p-3 mb-2`}>
           <h2>Latest Blocks</h2>
-          <p>Block Number: { blockNumber }</p>
+          <p>Block Number: { `${blockNumber}` }</p>
         </div>
         <div className={`border-2 border-[var(--border-color)]
                         rounded-lg w-full md:w-[45%] p-1 md:p-3 mb-2`}>
