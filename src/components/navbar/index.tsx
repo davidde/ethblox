@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Bars3Icon } from '@heroicons/react/24/solid';
 import DropdownLi from './dropdown-li';
-import ToggleIcons from './toggle-icons';
+import ToggleIcons from './toggles/toggle-icons';
 
 
 export default function Navbar() {
