@@ -1,28 +1,13 @@
 'use client';
 
-// Alchemy SDK Docs: https://docs.alchemy.com/reference/alchemy-sdk-api-surface-overview#api-surface
-import { Alchemy, Network } from 'alchemy-sdk';
 import { useEffect, useState, useContext } from 'react';
-import NetworkContext from "@/components/providers/network-context";
+import AlchemyContext from "@/components/providers/alchemy-context";
 import { GlobeAltIcon, Square3Stack3DIcon, ClockIcon, CubeIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import Search from '@/components/main/search';
 
 
-const networks = new Map([
-  ['Ethereum Mainnet' , Network.ETH_MAINNET],
-  ['Testnet Sepolia' , Network.ETH_SEPOLIA] ,
-]);
-
 export default function Home() {
-  const { network } = useContext(NetworkContext);
-
-  // You should never expose your API key like this in production level code!
-  // See https://docs.alchemy.com/docs/best-practices-for-key-security-and-management,
-  // and https://docs.alchemy.com/docs/how-to-use-jwts-for-api-requests.
-  const alchemy = new Alchemy({
-    apiKey: process.env.REACT_APP_ALCHEMY_API_KEY,
-    network: networks.get(network),
-  });
+  const { alchemy } = useContext(AlchemyContext);
 
   const [ethPrice, setEthPrice] = useState<{eur: string, usd: string}>();
   const [blockNumber, setBlockNumber] = useState<Number>();
@@ -56,7 +41,7 @@ export default function Home() {
     // Return cleanup function to ensure that a fetch that’s not
     // relevant anymore does not keep affecting the application:
     return () => { ignore = true; };
-  }, []);
+  }, [alchemy]);
 
   return (
     <main className='flex flex-col min-h-screen p-2 md:p-8'>
