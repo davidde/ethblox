@@ -3,7 +3,7 @@
 // Alchemy SDK Docs: https://docs.alchemy.com/reference/alchemy-sdk-api-surface-overview#api-surface
 import { Alchemy, Network } from 'alchemy-sdk';
 import { useEffect, useState, useContext } from 'react';
-import { NetworkContext } from '@/components/context-provider';
+import NetworkContext from "@/components/providers/network-context";
 import { GlobeAltIcon, Square3Stack3DIcon, ClockIcon, CubeIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import Search from '@/components/main/search';
 

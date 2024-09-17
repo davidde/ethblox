@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from '@headlessui/react';
-import { NetworkContext } from "@/components/context-provider";
+import NetworkContext from "@/components/providers/network-context";
 
 
 type Props = {

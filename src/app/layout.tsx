@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar";
-import ContextProvider from "@/components/context-provider";
+import Providers from "@/components/providers";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -20,10 +20,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} bg-[var(--main-bg-color)] text-[var(--main-fg-color)]`} >
-        <ContextProvider>
+        <Providers>
           <Navbar />
           {children}
-        </ContextProvider>
+        </Providers>
       </body>
     </html>
   );

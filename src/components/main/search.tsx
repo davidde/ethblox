@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { NetworkContext } from '@/components/context-provider';
+import NetworkContext from "@/components/providers/network-context";
 import { Input, Field, Label } from '@headlessui/react';
 
 

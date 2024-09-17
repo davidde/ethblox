@@ -1,22 +1,15 @@
 'use client';
 
 import { ThemeProvider } from 'next-themes';
-import { createContext, useState } from 'react';
+import { useState } from 'react';
+import NetworkContext from './network-context';
 
 
 type Props = {
   children: React.ReactNode;
 }
 
-export const NetworkContext = createContext<{
-  network: string,
-  setNetwork: (network: string) => void
-}>({
-  network: '',
-  setNetwork: () => {}
-});
-
-export default function ContextProvider({ children }: Props) {
+export default function Providers({ children }: Props) {
   const [network, setNetwork] = useState('Ethereum Mainnet');
 
   return (
