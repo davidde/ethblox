@@ -1,14 +1,21 @@
 'use client';
 
-import { useEffect, useState, useContext } from 'react';
-import AlchemyContext from "@/components/providers/alchemy-context";
+// Alchemy SDK Docs: https://docs.alchemy.com/reference/alchemy-sdk-api-surface-overview#api-surface
+import { Alchemy, Network } from 'alchemy-sdk';
+import { useEffect, useState } from 'react';
 import { GlobeAltIcon, Square3Stack3DIcon, ClockIcon, CubeIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import Search from '@/components/main/search';
 
 
-export default function Home() {
-  const { alchemy } = useContext(AlchemyContext);
+const alchemy = new Alchemy({
+  // You should never expose your API key like this in production level code!
+  // See https://docs.alchemy.com/docs/best-practices-for-key-security-and-management,
+  // and https://docs.alchemy.com/docs/how-to-use-jwts-for-api-requests.
+  apiKey: process.env.REACT_APP_ALCHEMY_API_KEY,
+  network: Network.ETH_MAINNET,
+});
 
+export default function Main() {
   const [ethPrice, setEthPrice] = useState<{eur: string, usd: string}>();
   const [blockNumber, setBlockNumber] = useState<Number>();
 
@@ -41,11 +48,11 @@ export default function Home() {
     // Return cleanup function to ensure that a fetch that’s not
     // relevant anymore does not keep affecting the application:
     return () => { ignore = true; };
-  }, [alchemy]);
+  }, []);
 
   return (
     <main className='flex flex-col min-h-screen p-2 md:p-8'>
-      <Search />
+      <Search network='Ethereum Mainnet' />
 
       <div className={`flex flex-col md:flex-row items-center justify-between
                        border-2 border-[var(--border-color)]

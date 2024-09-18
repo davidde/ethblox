@@ -1,14 +1,20 @@
-import { useContext } from 'react';
-import NetworkContext from "@/components/providers/network-context";
 import { Input, Field, Label } from '@headlessui/react';
 
 
-export default function Search() {
-  const { network } = useContext(NetworkContext);
+type Props = {
+  network: string
+}
 
+export default function Search(props: Props) {
   return (
     <div className={`w-full md:w-[40rem]`}>
-      <h1 className={`text-xl md:text-2xl font-semibold`}>The Ethereum Blockchain Explorer</h1>
+      <h1 className={`text-xl md:text-2xl font-semibold`}>
+        {
+          props.network === 'Ethereum Mainnet' ?
+                    'The Ethereum Blockchain Explorer' :
+                    'The Sepolia Testnet Explorer'
+        }
+      </h1>
       <Field className={`mt-3`}>
         <Label>Search by Address</Label>
         <Input
@@ -20,7 +26,7 @@ export default function Search() {
         />
       </Field>
       <span className={`ml-2 md:ml-8 text-sm font-light`}>
-        Network: { network }
+        Network: { props.network }
       </span>
     </div>
   );
