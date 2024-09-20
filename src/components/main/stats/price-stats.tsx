@@ -9,7 +9,7 @@ export default async function PriceStats() {
   try {
     const response = await fetch(
       'https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=eur,usd',
-      { cache: 'no-store' }
+      { next: { revalidate: 60 }} // Revalidate cache every minute
     );
     const data = await response.json();
     price = data.ethereum;
