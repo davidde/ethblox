@@ -3,8 +3,7 @@ import { GlobeAltIcon } from '@heroicons/react/24/outline';
 
 
 export default async function PriceStats() {
-  let price; // Num
-  let ethPrice, ethMarketCap; // Localestrings
+  let price, supply;
 
   try {
     const response = await fetch(
@@ -13,18 +12,6 @@ export default async function PriceStats() {
     );
     const data = await response.json();
     price = data.ethereum;
-    ethPrice = {
-      eur: price.eur.toLocaleString("en-US",
-            {
-              style: "currency",
-              currency: "EUR",
-            }),
-      usd: price.usd.toLocaleString("en-US",
-            {
-              style: "currency",
-              currency: "USD",
-            }),
-    };
   } catch(error) {
     console.error('Coingecko Eth Price Error: ', error);
   }
@@ -33,52 +20,78 @@ export default async function PriceStats() {
     const response = await fetch(`https://api.etherscan.io/api?module=stats&action=ethsupply2&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`);
     const data = await response.json();
     const { EthSupply, Eth2Staking, BurntFees } = data.result;
-    const totalSupply = Number(Utils.formatEther(EthSupply))
+    supply = Number(Utils.formatEther(EthSupply))
                         + Number(Utils.formatEther(Eth2Staking))
                         - Number(Utils.formatEther(BurntFees));
-    ethMarketCap = {
-      eur: (totalSupply * price.eur)
-            .toLocaleString("en-US", {
-              style: "currency",
-              currency: "EUR",
-            }),
-      usd: (totalSupply * price.usd)
-            .toLocaleString("en-US", {
-              style: "currency",
-              currency: "USD",
-            }),
-    };
   } catch(error) {
     console.error('Etherscan Eth Supply Error: ', error);
   }
 
+  let ethPrice, ethMarketCap;
+  ethPrice = {
+    eur: price.eur.toLocaleString('en-US',
+          {
+            style: 'currency',
+            currency: 'EUR',
+          }),
+    usd: price.usd.toLocaleString('en-US',
+          {
+            style: 'currency',
+            currency: 'USD',
+          }),
+  };
+  if (supply) {
+    ethMarketCap = {
+      eur: (supply * price.eur)
+            .toLocaleString('en-US', {
+              style: 'currency',
+              currency: 'EUR',
+            }),
+      usd: (supply * price.usd)
+            .toLocaleString('en-US', {
+              style: 'currency',
+              currency: 'USD',
+            }),
+    };
+    supply = supply.toLocaleString('en-US', {
+      maximumFractionDigits: 2,
+    });
+  }
+
   return (
-    <div>
-      <div className='flex mb-4'>
-        <div>
-          <div className={`w-8 h-8 bg-[image:var(--eth-logo-url)] bg-contain bg-no-repeat bg-center`} />
+    <>
+      <div>
+        <div className='flex mb-4'>
+          <div>
+            <div className='w-8 h-8 bg-[image:var(--eth-logo-url)] bg-contain bg-no-repeat bg-center' />
+          </div>
+          <div className='ml-4'>
+            <p className='text-xs tracking-wider text-[var(--grey-fg-color)]'>ETHER PRICE</p>
+            <p>{ ethPrice ? `${ethPrice.eur} / ${ethPrice.usd}` : '' }</p>
+          </div>
         </div>
-        <div className='ml-4'>
-          <p className='text-xs tracking-wider text-[var(--grey-fg-color)]'>ETHER PRICE</p>
-          <p>{ ethPrice ? `${ethPrice.eur} / ${ethPrice.usd}` : '' }</p>
+
+        <div className='ml-12'>
+          <p className='text-xs tracking-wider text-[var(--grey-fg-color)]'>ETHER SUPPLY</p>
+          <p>{`Ξ${supply}`}</p>
         </div>
       </div>
 
-      <div className='flex mb-4'>
+      <div className='flex my-6'>
         <div>
           <GlobeAltIcon className='w-8 h-8' />
         </div>
         <div className='ml-4'>
-          <p className='text-xs tracking-wider text-[var(--grey-fg-color)]'>MARKET CAP</p>
+          <p className='text-xs tracking-wider text-[var(--grey-fg-color)]'>MARKET CAP (= price * supply)</p>
           {
             ethMarketCap ?
             <div className='font-mono'>
-              <p>{ethMarketCap.eur}</p>
+              <p className='mb-4'>{ethMarketCap.eur}</p>
               <p>{ethMarketCap.usd}</p>
             </div> : ''
           }
         </div>
       </div>
-    </div>
+    </>
   );
 }

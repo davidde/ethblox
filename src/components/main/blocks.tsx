@@ -1,4 +1,5 @@
 import { Alchemy } from 'alchemy-sdk';
+import { CubeIcon } from '@heroicons/react/24/outline';
 
 
 type Props = {
