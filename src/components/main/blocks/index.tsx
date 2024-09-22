@@ -7,7 +7,7 @@ type Props = {
 }
 
 export default async function Blocks(props: Props) {
-  let blockNumber;
+  let blockNumber: number;
 
   try {
     blockNumber = await props.alchemy.core.getBlockNumber();
@@ -19,10 +19,14 @@ export default async function Blocks(props: Props) {
     <div className='border-2 border-[var(--border-color)]
                     rounded-lg w-full md:w-[50%] mb-2'>
       <h2 className='font-bold p-2 md:p-3 border-b-2 border-[var(--border-color)]'>Latest Blocks</h2>
-      <Block
-        blockNumber={blockNumber}
-        alchemy={props.alchemy}
-      />
+      {
+        [...Array(6)].map((x, i) =>
+          <Block
+            blockNumber={blockNumber-i}
+            alchemy={props.alchemy}
+          />
+        )
+      }
     </div>
   );
 }

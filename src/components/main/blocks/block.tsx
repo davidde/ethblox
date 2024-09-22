@@ -26,7 +26,9 @@ export default async function Transactions(props: Props) {
           `&blockno=${props.blockNumber}` +
           `&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`;
       const response = await fetch(url);
-      const data = await response.json(); console.log(data);
+      const data = await response.json();
+      console.log('blockNo = ', block?.number);
+      console.log('data = ', data);
       blockReward = data.result.blockReward;
     } catch(error) {
       console.error('Etherscan getBlockReward Error: ', error);
@@ -40,7 +42,7 @@ export default async function Transactions(props: Props) {
   if (blockReward) blockReward = Math.round(Number(Utils.formatEther(blockReward)) * 1e4) / 1e4;
 
   return (
-    <div className='p-1 md:p-3 border-b border-[var(--border-color)] last:border-0 overflow-hidden'>
+    <div className='p-2 md:p-3 border-b border-[var(--border-color)] last:border-0 overflow-hidden'>
       <div className='flex flex-col md:flex-row'>
         <div className='flex'>
           <CubeIcon className='w-10 h-10 md:w-8 md:h-8' />
@@ -49,10 +51,10 @@ export default async function Transactions(props: Props) {
             <span className='md:pl-4 text-sm text-[var(--grey-fg-color)]'>({secsSinceAdded} secs ago)</span>
           </div>
         </div>
-        <div className='flex flex-col ml-12'>
-          <span className='px-2 md:px-4'>{block?.transactions.length} transactions</span>
+        <div className='flex flex-col ml-12 mb-2 md:mb-0'>
+          <span className='px-2 md:px-4 leading-5'>{block?.transactions.length} transactions</span>
           <span className='pl-2 md:pl-4'>Block Reward: { blockReward ? `Ξ${blockReward}` : '' }</span>
-          <span className='pl-2 md:pl-4'>Recipient: {recipient}</span>
+          <span className='pl-2 md:pl-4 leading-5'>Recipient: {recipient}</span>
         </div>
       </div>
     </div>
