@@ -20,9 +20,9 @@ export default async function PriceStats() {
     const response = await fetch(`https://api.etherscan.io/api?module=stats&action=ethsupply2&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`);
     const data = await response.json();
     const { EthSupply, Eth2Staking, BurntFees } = data.result;
-    supply = Number(Utils.formatEther(EthSupply))
-                        + Number(Utils.formatEther(Eth2Staking))
-                        - Number(Utils.formatEther(BurntFees));
+    supply = +Utils.formatEther(EthSupply)
+              + (+Utils.formatEther(Eth2Staking))
+              - (+Utils.formatEther(BurntFees));
   } catch(error) {
     console.error('Etherscan Eth Supply Error: ', error);
   }

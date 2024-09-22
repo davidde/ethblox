@@ -18,7 +18,7 @@ export default async function Blocks(props: Props) {
   return (
     <div className='border-2 border-[var(--border-color)]
                     rounded-lg w-full md:w-[50%] mb-2'>
-      <h2 className='font-bold p-1 md:p-3 border-b border-[var(--border-color)]'>Latest Blocks</h2>
+      <h2 className='font-bold p-2 md:p-3 border-b-2 border-[var(--border-color)]'>Latest Blocks</h2>
       <Block
         blockNumber={blockNumber}
         alchemy={props.alchemy}
