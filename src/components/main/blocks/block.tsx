@@ -48,12 +48,12 @@ export default async function Transactions(props: Props) {
       <div className='flex flex-col md:flex-row'>
         <div className='flex'>
           <CubeIcon className='w-10 h-10 md:w-8 md:h-8' />
-          <div className='flex md:flex-col ml-2 pt-1 md:pt-0'>
+          <div className='flex md:flex-col ml-2 pt-1 md:pt-0 md:w-32'>
             <span className='px-2 md:px-4 leading-5'>{props.blockNumber}</span>
             <span className='md:pl-4 text-sm text-[var(--grey-fg-color)]'>({secsSinceAdded} secs ago)</span>
           </div>
         </div>
-        <div className='flex flex-col ml-12 mb-2 md:mb-0'>
+        <div className='flex flex-col ml-12 md:ml-8 mb-2 md:mb-0'>
           <span className='px-2 md:px-4 leading-5'>{block?.transactions.length} transactions</span>
           <span className='pl-2 md:pl-4'>Block Reward: { blockReward ? `Ξ${blockReward}` : '' }</span>
           <span className='pl-2 md:pl-4 leading-5'>Recipient: {recipient}</span>
