@@ -18,14 +18,19 @@ const alchemy = new Alchemy({
 });
 
 export default function Main() {
+  const network = 'Ethereum Mainnet';
+
   return (
     <main className='flex flex-col min-h-screen p-2 md:p-8'>
-      <Search network='Ethereum Mainnet' />
+      <Search network={network} />
 
       <Stats />
 
       <div className={`flex flex-col md:flex-row justify-between w-full`}>
-        <Blocks alchemy={alchemy} />
+        <Blocks
+          network={network}
+          alchemy={alchemy}
+        />
         <Transactions alchemy={alchemy} />
       </div>
     </main>

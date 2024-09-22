@@ -17,12 +17,17 @@ const alchemy = new Alchemy({
 });
 
 export default function Main() {
+  const network = 'Testnet Sepolia';
+
   return (
     <main className='flex flex-col min-h-screen p-2 md:p-8'>
-      <Search network='Testnet Sepolia' />
+      <Search network={network} />
 
       <div className={`flex flex-col md:flex-row justify-between w-full mt-8 md:mt-16`}>
-        <Blocks alchemy={alchemy} />
+        <Blocks
+          network={network}
+          alchemy={alchemy}
+        />
         <Transactions alchemy={alchemy} />
       </div>
     </main>

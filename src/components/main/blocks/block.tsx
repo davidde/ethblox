@@ -5,10 +5,12 @@ import { truncateAddress } from '@/lib/utilities';
 
 type Props = {
   blockNumber: number | undefined,
+  network: string,
   alchemy: Alchemy
 }
 
 export default async function Transactions(props: Props) {
+  const etherscan = props.network === 'Ethereum Mainnet' ? 'https://api.etherscan.io/' : 'https://api-sepolia.etherscan.io/';
   let block;
   let secsSinceAdded;
   let blockReward;
@@ -22,7 +24,8 @@ export default async function Transactions(props: Props) {
     }
     try {
       const response = await fetch(
-        `https://api.etherscan.io/api?module=block&action=getblockreward` +
+        `${etherscan}` +
+        `api?module=block&action=getblockreward` +
         `&blockno=${props.blockNumber}` +
         `&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`
       );

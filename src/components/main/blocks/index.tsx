@@ -3,6 +3,7 @@ import Block from './block';
 
 
 type Props = {
+  network: string,
   alchemy: Alchemy
 }
 
@@ -24,6 +25,7 @@ export default async function Blocks(props: Props) {
           <Block
             key={i}
             blockNumber={blockNumber-i}
+            network={props.network}
             alchemy={props.alchemy}
           />
         )
