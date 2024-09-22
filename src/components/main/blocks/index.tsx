@@ -20,8 +20,9 @@ export default async function Blocks(props: Props) {
                     rounded-lg w-full md:w-[50%] mb-2'>
       <h2 className='font-bold p-2 md:p-3 border-b-2 border-[var(--border-color)]'>Latest Blocks</h2>
       {
-        [...Array(6)].map((x, i) =>
+        [...Array(4)].map((x, i) =>
           <Block
+            key={i}
             blockNumber={blockNumber-i}
             alchemy={props.alchemy}
           />

@@ -21,14 +21,13 @@ export default async function Transactions(props: Props) {
       console.error('getBlock() Error: ', error);
     }
     try {
-      const url =
+      const response = await fetch(
         `https://api.etherscan.io/api?module=block&action=getblockreward` +
-          `&blockno=${props.blockNumber}` +
-          `&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`;
-      const response = await fetch(url);
+        `&blockno=${props.blockNumber}` +
+        `&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`
+      );
       const data = await response.json();
-      console.log('blockNo = ', block?.number);
-      console.log('data = ', data);
+      // console.log('data = ', data); // For some reason some blocks return 'No Record Found' ...
       blockReward = data.result.blockReward;
     } catch(error) {
       console.error('Etherscan getBlockReward Error: ', error);
