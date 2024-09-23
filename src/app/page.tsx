@@ -17,8 +17,15 @@ const alchemy = new Alchemy({
   },
 });
 
-export default function Main() {
+export default async function Main() {
   const network = 'Ethereum Mainnet';
+  let blockNumber;
+
+  try {
+    blockNumber = await alchemy.core.getBlockNumber();
+  } catch(error) {
+    console.error('getBlockNumber() Error: ', error);
+  }
 
   return (
     <main className='flex flex-col min-h-screen p-2 md:p-8'>
@@ -28,10 +35,15 @@ export default function Main() {
 
       <div className={`flex flex-col md:flex-row justify-between w-full`}>
         <Blocks
+          blockNumber={blockNumber}
           network={network}
           alchemy={alchemy}
         />
-        <Transactions alchemy={alchemy} />
+        <Transactions
+          blockNumber={blockNumber}
+          network={network}
+          alchemy={alchemy}
+        />
       </div>
     </main>
   );

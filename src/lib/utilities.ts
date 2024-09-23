@@ -13,3 +13,13 @@ export function truncateAddress(address: string, toLength: number) {
     address.substring(address.length - backChars)
   );
 };
+
+export function truncateTransaction(transaction: string, toLength: number) {
+  if (transaction.length <= toLength) return transaction;
+
+  const suffix = '...';
+  const suffixLength = suffix.length;
+  const charsToShow = toLength - suffixLength;
+
+  return transaction.substring(0, charsToShow) + suffix;
+};
