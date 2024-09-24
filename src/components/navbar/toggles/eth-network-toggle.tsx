@@ -40,7 +40,11 @@ export default function EthNetworkToggle(props: Props) {
                     data-[focus]:bg-[var(--hover-bg-color)]
                     ${sepolia ? `` : `text-[var(--hover-fg-color)]`}`}
         >
-          <Link href='/'>Ethereum Mainnet</Link>
+          {({ close }) => (
+            <Link href='/' onClick={close}>
+              Ethereum Mainnet
+            </Link>
+          )}
         </MenuItem>
 
         <MenuItem
@@ -49,7 +53,11 @@ export default function EthNetworkToggle(props: Props) {
                     data-[focus]:bg-[var(--hover-bg-color)]
                     ${sepolia ? `text-[var(--hover-fg-color)]` : ``}`}
         >
-          <Link href='/sepolia'>Testnet Sepolia</Link>
+          {({ close }) => (
+            <Link href='/sepolia' onClick={close}>
+              Testnet Sepolia
+            </Link>
+          )}
         </MenuItem>
 
         <MenuItem
