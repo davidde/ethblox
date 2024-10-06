@@ -59,39 +59,45 @@ export default async function PriceStats() {
   }
 
   return (
-    <>
-      <div>
-        <div className='flex mb-4'>
-          <div>
-            <div className='w-8 h-8 bg-[image:var(--eth-logo-url)] bg-contain bg-no-repeat bg-center' />
-          </div>
-          <div className='ml-4'>
-            <p className='text-xs tracking-wider text-[var(--grey-fg-color)]'>ETHER PRICE</p>
-            <p>{ ethPrice ? `${ethPrice.eur} / ${ethPrice.usd}` : '' }</p>
-          </div>
-        </div>
-
-        <div className='ml-12'>
-          <p className='text-xs tracking-wider text-[var(--grey-fg-color)]'>ETHER SUPPLY</p>
-          <p>{`Ξ${supply}`}</p>
-        </div>
-      </div>
-
-      <div className='flex my-6'>
+    <div className='border-2 border-[var(--border-color)]
+                    rounded-lg w-full md:w-[48%] mb-2'>
+      <div className='flex mb-4 border-b-2 border-[var(--border-color)]'>
         <div>
-          <GlobeAltIcon className='w-8 h-8' />
+          <div className='w-8 h-8 mt-1 md:mt-2 bg-[image:var(--eth-logo-url)] bg-contain bg-no-repeat bg-center' />
         </div>
         <div className='ml-4'>
-          <p className='text-xs tracking-wider text-[var(--grey-fg-color)]'>MARKET CAP (= price * supply)</p>
-          {
-            ethMarketCap ?
-            <div className='font-mono'>
-              <p className='mb-4'>{ethMarketCap.eur}</p>
-              <p>{ethMarketCap.usd}</p>
-            </div> : ''
-          }
+          <h2 className='font-bold py-2 md:py-3'>
+            Ξther Stats
+          </h2>
         </div>
       </div>
-    </>
+
+      <div className='pl-4 pb-2 border-b border-[var(--border-color)]'>
+        <p className='text-xs tracking-wider text-[var(--grey-fg-color)]'>ETHER PRICE</p>
+        {
+          ethPrice ?
+          <div>
+            <p>{ethPrice.eur}</p>
+            <p>{ethPrice.usd}</p>
+          </div> : ''
+        }
+      </div>
+
+      <div className='pl-4 pt-4 pb-2 border-b border-[var(--border-color)]'>
+        <p className='text-xs tracking-wider text-[var(--grey-fg-color)]'>ETHER SUPPLY</p>
+        <p>{`Ξ${supply}`}</p>
+      </div>
+
+      <div className='pl-4 pt-4 pb-2'>
+        <p className='text-xs tracking-wider text-[var(--grey-fg-color)]'>ETHER MARKET CAP (= price * supply)</p>
+        {
+          ethMarketCap ?
+          <div>
+            <p>{ethMarketCap.eur}</p>
+            <p>{ethMarketCap.usd}</p>
+          </div> : ''
+        }
+      </div>
+    </div>
   );
 }

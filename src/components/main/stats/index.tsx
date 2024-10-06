@@ -1,13 +1,12 @@
-import PriceStats from './price-stats';
+import EtherStats from './ether-stats';
 import TransactionStats from './transaction-stats';
 
 
 export default async function Stats() {
   return (
-    <div className={`flex flex-col md:flex-row items-start md:items-center justify-between
-      border-2 border-[var(--border-color)]
-      rounded-lg w-full md:w-[90%] p-1 md:p-3 my-8 md:my-16`}>
-      <PriceStats />
+    <div className='flex flex-col md:flex-row items-start md:items-center justify-between
+                    w-full md:w-[90%] my-8 md:my-16'>
+      <EtherStats />
       <TransactionStats />
     </div>
   );

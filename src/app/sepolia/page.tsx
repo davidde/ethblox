@@ -12,8 +12,8 @@ const alchemy = new Alchemy({
   apiKey: process.env.REACT_APP_ALCHEMY_API_KEY,
   network: Network.ETH_SEPOLIA,
   connectionInfoOverrides: {
-    skipFetchSetup: true,
-  },
+    skipFetchSetup: true, // Fix missing response error
+  }, // (see: https://github.com/alchemyplatform/alchemy-sdk-js/issues/400)
 });
 
 export default async function Main() {
