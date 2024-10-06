@@ -1,5 +1,4 @@
 import { Utils } from 'alchemy-sdk';
-import { GlobeAltIcon } from '@heroicons/react/24/outline';
 
 
 export default async function PriceStats() {
@@ -60,7 +59,7 @@ export default async function PriceStats() {
 
   return (
     <div className='border-2 border-[var(--border-color)]
-                    rounded-lg w-full md:w-[48%] mb-2'>
+                    rounded-lg w-full md:w-[30%] my-4 md:my-8'>
       <div className='flex mb-4 border-b-2 border-[var(--border-color)]'>
         <div>
           <div className='w-8 h-8 mt-1 md:mt-2 bg-[image:var(--eth-logo-url)] bg-contain bg-no-repeat bg-center' />

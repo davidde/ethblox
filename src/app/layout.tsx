@@ -8,8 +8,8 @@ import { ThemeProvider } from 'next-themes';
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Blockexplorer",
-  description: "Ethereum Blockexplorer with Next.js",
+  title: "EthBlox",
+  description: "The Ethereum Blockchain Explorer",
 };
 
 export default function RootLayout({

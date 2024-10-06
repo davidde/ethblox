@@ -1,4 +1,5 @@
 export function truncateAddress(address: string, toLength: number) {
+  if (!address) return null;
   if (address.length <= toLength) return address;
 
   const separator = '...';
