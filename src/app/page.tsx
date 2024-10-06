@@ -33,7 +33,7 @@ export default async function Main() {
 
       <Stats />
 
-      <div className={`flex flex-col md:flex-row justify-between w-full`}>
+      <div className={`flex flex-col md:flex-row items-center md:items-start w-full`}>
         <Blocks
           blockNumber={blockNumber}
           network={network}
