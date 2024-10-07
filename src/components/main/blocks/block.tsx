@@ -10,7 +10,7 @@ type Props = {
 }
 
 export default async function Transactions(props: Props) {
-  const etherscan = props.network === 'Ethereum Mainnet' ? 'https://api.etherscan.io/' : 'https://api-sepolia.etherscan.io/';
+  const blockscout = props.network === 'Ethereum Mainnet' ? 'https://eth.blockscout.com/' : 'https://eth-sepolia.blockscout.com/';
   let block;
   let secsSinceAdded;
   let blockReward;
@@ -24,10 +24,11 @@ export default async function Transactions(props: Props) {
     }
     try {
       const response = await fetch(
-        `${etherscan}` +
-        `api?module=block&action=getblockreward` +
-        `&blockno=${props.blockNumber}` +
-        `&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`
+        `${blockscout}` +
+        `api` +
+        `?module=block` +
+        `&action=getblockreward` +
+        `&blockno=${props.blockNumber}`
       );
       const data = await response.json();
       // console.log('data = ', data); // For some reason some blocks return 'No Record Found' ...
@@ -39,9 +40,9 @@ export default async function Transactions(props: Props) {
 
   if (block) {
     secsSinceAdded = Math.round(Date.now() / 1000 - block.timestamp);
-    recipient = truncateAddress(block.miner, 21);
+    recipient = truncateAddress(block.miner, 20);
   }
-  if (blockReward) blockReward = Math.round(Number(Utils.formatEther(blockReward)) * 1e4) / 1e4;
+  if (blockReward) blockReward = Math.round(+(Utils.formatEther(blockReward)) * 1e4) / 1e4;
 
   return (
     <div className='p-2 md:p-3 border-b border-[var(--border-color)] last:border-0 overflow-hidden'>
@@ -55,7 +56,7 @@ export default async function Transactions(props: Props) {
         </div>
         <div className='flex flex-col ml-12 md:ml-8 mb-2 md:mb-0'>
           <span className='px-2 md:px-4 leading-5'>{block?.transactions.length} transactions</span>
-          <span className='pl-2 md:pl-4'>Block Reward: { blockReward ? `Ξ${blockReward}` : '' }</span>
+          <span className='pl-2 md:pl-4'>Block Reward: { blockReward !== undefined ? `Ξ${blockReward}` : '' }</span>
           <span className='pl-2 md:pl-4 leading-5'>Recipient: {recipient}</span>
         </div>
       </div>

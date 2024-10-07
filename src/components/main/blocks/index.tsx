@@ -17,7 +17,7 @@ export default async function Blocks(props: Props) {
         [...Array(4)].map((x, i) =>
           <Block
             key={i}
-            blockNumber={props.blockNumber!-i}
+            blockNumber={props.blockNumber!-i-1}
             network={props.network}
             alchemy={props.alchemy}
           />

@@ -67,14 +67,13 @@ export default function Footer() {
           <div className='flex'>
             <WrenchIcon className='w-8 h-8' />
             <span className='font-semibold pt-1 pl-1'>
-              Made by&nbsp;
+              Made with ❤️ by&nbsp;
               <Link
                 href='https://github.com/davidde'
                 className='text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
               >
                 davidde
               </Link>
-              &nbsp;with ❤️
             </span>
           </div>
           <p className='pl-[0.4rem] pt-1 text-xs tracking-wider text-[var(--grey-fg-color)] md:text-center'>
