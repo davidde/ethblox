@@ -10,7 +10,12 @@ type Props = {
 }
 
 export default async function Transactions(props: Props) {
-  const blockscout = props.network === 'Ethereum Mainnet' ? 'https://eth.blockscout.com/' : 'https://eth-sepolia.blockscout.com/';
+  const blockRewardUrl = props.network === 'Ethereum Mainnet' ?
+    `https://eth.blockscout.com/api?module=block&action=getblockreward&blockno=${props.blockNumber}`
+    :
+    `https://api-sepolia.etherscan.io/api?module=block&action=getblockreward` +
+    `&blockno=${props.blockNumber}` +
+    `&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`;
   let block;
   let secsSinceAdded;
   let blockReward;
@@ -23,13 +28,7 @@ export default async function Transactions(props: Props) {
       console.error('getBlock() Error: ', error);
     }
     try {
-      const response = await fetch(
-        `${blockscout}` +
-        `api` +
-        `?module=block` +
-        `&action=getblockreward` +
-        `&blockno=${props.blockNumber}`
-      );
+      const response = await fetch(blockRewardUrl);
       const data = await response.json();
       // console.log('data = ', data); // For some reason some blocks return 'No Record Found' ...
       blockReward = data.result.blockReward;
@@ -56,7 +55,9 @@ export default async function Transactions(props: Props) {
         </div>
         <div className='flex flex-col ml-12 md:ml-8 mb-2 md:mb-0'>
           <span className='px-2 md:px-4 leading-5'>{block?.transactions.length} transactions</span>
-          <span className='pl-2 md:pl-4'>Block Reward: { blockReward !== undefined ? `Ξ${blockReward}` : '' }</span>
+          <span className='pl-2 md:pl-4'>
+            Block Reward: { blockReward !== undefined && blockReward !== null ? `Ξ${blockReward}` : 'TBD' }
+          </span>
           <span className='pl-2 md:pl-4 leading-5'>Recipient: {recipient}</span>
         </div>
       </div>
