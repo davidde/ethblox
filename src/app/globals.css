@@ -11,6 +11,7 @@
   --main-fg-color: black;
   --grey-fg-color: rgb(85, 81, 81);
   --border-color: rgb(178, 192, 210);
+  --link-color: rgb(42, 145, 192);
   --hover-fg-color: rgb(65, 195, 255);
   --hover-bg-color: rgb(239 246 255);
   --eth-logo-url: url(/images/ethereum-logo-dark.svg);

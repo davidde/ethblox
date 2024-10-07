@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar";
+import Footer from "@/components/footer";
 import { ThemeProvider } from 'next-themes';
 
 
@@ -23,6 +24,7 @@ export default function RootLayout({
         <ThemeProvider>
           <Navbar />
           {children}
+          <Footer />
         </ThemeProvider>
       </body>
     </html>
