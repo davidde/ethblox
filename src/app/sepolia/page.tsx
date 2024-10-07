@@ -30,8 +30,8 @@ export default async function Main() {
     <main className='flex flex-col min-h-screen p-2 md:p-8'>
       <Search network={network} />
 
-      <div className={`flex flex-col md:flex-row justify-between w-full mt-8 md:mt-16`}>
-      <Blocks
+      <div className='flex flex-col md:flex-row flex-wrap items-center md:items-start w-full'>
+        <Blocks
           blockNumber={blockNumber}
           network={network}
           alchemy={alchemy}
