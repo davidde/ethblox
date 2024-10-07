@@ -1,9 +1,6 @@
 // Alchemy SDK Docs: https://docs.alchemy.com/reference/alchemy-sdk-api-surface-overview#api-surface
 import { Alchemy, Network } from 'alchemy-sdk';
-import Search from '@/components/main/search';
-import Blocks from '@/components/main/blocks';
-import Transactions from '@/components/main/transactions';
-import Stats from '@/components/main/stats';
+import Main from '@/components/main';
 
 
 const alchemy = new Alchemy({
@@ -17,7 +14,7 @@ const alchemy = new Alchemy({
   }, // (see: https://github.com/alchemyplatform/alchemy-sdk-js/issues/400)
 });
 
-export default async function Main() {
+export default async function Page() {
   const network = 'Ethereum Mainnet';
   let blockNumber;
 
@@ -28,23 +25,10 @@ export default async function Main() {
   }
 
   return (
-    <main className='flex flex-col min-h-screen p-2 md:p-8'>
-      <Search network={network} />
-
-      <Stats />
-
-      <div className='flex flex-col md:flex-row flex-wrap items-center md:items-start w-full'>
-        <Blocks
-          blockNumber={blockNumber}
-          network={network}
-          alchemy={alchemy}
-        />
-        <Transactions
-          blockNumber={blockNumber}
-          network={network}
-          alchemy={alchemy}
-        />
-      </div>
-    </main>
+    <Main
+      blockNumber={blockNumber}
+      network={network}
+      alchemy={alchemy}
+    />
   );
 }
