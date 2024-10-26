@@ -9,7 +9,7 @@ type Props = {
 
 export default async function Transactions(props: Props) {
   const transactionHash = truncateTransaction(props.transaction.hash, 14);
-  const amount = Math.round(Number(Utils.formatEther(props.transaction.value)) * 1e4) / 1e4;
+  const amount = Math.round(Number(Utils.formatEther(props.transaction.value)) * 1e6) / 1e6;
   const from = truncateAddress(props.transaction.from, 21);
   const to = truncateAddress(props.transaction.to!, 21);
 
