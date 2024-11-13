@@ -21,7 +21,12 @@ export default function Navbar() {
                         ` flex justify-between items-center gap-10` +
                         ` absolute z-40 w-full py-2.5 px-5 min-h-16`
         }>
-          <a href='#home' className={`text-3xl font-mono`}>ΞthBlox</a>
+          <a
+            href='/mainnet'
+            className='text-3xl font-mono hover:text-[var(--hover-fg-color)]'
+          >
+            ΞthBlox
+          </a>
 
           {/* Responsive horizontal list desktop-only: */}
           <ul className={` hidden justify-between text-start` +
