@@ -4,6 +4,7 @@ import Search from '@/components/main/search';
 import Blocks from '@/components/main/blocks';
 import Transactions from '@/components/main/transactions';
 import Stats from '@/components/main/stats';
+import { Suspense } from 'react';
 
 
 type Props = {
@@ -15,7 +16,9 @@ type Props = {
 export default function Main(props: Props) {
   return (
     <main className='flex flex-col min-h-screen p-2 md:p-8'>
-      <Search network={props.network} />
+      <Suspense>
+        <Search network={props.network} />
+      </Suspense>
 
       {
         props.network === 'Ethereum Mainnet' ?
