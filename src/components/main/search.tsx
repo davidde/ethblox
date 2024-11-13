@@ -25,7 +25,7 @@ export default function Search(props: Props) {
     if (searchTerm) {
       if (isAddress(searchTerm)) {
         params.delete('query');
-        router.push(`/address/${searchTerm}`);
+        router.push(`${pathname}/address/${searchTerm}`);
       } else {
         params.set('query', searchTerm);
         router.replace(`${pathname}?${params.toString()}`);
