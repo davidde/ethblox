@@ -38,7 +38,7 @@ export default async function TransactionStats() {
                     rounded-lg w-full md:w-[50%] max-w-[20rem] md:max-w-[32rem] md:min-w-[26rem] md:ml-12 my-4 md:my-8 md:h-[19.5rem]'>
       <div className='flex mb-4 border-b-2 border-[var(--border-color)]'>
         <div>
-          <Square3Stack3DIcon className='w-8 h-8 mt-1 md:mt-2' />
+          <Square3Stack3DIcon className='w-8 h-8 ml-1.5 mt-1 md:mt-2' />
         </div>
         <div className='ml-4'>
           <h2 className='font-bold py-2 md:py-3'>
