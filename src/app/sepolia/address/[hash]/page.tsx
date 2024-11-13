@@ -1,4 +1,7 @@
+import { createAlchemy } from '@/lib/utilities';
 
+
+const alchemy = createAlchemy('sepolia');
 
 export default async function Page({ params } :
   { params: Promise<{ hash: string }> })
