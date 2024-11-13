@@ -12,10 +12,8 @@ type Props = {
 }
 
 export default function Search(props: Props) {
-  const [searchTerm, setSearchTerm] = useState('');
   const searchParams = useSearchParams();
-  const query = searchParams.get('query')?.toString();
-
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('query') ?? '');
 
   const pathname = usePathname();
   const router = useRouter();
@@ -34,7 +32,7 @@ export default function Search(props: Props) {
       }
     } else {
       params.delete('query');
-      router.replace(`${pathname}?${params.toString()}`);
+      router.replace(`${pathname}`);
     }
   }
 
@@ -52,7 +50,7 @@ export default function Search(props: Props) {
         <Input
           type='text'
           placeholder='Search by Address'
-          value={searchTerm || query}
+          value={searchTerm}
           onChange={e => setSearchTerm(e.target.value.trim())}
           className='block w-full h-10 rounded-lg p-2
                      focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-black/25
@@ -60,9 +58,8 @@ export default function Search(props: Props) {
         />
         <Button
           type='submit'
-          className='w-11 h-10 leading-8 align-middle text-center
-                     rounded-lg ml-4 bg-[var(--main-bg-color)]
-                     border-2 border-[var(--border-color)]'
+          className='w-11 h-10 leading-8 align-middle text-center rounded-lg ml-4
+                     bg-[var(--border-color)] hover:bg-[var(--hover-fg-color)] text-[var(--main-bg-color)]'
         >
           <MagnifyingGlassIcon
             className='inline-block w-6 h-6 text-center'
