@@ -1,17 +1,25 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import Navbar from "@/components/navbar";
-import Footer from "@/components/footer";
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import Navbar from '@/components/navbar';
+import Footer from '@/components/footer';
 import { ThemeProvider } from 'next-themes';
+import type { Viewport } from 'next';
 
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "EthBlox",
-  description: "The Ethereum Blockchain Explorer",
+  title: 'EthBlox',
+  description: 'The Ethereum Blockchain Explorer',
 };
+
+export const viewport: Viewport = {
+  height: 'device-height',
+  width: 'device-width',
+  initialScale: 1,
+  minimumScale: 1,
+}
 
 export default function RootLayout({
   children,
@@ -19,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang='en' suppressHydrationWarning>
       <body className={`${inter.className} bg-[var(--main-bg-color)] text-[var(--main-fg-color)]`} >
         <ThemeProvider>
           <Navbar />
