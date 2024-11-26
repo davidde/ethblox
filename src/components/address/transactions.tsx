@@ -17,12 +17,13 @@ export default async function Transactions(props: Props) {
     // an account managed by a human, not a contract.
   });
   const transfers = response.transfers;
+  // console.log('transfers = ', transfers);
 
   const numberOfTransactionsToShow = 10;
 
   return (
-    <div>
-      <p className='px-4 pt-4 text-sm tracking-wider text-[var(--grey-fg-color)]'>
+    <div className='mx-4 w-min'>
+      <p className='mt-4 pb-4 border-b border-[var(--border-color)] text-sm tracking-wider text-[var(--grey-fg-color)]'>
         {
           transfers.length !== 0 ?
             `LATEST ${numberOfTransactionsToShow} TRANSACTIONS`
@@ -37,7 +38,7 @@ export default async function Transactions(props: Props) {
             transfer.asset === 'ETH' ?
               <div
                 key={i}
-                className='mb-2 w-full rounded-md bg-white pl-4 py-2 border-b last-of-type:border-none'
+                className='mb-2 w-full rounded-md pl-4 py-2 border-b border-[var(--border-color)] last-of-type:border-none'
               >
                 <div className='pb-1'>
                   <p className='font-medium'>
@@ -89,9 +90,9 @@ export default async function Transactions(props: Props) {
       </div>
 
       {/* Desktop display only: */}
-      <table className='hidden md:table text-gray-900 ml-8'>
+      <table className='hidden md:table ml-8'>
         <thead className='rounded-lg text-left font-normal'>
-          <tr className='border-b'>
+          <tr className='border-b border-[var(--border-color)]'>
             <th scope='col' className='py-5 font-medium'>
               Transaction Hash
             </th>
@@ -109,13 +110,13 @@ export default async function Transactions(props: Props) {
             </th>
           </tr>
         </thead>
-        <tbody className='bg-white'>
+        <tbody>
           {
             transfers?.slice(0, numberOfTransactionsToShow).map((transfer, i) => (
               transfer.asset === 'ETH' ?
                 <tr
                   key={i}
-                  className='w-full border-b last-of-type:border-none py-3'
+                  className='w-full border-b border-[var(--border-color)] last-of-type:border-none py-3'
                 >
                   <td className='whitespace-nowrap py-3 pr-3'>
                     { truncateTransaction(transfer.hash, 18) }
