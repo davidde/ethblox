@@ -31,7 +31,7 @@ export default async function Page({ params } :
         badAddress ?
           <div className='m-4'>This address does not exist.</div>
           :
-          <div className='flex flex-col md:flex-row'>
+          <div className='flex flex-col md:flex-row flex-wrap'>
             <Tokens
               hash={hash}
               ethBalance={ethBalance!}
