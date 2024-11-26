@@ -14,8 +14,8 @@ export default function Navbar() {
   };
 
   return (
-    <section className='w-screen block h-24'>
-      <div className='sticky top-0 z-50'>
+    <section className='w-screen h-24 sticky top-0 z-50'>
+      <div>
         <nav className={`bg-[var(--main-bg-color)] text-[var(--main-fg-color)]` +
                         ` border-b border-[var(--border-color)]` +
                         ` flex justify-between items-center gap-10` +
