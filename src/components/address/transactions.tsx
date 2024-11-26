@@ -23,14 +23,19 @@ export default async function Transactions(props: Props) {
 
   return (
     <div className='mx-4 w-min'>
-      <p className='mt-4 pb-4 border-b border-[var(--border-color)] text-sm tracking-wider text-[var(--grey-fg-color)]'>
+      <div className='mt-4 text-sm tracking-wider text-[var(--grey-fg-color)]'>
         {
           transfers.length !== 0 ?
-            `LATEST ${numberOfTransactionsToShow} TRANSACTIONS`
+            <p className='pb-4 border-b border-[var(--border-color)]'>
+              {`LATEST ${numberOfTransactionsToShow} TRANSACTIONS`}
+            </p>
             :
-            'No transactions yet.'
+            <p className='w-60'>
+              NO TRANSACTIONS YET.
+            </p>
         }
-      </p>
+      </div>
+
       {/* Mobile display only: */}
       <div className='md:hidden'>
         {
@@ -90,55 +95,60 @@ export default async function Transactions(props: Props) {
       </div>
 
       {/* Desktop display only: */}
-      <table className='hidden md:table ml-8'>
-        <thead className='rounded-lg text-left font-normal'>
-          <tr className='border-b border-[var(--border-color)]'>
-            <th scope='col' className='py-5 font-medium'>
-              Transaction Hash
-            </th>
-            <th scope='col' className='px-4 py-5 font-medium'>
-              Block
-            </th>
-            <th scope='col' className='px-4 py-5 font-medium'>
-              From
-            </th>
-            <th scope='col' className='px-4 py-5 font-medium'>
-              To
-            </th>
-            <th scope='col' className='px-4 py-5 font-medium'>
-              Amount
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {
-            transfers?.slice(0, numberOfTransactionsToShow).map((transfer, i) => (
-              transfer.asset === 'ETH' ?
-                <tr
-                  key={i}
-                  className='w-full border-b border-[var(--border-color)] last-of-type:border-none py-3'
-                >
-                  <td className='whitespace-nowrap py-3 pr-3'>
-                    { truncateTransaction(transfer.hash, 18) }
-                  </td>
-                  <td className='whitespace-nowrap px-4 py-3'>
-                    { Number(transfer.blockNum) }
-                  </td>
-                  <td className='whitespace-nowrap px-4 py-3'>
-                    { truncateAddress(transfer.from, 21) }
-                  </td>
-                  <td className='whitespace-nowrap px-4 py-3'>
-                    { truncateAddress(transfer.to!, 21) }
-                  </td>
-                  <td className='whitespace-nowrap px-4 py-3'>
-                    Ξ{transfer.value}
-                  </td>
-                </tr>
-                :
-                ''
-          ))}
-        </tbody>
-      </table>
+      {
+        transfers.length !== 0 ?
+          <table className='hidden md:table ml-8'>
+            <thead className='rounded-lg text-left font-normal'>
+              <tr className='border-b border-[var(--border-color)]'>
+                <th scope='col' className='py-5 font-medium'>
+                  Transaction Hash
+                </th>
+                <th scope='col' className='px-4 py-5 font-medium'>
+                  Block
+                </th>
+                <th scope='col' className='px-4 py-5 font-medium'>
+                  From
+                </th>
+                <th scope='col' className='px-4 py-5 font-medium'>
+                  To
+                </th>
+                <th scope='col' className='px-4 py-5 font-medium'>
+                  Amount
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                transfers?.slice(0, numberOfTransactionsToShow).map((transfer, i) => (
+                  transfer.asset === 'ETH' ?
+                    <tr
+                      key={i}
+                      className='w-full border-b border-[var(--border-color)] last-of-type:border-none py-3'
+                    >
+                      <td className='whitespace-nowrap py-3 pr-3'>
+                        { truncateTransaction(transfer.hash, 18) }
+                      </td>
+                      <td className='whitespace-nowrap px-4 py-3'>
+                        { Number(transfer.blockNum) }
+                      </td>
+                      <td className='whitespace-nowrap px-4 py-3'>
+                        { truncateAddress(transfer.from, 21) }
+                      </td>
+                      <td className='whitespace-nowrap px-4 py-3'>
+                        { truncateAddress(transfer.to!, 21) }
+                      </td>
+                      <td className='whitespace-nowrap px-4 py-3'>
+                        Ξ{transfer.value}
+                      </td>
+                    </tr>
+                    :
+                    ''
+              ))}
+            </tbody>
+          </table>
+          :
+          ''
+      }
     </div>
   );
 }

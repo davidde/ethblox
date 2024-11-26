@@ -21,7 +21,7 @@ export default async function Address(props: Props) {
 
   return (
     <div>
-      <div className='m-4'>
+      <div className='mt-0 m-4'>
         <p className='text-lg font-bold'>
           Address:
         </p>
