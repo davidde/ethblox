@@ -22,10 +22,12 @@ export default async function Page({ params } :
   return (
     <div>
       <div className='m-4'>
-        <p className="text-lg font-bold">
+        <p className='text-lg font-bold'>
           Address:
         </p>
-        {hash}
+        <p className='max-w-[90vw] break-words'>
+          {hash}
+        </p>
       </div>
       {
         badAddress ?
