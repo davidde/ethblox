@@ -43,7 +43,7 @@ export default async function Transactions(props: Props) {
             transfer.asset === 'ETH' ?
               <div
                 key={i}
-                className='mb-2 w-full rounded-md pl-4 py-2 border-b border-[var(--border-color)] last-of-type:border-none'
+                className='mb-2 w-full rounded-md py-2 border-b border-[var(--border-color)] last-of-type:border-none'
               >
                 <div className='pb-1'>
                   <p className='font-medium'>
@@ -97,7 +97,7 @@ export default async function Transactions(props: Props) {
       {/* Desktop display only: */}
       {
         transfers.length !== 0 ?
-          <table className='hidden md:table ml-8'>
+          <table className='hidden md:table'>
             <thead className='rounded-lg text-left font-normal'>
               <tr className='border-b border-[var(--border-color)]'>
                 <th scope='col' className='py-5 font-medium'>
