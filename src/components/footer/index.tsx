@@ -7,7 +7,7 @@ import { LightBulbIcon } from '@heroicons/react/24/solid';
 
 export default function Footer() {
   return (
-    <section className='border-t border-[var(--border-color)] p-4 mt-12'>
+    <section className='w-screen border-t border-[var(--border-color)] p-4 mt-12'>
       <div className='flex justify-between pb-6 border-b border-[var(--border-color)]'>
         <Link
           href='https://github.com/davidde/ethblox'
