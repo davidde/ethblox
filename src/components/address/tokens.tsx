@@ -51,12 +51,14 @@ export default async function Tokens(props: Props) {
 
             <div className='m-4'>
               <h2 className='text-sm tracking-wider text-[var(--grey-fg-color)]'>TOKEN HOLDINGS</h2>
-              <ul>
+              <ul className='ml-4'>
                 {
                   realTokens!.length !== 0 ?
                     realTokens!.map((token, i) =>
-                      <li key={i}>
-                        {token.name}: {token.balance} {token.symbol}
+                      <li key={i} className='list-disc text-[var(--grey-fg-color)]'>
+                        <span className='text-[var(--main-fg-color)]'>
+                          {`${token.name}: ${token.balance} ${token.symbol}`}
+                        </span>
                       </li>)
                       :
                       '/'
