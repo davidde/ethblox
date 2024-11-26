@@ -37,20 +37,20 @@ export default async function Tokens(props: Props) {
   return (
     <div className='pr-12'>
       <div className='m-4'>
-        <h2 className='text-xs tracking-wider text-[var(--grey-fg-color)]'>ETH BALANCE</h2>
+        <h2 className='text-sm tracking-wider text-[var(--grey-fg-color)]'>ETH BALANCE</h2>
         Ξ{props.ethBalance}
       </div>
       {
         props.network === 'mainnet' ?
           <div>
             <div className='m-4'>
-              <h2 className='text-xs tracking-wider text-[var(--grey-fg-color)]'>ETH VALUE</h2>
+              <h2 className='text-sm tracking-wider text-[var(--grey-fg-color)]'>ETH VALUE</h2>
               <p>{valueEur}</p>
               <p>{valueUsd}</p>
             </div>
 
             <div className='m-4'>
-              <h2 className='text-xs tracking-wider text-[var(--grey-fg-color)]'>TOKEN HOLDINGS</h2>
+              <h2 className='text-sm tracking-wider text-[var(--grey-fg-color)]'>TOKEN HOLDINGS</h2>
               <ul>
                 {
                   realTokens!.map((token, i) =>

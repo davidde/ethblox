@@ -22,10 +22,10 @@ export default async function Transactions(props: Props) {
 
   return (
     <div>
-      <p className='p-4 text-lg font-medium tracking-wider text-[var(--grey-fg-color)] border-b'>
+      <p className='px-4 pt-4 text-sm tracking-wider text-[var(--grey-fg-color)]'>
         {
           transfers.length !== 0 ?
-            `Latest ${numberOfTransactionsToShow} transactions`
+            `LATEST ${numberOfTransactionsToShow} TRANSACTIONS`
             :
             'No transactions yet.'
         }
@@ -89,22 +89,22 @@ export default async function Transactions(props: Props) {
       </div>
 
       {/* Desktop display only: */}
-      <table className='hidden md:table min-w-full text-gray-900'>
+      <table className='hidden md:table text-gray-900 ml-8'>
         <thead className='rounded-lg text-left font-normal'>
-          <tr>
-            <th scope='col' className='px-4 py-5 font-medium sm:pl-6'>
+          <tr className='border-b'>
+            <th scope='col' className='py-5 font-medium'>
               Transaction Hash
             </th>
-            <th scope='col' className='px-3 py-5 font-medium'>
+            <th scope='col' className='px-4 py-5 font-medium'>
               Block
             </th>
-            <th scope='col' className='px-3 py-5 font-medium'>
+            <th scope='col' className='px-4 py-5 font-medium'>
               From
             </th>
-            <th scope='col' className='px-3 py-5 font-medium'>
+            <th scope='col' className='px-4 py-5 font-medium'>
               To
             </th>
-            <th scope='col' className='px-3 py-5 font-medium'>
+            <th scope='col' className='px-4 py-5 font-medium'>
               Amount
             </th>
           </tr>
@@ -117,19 +117,19 @@ export default async function Transactions(props: Props) {
                   key={i}
                   className='w-full border-b last-of-type:border-none py-3'
                 >
-                  <td className='whitespace-nowrap py-3 pl-6 pr-3'>
+                  <td className='whitespace-nowrap py-3 pr-3'>
                     { truncateTransaction(transfer.hash, 18) }
                   </td>
-                  <td className='whitespace-nowrap px-3 py-3'>
+                  <td className='whitespace-nowrap px-4 py-3'>
                     { Number(transfer.blockNum) }
                   </td>
-                  <td className='whitespace-nowrap px-3 py-3'>
+                  <td className='whitespace-nowrap px-4 py-3'>
                     { truncateAddress(transfer.from, 21) }
                   </td>
-                  <td className='whitespace-nowrap px-3 py-3'>
+                  <td className='whitespace-nowrap px-4 py-3'>
                     { truncateAddress(transfer.to!, 21) }
                   </td>
-                  <td className='whitespace-nowrap px-3 py-3'>
+                  <td className='whitespace-nowrap px-4 py-3'>
                     Ξ{transfer.value}
                   </td>
                 </tr>
