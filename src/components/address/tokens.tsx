@@ -35,7 +35,7 @@ export default async function Tokens(props: Props) {
   }
 
   return (
-    <div>
+    <div className='pr-12'>
       <div className='m-4'>
         <h2 className='text-xs tracking-wider text-[var(--grey-fg-color)]'>ETH BALANCE</h2>
         Ξ{props.ethBalance}

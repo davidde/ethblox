@@ -1,6 +1,7 @@
 import { createAlchemy } from '@/lib/utilities';
 import { Utils } from 'alchemy-sdk';
 import Tokens from '@/components/address/tokens';
+import Transactions from '@/components/address/transactions';
 
 
 const alchemy = createAlchemy('mainnet');
@@ -18,29 +19,31 @@ export default async function Page({ params } :
     badAddress = true;
   }
 
-  // let transfers = await alchemy.core.getAssetTransfers({
-  //   toAddress: hash,
-  //   excludeZeroValue: true,
-  //   category: [ AssetTransfersCategory.ERC20 ],
-  // })
-
-  // console.log("transfers = ", transfers);
-
   return (
     <div>
       <div className='m-4'>
-        <b>Address:</b> {hash}
+        <p className="text-lg font-bold">
+          Address:
+        </p>
+        {hash}
       </div>
       {
         badAddress ?
           <div className='m-4'>This address does not exist.</div>
           :
-          <Tokens
-            hash={hash}
-            ethBalance={ethBalance!}
-            network='mainnet'
-            alchemy={alchemy}
-          />
+          <div className='flex flex-col md:flex-row'>
+            <Tokens
+              hash={hash}
+              ethBalance={ethBalance!}
+              network='mainnet'
+              alchemy={alchemy}
+            />
+            <Transactions
+              hash={hash}
+              network='mainnet'
+              alchemy={alchemy}
+            />
+          </div>
       }
     </div>
   );
