@@ -1,5 +1,5 @@
 import { Alchemy, AssetTransfersCategory, SortingOrder } from 'alchemy-sdk';
-import { truncateTransaction, truncateAddress } from '@/lib/utilities';
+import { truncateTransaction, truncateAddress, getBlockAgeFromDateTimeString } from '@/lib/utilities';
 
 
 type Props = {
@@ -15,6 +15,7 @@ export default async function Transactions(props: Props) {
     category: [ AssetTransfersCategory.EXTERNAL ],
     // EXTERNAL: Ethereum transaction initiated by an EOA (= externally-owned account),
     // an account managed by a human, not a contract.
+    withMetadata: true,
   });
   const transfers = response.transfers;
   // console.log('transfers = ', transfers);
@@ -39,58 +40,66 @@ export default async function Transactions(props: Props) {
       {/* Mobile display only: */}
       <div className='md:hidden'>
         {
-          transfers?.slice(0, numberOfTransactionsToShow).map((transfer, i) => (
-            transfer.asset === 'ETH' ?
+          transfers?.slice(0, numberOfTransactionsToShow).map((transfer, i) => {
+            const blockAge = getBlockAgeFromDateTimeString(transfer.metadata.blockTimestamp);
+
+            return transfer.asset === 'ETH' ?
               <div
                 key={i}
                 className='mb-2 w-full rounded-md py-2 border-b border-[var(--border-color)] last-of-type:border-none'
               >
-                <div className='pb-1'>
-                  <p className='font-medium'>
-                    Transaction Hash
-                  </p>
-                  <p className=''>
+                <div className='pb-1 text-nowrap'>
+                  <span className='font-medium'>
+                    Transaction Hash:&nbsp;
+                  </span>
+                  <span>
                     { truncateTransaction(transfer.hash, 18) }
-                  </p>
+                  </span>
                 </div>
-                <div className='flex w-full items-center justify-start pb-1'>
-                  <div className='pr-6'>
-                    <p className='font-medium'>
-                      Block
-                    </p>
-                    <p>
+                <div className='pb-1'>
+                  <span className='font-medium'>
+                    Block:&nbsp;
+                  </span>
+                  <span>
                     { Number(transfer.blockNum) }
-                    </p>
-                  </div>
-                  <div>
-                    <p className='font-medium'>
-                      Amount
-                    </p>
-                    <p>
-                      Ξ{transfer.value}
-                    </p>
-                  </div>
+                  </span>
                 </div>
                 <div className='pb-1'>
-                  <p className='font-medium'>
-                    From
-                  </p>
-                  <p className=''>
+                  <span className='font-medium'>
+                    Age:&nbsp;
+                  </span>
+                  <span>
+                    {blockAge}
+                  </span>
+                </div>
+                <div className='pb-1'>
+                  <span className='font-medium'>
+                    From:&nbsp;
+                  </span>
+                  <span className=''>
                     { truncateAddress(transfer.from, 21) }
-                  </p>
+                  </span>
                 </div>
                 <div className='pb-1'>
-                  <p className='font-medium'>
-                    To
-                  </p>
-                  <p className=''>
+                  <span className='font-medium'>
+                    To:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  </span>
+                  <span className=''>
                     { truncateAddress(transfer.to!, 21) }
-                  </p>
+                  </span>
+                </div>
+                <div className='pb-1'>
+                  <span className='font-medium'>
+                    Amount:&nbsp;
+                  </span>
+                  <span>
+                    Ξ{transfer.value}
+                  </span>
                 </div>
               </div>
               :
               ''
-            ))
+            })
         }
       </div>
 
@@ -107,6 +116,9 @@ export default async function Transactions(props: Props) {
                   Block
                 </th>
                 <th scope='col' className='px-4 py-5 font-medium'>
+                  Age
+                </th>
+                <th scope='col' className='px-4 py-5 font-medium'>
                   From
                 </th>
                 <th scope='col' className='px-4 py-5 font-medium'>
@@ -119,8 +131,10 @@ export default async function Transactions(props: Props) {
             </thead>
             <tbody>
               {
-                transfers?.slice(0, numberOfTransactionsToShow).map((transfer, i) => (
-                  transfer.asset === 'ETH' ?
+                transfers?.slice(0, numberOfTransactionsToShow).map((transfer, i) => {
+                  const blockAge = getBlockAgeFromDateTimeString(transfer.metadata.blockTimestamp);
+
+                  return transfer.asset === 'ETH' ?
                     <tr
                       key={i}
                       className='w-full border-b border-[var(--border-color)] last-of-type:border-none py-3'
@@ -130,6 +144,9 @@ export default async function Transactions(props: Props) {
                       </td>
                       <td className='whitespace-nowrap px-4 py-3'>
                         { Number(transfer.blockNum) }
+                      </td>
+                      <td className='whitespace-nowrap px-4 py-3'>
+                        { blockAge }
                       </td>
                       <td className='whitespace-nowrap px-4 py-3'>
                         { truncateAddress(transfer.from, 21) }
@@ -143,7 +160,8 @@ export default async function Transactions(props: Props) {
                     </tr>
                     :
                     ''
-              ))}
+                })
+              }
             </tbody>
           </table>
           :

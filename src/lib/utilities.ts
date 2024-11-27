@@ -15,6 +15,31 @@ export function createAlchemy(network: string) {
   });
 }
 
+export function getBlockAgeFromDateTimeString(datetime: string) {
+  const blockAgeSecs = Math.round(Date.now()/1000 - Date.parse(datetime)/1000);
+
+  const secsInMinute = 60;
+  const secsInHour = 60 * secsInMinute;
+  const secsInDay = secsInHour * 24;
+
+  let age, blockAge;
+  if (blockAgeSecs > secsInDay) {
+    age = Math.floor(blockAgeSecs/secsInDay);
+    blockAge = age > 1 ? `${age} days` : `${age} day`;
+  } else if (blockAgeSecs > secsInHour) {
+    age = Math.floor(blockAgeSecs/secsInHour);
+    blockAge = age > 1 ? `${age} hours` : `${age} hour`;
+  } else if (blockAgeSecs > secsInMinute) {
+    age = Math.floor(blockAgeSecs/secsInMinute);
+    blockAge = age > 1 ? `${age} mins` : `${age} min`;
+  } else {
+    age = Math.floor(blockAgeSecs);
+    blockAge = age > 1 ? `${age} secs` : `${age} sec`;
+  }
+
+  return blockAge;
+}
+
 export function truncateAddress(address: string, toLength: number) {
   if (!address) return null;
   if (address.length <= toLength) return address;
