@@ -9,7 +9,7 @@ type Props = {
 }
 
 export default async function Transactions(props: Props) {
-  let transfers;
+  let transfers, totalTransfers, error;
   const numberOfTransactionsToShow = 10;
 
   try {
@@ -22,32 +22,52 @@ export default async function Transactions(props: Props) {
       withMetadata: true,
     });
     transfers = response.transfers;
+    totalTransfers = transfers.length;
+    error = false;
     // console.log('transfers = ', transfers);
-  } catch(error) {
-    console.error('getAssetTransfers() Error: ', error);
+  } catch(err) {
+    console.error('getAssetTransfers() Error: ', err);
+    error = true;
   }
 
   const showTransfers = transfers && transfers.length !== 0;
 
+  if (error) {
+    return (
+      <>
+        <div className={`basis-full ${showTransfers ? 'hidden' : ''}`} />
+        <div className='mx-4 w-min md:w-auto'>
+          <p className='mt-4 text-sm tracking-wider text-[var(--grey-fg-color)]'>
+            TRANSACTIONS
+          </p>
+          <p className='text-red-500'>
+            An error occurred while getting the transactions. Please reload.
+          </p>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
-      {/* If there are no transactions, just put the next div (which only says 'No transactions yet')
+      {/* If there are no transactions, just put the next div (the TRANSACTIONS header)
       directly below the Token Holdings. This is done by introducing this invisible extra flex item
       that takes the full width of the container (flex-basis: 100%), so it will sit on its own row. */}
       <div className={`basis-full ${showTransfers ? 'hidden' : ''}`} />
-      <div className='mx-4 w-min'>
-        <div className='mt-4 text-sm tracking-wider text-[var(--grey-fg-color)]'>
-          {
-            showTransfers ?
-              <p className='pb-4 border-b border-[var(--border-color)]'>
-                {`LATEST ${numberOfTransactionsToShow} TRANSACTIONS`}
-              </p>
-              :
-              <p className='w-60'>
-                NO TRANSACTIONS YET.
-              </p>
-          }
-        </div>
+      <div className='mx-4 w-min md:w-auto'>
+        <p className={`mt-4 text-sm tracking-wider text-[var(--grey-fg-color)] ${showTransfers ? 'pb-4 border-b border-[var(--border-color)]' : ''}`}>
+          TRANSACTIONS
+        </p>
+        {
+          showTransfers ?
+            <p className='pl-8 text-sm tracking-wider py-3 border-b border-[var(--border-color)]'>
+              {`Showing latest ${numberOfTransactionsToShow} of ${totalTransfers} external transactions`}
+            </p>
+            :
+            <p>
+              /
+            </p>
+        }
 
         {/* Mobile display only: */}
         <div className='md:hidden'>
