@@ -4,7 +4,6 @@ import Searchbar from '@/components/searchbar';
 import Blocks from '@/components/main/blocks';
 import Transactions from '@/components/main/transactions';
 import Stats from '@/components/main/stats';
-import { Suspense } from 'react';
 
 
 type Props = {
@@ -16,21 +15,19 @@ type Props = {
 export default function Main(props: Props) {
   return (
     <main className='flex flex-col min-h-screen p-2 md:p-8'>
-      <Suspense>
-        <div className='w-full md:w-[40rem] mb-4 md:mb-8'>
-          <h1 className='text-xl md:text-2xl font-semibold mb-3'>
-            {
-              props.network === 'Ethereum Mainnet' ?
-                        'The Ethereum Blockchain Explorer' :
-                        'The Sepolia Testnet Explorer'
-            }
-          </h1>
-          <Searchbar />
-          <span className='ml-2 md:ml-8 text-sm font-light'>
-            Network: { props.network }
-          </span>
-        </div>
-      </Suspense>
+      <div className='w-full md:w-[40rem] mb-4 md:mb-8'>
+        <h1 className='text-xl md:text-2xl font-semibold mb-3'>
+          {
+            props.network === 'Ethereum Mainnet' ?
+                      'The Ethereum Blockchain Explorer' :
+                      'The Sepolia Testnet Explorer'
+          }
+        </h1>
+        <Searchbar />
+        <span className='ml-2 md:ml-8 text-sm font-light'>
+          Network: { props.network }
+        </span>
+      </div>
 
       {
         props.network === 'Ethereum Mainnet' ?
