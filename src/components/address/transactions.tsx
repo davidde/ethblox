@@ -75,7 +75,7 @@ export default async function Transactions(props: Props) {
             transfers?.slice(0, numberOfTransactionsToShow).map((transfer, i) => {
               const blockAge = getBlockAgeFromDateTimeString(transfer.metadata.blockTimestamp);
 
-              return transfer.asset === 'ETH' ?
+              return (
                 <div
                   key={i}
                   className='mb-2 w-full py-2 border-b border-[var(--border-color)] last-of-type:border-none'
@@ -125,13 +125,12 @@ export default async function Transactions(props: Props) {
                       Amount:&nbsp;
                     </span>
                     <span>
-                      Ξ{transfer.value}
+                      {transfer.value?.toFixed(8)} {transfer.asset}
                     </span>
                   </div>
                 </div>
-                :
-                ''
-              })
+              );
+            })
           }
         </div>
 
@@ -164,7 +163,7 @@ export default async function Transactions(props: Props) {
               transfers?.slice(0, numberOfTransactionsToShow).map((transfer, i) => {
                 const blockAge = getBlockAgeFromDateTimeString(transfer.metadata.blockTimestamp);
 
-                return transfer.asset === 'ETH' ?
+                return (
                   <tr
                     key={i}
                     className='w-full border-b border-[var(--border-color)] last-of-type:border-none py-3'
@@ -185,11 +184,10 @@ export default async function Transactions(props: Props) {
                       { truncateAddress(transfer.to!, 21) }
                     </td>
                     <td className='whitespace-nowrap px-4 py-3'>
-                      Ξ{transfer.value}
+                      {transfer.value?.toFixed(8)} {transfer.asset}
                     </td>
                   </tr>
-                  :
-                  ''
+                );
               })
             }
           </tbody>
