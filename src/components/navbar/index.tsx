@@ -29,7 +29,7 @@ export default function Navbar() {
           </div>
 
           {/* Desktop searchbar: */}
-          <Searchbar className='hidden md:flex md:w-[40rem]' />
+          <Searchbar className='hidden md:flex md:w-[50vw]' />
 
           <Toggles />
 
