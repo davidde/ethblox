@@ -9,34 +9,36 @@ type Props = {
 }
 
 export default async function Transactions(props: Props) {
-  const response = await props.alchemy.core.getAssetTransfers({
-    fromAddress: props.hash,
-    order: SortingOrder.DESCENDING, // Latest block numbers first!
-    category: [ AssetTransfersCategory.EXTERNAL ],
-    // EXTERNAL: Ethereum transaction initiated by an EOA (= externally-owned account),
-    // an account managed by a human, not a contract.
-    withMetadata: true,
-  });
-  const transfers = response.transfers;
-  // console.log('transfers = ', transfers);
-
+  let transfers;
   const numberOfTransactionsToShow = 10;
+
+  try {
+    const response = await props.alchemy.core.getAssetTransfers({
+      fromAddress: props.hash,
+      order: SortingOrder.DESCENDING, // Latest block numbers first!
+      category: [ AssetTransfersCategory.EXTERNAL ],
+      // EXTERNAL: Ethereum transaction initiated by an EOA (= externally-owned account),
+      // an account managed by a human, not a contract.
+      withMetadata: true,
+    });
+    transfers = response.transfers;
+    // console.log('transfers = ', transfers);
+  } catch(error) {
+    console.error('getAssetTransfers() Error: ', error);
+  }
+
+  const showTransfers = transfers && transfers.length !== 0;
 
   return (
     <>
-      {
-        transfers.length === 0 ?
-          // If there are no transactions, just put the next div (which only says 'No transactions yet')
-          // directly below the Token Holdings. This is done by introducing an invisible extra flex item
-          // that takes the full width of the container (flex-basis: 100%), so it will sit on its own row.
-          <div className='basis-full' />
-          :
-          ''
-      }
+      {/* If there are no transactions, just put the next div (which only says 'No transactions yet')
+      directly below the Token Holdings. This is done by introducing this invisible extra flex item
+      that takes the full width of the container (flex-basis: 100%), so it will sit on its own row. */}
+      <div className={`basis-full ${showTransfers ? 'hidden' : ''}`} />
       <div className='mx-4 w-min'>
         <div className='mt-4 text-sm tracking-wider text-[var(--grey-fg-color)]'>
           {
-            transfers.length !== 0 ?
+            showTransfers ?
               <p className='pb-4 border-b border-[var(--border-color)]'>
                 {`LATEST ${numberOfTransactionsToShow} TRANSACTIONS`}
               </p>
@@ -114,69 +116,64 @@ export default async function Transactions(props: Props) {
         </div>
 
         {/* Desktop display only: */}
-        {
-          transfers.length !== 0 ?
-            <table className='hidden md:table'>
-              <thead className='rounded-lg text-left font-normal'>
-                <tr className='border-b border-[var(--border-color)]'>
-                  <th scope='col' className='py-5 font-medium'>
-                    Transaction Hash
-                  </th>
-                  <th scope='col' className='px-4 py-5 font-medium'>
-                    Block
-                  </th>
-                  <th scope='col' className='px-4 py-5 font-medium'>
-                    Age
-                  </th>
-                  <th scope='col' className='px-4 py-5 font-medium'>
-                    From
-                  </th>
-                  <th scope='col' className='px-4 py-5 font-medium'>
-                    To
-                  </th>
-                  <th scope='col' className='px-4 py-5 font-medium'>
-                    Amount
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {
-                  transfers?.slice(0, numberOfTransactionsToShow).map((transfer, i) => {
-                    const blockAge = getBlockAgeFromDateTimeString(transfer.metadata.blockTimestamp);
+        <table className={`hidden ${showTransfers ? 'md:table' : ''}`}>
+          <thead className='rounded-lg text-left font-normal'>
+            <tr className='border-b border-[var(--border-color)]'>
+              <th scope='col' className='py-5 font-medium'>
+                Transaction Hash
+              </th>
+              <th scope='col' className='px-4 py-5 font-medium'>
+                Block
+              </th>
+              <th scope='col' className='px-4 py-5 font-medium'>
+                Age
+              </th>
+              <th scope='col' className='px-4 py-5 font-medium'>
+                From
+              </th>
+              <th scope='col' className='px-4 py-5 font-medium'>
+                To
+              </th>
+              <th scope='col' className='px-4 py-5 font-medium'>
+                Amount
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              transfers?.slice(0, numberOfTransactionsToShow).map((transfer, i) => {
+                const blockAge = getBlockAgeFromDateTimeString(transfer.metadata.blockTimestamp);
 
-                    return transfer.asset === 'ETH' ?
-                      <tr
-                        key={i}
-                        className='w-full border-b border-[var(--border-color)] last-of-type:border-none py-3'
-                      >
-                        <td className='whitespace-nowrap py-3 pr-3'>
-                          { truncateTransaction(transfer.hash, 18) }
-                        </td>
-                        <td className='whitespace-nowrap px-4 py-3'>
-                          { Number(transfer.blockNum) }
-                        </td>
-                        <td className='whitespace-nowrap px-4 py-3'>
-                          { blockAge }
-                        </td>
-                        <td className='whitespace-nowrap px-4 py-3'>
-                          { truncateAddress(transfer.from, 21) }
-                        </td>
-                        <td className='whitespace-nowrap px-4 py-3'>
-                          { truncateAddress(transfer.to!, 21) }
-                        </td>
-                        <td className='whitespace-nowrap px-4 py-3'>
-                          Ξ{transfer.value}
-                        </td>
-                      </tr>
-                      :
-                      ''
-                  })
-                }
-              </tbody>
-            </table>
-            :
-            ''
-        }
+                return transfer.asset === 'ETH' ?
+                  <tr
+                    key={i}
+                    className='w-full border-b border-[var(--border-color)] last-of-type:border-none py-3'
+                  >
+                    <td className='whitespace-nowrap py-3 pr-3'>
+                      { truncateTransaction(transfer.hash, 18) }
+                    </td>
+                    <td className='whitespace-nowrap px-4 py-3'>
+                      { Number(transfer.blockNum) }
+                    </td>
+                    <td className='whitespace-nowrap px-4 py-3'>
+                      { blockAge }
+                    </td>
+                    <td className='whitespace-nowrap px-4 py-3'>
+                      { truncateAddress(transfer.from, 21) }
+                    </td>
+                    <td className='whitespace-nowrap px-4 py-3'>
+                      { truncateAddress(transfer.to!, 21) }
+                    </td>
+                    <td className='whitespace-nowrap px-4 py-3'>
+                      Ξ{transfer.value}
+                    </td>
+                  </tr>
+                  :
+                  ''
+              })
+            }
+          </tbody>
+        </table>
       </div>
     </>
   );

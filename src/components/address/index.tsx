@@ -20,7 +20,7 @@ export default async function Address(props: Props) {
   }
 
   return (
-    <div>
+    <main>
       <div className='mt-0 m-4'>
         <p className='text-lg font-bold'>
           Address:
@@ -52,6 +52,6 @@ export default async function Address(props: Props) {
             />
           </div>
       }
-    </div>
+    </main>
   );
 }
