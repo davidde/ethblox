@@ -40,7 +40,7 @@ export default async function Transactions(props: Props) {
           <p className='mt-4 text-sm tracking-wider text-[var(--grey-fg-color)]'>
             TRANSACTIONS
           </p>
-          <p className='text-red-500'>
+          <p className='text-red-500 w-[95vw]'>
             An error occurred while getting the transactions. Please reload.
           </p>
         </div>
@@ -61,7 +61,7 @@ export default async function Transactions(props: Props) {
         {
           showTransfers ?
             <p className='pl-8 text-sm tracking-wider py-3 border-b border-[var(--border-color)]'>
-              {`Showing latest ${numberOfTransactionsToShow} of ${totalTransfers} external transactions`}
+              {`Showing latest ${numberOfTransactionsToShow} of ${totalTransfers} transactions`}
             </p>
             :
             <p>
@@ -80,13 +80,13 @@ export default async function Transactions(props: Props) {
                   key={i}
                   className='mb-2 w-full py-2 border-b border-[var(--border-color)] last-of-type:border-none'
                 >
-                  <div className='pb-1 text-nowrap'>
-                    <span className='font-medium'>
+                  <div className='pb-1 flex w-[92vw] '>
+                    <p className='text-nowrap font-medium'>
                       Transaction Hash:&nbsp;
-                    </span>
-                    <span>
-                      { truncateTransaction(transfer.hash, 18) }
-                    </span>
+                    </p>
+                    <p className='overflow-hidden whitespace-nowrap text-ellipsis'>
+                      { truncateTransaction(transfer.hash, 25) }
+                    </p>
                   </div>
                   <div className='pb-1'>
                     <span className='font-medium'>
@@ -109,7 +109,7 @@ export default async function Transactions(props: Props) {
                       From:&nbsp;
                     </span>
                     <span className=''>
-                      { truncateAddress(transfer.from, 21) }
+                      { truncateAddress(transfer.from, 28) }
                     </span>
                   </div>
                   <div className='pb-1'>
@@ -117,7 +117,7 @@ export default async function Transactions(props: Props) {
                       To:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </span>
                     <span className=''>
-                      { truncateAddress(transfer.to!, 21) }
+                      { truncateAddress(transfer.to!, 28) }
                     </span>
                   </div>
                   <div className='pb-1'>
