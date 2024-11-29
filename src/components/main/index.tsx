@@ -1,6 +1,6 @@
 // Alchemy SDK Docs: https://docs.alchemy.com/reference/alchemy-sdk-api-surface-overview#api-surface
 import { Alchemy } from 'alchemy-sdk';
-import Search from '@/components/main/search';
+import Searchbar from '@/components/searchbar';
 import Blocks from '@/components/main/blocks';
 import Transactions from '@/components/main/transactions';
 import Stats from '@/components/main/stats';
@@ -17,7 +17,19 @@ export default function Main(props: Props) {
   return (
     <main className='flex flex-col min-h-screen p-2 md:p-8'>
       <Suspense>
-        <Search network={props.network} />
+        <div className='w-full md:w-[40rem] mb-4 md:mb-8'>
+          <h1 className='text-xl md:text-2xl font-semibold mb-3'>
+            {
+              props.network === 'Ethereum Mainnet' ?
+                        'The Ethereum Blockchain Explorer' :
+                        'The Sepolia Testnet Explorer'
+            }
+          </h1>
+          <Searchbar />
+          <span className='ml-2 md:ml-8 text-sm font-light'>
+            Network: { props.network }
+          </span>
+        </div>
       </Suspense>
 
       {

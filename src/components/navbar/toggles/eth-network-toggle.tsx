@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import Link from 'next/link';

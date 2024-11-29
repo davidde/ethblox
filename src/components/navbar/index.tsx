@@ -1,72 +1,43 @@
 'use client';
 
-import { useState } from 'react';
-import { Bars3Icon } from '@heroicons/react/24/solid';
-import DropdownLi from './dropdown-li';
-import ToggleIcons from './toggles/toggle-icons';
+import Toggles from './toggles';
+import Searchbar from '@/components/searchbar';
+import { usePathname } from 'next/navigation';
 
 
 export default function Navbar() {
-  const [isOpen, setisOpen] = useState(false); // Mobile only!
-
-  const toggleOpen = () => {
-    setisOpen(!isOpen);
-  };
+  const pathname = usePathname();
+  const network = pathname.split('/')[1];
 
   return (
-    <section className='w-screen h-24 sticky top-0 z-50'>
-      <div>
+    <section className='w-screen h-36 md:h-24 sticky top-0 z-50'>
         <nav className={`bg-[var(--main-bg-color)] text-[var(--main-fg-color)]` +
                         ` border-b border-[var(--border-color)]` +
-                        ` flex justify-between items-center gap-10` +
-                        ` absolute z-40 w-full py-2.5 px-5 min-h-16`
+                        ` flex flex-wrap justify-between items-center` +
+                        ` absolute z-40 w-full py-1.5 px-2 md:px-5 min-h-16`
         }>
-          <a
-            href='/mainnet'
-            className='text-3xl font-mono hover:text-[var(--hover-fg-color)]'
-          >
-            ΞthBlox
-          </a>
-
-          {/* Responsive horizontal list desktop-only: */}
-          <ul className={` hidden justify-between text-start` +
-                         ` m-0 py-4 px-14 ease-in-out duration-500` +
-                         ` md:flex md:static md:flex-row md:gap-12 md:w-auto md:z-10`
-          }>
-            <DropdownLi href='#home' title='Blockchain' />
-            <DropdownLi href='#home' title='Tokens' />
-            <DropdownLi href='#home' title='NFTs' />
-            <DropdownLi href='#home' title='Resources' />
-          </ul>
-
-          <div>
-            {/* Show on desktop, not mobile: */}
-            <span className='hidden md:inline'>
-              <ToggleIcons />
-            </span>
-            {/* Show on mobile, not desktop: */}
-            <Bars3Icon className='w-6 cursor-pointer hover:text-[var(--hover-fg-color)] md:hidden' onClick={toggleOpen} />
+          <div className=''>
+            <a
+              href='/mainnet'
+              className='text-3xl font-mono hover:text-[var(--hover-fg-color)]'
+            >
+              ΞthBlox
+            </a>
+            <p className='pl-[2.5rem] mt-[-0.6rem] text-lg font-mono tracking-wider text-[var(--grey-fg-color)]'>
+              {network}
+            </p>
           </div>
-        </nav>
 
-        {/* Responsive vertical list mobile-only: */}
-        <nav className={`bg-[var(--main-bg-color)] text-[var(--main-fg-color)]` +
-                        ` border-b border-[var(--border-color)]` +
-                        ` md:hidden absolute w-full left-0` +
-                        ` transition-[top] ease-in-out duration-500` +
-                        `${isOpen ? ' top-16' : ' -top-96'}`} >
-          <ul className={` flex flex-col gap-4 justify-between text-start` +
-                        ` m-0 py-4 px-14`}>
-            <li className='pb-5'>
-              <ToggleIcons />
-            </li>
-            <DropdownLi href='#home' title='Blockchain' />
-            <DropdownLi href='#home' title='Tokens' />
-            <DropdownLi href='#home' title='NFTs' />
-            <DropdownLi href='#home' title='Resources' />
-          </ul>
+          {/* Desktop searchbar: */}
+          <Searchbar className='hidden md:flex md:w-[40rem]' />
+
+          <Toggles />
+
+          {/* Helper component to break following flex item onto new row: */}
+          <div className='basis-full md:hidden' />
+          {/* Mobile searchbar: */}
+          <Searchbar className='md:hidden w-full my-2' />
         </nav>
-      </div>
     </section>
   );
 }
