@@ -1,6 +1,7 @@
 import { Utils, Alchemy } from 'alchemy-sdk';
 import Tokens from '@/components/address/tokens';
 import Transactions from '@/components/address/transactions';
+import EthBalance from './eth-balance';
 
 
 type Props = {
@@ -39,12 +40,17 @@ export default async function Address(props: Props) {
             'flex flex-col' // Testnet shows no tokens,
             // so Transactions should show instead (and not to the right)
           }>
-            <Tokens
-              hash={props.hash}
-              ethBalance={ethBalance!}
-              network={props.network}
-              alchemy={props.alchemy}
-            />
+            <div>
+              <EthBalance
+                ethBalance={ethBalance!}
+                network={props.network}
+              />
+              <Tokens
+                hash={props.hash}
+                network={props.network}
+                alchemy={props.alchemy}
+              />
+            </div>
             <Transactions
               hash={props.hash}
               network={props.network}
