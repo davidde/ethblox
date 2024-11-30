@@ -26,7 +26,7 @@ export default async function Transactions(props: Props) {
     error = false;
     // console.log('transfers = ', transfers);
   } catch(err) {
-    console.error('getAssetTransfers() Error: ', err);
+    console.error('getAssetTransfers()', err);
     error = true;
   }
 

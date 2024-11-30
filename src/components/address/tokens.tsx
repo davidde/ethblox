@@ -13,7 +13,10 @@ export default async function Tokens(props: Props) {
 
   if (props.network === 'mainnet') {
     try {
-      const tokens = await props.alchemy.core.getTokensForOwner(props.hash);
+      let tokens = await props.alchemy.core.getTokensForOwner(props.hash);
+      // apparently, getTokensForOwner() randomly returns an array with almost everything undefined,
+      // which ruins the filter function, so we redo the function when balance is undefined:
+      while (!tokens.tokens[0].balance) tokens = await props.alchemy.core.getTokensForOwner(props.hash);
       // Remove tokens with zero balance or undefined logo or symbol:
       realTokens = tokens.tokens.filter((token) => {
         return token.balance !== '0.0' && token.logo !== undefined && token.symbol !== undefined;
@@ -21,7 +24,7 @@ export default async function Tokens(props: Props) {
       // Sort tokens alphabetically by symbol:
       realTokens.sort((a, b) => a.symbol!.localeCompare(b.symbol!));
     } catch(err) {
-      console.error('getTokensForOwner() Error: ', err);
+      console.error('getTokensForOwner()', err);
     }
   }
 
