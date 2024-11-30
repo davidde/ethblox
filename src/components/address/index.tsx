@@ -12,12 +12,20 @@ type Props = {
 
 export default async function Address(props: Props) {
   let ethBalance, badAddress;
+  let success = false;
 
-  try {
-    ethBalance = Utils.formatEther(await props.alchemy.core.getBalance(props.hash, 'latest'));
-    badAddress = false;
-  } catch {
-    badAddress = true;
+  while (!success) {
+    try {
+      ethBalance = Utils.formatEther(await props.alchemy.core.getBalance(props.hash, 'latest'));
+      badAddress = false; success = true;
+    } catch(err) {
+      if (err instanceof Error && err.message.startsWith('bad address checksum')) {
+        console.error('getBalance() Error: ', err.message);
+        badAddress = true; success = true;
+      } else {
+        badAddress = false; success = false;
+      }
+    }
   }
 
   return (
