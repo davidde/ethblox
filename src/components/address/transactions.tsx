@@ -36,7 +36,7 @@ export default async function Transactions(props: Props) {
     return (
       <>
         <div className={`basis-full ${showTransfers ? 'hidden' : ''}`} />
-        <div className='mx-4 w-min md:w-auto'>
+        <div className='mx-4 w-min lg:w-auto'>
           <p className='mt-4 text-sm tracking-wider text-[var(--grey-fg-color)]'>
             TRANSACTIONS
           </p>
@@ -54,7 +54,7 @@ export default async function Transactions(props: Props) {
       directly below the Token Holdings. This is done by introducing this invisible extra flex item
       that takes the full width of the container (flex-basis: 100%), so it will sit on its own row. */}
       <div className={`basis-full ${showTransfers ? 'hidden' : ''}`} />
-      <div className='mx-4 w-min md:w-auto'>
+      <div className='mx-4 w-min lg:w-auto'>
         <p className={`mt-4 text-sm tracking-wider text-[var(--grey-fg-color)] ${showTransfers ? 'pb-4 border-b border-[var(--border-color)]' : ''}`}>
           TRANSACTIONS
         </p>
@@ -70,7 +70,7 @@ export default async function Transactions(props: Props) {
         }
 
         {/* Mobile display only: */}
-        <div className='md:hidden portrait:block'>
+        <div className='lg:hidden portrait:block'>
           {
             transfers?.slice(0, numberOfTransactionsToShow).map((transfer, i) => {
               const blockAge = getBlockAgeFromDateTimeString(transfer.metadata.blockTimestamp);
@@ -80,7 +80,7 @@ export default async function Transactions(props: Props) {
                   key={i}
                   className='mb-2 w-full py-2 border-b border-[var(--border-color)] last-of-type:border-none'
                 >
-                  <div className='pb-1 flex max-md:w-[92vw]'>
+                  <div className='pb-1 flex max-sm:w-[92vw]'>
                     <p className='text-nowrap font-medium'>
                       Transaction Hash:&nbsp;
                     </p>
@@ -135,7 +135,7 @@ export default async function Transactions(props: Props) {
         </div>
 
         {/* Desktop display only: */}
-        <table className={`hidden portrait:hidden ${showTransfers ? 'md:table' : ''}`}>
+        <table className={`hidden portrait:hidden ${showTransfers ? 'lg:table' : ''}`}>
           <thead className='rounded-lg text-left font-normal'>
             <tr className='border-b border-[var(--border-color)]'>
               <th scope='col' className='py-5 font-medium'>
