@@ -1,9 +1,9 @@
 // Alchemy SDK Docs: https://docs.alchemy.com/reference/alchemy-sdk-api-surface-overview#api-surface
 import { Alchemy } from 'alchemy-sdk';
 import Searchbar from '@/components/header/searchbar';
-import Blocks from '@/components/main/blocks';
-import Transactions from '@/components/main/transactions';
-import Stats from '@/components/main/stats';
+import Blocks from './blocks';
+import Transactions from './transactions';
+import Stats from './stats';
 
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
   alchemy: Alchemy
 }
 
-export default function Main(props: Props) {
+export default function Home(props: Props) {
   return (
     <main className='flex flex-col min-h-screen p-2 md:p-8'>
       <div className='w-full md:w-[40rem] mb-4 md:mb-8'>

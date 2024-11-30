@@ -1,5 +1,5 @@
 import { createAlchemy } from '@/lib/utilities';
-import Main from '@/components/main';
+import Home from '@/components/content/home';
 
 
 const alchemy = createAlchemy('sepolia');
@@ -15,7 +15,7 @@ export default async function Page() {
   }
 
   return (
-    <Main
+    <Home
       blockNumber={blockNumber}
       network={network}
       alchemy={alchemy}
