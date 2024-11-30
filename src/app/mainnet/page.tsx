@@ -1,5 +1,5 @@
 import { createAlchemy } from '@/lib/utilities';
-import Home from '@/components/content/home';
+import HomePage from '@/components/content/home-page';
 
 
 const alchemy = createAlchemy('mainnet');
@@ -15,7 +15,7 @@ export default async function Page() {
   }
 
   return (
-    <Home
+    <HomePage
       blockNumber={blockNumber}
       network={network}
       alchemy={alchemy}
