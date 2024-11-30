@@ -72,7 +72,8 @@ export default async function Transactions(props: Props) {
         {/* Mobile display only: */}
         <div className='lg:hidden portrait:block'>
           {
-            transfers?.slice(0, numberOfTransactionsToShow).map((transfer, i) => {
+            transfers === undefined ? <p className='text-red-500'>Error getting transactions.</p> :
+            transfers.slice(0, numberOfTransactionsToShow).map((transfer, i) => {
               const blockAge = getBlockAgeFromDateTimeString(transfer.metadata.blockTimestamp);
 
               return (
@@ -160,7 +161,8 @@ export default async function Transactions(props: Props) {
           </thead>
           <tbody>
             {
-              transfers?.slice(0, numberOfTransactionsToShow).map((transfer, i) => {
+              transfers === undefined ? <p className='text-red-500'>Error getting transactions.</p> :
+              transfers.slice(0, numberOfTransactionsToShow).map((transfer, i) => {
                 const blockAge = getBlockAgeFromDateTimeString(transfer.metadata.blockTimestamp);
 
                 return (
