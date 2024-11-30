@@ -1,6 +1,6 @@
 import { Utils, Alchemy } from 'alchemy-sdk';
-import Tokens from '@/components/address/tokens';
-import Transactions from '@/components/address/transactions';
+import Tokens from './tokens';
+import Transactions from './transactions';
 import EthBalance from './eth-balance';
 
 
@@ -10,7 +10,7 @@ type Props = {
   alchemy: Alchemy
 }
 
-export default async function Address(props: Props) {
+export default async function AddressPage(props: Props) {
   let ethBalance, badAddress;
   let success = false;
 

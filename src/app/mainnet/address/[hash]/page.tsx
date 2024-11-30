@@ -1,5 +1,5 @@
 import { createAlchemy } from '@/lib/utilities';
-import Address from '@/components/address';
+import AddressPage from '@/components/content/address-page';
 
 
 const network = 'mainnet'
@@ -10,7 +10,7 @@ export default async function Page({params} : {params: Promise<{hash: string}>})
   const hash = (await params).hash;
 
   return (
-    <Address
+    <AddressPage
       hash={hash}
       network={network}
       alchemy={alchemy}
