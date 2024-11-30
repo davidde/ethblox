@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import Navbar from '@/components/navbar';
+import Header from '@/components/header';
 import Footer from '@/components/footer';
 import { ThemeProvider } from 'next-themes';
 import type { Viewport } from 'next';
@@ -30,7 +30,7 @@ export default function RootLayout({
     <html lang='en' suppressHydrationWarning>
       <body className={`${inter.className} bg-[var(--main-bg-color)] text-[var(--main-fg-color)]`} >
         <ThemeProvider>
-          <Navbar />
+          <Header />
           {children}
           <Footer />
         </ThemeProvider>

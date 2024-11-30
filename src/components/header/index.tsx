@@ -3,7 +3,7 @@ import Searchbar from '@/components/searchbar';
 import EthBlox from './ethblox';
 
 
-export default function Navbar() {
+export default function Header() {
   return (
     <section className='w-screen h-36 md:h-24 sticky top-0 z-50'>
         <nav className={`bg-[var(--main-bg-color)] text-[var(--main-fg-color)]` +
