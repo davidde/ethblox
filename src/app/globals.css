@@ -8,9 +8,9 @@
 
 body {
   min-height: 100vh;
-  /* max-width: 100%; */
-  /* This also prevents scrolling on tablets, where not all content will show in portrait mode: */
-  /* overflow-x: hidden; */
+  max-width: 100%;
+  /* This also prevents scrolling on tablets, which be a problem for wide content in portrait mode: */
+  overflow-x: hidden;
   margin: 0;
   display: grid;
   grid-template-rows: auto 1fr auto;

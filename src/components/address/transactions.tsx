@@ -70,7 +70,7 @@ export default async function Transactions(props: Props) {
         }
 
         {/* Mobile display only: */}
-        <div className='md:hidden'>
+        <div className='md:hidden portrait:block'>
           {
             transfers?.slice(0, numberOfTransactionsToShow).map((transfer, i) => {
               const blockAge = getBlockAgeFromDateTimeString(transfer.metadata.blockTimestamp);
@@ -80,7 +80,7 @@ export default async function Transactions(props: Props) {
                   key={i}
                   className='mb-2 w-full py-2 border-b border-[var(--border-color)] last-of-type:border-none'
                 >
-                  <div className='pb-1 flex w-[92vw] '>
+                  <div className='pb-1 flex max-md:w-[92vw]'>
                     <p className='text-nowrap font-medium'>
                       Transaction Hash:&nbsp;
                     </p>
@@ -135,7 +135,7 @@ export default async function Transactions(props: Props) {
         </div>
 
         {/* Desktop display only: */}
-        <table className={`hidden ${showTransfers ? 'md:table' : ''}`}>
+        <table className={`hidden portrait:hidden ${showTransfers ? 'md:table' : ''}`}>
           <thead className='rounded-lg text-left font-normal'>
             <tr className='border-b border-[var(--border-color)]'>
               <th scope='col' className='py-5 font-medium'>
