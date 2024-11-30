@@ -9,7 +9,6 @@ type Props = {
 
 export default async function Tokens(props: Props) {
   let realTokens;
-  let error = false;
   const showTokens = props.network === 'mainnet' ? '' : 'hidden';
 
   if (props.network === 'mainnet') {
@@ -23,7 +22,6 @@ export default async function Tokens(props: Props) {
       realTokens.sort((a, b) => a.symbol!.localeCompare(b.symbol!));
     } catch(err) {
       console.error('getTokensForOwner() Error: ', err);
-      error = true;
     }
   }
 
@@ -33,9 +31,9 @@ export default async function Tokens(props: Props) {
         <h2 className='text-sm tracking-wider text-[var(--grey-fg-color)]'>TOKEN HOLDINGS</h2>
         <ul>
           {
-            error ? <p className='text-red-500'>Error getting tokens.</p> :
-            realTokens!.length === 0 ? '/' :
-              realTokens!.map((token, i) =>
+            realTokens === undefined ? <p className='text-red-500'>Error getting tokens.</p> :
+            realTokens.length === 0 ? '/' :
+              realTokens.map((token, i) =>
                 <li key={i} className='ml-4 list-disc text-[var(--grey-fg-color)]'>
                   <span className='text-[var(--main-fg-color)]'>
                     {`${token.symbol}: ${parseFloat(parseFloat(token.balance ?? '0').toFixed(8))} (${token.name})`}
