@@ -1,6 +1,7 @@
 import { CubeIcon } from '@heroicons/react/24/outline';
 import { Alchemy, Utils } from 'alchemy-sdk';
 import { truncateAddress } from '@/lib/utilities';
+import LinkWithPopover from './link-with-popover';
 
 
 type Props = {
@@ -10,7 +11,7 @@ type Props = {
 }
 
 export default async function Transactions(props: Props) {
-  const blockRewardUrl = props.network === 'Ethereum Mainnet' ?
+  const blockRewardUrl = props.network === 'mainnet' ?
     `https://eth.blockscout.com/api?module=block&action=getblockreward&blockno=${props.blockNumber}`
     :
     `https://api-sepolia.etherscan.io/api?module=block&action=getblockreward` +
@@ -19,13 +20,13 @@ export default async function Transactions(props: Props) {
   let block;
   let secsSinceAdded;
   let blockReward;
-  let recipient;
+  let recipient, recipientShort;
 
   if (props.blockNumber) {
     try {
       block = await props.alchemy.core.getBlock(props.blockNumber);
     } catch(error) {
-      console.error('getBlock() Error: ', error);
+      console.error('getBlock()', error);
     }
     try {
       const response = await fetch(blockRewardUrl);
@@ -33,13 +34,14 @@ export default async function Transactions(props: Props) {
       // console.log('data = ', data); // For some reason some blocks return 'No Record Found' ...
       blockReward = data.result.blockReward;
     } catch(error) {
-      console.error('Etherscan getBlockReward Error: ', error);
+      console.error('Etherscan getBlockReward', error);
     }
   }
 
   if (block) {
     secsSinceAdded = Math.round(Date.now() / 1000 - block.timestamp);
-    recipient = truncateAddress(block.miner, 20);
+    recipient = block.miner;
+    recipientShort = truncateAddress(recipient, 20);
   }
   if (blockReward) blockReward = Math.round(+(Utils.formatEther(blockReward)) * 1e4) / 1e4;
 
@@ -58,7 +60,13 @@ export default async function Transactions(props: Props) {
           <span className='pl-2 md:pl-4'>
             Block Reward: { blockReward !== undefined && blockReward !== null ? `Ξ${blockReward}` : 'TBD' }
           </span>
-          <span className='pl-2 md:pl-4 leading-5'>Recipient: {recipient}</span>
+          <span className='pl-2 md:pl-4 leading-5'>
+            Recipient:&nbsp;
+            <LinkWithPopover
+              href={`/${props.network}/address/${recipient}`}
+              content={recipientShort ?? ''}
+            />
+          </span>
         </div>
       </div>
     </div>

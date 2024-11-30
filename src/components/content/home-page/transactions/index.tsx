@@ -4,7 +4,6 @@ import Transaction from './transaction';
 
 type Props = {
   blockNumber: number | undefined,
-  network: string,
   alchemy: Alchemy
 }
 

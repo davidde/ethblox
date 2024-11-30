@@ -24,6 +24,7 @@ body {
   --link-color: rgb(42, 145, 192);
   --hover-fg-color: rgb(65, 195, 255);
   --hover-bg-color: rgb(239 246 255);
+  --link-fg-color: rgb(9, 120, 171);
   --eth-logo-url: url(/images/ethereum-logo-dark.svg);
 }
 
@@ -34,6 +35,7 @@ body {
   --border-color: rgb(45, 42, 41);
   --hover-fg-color: rgb(141, 219, 255);
   --hover-bg-color: rgb(39 39 42);
+  --link-fg-color: rgb(27, 131, 179);
   --eth-logo-url: url(/images/ethereum-logo-light.svg);
 }
 
