@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import GithubIcon from '../icons/github-icon';
-import BackToTopIcon from '../icons/back-to-top-icon';
+import GithubIcon from './icons/github-icon';
+import BackToTopIcon from './icons/back-to-top-icon';
 import { WrenchIcon } from '@heroicons/react/24/solid';
 import { LightBulbIcon } from '@heroicons/react/24/solid';
 

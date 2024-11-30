@@ -1,5 +1,5 @@
 import Toggles from './toggles';
-import Searchbar from '@/components/searchbar';
+import Searchbar from './searchbar';
 import EthBlox from './ethblox';
 
 
