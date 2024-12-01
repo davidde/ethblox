@@ -65,6 +65,7 @@ export default async function Transactions(props: Props) {
             <LinkWithPopover
               href={`/${props.network}/address/${recipient}`}
               content={recipientShort ?? ''}
+              popover={recipient}
             />
           </span>
         </div>

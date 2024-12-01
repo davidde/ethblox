@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={`${inter.className} bg-[var(--main-bg-color)] text-[var(--main-fg-color)]`} >
-        <ThemeProvider>
+        <ThemeProvider attribute="class">
           <Header />
           {children}
           <Footer />

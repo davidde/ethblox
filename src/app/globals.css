@@ -16,7 +16,7 @@ body {
   grid-template-rows: auto 1fr auto;
 }
 
-:root {
+.light {
   --main-bg-color: white;
   --main-fg-color: black;
   --grey-fg-color: rgb(85, 81, 81);
@@ -25,10 +25,12 @@ body {
   --hover-fg-color: rgb(65, 195, 255);
   --hover-bg-color: rgb(239 246 255);
   --link-fg-color: rgb(9, 120, 171);
+  --inverse-bg-color: rgb(6, 60, 84);
+  --inverse-bg-color-lighter: rgb(18, 128, 179);
   --eth-logo-url: url(/images/ethereum-logo-dark.svg);
 }
 
-[data-theme='dark'] {
+.dark {
   --main-bg-color: black;
   --main-fg-color: rgb(196, 196, 196);
   --grey-fg-color: rgb(156, 151, 151);
@@ -36,6 +38,8 @@ body {
   --hover-fg-color: rgb(141, 219, 255);
   --hover-bg-color: rgb(39 39 42);
   --link-fg-color: rgb(27, 131, 179);
+  --inverse-bg-color: rgb(3, 29, 41);
+  --inverse-bg-color-lighter: rgb(14, 118, 166);
   --eth-logo-url: url(/images/ethereum-logo-light.svg);
 }
 
