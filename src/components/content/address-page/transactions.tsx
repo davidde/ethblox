@@ -1,5 +1,6 @@
 import { Alchemy, AssetTransfersCategory, SortingOrder } from 'alchemy-sdk';
 import { truncateTransaction, truncateAddress, getBlockAgeFromDateTimeString } from '@/lib/utilities';
+import LinkWithPopover from '@/components/content/home-page/blocks/link-with-popover';
 
 
 type Props = {
@@ -109,16 +110,24 @@ export default async function Transactions(props: Props) {
                     <span className='font-medium'>
                       From:&nbsp;
                     </span>
-                    <span className=''>
-                      { truncateAddress(transfer.from, 28) }
+                    <span>
+                      <LinkWithPopover
+                        href={`/${props.network}/address/${transfer.from}`}
+                        content={truncateAddress(transfer.from, 28)!}
+                        popover={transfer.from}
+                      />
                     </span>
                   </div>
                   <div className='pb-1'>
                     <span className='font-medium'>
                       To:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </span>
-                    <span className=''>
-                      { truncateAddress(transfer.to!, 28) }
+                    <span>
+                      <LinkWithPopover
+                        href={`/${props.network}/address/${transfer.to}`}
+                        content={truncateAddress(transfer.to!, 28)!}
+                        popover={transfer.to!}
+                      />
                     </span>
                   </div>
                   <div className='pb-1'>
@@ -180,10 +189,18 @@ export default async function Transactions(props: Props) {
                       { blockAge }
                     </td>
                     <td className='whitespace-nowrap px-4 py-3'>
-                      { truncateAddress(transfer.from, 21) }
+                      <LinkWithPopover
+                        href={`/${props.network}/address/${transfer.from}`}
+                        content={truncateAddress(transfer.from, 21)!}
+                        popover={transfer.from}
+                      />
                     </td>
                     <td className='whitespace-nowrap px-4 py-3'>
-                      { truncateAddress(transfer.to!, 21) }
+                      <LinkWithPopover
+                        href={`/${props.network}/address/${transfer.to}`}
+                        content={truncateAddress(transfer.to!, 21)!}
+                        popover={transfer.to!}
+                      />
                     </td>
                     <td className='whitespace-nowrap px-4 py-3'>
                       {transfer.value?.toFixed(8)} {transfer.asset}
