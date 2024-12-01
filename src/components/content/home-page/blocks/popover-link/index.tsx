@@ -15,12 +15,20 @@ type Props = {
 export default function PopoverLink(props: Props) {
   const [show, setShow] = useState(false);
 
+  const handleMouseEnter = () => {
+    setShow(true);
+  }
+
+  const handleMouseLeave = () => {
+    setShow(false);
+  }
+
   return (
     <Link
       href={props.href}
       className='relative w-40 h-8 text-sky-600 dark:text-blue-300 hover:text-[var(--hover-fg-color)] dark:hover:text-[var(--inverse-bg-color-lighter)]'
-      onMouseEnter={() => setShow(true)}
-      onMouseLeave={() => setShow(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       {
         !props.popover ? '' :
