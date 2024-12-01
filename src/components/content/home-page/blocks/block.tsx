@@ -65,7 +65,8 @@ export default async function Transactions(props: Props) {
             <PopoverLink
               href={`/${props.network}/address/${recipient}`}
               content={recipientShort ?? ''}
-              popover={recipient}
+              popover={recipient ?? ''}
+              className='left-[-37%] top-[-2.6rem] w-[19.5rem] py-1.5 px-2.5'
             />
           </span>
         </div>

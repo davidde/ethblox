@@ -115,7 +115,7 @@ export default async function Transactions(props: Props) {
                         href={`/${props.network}/address/${transfer.from}`}
                         content={truncateAddress(transfer.from, 28)!}
                         popover={transfer.from}
-                        className='left-[-25%]'
+                        className='left-[-12%] top-[-2.6rem] w-[19.5rem] py-1.5 px-2.5'
                       />
                     </span>
                   </div>
@@ -128,7 +128,7 @@ export default async function Transactions(props: Props) {
                         href={`/${props.network}/address/${transfer.to}`}
                         content={truncateAddress(transfer.to!, 28)!}
                         popover={transfer.to!}
-                        className='left-[-25%]'
+                        className='left-[-12%] top-[-2.6rem] w-[19.5rem] py-1.5 px-2.5'
                       />
                     </span>
                   </div>
@@ -195,6 +195,7 @@ export default async function Transactions(props: Props) {
                         href={`/${props.network}/address/${transfer.from}`}
                         content={truncateAddress(transfer.from, 21)!}
                         popover={transfer.from}
+                        className='left-[-35%] top-[-2.6rem] w-[19.5rem] py-1.5 px-2.5'
                       />
                     </td>
                     <td className='whitespace-nowrap px-4 py-3'>
@@ -202,6 +203,7 @@ export default async function Transactions(props: Props) {
                         href={`/${props.network}/address/${transfer.to}`}
                         content={truncateAddress(transfer.to!, 21)!}
                         popover={transfer.to!}
+                        className='left-[-35%] top-[-2.6rem] w-[19.5rem] py-1.5 px-2.5'
                       />
                     </td>
                     <td className='whitespace-nowrap px-4 py-3'>

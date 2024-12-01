@@ -34,6 +34,7 @@ export default async function Transactions(props: Props) {
               href={`/${props.network}/address/${from}`}
               content={fromShort!}
               popover={from}
+              className='left-[-35%] top-[-2.6rem] w-[19.5rem] py-1.5 px-2.5'
             />
           </span>
           <span className='pl-7 md:pl-9'>
@@ -42,6 +43,7 @@ export default async function Transactions(props: Props) {
               href={`/${props.network}/address/${to}`}
               content={toShort!}
               popover={to}
+              className='left-[-35%] top-[-2.6rem] w-[19.5rem] py-1.5 px-2.5'
             />
           </span>
         </div>
