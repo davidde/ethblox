@@ -120,8 +120,8 @@ export default async function Transactions(props: Props) {
                     </span>
                   </div>
                   <div className='pb-1'>
-                    <span className='font-medium'>
-                      To:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span className='pl-5 font-medium'>
+                      To:&nbsp;
                     </span>
                     <span>
                       <PopoverLink
