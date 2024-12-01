@@ -1,7 +1,7 @@
 import { CubeIcon } from '@heroicons/react/24/outline';
 import { Alchemy, Utils } from 'alchemy-sdk';
 import { truncateAddress } from '@/lib/utilities';
-import LinkWithPopover from './link-with-popover';
+import PopoverLink from './popover-link';
 
 
 type Props = {
@@ -62,7 +62,7 @@ export default async function Transactions(props: Props) {
           </span>
           <span className='pl-2 md:pl-4 leading-5'>
             Recipient:&nbsp;
-            <LinkWithPopover
+            <PopoverLink
               href={`/${props.network}/address/${recipient}`}
               content={recipientShort ?? ''}
               popover={recipient}

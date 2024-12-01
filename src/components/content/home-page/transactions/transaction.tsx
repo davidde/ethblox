@@ -1,7 +1,7 @@
 import { DocumentTextIcon } from '@heroicons/react/24/outline';
 import { Utils, TransactionResponse } from 'alchemy-sdk';
 import { truncateAddress, truncateTransaction } from '@/lib/utilities';
-import LinkWithPopover from '@/components/content/home-page/blocks/link-with-popover';
+import PopoverLink from '@/components/content/home-page/blocks/popover-link';
 
 
 type Props = {
@@ -30,7 +30,7 @@ export default async function Transactions(props: Props) {
         <div className='flex flex-col ml-12 md:ml-4 my-2 md:my-0'>
           <span className='pl-2 md:pl-4'>
             From:&nbsp;
-            <LinkWithPopover
+            <PopoverLink
               href={`/${props.network}/address/${from}`}
               content={fromShort!}
               popover={from}
@@ -38,7 +38,7 @@ export default async function Transactions(props: Props) {
           </span>
           <span className='pl-7 md:pl-9'>
             To:&nbsp;
-            <LinkWithPopover
+            <PopoverLink
               href={`/${props.network}/address/${to}`}
               content={toShort!}
               popover={to}
