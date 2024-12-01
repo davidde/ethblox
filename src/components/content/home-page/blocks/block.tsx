@@ -46,7 +46,7 @@ export default async function Transactions(props: Props) {
   if (blockReward) blockReward = Math.round(+(Utils.formatEther(blockReward)) * 1e4) / 1e4;
 
   return (
-    <div className='p-2 md:p-3 border-b border-[var(--border-color)] last:border-0 overflow-hidden'>
+    <div className='p-2 md:p-3 border-b border-[var(--border-color)] last:border-0'>
       <div className='flex flex-col md:flex-row'>
         <div className='flex'>
           <CubeIcon className='w-10 h-10 md:w-8 md:h-8' />
