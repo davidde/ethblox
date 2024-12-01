@@ -8,8 +8,8 @@ import Popover from './popover';
 type Props = {
   href: string,
   content: string,
-  popover?: string,
-  leftPosition?: string
+  popover: string,
+  className?: string
 }
 
 export default function PopoverLink(props: Props) {
@@ -23,8 +23,8 @@ export default function PopoverLink(props: Props) {
     setShow(false);
   }
 
-  const leftPosition = props.leftPosition ?? 'left-[-42%]';
-  console.log('leftPosition = ', leftPosition);
+  const className = props.className ?? 'left-[-42%]';
+  console.log('className = ', className);
 
   return (
     <Link
@@ -33,13 +33,10 @@ export default function PopoverLink(props: Props) {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {
-        !props.popover ? '' :
-          <Popover
-            className={`${show ? 'inline' : 'hidden'} ${leftPosition} top-[-2.6rem]`}
-            content={props.popover}
-          />
-        }
+      <Popover
+        className={`${show ? 'inline' : 'hidden'} ${className} top-[-2.6rem]`}
+        content={props.popover}
+      />
       <span>
         {props.content}
       </span>

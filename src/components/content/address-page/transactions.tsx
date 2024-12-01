@@ -115,7 +115,7 @@ export default async function Transactions(props: Props) {
                         href={`/${props.network}/address/${transfer.from}`}
                         content={truncateAddress(transfer.from, 28)!}
                         popover={transfer.from}
-                        leftPosition='left-[-25%]'
+                        className='left-[-25%]'
                       />
                     </span>
                   </div>
@@ -128,7 +128,7 @@ export default async function Transactions(props: Props) {
                         href={`/${props.network}/address/${transfer.to}`}
                         content={truncateAddress(transfer.to!, 28)!}
                         popover={transfer.to!}
-                        leftPosition='left-[-25%]'
+                        className='left-[-25%]'
                       />
                     </span>
                   </div>
