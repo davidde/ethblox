@@ -9,7 +9,7 @@ type Props = {
   href: string,
   content: string,
   popover?: string,
-  percentToLeft?: string
+  leftPosition?: string
 }
 
 export default function PopoverLink(props: Props) {
@@ -23,6 +23,9 @@ export default function PopoverLink(props: Props) {
     setShow(false);
   }
 
+  const leftPosition = props.leftPosition ?? 'left-[-42%]';
+  console.log('leftPosition = ', leftPosition);
+
   return (
     <Link
       href={props.href}
@@ -33,7 +36,7 @@ export default function PopoverLink(props: Props) {
       {
         !props.popover ? '' :
           <Popover
-            className={`${show ? 'inline' : 'hidden'} -left-[${props.percentToLeft ?? 42}%] top-[-2.6rem]`}
+            className={`${show ? 'inline' : 'hidden'} ${leftPosition} top-[-2.6rem]`}
             content={props.popover}
           />
         }
