@@ -4,6 +4,7 @@ import Transaction from './transaction';
 
 type Props = {
   blockNumber: number | undefined,
+  network: string,
   alchemy: Alchemy
 }
 
@@ -27,6 +28,7 @@ export default async function Transactions(props: Props) {
               <Transaction
                 key={i}
                 transaction={transaction!}
+                network={props.network}
               />
             );
         })

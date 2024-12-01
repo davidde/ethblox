@@ -1,17 +1,21 @@
 import { DocumentTextIcon } from '@heroicons/react/24/outline';
 import { Utils, TransactionResponse } from 'alchemy-sdk';
 import { truncateAddress, truncateTransaction } from '@/lib/utilities';
+import LinkWithPopover from '@/components/content/home-page/blocks/link-with-popover';
 
 
 type Props = {
-  transaction: TransactionResponse
+  transaction: TransactionResponse,
+  network: string
 }
 
 export default async function Transactions(props: Props) {
   const transactionHash = truncateTransaction(props.transaction.hash, 18);
   const amount = Math.round(Number(Utils.formatEther(props.transaction.value)) * 1e6) / 1e6;
-  const from = truncateAddress(props.transaction.from, 21);
-  const to = truncateAddress(props.transaction.to!, 21);
+  const from = props.transaction.from;
+  const fromShort = truncateAddress(from, 21);
+  const to = props.transaction.to!;
+  const toShort = truncateAddress(to, 21);
 
   return (
     <div className='p-2 md:p-3 border-b border-[var(--border-color)] last:border-0 overflow-hidden'>
@@ -24,8 +28,22 @@ export default async function Transactions(props: Props) {
           </div>
         </div>
         <div className='flex flex-col ml-12 md:ml-4 my-2 md:my-0'>
-          <span className='pl-2 md:pl-4'>From: {from}</span>
-          <span className='pl-7 md:pl-9'>To: {to}</span>
+          <span className='pl-2 md:pl-4'>
+            From:&nbsp;
+            <LinkWithPopover
+              href={`/${props.network}/address/${from}`}
+              content={fromShort!}
+              popover={from}
+            />
+          </span>
+          <span className='pl-7 md:pl-9'>
+            To:&nbsp;
+            <LinkWithPopover
+              href={`/${props.network}/address/${to}`}
+              content={toShort!}
+              popover={to}
+            />
+          </span>
         </div>
       </div>
     </div>

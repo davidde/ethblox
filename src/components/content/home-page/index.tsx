@@ -51,6 +51,7 @@ export default async function HomePage(props: Props) {
         />
         <Transactions
           blockNumber={blockNumber}
+          network={props.network}
           alchemy={props.alchemy}
         />
       </div>
