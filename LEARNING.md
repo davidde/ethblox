@@ -33,7 +33,7 @@
   node_modules\next\dist\esm\server\lib\patch-fetch.js
   node_modules\next\dist\server\lib\patch-fetch.js
   ```
-  Example from `patch-fetch.js`:
+  We can tell from these paths that the file we'll likely need is `patch-fetch.js`, since it's located directly in the server, without intervening `compiled` or `esm` (ECMAScript modules) folders. The location of the error looks like this:
   ```js
   const isCacheableRevalidate = typeof revalidate === "number" && revalidate > 0 || revalidate === false;
   let cacheKey;
@@ -42,12 +42,12 @@
           cacheKey = await staticGenerationStore.incrementalCache.fetchCacheKey(fetchUrl, isRequestInput ? input : init);
       } catch (err) {
           console.error(`Failed to generate cache key for`, input);
-          // We put in an extra error log here:
+          // We put in an extra error log here, to verify this is the file:
           console.error(err);
       }
   }
   ```
-  Then, we need to restart the dev server: `npm run dev`, and we get the following error log:
+  After restarting the dev server with `npm run dev`, we get the following error log:
   ```
   Failed to generate cache key for https://eth-mainnet.g.alchemy.com/v2/[ALCHEMY_API_KEY]
   TypeError: formData.getAll is not a function
@@ -92,3 +92,4 @@
       at listOnTimeout (node:internal/timers:555:9)
       at process.processTimers (node:internal/timers:529:7)
   ```
+  which means we are at least in the right file!

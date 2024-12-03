@@ -35,7 +35,7 @@ export default async function EthBalance(props: Props) {
         Ξ{props.ethBalance}
       </div>
       <div className={`m-4 ${showEthValue}`}>
-        <h2 className='text-sm tracking-wider text-[var(--grey-fg-color)]'>ETH VALUE</h2>
+        <h2 className='text-sm tracking-wider text-[var(--grey-fg-color)]'>TOTAL ETH VALUE</h2>
         {
           error ?
             <div className='text-red-500'>

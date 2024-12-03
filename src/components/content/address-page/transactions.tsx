@@ -10,11 +10,12 @@ type Props = {
 }
 
 export default async function Transactions(props: Props) {
-  let transfers, totalTransfers, error;
+  let transactions, totalTransactions, error;
   const numberOfTransactionsToShow = 10;
 
   try {
-    const response = await props.alchemy.core.getAssetTransfers({
+    // By default returns a max of 1000 transfers:
+    const txResp = await props.alchemy.core.getAssetTransfers({
       fromAddress: props.hash,
       order: SortingOrder.DESCENDING, // Latest block numbers first!
       category: [ AssetTransfersCategory.EXTERNAL ],
@@ -22,21 +23,22 @@ export default async function Transactions(props: Props) {
       // an account managed by a human, not a contract.
       withMetadata: true,
     });
-    transfers = response.transfers;
-    totalTransfers = transfers.length;
+    transactions = txResp.transfers;
+    const cntResp = await props.alchemy.core.getTransactionCount(props.hash);
+    totalTransactions = cntResp.toLocaleString('en-US');
     error = false;
-    // console.log('transfers = ', transfers);
+    // console.log('transactions = ', transactions);
   } catch(err) {
     console.error('getAssetTransfers()', err);
     error = true;
   }
 
-  const showTransfers = transfers && transfers.length !== 0;
+  const showTransactions = transactions && transactions.length !== 0;
 
   if (error) {
     return (
       <>
-        <div className={`basis-full ${showTransfers ? 'hidden' : ''}`} />
+        <div className={`basis-full ${showTransactions ? 'hidden' : ''}`} />
         <div className='mx-4 w-min'>
           <p className='mt-4 text-sm tracking-wider text-[var(--grey-fg-color)]'>
             TRANSACTIONS
@@ -54,15 +56,15 @@ export default async function Transactions(props: Props) {
       {/* If there are no transactions, just put the next div (the TRANSACTIONS header)
       directly below the Token Holdings. This is done by introducing this invisible extra flex item
       that takes the full width of the container (flex-basis: 100%), so it will sit on its own row. */}
-      <div className={`basis-full ${showTransfers ? 'hidden' : ''}`} />
+      <div className={`basis-full ${showTransactions ? 'hidden' : ''}`} />
       <div className='mx-4 w-min'>
-        <p className={`mt-4 text-sm tracking-wider text-[var(--grey-fg-color)] ${showTransfers ? 'pb-4 border-b border-[var(--border-color)]' : ''}`}>
+        <p className={`mt-4 text-sm tracking-wider text-[var(--grey-fg-color)] ${showTransactions ? 'pb-4 border-b border-[var(--border-color)]' : ''}`}>
           TRANSACTIONS
         </p>
         {
-          showTransfers ?
+          showTransactions ?
             <p className='pl-8 text-sm tracking-wider py-3 border-b border-[var(--border-color)]'>
-              {`Showing latest ${numberOfTransactionsToShow} of ${totalTransfers} transactions`}
+              {`Showing latest ${numberOfTransactionsToShow} of ${totalTransactions} transactions`}
             </p>
             :
             <p>
@@ -73,9 +75,9 @@ export default async function Transactions(props: Props) {
         {/* Mobile display only: */}
         <div className='lg:hidden portrait:block'>
           {
-            transfers === undefined ? <p className='text-red-500 py-2'>Error getting transactions.</p> :
-            transfers.slice(0, numberOfTransactionsToShow).map((transfer, i) => {
-              const blockAge = getBlockAgeFromDateTimeString(transfer.metadata.blockTimestamp);
+            transactions === undefined ? <p className='text-red-500 py-2'>Error getting transactions.</p> :
+            transactions.slice(0, numberOfTransactionsToShow).map((transaction, i) => {
+              const blockAge = getBlockAgeFromDateTimeString(transaction.metadata.blockTimestamp);
 
               return (
                 <div
@@ -87,7 +89,7 @@ export default async function Transactions(props: Props) {
                       Transaction Hash:&nbsp;
                     </p>
                     <p className='overflow-hidden whitespace-nowrap text-ellipsis'>
-                      { truncateTransaction(transfer.hash, 25) }
+                      { truncateTransaction(transaction.hash, 25) }
                     </p>
                   </div>
                   <div className='pb-1'>
@@ -95,7 +97,7 @@ export default async function Transactions(props: Props) {
                       Block:&nbsp;
                     </span>
                     <span>
-                      { Number(transfer.blockNum) }
+                      { Number(transaction.blockNum) }
                     </span>
                   </div>
                   <div className='pb-1'>
@@ -112,9 +114,9 @@ export default async function Transactions(props: Props) {
                     </span>
                     <span>
                       <PopoverLink
-                        href={`/${props.network}/address/${transfer.from}`}
-                        content={truncateAddress(transfer.from, 28)!}
-                        popover={transfer.from}
+                        href={`/${props.network}/address/${transaction.from}`}
+                        content={truncateAddress(transaction.from, 28)!}
+                        popover={transaction.from}
                         className='left-[-12%] top-[-2.6rem] w-[19.5rem] py-1.5 px-2.5'
                       />
                     </span>
@@ -125,9 +127,9 @@ export default async function Transactions(props: Props) {
                     </span>
                     <span>
                       <PopoverLink
-                        href={`/${props.network}/address/${transfer.to}`}
-                        content={truncateAddress(transfer.to!, 28)!}
-                        popover={transfer.to!}
+                        href={`/${props.network}/address/${transaction.to}`}
+                        content={truncateAddress(transaction.to!, 28)!}
+                        popover={transaction.to!}
                         className='left-[-12%] top-[-2.6rem] w-[19.5rem] py-1.5 px-2.5'
                       />
                     </span>
@@ -137,7 +139,7 @@ export default async function Transactions(props: Props) {
                       Amount:&nbsp;
                     </span>
                     <span>
-                      {transfer.value?.toFixed(8)} {transfer.asset}
+                      {transaction.value?.toFixed(8)} {transaction.asset}
                     </span>
                   </div>
                 </div>
@@ -147,7 +149,7 @@ export default async function Transactions(props: Props) {
         </div>
 
         {/* Desktop display only: */}
-        <table className={`hidden portrait:hidden ${showTransfers ? 'lg:table' : ''}`}>
+        <table className={`hidden portrait:hidden ${showTransactions ? 'lg:table' : ''}`}>
           <thead className='rounded-lg text-left font-normal'>
             <tr className='border-b border-[var(--border-color)]'>
               <th scope='col' className='py-5 font-medium'>
@@ -172,9 +174,9 @@ export default async function Transactions(props: Props) {
           </thead>
           <tbody>
             {
-              transfers === undefined ? <p className='text-red-500 py-2'>Error getting transactions.</p> :
-              transfers.slice(0, numberOfTransactionsToShow).map((transfer, i) => {
-                const blockAge = getBlockAgeFromDateTimeString(transfer.metadata.blockTimestamp);
+              transactions === undefined ? <p className='text-red-500 py-2'>Error getting transactions.</p> :
+              transactions.slice(0, numberOfTransactionsToShow).map((transaction, i) => {
+                const blockAge = getBlockAgeFromDateTimeString(transaction.metadata.blockTimestamp);
 
                 return (
                   <tr
@@ -182,32 +184,32 @@ export default async function Transactions(props: Props) {
                     className='w-full border-b border-[var(--border-color)] last-of-type:border-none py-3'
                   >
                     <td className='whitespace-nowrap py-3 pr-3'>
-                      { truncateTransaction(transfer.hash, 18) }
+                      { truncateTransaction(transaction.hash, 18) }
                     </td>
                     <td className='whitespace-nowrap px-4 py-3'>
-                      { Number(transfer.blockNum) }
+                      { Number(transaction.blockNum) }
                     </td>
                     <td className='whitespace-nowrap px-4 py-3'>
                       { blockAge }
                     </td>
                     <td className='whitespace-nowrap px-4 py-3'>
                       <PopoverLink
-                        href={`/${props.network}/address/${transfer.from}`}
-                        content={truncateAddress(transfer.from, 21)!}
-                        popover={transfer.from}
+                        href={`/${props.network}/address/${transaction.from}`}
+                        content={truncateAddress(transaction.from, 21)!}
+                        popover={transaction.from}
                         className='left-[-35%] top-[-2.6rem] w-[19.5rem] py-1.5 px-2.5'
                       />
                     </td>
                     <td className='whitespace-nowrap px-4 py-3'>
                       <PopoverLink
-                        href={`/${props.network}/address/${transfer.to}`}
-                        content={truncateAddress(transfer.to!, 21)!}
-                        popover={transfer.to!}
+                        href={`/${props.network}/address/${transaction.to}`}
+                        content={truncateAddress(transaction.to!, 21)!}
+                        popover={transaction.to!}
                         className='left-[-35%] top-[-2.6rem] w-[19.5rem] py-1.5 px-2.5'
                       />
                     </td>
                     <td className='whitespace-nowrap px-4 py-3'>
-                      {transfer.value?.toFixed(8)} {transfer.asset}
+                      {transaction.value?.toFixed(8)} {transaction.asset}
                     </td>
                   </tr>
                 );
