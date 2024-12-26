@@ -10,7 +10,8 @@ type Props = {
 }
 
 export default async function Transactions(props: Props) {
-  const transactionHash = truncateTransaction(props.transaction.hash, 18);
+  const transactionHash = props.transaction.hash;
+  const transactionHashShort = truncateTransaction(props.transaction.hash, 18);
   const amount = Math.round(Number(Utils.formatEther(props.transaction.value)) * 1e6) / 1e6;
   const from = props.transaction.from;
   const fromShort = truncateAddress(from, 21);
@@ -23,7 +24,14 @@ export default async function Transactions(props: Props) {
         <div className='flex'>
           <DocumentTextIcon className='w-10 h-10 md:w-8 md:h-8' />
           <div className='flex flex-col ml-2 pt-1 md:pt-0 md:w-48'>
-            <span className='px-2 md:px-4'>{transactionHash}</span>
+            <span className='px-2 md:px-4'>
+              <PopoverLink
+                href={`/${props.network}/transaction/${transactionHash}`}
+                content={transactionHashShort!}
+                popover={transactionHash}
+                className='left-[-100%] top-[-2.6rem] w-[30rem] py-1.5 px-2.5'
+              />
+            </span>
             <span className='px-2 md:pl-4'>Amount: {`Ξ${amount}`}</span>
           </div>
         </div>

@@ -10,7 +10,7 @@ type Props = {
 }
 
 export default async function Transactions(props: Props) {
-  let transactions, totalTransactions, error;
+  let transactions, totalTransactions, txError;
   const numberOfTransactionsToShow = 10;
 
   try {
@@ -24,18 +24,24 @@ export default async function Transactions(props: Props) {
       withMetadata: true,
     });
     transactions = txResp.transfers;
-    const cntResp = await props.alchemy.core.getTransactionCount(props.hash);
-    totalTransactions = cntResp.toLocaleString('en-US');
-    error = false;
+    txError = false;
     // console.log('transactions = ', transactions);
   } catch(err) {
     console.error('getAssetTransfers()', err);
-    error = true;
+    txError = true;
+  }
+
+  try {
+    const cntResp = await props.alchemy.core.getTransactionCount(props.hash);
+    totalTransactions = cntResp.toLocaleString('en-US');
+  } catch(err) {
+    console.error('getTransactionCount()', err);
+    totalTransactions = 'unknown number of';
   }
 
   const showTransactions = transactions && transactions.length !== 0;
 
-  if (error) {
+  if (txError) {
     return (
       <>
         <div className={`basis-full ${showTransactions ? 'hidden' : ''}`} />
@@ -89,7 +95,12 @@ export default async function Transactions(props: Props) {
                       Transaction Hash:&nbsp;
                     </p>
                     <p className='overflow-hidden whitespace-nowrap text-ellipsis'>
-                      { truncateTransaction(transaction.hash, 25) }
+                      <PopoverLink
+                        href={`/${props.network}/transaction/${transaction.hash}`}
+                        content={truncateTransaction(transaction.hash, 25)!}
+                        popover={transaction.hash}
+                        className='left-[-100%] top-[-2.6rem] w-[30rem] py-1.5 px-2.5'
+                      />
                     </p>
                   </div>
                   <div className='pb-1'>
@@ -184,7 +195,12 @@ export default async function Transactions(props: Props) {
                     className='w-full border-b border-[var(--border-color)] last-of-type:border-none py-3'
                   >
                     <td className='whitespace-nowrap py-3 pr-3'>
-                      { truncateTransaction(transaction.hash, 18) }
+                      <PopoverLink
+                        href={`/${props.network}/transaction/${transaction.hash}`}
+                        content={truncateTransaction(transaction.hash, 18)!}
+                        popover={transaction.hash}
+                        className='left-[-100%] top-[-2.6rem] w-[30rem] py-1.5 px-2.5'
+                      />
                     </td>
                     <td className='whitespace-nowrap px-4 py-3'>
                       { Number(transaction.blockNum) }
