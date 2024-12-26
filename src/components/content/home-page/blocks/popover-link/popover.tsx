@@ -17,8 +17,7 @@ export default function Popover(props: Props) { // from-[var(--inverse-bg-color)
       <span
         className={`${props.className} ` +
           `absolute rounded-lg text-[0.8rem] ` +
-          `bg-gradient-to-t from-indigo-900 to-blue-400 text-[var(--main-bg-color)] ` +
-          `dark:from-[var(--inverse-bg-color)] dark:to-[var(--inverse-bg-color-lighter)] dark:text-[var(--main-fg-color)] ` +
+          `bg-gradient-to-t from-indigo-900 to-blue-400 text-[var(--main-bg-color)] dark:text-[var(--main-fg-color)] ` +
           `after:content-[''] after:block after:absolute after:w-0 after:left-[48%] ` +
           `after:bottom-[-.5rem] after:border-t-[.5rem] after:border-x-[0.5rem] after:border-b-[0rem] ` +
           `after:border-solid after:border-y-indigo-900 dark:after:border-y-[var(--inverse-bg-color)] after:border-x-transparent`
