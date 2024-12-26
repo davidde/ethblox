@@ -9,23 +9,29 @@ export default async function EthBalance(props: Props) {
   const showEthValue = props.network === 'mainnet' ? '' : 'hidden';
 
   if (props.network === 'mainnet') {
-    try {
-      const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=eur,usd');
-      const data = await response.json();
-      valueEur = (+props.ethBalance * data.ethereum.eur).toLocaleString('en-US',
-        {
-          style: 'currency',
-          currency: 'EUR',
-        });
-      valueUsd = (+props.ethBalance * data.ethereum.usd).toLocaleString('en-US',
-        {
-          style: 'currency',
-          currency: 'USD',
-        });
-    } catch(err) {
-      console.error('Coingecko Error: ', err);
-      error = true;
+    let price;
+
+    while (!price) {
+      try {
+        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=eur,usd');
+        const data = await response.json();
+        price = data.ethereum;
+      } catch(err) {
+        console.error('Coingecko Error: ', err);
+        error = true;
+      }
     }
+
+    valueEur = (+props.ethBalance * price.eur).toLocaleString('en-US',
+      {
+        style: 'currency',
+        currency: 'EUR',
+      });
+    valueUsd = (+props.ethBalance * price.usd).toLocaleString('en-US',
+      {
+        style: 'currency',
+        currency: 'USD',
+      });
   }
 
   return (

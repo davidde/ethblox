@@ -2,30 +2,19 @@ import { Utils } from 'alchemy-sdk';
 
 
 export default async function PriceStats() {
-  let price, ethPrice, supply;
+  let price, supply;
 
-  try {
-    const response = await fetch(
-      'https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=eur,usd',
-      // { next: { revalidate: 60 }} // Revalidate cache every minute
-    );
-    const data = await response.json();
-    price = data.ethereum;
-    console.log('price = ', price);
-    ethPrice = {
-      eur: price.eur.toLocaleString('en-US',
-            {
-              style: 'currency',
-              currency: 'EUR',
-            }),
-      usd: price.usd.toLocaleString('en-US',
-            {
-              style: 'currency',
-              currency: 'USD',
-            }),
-    };
-  } catch(error) {
-    console.error('Coingecko Eth Price Error: ', error);
+  while (!price) {
+    try {
+      const response = await fetch(
+        'https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=eur,usd',
+        // { next: { revalidate: 60 }} // Revalidate cache every minute
+      );
+      const data = await response.json();
+      price = data.ethereum;
+    } catch(error) {
+      console.error('Coingecko Eth Price Error: ', error);
+    }
   }
 
   try {
@@ -39,7 +28,19 @@ export default async function PriceStats() {
     console.error('Etherscan Eth Supply Error: ', error);
   }
 
-  let ethMarketCap;
+  let ethPrice, ethMarketCap;
+  ethPrice = {
+    eur: price.eur.toLocaleString('en-US',
+          {
+            style: 'currency',
+            currency: 'EUR',
+          }),
+    usd: price.usd.toLocaleString('en-US',
+          {
+            style: 'currency',
+            currency: 'USD',
+          }),
+  };
   if (supply) {
     ethMarketCap = {
       eur: (supply * price.eur)
