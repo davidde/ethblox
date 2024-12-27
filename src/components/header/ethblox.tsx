@@ -1,6 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 
 
 export default function EthBlox() {
@@ -9,12 +10,12 @@ export default function EthBlox() {
 
   return (
     <div>
-      <a
+      <Link
         href='/mainnet'
         className='text-3xl font-mono hover:text-[var(--hover-fg-color)]'
       >
         ΞthBlox
-      </a>
+      </Link>
       <p className='pl-[2.5rem] mt-[-0.6rem] text-lg font-mono tracking-wider text-[var(--grey-fg-color)]'>
         {network}
       </p>
