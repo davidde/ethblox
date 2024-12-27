@@ -14,7 +14,6 @@ export default async function TransactionPage(props: Props) {
   while (!tx) {
     try {
       tx = await props.alchemy.transact.getTransaction(props.hash);
-      console.log('tx = ', tx);
     } catch (err) {
       console.error('getTransaction()', err);
     }
@@ -22,7 +21,6 @@ export default async function TransactionPage(props: Props) {
   while (!txReceipt) {
     try {
       txReceipt = await props.alchemy.core.getTransactionReceipt(props.hash);
-      console.log('txReceipt = ', txReceipt);
     } catch (err) {
       console.error('getTransactionReceipt()', err);
     }
