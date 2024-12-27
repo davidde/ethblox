@@ -4,7 +4,7 @@ type Props = {
   reason: string
 }
 
-export default function ErrorPage(props: Props) {
+export default function NotFoundPage(props: Props) {
   return (
     <main className='p-2 md:p-8 text-red-700'>
       <div className='py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6'>
