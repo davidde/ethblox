@@ -1,6 +1,6 @@
 import { DocumentTextIcon } from '@heroicons/react/24/outline';
-import { Utils, TransactionResponse } from 'alchemy-sdk';
-import { truncateAddress, truncateTransaction } from '@/lib/utilities';
+import { TransactionResponse } from 'alchemy-sdk';
+import { truncateAddress, truncateTransaction, getEtherValueFromWei } from '@/lib/utilities';
 import PopoverLink from '@/components/content/home-page/blocks/popover-link';
 
 
@@ -12,7 +12,7 @@ type Props = {
 export default async function Transactions(props: Props) {
   const transactionHash = props.transaction.hash;
   const transactionHashShort = truncateTransaction(props.transaction.hash, 18);
-  const amount = Math.round(Number(Utils.formatEther(props.transaction.value)) * 1e6) / 1e6;
+  const amount = getEtherValueFromWei(props.transaction.value, 6);
   const from = props.transaction.from;
   const fromShort = truncateAddress(from, 21);
   const to = props.transaction.to!;

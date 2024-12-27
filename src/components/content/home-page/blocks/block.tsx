@@ -1,6 +1,6 @@
 import { CubeIcon } from '@heroicons/react/24/outline';
-import { Alchemy, Utils } from 'alchemy-sdk';
-import { truncateAddress } from '@/lib/utilities';
+import { Alchemy } from 'alchemy-sdk';
+import { truncateAddress, getEtherValueFromWei } from '@/lib/utilities';
 import PopoverLink from './popover-link';
 
 
@@ -43,7 +43,7 @@ export default async function Transactions(props: Props) {
     recipient = block.miner;
     recipientShort = truncateAddress(recipient, 20);
   }
-  if (blockReward) blockReward = Math.round(+(Utils.formatEther(blockReward)) * 1e4) / 1e4;
+  if (blockReward) blockReward = getEtherValueFromWei(blockReward, 4);
 
   return (
     <div className='p-2 md:p-3 border-b border-[var(--border-color)] last:border-0'>

@@ -1,5 +1,5 @@
 // Alchemy SDK Docs: https://docs.alchemy.com/reference/alchemy-sdk-api-surface-overview#api-surface
-import { Alchemy, Network } from 'alchemy-sdk';
+import { Alchemy, Network, Utils, BigNumber } from 'alchemy-sdk';
 
 
 export function createAlchemy(network: string) {
@@ -13,6 +13,10 @@ export function createAlchemy(network: string) {
       skipFetchSetup: true, // Fix missing response error
     }, // (see: https://github.com/alchemyplatform/alchemy-sdk-js/issues/400)
   });
+}
+
+export function getEtherValueFromWei(wei: BigNumber, decimals: number) {
+  return Math.round(+(Utils.formatEther(wei)) * Math.pow(10, decimals)) / Math.pow(10, decimals);
 }
 
 export function getBlockAgeFromDateTimeString(datetime: string) {
