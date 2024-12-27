@@ -84,6 +84,10 @@ export default async function Transactions(props: Props) {
             transactions === undefined ? <p className='text-red-500 py-2'>Error getting transactions.</p> :
             transactions.slice(0, numberOfTransactionsToShow).map((transaction, i) => {
               const blockAge = getBlockAgeFromDateTimeString(transaction.metadata.blockTimestamp);
+              const amount = transaction.asset === 'ETH' ?
+                  `Ξ${transaction.value?.toFixed(8)}`
+                  :
+                  `${transaction.value?.toFixed(8)} ${transaction.asset}`;
 
               return (
                 <div
@@ -150,7 +154,7 @@ export default async function Transactions(props: Props) {
                       Amount:&nbsp;
                     </span>
                     <span>
-                      {transaction.value?.toFixed(8)} {transaction.asset}
+                      {amount}
                     </span>
                   </div>
                 </div>
@@ -188,6 +192,10 @@ export default async function Transactions(props: Props) {
               transactions === undefined ? <p className='text-red-500 py-2'>Error getting transactions.</p> :
               transactions.slice(0, numberOfTransactionsToShow).map((transaction, i) => {
                 const blockAge = getBlockAgeFromDateTimeString(transaction.metadata.blockTimestamp);
+                const amount = transaction.asset === 'ETH' ?
+                  `Ξ${transaction.value?.toFixed(8)}`
+                  :
+                  `${transaction.value?.toFixed(8)} ${transaction.asset}`;
 
                 return (
                   <tr
@@ -225,7 +233,7 @@ export default async function Transactions(props: Props) {
                       />
                     </td>
                     <td className='whitespace-nowrap px-4 py-3'>
-                      {transaction.value?.toFixed(8)} {transaction.asset}
+                      {amount}
                     </td>
                   </tr>
                 );
