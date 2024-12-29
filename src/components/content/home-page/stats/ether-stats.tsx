@@ -2,7 +2,7 @@ import { Utils } from 'alchemy-sdk';
 
 
 export default async function PriceStats() {
-  let price, supply;
+  let price, EthSupply, Eth2Staking, BurntFees;
 
   while (!price) {
     try {
@@ -17,16 +17,19 @@ export default async function PriceStats() {
     }
   }
 
-  try {
-    const response = await fetch(`https://api.etherscan.io/api?module=stats&action=ethsupply2&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`);
-    const data = await response.json();
-    const { EthSupply, Eth2Staking, BurntFees } = data.result;
-    supply = +Utils.formatEther(EthSupply)
+  while (!EthSupply) {
+    try {
+      const response = await fetch(`https://api.etherscan.io/api?module=stats&action=ethsupply2&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`);
+      const data = await response.json();
+      ({ EthSupply, Eth2Staking, BurntFees } = data.result);
+    } catch(error) {
+      console.error('Etherscan Eth Supply Error: ', error);
+    }
+  }
+
+  let supply = +Utils.formatEther(EthSupply)
               + (+Utils.formatEther(Eth2Staking))
               - (+Utils.formatEther(BurntFees));
-  } catch(error) {
-    console.error('Etherscan Eth Supply Error: ', error);
-  }
 
   let ethPrice, ethMarketCap;
   ethPrice = {
@@ -41,6 +44,8 @@ export default async function PriceStats() {
             currency: 'USD',
           }),
   };
+
+  let supplyFormatted;
   if (supply) {
     ethMarketCap = {
       eur: (supply * price.eur)
@@ -54,7 +59,7 @@ export default async function PriceStats() {
               currency: 'USD',
             }),
     };
-    supply = supply.toLocaleString('en-US', {
+    supplyFormatted = supply.toLocaleString('en-US', {
       maximumFractionDigits: 2,
     });
   }
@@ -86,7 +91,7 @@ export default async function PriceStats() {
 
       <div className='pl-4 pt-4 pb-2 border-b border-[var(--border-color)]'>
         <p className='text-xs tracking-wider text-[var(--grey-fg-color)]'>ETHER SUPPLY</p>
-        <p>{`Ξ${supply}`}</p>
+        <p>{`Ξ${supplyFormatted}`}</p>
       </div>
 
       <div className='pl-4 pt-4 pb-2'>
