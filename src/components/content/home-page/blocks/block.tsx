@@ -1,6 +1,7 @@
 import { CubeIcon } from '@heroicons/react/24/outline';
 import { Alchemy } from 'alchemy-sdk';
 import { truncateAddress, getEtherValueFromWei } from '@/lib/utilities';
+import Link from 'next/link';
 import PopoverLink from './popover-link';
 
 
@@ -51,7 +52,15 @@ export default async function Transactions(props: Props) {
         <div className='flex'>
           <CubeIcon className='w-10 h-10 md:w-8 md:h-8' />
           <div className='flex md:flex-col ml-2 pt-1 md:pt-0 md:w-32'>
-            <span className='px-2 md:px-4 leading-5'>{props.blockNumber}</span>
+            <span className='px-2 md:px-4 leading-5'>
+              <Link
+                href={`/${props.network}/block/${props.blockNumber}`}
+                className='text-sky-600 dark:text-blue-300
+                  hover:text-[var(--hover-fg-color)] dark:hover:text-[var(--inverse-bg-color-lighter)]'
+              >
+                {props.blockNumber}
+              </Link>
+            </span>
             <span className='md:pl-4 text-sm text-[var(--grey-fg-color)]'>({secsSinceAdded} secs ago)</span>
           </div>
         </div>
