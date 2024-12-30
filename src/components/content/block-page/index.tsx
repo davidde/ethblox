@@ -10,7 +10,7 @@ type Props = {
 }
 
 export default async function BlockPage(props: Props) {
-  let block, blockReward;
+  let block, finalizedBlock, blockReward;
   const blockRewardUrl = props.network === 'mainnet' ?
     `https://eth.blockscout.com/api?module=block&action=getblockreward&blockno=${props.number}`
     :
@@ -18,10 +18,10 @@ export default async function BlockPage(props: Props) {
     `&blockno=${props.number}` +
     `&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`;
 
-  while (!block) {
+  while (!block || !finalizedBlock) {
     try {
       block = await props.alchemy.core.getBlock(props.number);
-      console.log("block = ", block);
+      finalizedBlock = await props.alchemy.core.getBlock('finalized');
     } catch (err) {
       console.error('BlockPage getBlock()', err);
     }
@@ -29,7 +29,6 @@ export default async function BlockPage(props: Props) {
   try {
     const response = await fetch(blockRewardUrl);
     const data = await response.json();
-    // console.log('data = ', data); // For some reason some blocks return 'No Record Found' ...
     blockReward = data.result.blockReward;
   } catch(error) {
     console.error('BlockPage Etherscan getBlockReward', error);
@@ -37,6 +36,7 @@ export default async function BlockPage(props: Props) {
 
   // let blockAge = getBlockAgeFromDateTimeString(block.timestamp);
   if (blockReward) blockReward = getEtherValueFromWei(blockReward, 4);
+  let finalized = props.number <= finalizedBlock.number;
 
   return (
     <main>
@@ -61,10 +61,10 @@ export default async function BlockPage(props: Props) {
             <p className='flex flex-col md:flex-row'>
               <span className='w-60'>Status:</span>
               {
-              //   block.status ?
-              //     <span className='bg-green-100 text-green-700 border-green-400 border rounded-md p-1 px-4'>Success</span>
-              //     :
-              //     <span className='bg-red-100 text-red-700 border-red-400 border rounded-md p-1 px-4'>Fail</span>
+                finalized ?
+                  <span className='bg-green-100 text-green-700 border-green-400 border rounded-md p-1 px-4'>Finalized</span>
+                  :
+                  <span className='bg-red-100 text-red-700 border-red-400 border rounded-md p-1 px-4'>Unfinalized</span>
               }
             </p>
           </li>
