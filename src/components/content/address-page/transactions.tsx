@@ -1,6 +1,7 @@
 import { Alchemy, AssetTransfersCategory, SortingOrder } from 'alchemy-sdk';
 import { truncateTransaction, truncateAddress, getSecsFromDateTimeString, getBlockAgeFromSecs } from '@/lib/utilities';
 import PopoverLink from '@/components/content/home-page/blocks/popover-link';
+import Link from 'next/link';
 
 
 type Props = {
@@ -113,7 +114,13 @@ export default async function Transactions(props: Props) {
                       Block:&nbsp;
                     </span>
                     <span>
-                      { Number(transaction.blockNum) }
+                      <Link
+                        href={`/${props.network}/block/${+transaction.blockNum}`}
+                        className='text-sky-600 dark:text-blue-300
+                          hover:text-[var(--hover-fg-color)] dark:hover:text-[var(--inverse-bg-color-lighter)]'
+                      >
+                        {+transaction.blockNum}
+                      </Link>
                     </span>
                   </div>
                   <div className='pb-1'>
@@ -213,7 +220,13 @@ export default async function Transactions(props: Props) {
                       />
                     </td>
                     <td className='whitespace-nowrap px-4 py-3'>
-                      { Number(transaction.blockNum) }
+                      <Link
+                          href={`/${props.network}/block/${+transaction.blockNum}`}
+                          className='text-sky-600 dark:text-blue-300
+                            hover:text-[var(--hover-fg-color)] dark:hover:text-[var(--inverse-bg-color-lighter)]'
+                        >
+                          {+transaction.blockNum}
+                        </Link>
                     </td>
                     <td className='whitespace-nowrap px-4 py-3'>
                       { blockAge }

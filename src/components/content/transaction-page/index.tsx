@@ -53,7 +53,15 @@ export default async function TransactionPage(props: Props) {
           <li className='list-disc ml-4 mt-4 m-2'>
             <p className='flex flex-col md:flex-row'>
               <span className='w-60'>Block:</span>
-              <span>{tx.blockNumber}</span>
+              <span>
+              <Link
+                href={`/${props.network}/block/${tx.blockNumber}`}
+                className='text-sky-600 dark:text-blue-300
+                  hover:text-[var(--hover-fg-color)] dark:hover:text-[var(--inverse-bg-color-lighter)]'
+              >
+                {tx.blockNumber}
+              </Link>
+              </span>
             </p>
           </li>
           <div className='ml-4'>
