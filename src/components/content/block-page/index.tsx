@@ -1,6 +1,6 @@
 import { Alchemy, Utils } from 'alchemy-sdk';
 import Link from 'next/link';
-import { getBlockAgeFromDateTimeString, getEtherValueFromWei } from '@/lib/utilities';
+import { getDateFromUnixSecs, getSecsFromUnixSecs, getBlockAgeFromSecs, getEtherValueFromWei } from '@/lib/utilities';
 
 
 type Props = {
@@ -34,9 +34,11 @@ export default async function BlockPage(props: Props) {
     console.error('BlockPage Etherscan getBlockReward', error);
   }
 
-  // let blockAge = getBlockAgeFromDateTimeString(block.timestamp);
+  const blockDate = getDateFromUnixSecs(block.timestamp);
+  const secs = getSecsFromUnixSecs(block.timestamp);
+  const blockAge = getBlockAgeFromSecs(secs);
   if (blockReward) blockReward = getEtherValueFromWei(blockReward, 4);
-  let finalized = props.number <= finalizedBlock.number;
+  const finalized = props.number <= finalizedBlock.number;
 
   return (
     <main>
@@ -71,7 +73,7 @@ export default async function BlockPage(props: Props) {
           <li className='list-disc ml-4 mt-4 m-2'>
             <p className='flex flex-col md:flex-row'>
               <span className='w-60'>Timestamp:</span>
-              <span>{block.timestamp}</span>
+              <span>{blockAge} ago ({blockDate})</span>
             </p>
           </li>
           <li className='list-disc ml-4 mt-4 m-2'>

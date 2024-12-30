@@ -1,6 +1,6 @@
 import { CubeIcon } from '@heroicons/react/24/outline';
 import { Alchemy } from 'alchemy-sdk';
-import { truncateAddress, getEtherValueFromWei } from '@/lib/utilities';
+import { getSecsFromUnixSecs, truncateAddress, getEtherValueFromWei } from '@/lib/utilities';
 import Link from 'next/link';
 import PopoverLink from './popover-link';
 
@@ -40,7 +40,7 @@ export default async function Transactions(props: Props) {
   }
 
   if (block) {
-    secsSinceAdded = Math.round(Date.now() / 1000 - block.timestamp);
+    secsSinceAdded = getSecsFromUnixSecs(block.timestamp);
     recipient = block.miner;
     recipientShort = truncateAddress(recipient, 20);
   }

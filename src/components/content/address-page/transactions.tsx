@@ -1,5 +1,5 @@
 import { Alchemy, AssetTransfersCategory, SortingOrder } from 'alchemy-sdk';
-import { truncateTransaction, truncateAddress, getBlockAgeFromDateTimeString } from '@/lib/utilities';
+import { truncateTransaction, truncateAddress, getSecsFromDateTimeString, getBlockAgeFromSecs } from '@/lib/utilities';
 import PopoverLink from '@/components/content/home-page/blocks/popover-link';
 
 
@@ -83,7 +83,8 @@ export default async function Transactions(props: Props) {
           {
             transactions === undefined ? <p className='text-red-500 py-2'>Error getting transactions.</p> :
             transactions.slice(0, numberOfTransactionsToShow).map((transaction, i) => {
-              const blockAge = getBlockAgeFromDateTimeString(transaction.metadata.blockTimestamp);
+              const secs = getSecsFromDateTimeString(transaction.metadata.blockTimestamp);
+              const blockAge = getBlockAgeFromSecs(secs);
               const amount = transaction.asset === 'ETH' ?
                   `Ξ${transaction.value?.toFixed(8)}`
                   :
@@ -191,7 +192,8 @@ export default async function Transactions(props: Props) {
             {
               transactions === undefined ? <p className='text-red-500 py-2'>Error getting transactions.</p> :
               transactions.slice(0, numberOfTransactionsToShow).map((transaction, i) => {
-                const blockAge = getBlockAgeFromDateTimeString(transaction.metadata.blockTimestamp);
+                const secs = getSecsFromDateTimeString(transaction.metadata.blockTimestamp);
+                const blockAge = getBlockAgeFromSecs(secs);
                 const amount = transaction.asset === 'ETH' ?
                   `Ξ${transaction.value?.toFixed(8)}`
                   :

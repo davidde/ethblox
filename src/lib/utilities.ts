@@ -19,25 +19,35 @@ export function getEtherValueFromWei(wei: BigNumber, decimals: number) {
   return Math.round(+(Utils.formatEther(wei)) * Math.pow(10, decimals)) / Math.pow(10, decimals);
 }
 
-export function getBlockAgeFromDateTimeString(datetime: string) {
-  const blockAgeSecs = Math.round(Date.now()/1000 - Date.parse(datetime)/1000);
+export function getDateFromUnixSecs(secs: number) {
+  return new Date(secs * 1000).toString();
+}
 
+export function getSecsFromUnixSecs(secs: number) {
+  return Math.round(Date.now() / 1000 - secs);
+}
+
+export function getSecsFromDateTimeString(datetime: string) {
+  return Math.round(Date.now()/1000 - Date.parse(datetime)/1000);
+}
+
+export function getBlockAgeFromSecs(secs: number) {
   const secsInMinute = 60;
   const secsInHour = 60 * secsInMinute;
   const secsInDay = secsInHour * 24;
 
   let age, blockAge;
-  if (blockAgeSecs > secsInDay) {
-    age = Math.floor(blockAgeSecs/secsInDay);
+  if (secs > secsInDay) {
+    age = Math.floor(secs/secsInDay);
     blockAge = age > 1 ? `${age} days` : `${age} day`;
-  } else if (blockAgeSecs > secsInHour) {
-    age = Math.floor(blockAgeSecs/secsInHour);
+  } else if (secs > secsInHour) {
+    age = Math.floor(secs/secsInHour);
     blockAge = age > 1 ? `${age} hours` : `${age} hour`;
-  } else if (blockAgeSecs > secsInMinute) {
-    age = Math.floor(blockAgeSecs/secsInMinute);
+  } else if (secs > secsInMinute) {
+    age = Math.floor(secs/secsInMinute);
     blockAge = age > 1 ? `${age} mins` : `${age} min`;
   } else {
-    age = Math.floor(blockAgeSecs);
+    age = Math.floor(secs);
     blockAge = age > 1 ? `${age} secs` : `${age} sec`;
   }
 
