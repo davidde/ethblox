@@ -3,6 +3,7 @@ import { Utils } from 'alchemy-sdk';
 
 export default async function PriceStats() {
   let price, EthSupply, Eth2Staking, BurntFees;
+  let ethSupplyError = false;
 
   while (!price) {
     try {
@@ -17,13 +18,16 @@ export default async function PriceStats() {
     }
   }
 
-  while (!EthSupply) {
+  while (!EthSupply && !ethSupplyError) {
     try {
       const response = await fetch(`https://api.etherscan.io/api?module=stats&action=ethsupply2&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`);
       const data = await response.json();
       ({ EthSupply, Eth2Staking, BurntFees } = data.result);
     } catch(error) {
       console.error('Etherscan Eth Supply Error: ', error);
+      if (error instanceof SyntaxError) { // SyntaxError in json parsing
+        ethSupplyError = true;
+      }
     }
   }
 

@@ -33,7 +33,7 @@ export default async function Transactions(props: Props) {
       const response = await fetch(blockRewardUrl);
       const data = await response.json();
       console.log('data = ', data); // For some reason some blocks return 'No Record Found' ...
-      blockReward = data.result.blockReward;
+      blockReward = data.result?.blockReward;
     } catch(error) {
       console.error('Etherscan getBlockReward', error);
     }
