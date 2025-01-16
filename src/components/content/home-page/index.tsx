@@ -4,6 +4,7 @@ import Searchbar from '@/components/header/searchbar';
 import Blocks from './blocks';
 import Transactions from './transactions';
 import Stats from './stats';
+import NodeBanner from './node-banner';
 
 
 type Props = {
@@ -21,8 +22,8 @@ export default async function HomePage(props: Props) {
   }
 
   return (
-    <main className='flex flex-col min-h-screen p-2 md:p-8'>
-      <div className='w-full md:w-[40rem] mb-4 md:mb-8'>
+    <main className='flex flex-col min-h-screen'>
+      <NodeBanner className='mb-4 md:mb-8'>
         <h1 className='text-xl md:text-2xl font-semibold mb-3'>
           {
             props.network === 'mainnet' ?
@@ -36,7 +37,7 @@ export default async function HomePage(props: Props) {
                       'Ethereum Mainnet' :
                       'Testnet Sepolia' }
         </span>
-      </div>
+      </NodeBanner>
 
       {
         props.network === 'mainnet' ?

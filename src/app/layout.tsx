@@ -21,17 +21,17 @@ export const viewport: Viewport = {
   minimumScale: 1,
 }
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+type Props = {
+  children: React.ReactNode
+}
+
+export default function RootLayout(props: Props) {
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={`${inter.className} bg-[var(--main-bg-color)] text-[var(--main-fg-color)]`} >
         <ThemeProvider attribute="class">
           <Header />
-          {children}
+          {props.children}
           <Footer />
         </ThemeProvider>
       </body>
