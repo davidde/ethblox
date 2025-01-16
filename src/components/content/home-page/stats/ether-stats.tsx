@@ -31,7 +31,7 @@ export default async function PriceStats() {
     }
   }
 
-  let supply = +Utils.formatEther(EthSupply)
+  let supply = ethSupplyError ? null : +Utils.formatEther(EthSupply)
               + (+Utils.formatEther(Eth2Staking))
               - (+Utils.formatEther(BurntFees));
 
