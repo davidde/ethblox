@@ -4,20 +4,10 @@ import { useRef, useEffect } from 'react';
 
 
 type Props = {
-  children: React.ReactNode,
   className: string,
+  bgColor?: string,
+  fgColor?: string,
 }
-
-// Settings:
-const colored = false; // gives nodes random colors when true, nodeColor when false
-const bgColor = "#15172e";
-const nodeColor = "#3f426a"; // Only when colored is false!
-const nodeSize = 3; // node radius in pixels
-const lineWidth = 2; // node connection line width in pixels
-const speed = 0.2; // speed multiplier
-const nodeAmount = 100; // node amount, the more the slower
-const drawLineThreshold = 100; // distance threshold for drawing the lines between nodes; higher = more lines = slower
-const height = 300; // node canvas height
 
 export default function NodeBanner(props: Props) {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -26,8 +16,20 @@ export default function NodeBanner(props: Props) {
   let t = 0; // counter variable
   let nodes: Node[] = []; // node array
   let width: number;
+  let isMobile: boolean;
 
-  // node constructor function
+  // Settings:
+  const colored = false; // gives nodes random colors when true, nodeColor when false
+  const bgColor = props.bgColor ?? '#15172e';
+  const nodeColor = props.fgColor ?? '#3f426a'; // Only when colored is false!
+  const nodeSize = 3; // node radius in pixels
+  const lineWidth = 2; // node connection line width in pixels
+  const speed = 0.2; // speed multiplier
+  let nodeAmount = 100; // node amount, the more the slower
+  let drawLineThreshold = 100; // distance threshold for drawing the lines between nodes; higher = more lines = slower
+  const height = 300; // node canvas height
+
+  // node class and constructor:
   class Node {
     x: number; y: number; id: number;
     speedX: number; speedY: number;
@@ -93,10 +95,31 @@ export default function NodeBanner(props: Props) {
     if (canvas == null) return; // ref is null before render
     const context = canvas.getContext('2d')!;
 
+    setupCanvasWithNodes(context, canvas);
+
+    // run the loop
+    loop(context);
+
+    // resize event listener
+    let onResize = () => setupCanvasWithNodes(context, canvas);
+    window.addEventListener('resize', onResize);
+
+    return () => {
+      window.removeEventListener('resize', onResize);
+    }
+  }, [])
+
+  function setupCanvasWithNodes(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
     width = window.innerWidth; // node canvas width
+    isMobile = width <= 768;
+    nodeAmount = isMobile ? 0.5 * nodeAmount : nodeAmount;
+    drawLineThreshold = isMobile ? 0.7 * drawLineThreshold : drawLineThreshold;
     canvas.width = width;
     canvas.height = height;
     clearCanvas(context);
+
+    // reset the nodes
+    nodes = [];
 
     // generate x random of nodes with random position and push them to the array
     for (var i = 0; i < nodeAmount; i++) {
@@ -109,38 +132,7 @@ export default function NodeBanner(props: Props) {
       nodes[i].move();
       nodes[i].draw();
     }
-
-    // run the loop
-    loop(context);
-
-    // resize event listener
-    let onResize = () => {
-      canvas.width = width;
-      canvas.height = height;
-
-      clearCanvas(context);
-
-      // reset the nodes
-      nodes = [];
-
-      // generate nodes again
-      for (let i = 0; i < nodeAmount; i++) {
-        var node = new Node(randomInt(0, width), randomInt(0, height), i, context);
-        nodes.push(node);
-      }
-
-      // set them up
-      for (var i = 0; i < nodes.length; i++) {
-        nodes[i].move();
-        nodes[i].draw();
-      }
-    }
-    window.addEventListener('resize', onResize);
-
-    return () => {
-      window.removeEventListener('resize', onResize);
-    }
-  }, [])
+  }
 
   // Return random int from min to max inclusive:
   function randomInt(min: number, max: number) {
@@ -247,8 +239,6 @@ export default function NodeBanner(props: Props) {
   }
 
   return (
-    <canvas className={props.className} ref={ref} >
-      {props.children}
-    </canvas>
+    <canvas className={props.className} ref={ref} />
   );
 }
