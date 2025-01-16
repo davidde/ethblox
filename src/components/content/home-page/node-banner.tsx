@@ -15,8 +15,10 @@ export default function NodeBanner(props: Props) {
   let nodePositionArray : [number, number, string][] = []; // indexed by node id, each id containing a sub-array of x, y and color.
   let t = 0; // counter variable
   let nodes: Node[] = []; // node array
-  let width: number;
+  let width: number; // node canvas width
   let isMobile: boolean;
+  let nodeAmount: number;
+  let drawLineThreshold: number;
 
   // Settings:
   const colored = false; // gives nodes random colors when true, nodeColor when false
@@ -25,8 +27,8 @@ export default function NodeBanner(props: Props) {
   const nodeSize = 3; // node radius in pixels
   const lineWidth = 2; // node connection line width in pixels
   const speed = 0.2; // speed multiplier
-  let nodeAmount = 100; // node amount, the more the slower
-  let drawLineThreshold = 100; // distance threshold for drawing the lines between nodes; higher = more lines = slower
+  const nodeAmountMax = 100; // node amount, the more the slower
+  const drawLineThresholdMax = 100; // distance threshold for drawing the lines between nodes; higher = more lines = slower
   const height = 300; // node canvas height
 
   // node class and constructor:
@@ -112,8 +114,8 @@ export default function NodeBanner(props: Props) {
   function setupCanvasWithNodes(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
     width = window.innerWidth; // node canvas width
     isMobile = width <= 768;
-    nodeAmount = isMobile ? 0.5 * nodeAmount : nodeAmount;
-    drawLineThreshold = isMobile ? 0.7 * drawLineThreshold : drawLineThreshold;
+    nodeAmount = isMobile ? 0.5 * nodeAmountMax : nodeAmountMax;
+    drawLineThreshold = isMobile ? 0.7 * drawLineThresholdMax : drawLineThresholdMax;
     canvas.width = width;
     canvas.height = height;
     clearCanvas(context);
