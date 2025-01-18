@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import GithubIcon from './icons/github-icon';
 import BackToTopIcon from './icons/back-to-top-icon';
@@ -16,13 +18,20 @@ export default function Footer() {
           <GithubIcon className='w-6 h-6 inline mr-2' />
           <span className='align-middle'>Source Code</span>
         </Link>
-        <Link
-          href='#'
-          className='hover:text-[var(--hover-fg-color)]'
+        <div
+          onClick={() => {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+                /* you can also use 'auto' behaviour
+             in place of 'smooth' */
+            });
+          }}
+          className='hover:text-[var(--hover-fg-color)] cursor-pointer'
         >
           <span className='align-middle'>Back to Top</span>
           <BackToTopIcon className='w-5 h-5 inline ml-1' />
-        </Link>
+        </div>
       </div>
 
       <div className='pt-6 text-center'>
