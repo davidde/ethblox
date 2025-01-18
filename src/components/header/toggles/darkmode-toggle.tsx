@@ -39,9 +39,9 @@ export default function DarkmodeToggle(props: Props) {
     <button className={props.className} onClick={toggleTheme} >
       {
         resolvedTheme === 'dark' ?
-        <MoonIcon />
-        :
         <SunIcon />
+        :
+        <MoonIcon />
       }
     </button>
   );
