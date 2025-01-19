@@ -46,7 +46,7 @@ export default async function Transactions(props: Props) {
     return (
       <>
         <div className={`basis-full ${showTransactions ? 'hidden' : ''}`} />
-        <div className='mx-4 w-min'>
+        <div className='w-min'>
           <p className='mt-4 text-sm tracking-wider text-[var(--grey-fg-color)]'>
             TRANSACTIONS
           </p>
@@ -64,7 +64,7 @@ export default async function Transactions(props: Props) {
       directly below the Token Holdings. This is done by introducing this invisible extra flex item
       that takes the full width of the container (flex-basis: 100%), so it will sit on its own row. */}
       <div className={`basis-full ${showTransactions ? 'hidden' : ''}`} />
-      <div className='mx-4 w-min'>
+      <div className='w-min'>
         <p className={`mt-4 text-sm tracking-wider text-[var(--grey-fg-color)] ${showTransactions ? 'pb-4 border-b border-[var(--border-color)]' : ''}`}>
           TRANSACTIONS
         </p>

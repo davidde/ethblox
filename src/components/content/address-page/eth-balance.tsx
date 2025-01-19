@@ -36,11 +36,11 @@ export default async function EthBalance(props: Props) {
 
   return (
     <div className='pr-12'>
-      <div className='m-4'>
+      <div className='my-4'>
         <h2 className='text-sm tracking-wider text-[var(--grey-fg-color)]'>ETH BALANCE</h2>
         Ξ{props.ethBalance}
       </div>
-      <div className={`m-4 ${showEthValue}`}>
+      <div className={`my-4 ${showEthValue}`}>
         <h2 className='text-sm tracking-wider text-[var(--grey-fg-color)]'>TOTAL ETH VALUE</h2>
         {
           error ?

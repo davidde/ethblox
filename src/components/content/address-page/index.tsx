@@ -29,8 +29,8 @@ export default async function AddressPage(props: Props) {
   }
 
   return (
-    <main>
-      <div className='mt-0 m-4'>
+    <main className='m-4 mt-8 md:m-8'>
+      <div>
         <p className='text-lg font-bold'>
           Address:
         </p>
@@ -40,7 +40,7 @@ export default async function AddressPage(props: Props) {
       </div>
       {
         badAddress ?
-          <div className='m-4'>This address does not exist.</div>
+          <div>This address does not exist.</div>
           :
           <div className={props.network === 'mainnet' ?
             'flex flex-col md:flex-row flex-wrap'

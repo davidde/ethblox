@@ -30,7 +30,7 @@ export default async function Tokens(props: Props) {
 
   return (
     <div className='pr-12'>
-      <div className={`m-4 ${showTokens}`}>
+      <div className={`my-4 ${showTokens}`}>
         <h2 className='text-sm tracking-wider text-[var(--grey-fg-color)]'>TOKEN HOLDINGS</h2>
         <ul>
           {

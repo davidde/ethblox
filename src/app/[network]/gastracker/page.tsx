@@ -10,8 +10,9 @@ export default async function Page({params} : {params: Promise<{network: string}
   }
 
   let ethPrice, lowGasPrice, averageGasPrice, highGasPrice;
+  let ethPriceError = false;
 
-  while (!ethPrice) {
+  while (!ethPrice && !ethPriceError) {
     try {
       const response = await fetch('https://eth.blockscout.com/api/v2/stats');
       const data = await response.json();
@@ -21,6 +22,9 @@ export default async function Page({params} : {params: Promise<{network: string}
       highGasPrice = +data.gas_prices.fast;
     } catch(error) {
       console.error('Blockscout Gastracker Error: ', error);
+      if (error instanceof SyntaxError) { // SyntaxError in json parsing
+        ethPriceError = true;
+      }
     }
   }
 

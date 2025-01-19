@@ -42,7 +42,7 @@ export default async function BlockPage(props: Props) {
 
   return (
     <main>
-      <div className='mt-0 m-4'>
+      <div className='m-4 mt-8 md:m-8'>
         <h1 className='text-lg font-bold'>
           Block Details
         </h1>
@@ -64,9 +64,9 @@ export default async function BlockPage(props: Props) {
               <span className='w-60'>Status:</span>
               {
                 finalized ?
-                  <span className='bg-green-100 text-green-700 border-green-400 border rounded-md p-1 px-4'>Finalized</span>
+                  <span className='bg-green-100 text-green-700 border-green-400 border rounded-md p-1 px-4 w-[6.4rem]'>Finalized</span>
                   :
-                  <span className='bg-red-100 text-red-700 border-red-400 border rounded-md p-1 px-4'>Unfinalized</span>
+                  <span className='bg-red-100 text-red-700 border-red-400 border rounded-md p-1 px-4 w-[7.6rem]'>Unfinalized</span>
               }
             </p>
           </li>

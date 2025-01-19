@@ -25,8 +25,9 @@ export default async function Stats() {
   }
 
   let totalTransactions, transactionsToday, ethPrice, averageGasPrice;
+  let ethPriceError = false;
 
-  while (!ethPrice) {
+  while (!ethPrice && !ethPriceError) {
     try {
       const response = await fetch('https://eth.blockscout.com/api/v2/stats');
       const data = await response.json();
@@ -36,6 +37,9 @@ export default async function Stats() {
       averageGasPrice = +data.gas_prices.average;
     } catch(error) {
       console.error('Blockscout Transactions Stats Error: ', error);
+      if (error instanceof SyntaxError) { // SyntaxError in json parsing
+        ethPriceError = true;
+      }
     }
   }
 
@@ -68,7 +72,7 @@ export default async function Stats() {
 
   return (
     <div className='border-2 border-[var(--border-color)]
-                    rounded-lg w-full max-w-[80rem] my-4 md:my-8'>
+                    rounded-lg w-full max-w-[75rem] my-4 md:my-8'>
       <div className='flex flex-col md:flex-row justify-between'>
         <div className='w-56 pl-4 py-4'>
           <div className='flex'>
