@@ -44,13 +44,13 @@ export default async function Page({params} : {params: Promise<{network: string}
 
   return (
     <main>
-      <div className='flex flex-col items-center py-4 pr-16'>
-        <div className='flex py-10'>
+      <div className='flex flex-col items-center py-4'>
+        <div className='flex py-10 ml-auto mr-auto'>
           <ChartBarIcon className='w-8 h-8' />
-          <p className='pt-1 pl-4 text-lg tracking-wider'>ETHEREUM GAS TRACKER</p>
+          <p className='pl-4 text-2xl'>Ethereum Gas Tracker</p>
         </div>
         <div className='flex flex-col md:flex-row items-start justify-between w-full max-w-[50rem] mt-2'>
-          <div className='border border-[var(--border-color)] rounded-lg md:px-16 md:py-4'>
+          <div className='border border-[var(--border-color)] rounded-lg px-16 py-4 w-[14.5rem] ml-auto mr-auto'>
             <p className='font-bold'>
               <span className='text-xl mr-2' role="img" aria-label="smiling face with sunglasses">😎</span>
               Low
@@ -58,7 +58,7 @@ export default async function Page({params} : {params: Promise<{network: string}
             <p className='text-lg tracking-wide text-green-600'>{ lowGasPriceGwei } gwei</p>
             <p className='text-sm tracking-wide text-green-600'>(${ lowGasPriceUsd })</p>
           </div>
-          <div className='border border-[var(--border-color)] rounded-lg my-4 md:my-0 md:px-16 md:py-4'>
+          <div className='border border-[var(--border-color)] rounded-lg my-4 md:my-0 px-16 py-4 w-[14.5rem] ml-auto mr-auto'>
             <p className='font-bold'>
               <span className='text-xl mr-2' role="img" aria-label="beaming face with smiling eyes">😁</span>
               Average
@@ -66,7 +66,7 @@ export default async function Page({params} : {params: Promise<{network: string}
             <p className='text-lg tracking-wide text-blue-600'>{ averageGasPriceGwei } gwei</p>
             <p className='text-sm tracking-wide text-blue-600'>(${ averageGasPriceUsd })</p>
           </div>
-          <div className='border border-[var(--border-color)] rounded-lg md:px-16 md:py-4'>
+          <div className='border border-[var(--border-color)] rounded-lg px-16 py-4 w-[14.5rem] ml-auto mr-auto'>
             <p className='font-bold'>
               <span className='text-xl mr-2' role="img" aria-label="flushed face">😳</span>
               High
