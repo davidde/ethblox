@@ -22,7 +22,7 @@ export default async function HomePage(props: Props) {
   }
 
   return (
-    <main className='relative flex flex-col min-h-screen'>
+    <main className='relative'>
       <NodeBanner
         className='relative top-0 left-0 mb-4 md:mb-8'
         bgColor='#15172e'
@@ -47,7 +47,7 @@ export default async function HomePage(props: Props) {
         </span>
       </div>
 
-      <div className='relative -top-24 md:-top-[10.2rem] p-2 md:pl-12 md:pr-0'>
+      <div className='relative -mt-[6rem] md:-mt-[10.2rem] p-2 md:pl-12 md:pr-0'>
         <div className='flex flex-col md:flex-row flex-wrap items-center md:items-start justify-center w-full'>
           {
             props.network === 'mainnet' ?
