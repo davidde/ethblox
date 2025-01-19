@@ -19,6 +19,7 @@ export default function NodeBanner(props: Props) {
   let isMobile: boolean;
   let nodeAmount: number;
   let drawLineThreshold: number;
+  let height: number;
 
   // Settings:
   const colored = false; // gives nodes random colors when true, nodeColor when false
@@ -29,7 +30,7 @@ export default function NodeBanner(props: Props) {
   const speed = 0.2; // speed multiplier
   const nodeAmountMax = 100; // node amount, the more the slower
   const drawLineThresholdMax = 100; // distance threshold for drawing the lines between nodes; higher = more lines = slower
-  const height = 300; // node canvas height
+  const heightMax = 460; // node canvas height
 
   // node class and constructor:
   class Node {
@@ -116,6 +117,7 @@ export default function NodeBanner(props: Props) {
     isMobile = width <= 768;
     nodeAmount = isMobile ? 0.5 * nodeAmountMax : nodeAmountMax;
     drawLineThreshold = isMobile ? 0.7 * drawLineThresholdMax : drawLineThresholdMax;
+    height = isMobile ? 0.75 * heightMax : heightMax;
     canvas.width = width;
     canvas.height = height;
     clearCanvas(context);
