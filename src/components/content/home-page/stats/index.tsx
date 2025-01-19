@@ -91,7 +91,7 @@ export default async function Stats() {
             <p className='pt-2 pl-4 text-xs tracking-wider text-[var(--grey-fg-color)]'>ETHER SUPPLY</p>
           </div>
           <div className='pl-12'>
-            {`Ξ${supplyFormatted}`}
+            { supplyFormatted ? `Ξ${supplyFormatted}` : '' }
           </div>
         </div>
 
@@ -116,9 +116,10 @@ export default async function Stats() {
           </div>
           <Link
             href='/mainnet/gastracker'
-            className='pl-12 hover:text-[var(--hover-fg-color)] dark:hover:text-[var(--inverse-bg-color-lighter)]'
+            className={`pl-12 hover:text-[var(--hover-fg-color)] dark:hover:text-[var(--inverse-bg-color-lighter)] ` +
+                      `${averageGasPriceUsd ? '' : 'hidden'}`}
           >
-            {averageGasPriceGwei} gwei (${averageGasPriceUsd})
+            { averageGasPriceUsd ? `${averageGasPriceGwei} gwei ($${averageGasPriceUsd})` : '' }
           </Link>
         </div>
 
