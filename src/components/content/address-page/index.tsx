@@ -31,9 +31,12 @@ export default async function AddressPage(props: Props) {
   return (
     <main className='m-4 mt-8 md:m-8'>
       <div>
-        <p className='text-lg font-bold'>
-          Address:
-        </p>
+        <h1 className='text-lg font-bold mb-8'>
+          Address Details
+        </h1>
+        <h2 className='text-sm tracking-wider text-[var(--grey-fg-color)]'>
+          ADDRESS
+        </h2>
         <p className='max-w-[90vw] break-words'>
           {props.hash}
         </p>

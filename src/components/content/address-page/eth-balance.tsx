@@ -49,8 +49,7 @@ export default async function EthBalance(props: Props) {
             </div>
             :
             <div>
-              <p>{valueEur}</p>
-              <p>{valueUsd}</p>
+              <p>{valueUsd} ({valueEur})</p>
             </div>
         }
       </div>
