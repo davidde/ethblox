@@ -30,7 +30,7 @@ export default async function HomePage(props: Props) {
       />
 
       <div className='absolute top-10 md:top-20 left-0 md:left-60' >
-        <h1 className='text-white text-xl md:text-4xl font-semibold md:mb-8 p-2 md:p-0 text-pretty'>
+        <h1 className='text-white text-2xl md:text-4xl font-semibold md:mb-8 p-2 md:p-0 text-pretty'>
           {
             props.network === 'mainnet' ?
                       'The Ethereum Blockchain Explorer' :
@@ -48,12 +48,11 @@ export default async function HomePage(props: Props) {
       </div>
 
       <div className='relative p-2 md:p-8'>
-        {
-          props.network === 'mainnet' ?
-          <Stats /> : ''
-        }
-
         <div className='flex flex-col md:flex-row flex-wrap items-center md:items-start w-full'>
+          {
+            props.network === 'mainnet' ?
+            <Stats /> : ''
+          }
           <Blocks
             blockNumber={blockNumber}
             network={props.network}
