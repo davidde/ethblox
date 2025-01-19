@@ -72,7 +72,7 @@ export default async function Stats() {
 
   return (
     <div className='border-2 border-[var(--border-color)]
-                    rounded-lg w-full max-w-[36rem] md:max-w-[75rem] my-4 md:my-8'>
+                    rounded-lg w-full max-w-[36rem] md:max-w-[75rem] my-4 md:my-8 md:mr-12'>
       <div className='flex flex-col md:flex-row justify-between'>
         <div className='w-56 md:w-[calc(100%/3)] pl-4 py-4 md:border-b border-[var(--border-color)]'>
           <div className='flex'>

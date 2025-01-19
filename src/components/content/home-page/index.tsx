@@ -47,11 +47,14 @@ export default async function HomePage(props: Props) {
         </span>
       </div>
 
-      <div className='relative p-2 md:p-8'>
-        <div className='flex flex-col md:flex-row flex-wrap items-center md:items-start w-full'>
+      <div className='relative p-2 md:pl-12 md:pr-0'>
+        <div className='flex flex-col md:flex-row flex-wrap items-center md:items-start justify-center w-full'>
           {
             props.network === 'mainnet' ?
-            <Stats /> : ''
+              <>
+                <Stats />
+                <div className='basis-full h-0' /> {/* Break the following flex item to a new row */}
+              </> : ''
           }
           <Blocks
             blockNumber={blockNumber}
