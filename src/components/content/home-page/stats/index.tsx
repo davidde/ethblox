@@ -37,7 +37,8 @@ export default async function Stats() {
       averageGasPrice = +data.gas_prices.average;
     } catch(error) {
       console.error('Blockscout Transactions Stats Error: ', error);
-      if (error instanceof SyntaxError) { // SyntaxError in json parsing
+      // SyntaxError in json parsing or TypeError due to undefined var:
+      if (error instanceof SyntaxError || error instanceof TypeError) {
         ethPriceError = true;
       }
     }
