@@ -5,12 +5,11 @@ import EthBlox from './ethblox';
 
 export default function Header() {
   return (
-    <section className='w-screen h-[7.5rem] md:h-16 sticky top-0 z-50'>
-        <nav className={`bg-[var(--main-bg-color)] text-[var(--main-fg-color)]` +
-                        ` border-b border-[var(--border-color)]` +
-                        ` flex flex-wrap justify-between items-center` +
-                        ` absolute z-40 w-full py-1.5 px-2 md:px-5 min-h-16`
-        }>
+    <section className='sticky w-screen h-[7.5rem] md:h-16 top-0 z-50
+        bg-[var(--main-bg-color)] text-[var(--main-fg-color)] border-b border-[var(--border-color)]'>
+        <nav className='flex flex-wrap justify-between items-center
+                        absolute z-40 w-full py-1.5 px-2 md:px-5'
+        >
           <EthBlox />
 
           {/* Desktop searchbar: */}

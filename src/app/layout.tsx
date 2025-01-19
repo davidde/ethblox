@@ -28,7 +28,8 @@ type Props = {
 export default function RootLayout(props: Props) {
   return (
     <html lang='en' suppressHydrationWarning>
-      <body className={`${inter.className} bg-[var(--main-bg-color)] text-[var(--main-fg-color)]`} >
+      { /* body CSS see globals.css stylesheet! */ }
+      <body className={`${inter.className}`} >
         <ThemeProvider attribute="class">
           <Header />
           {props.children}
