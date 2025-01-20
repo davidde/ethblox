@@ -11,13 +11,16 @@ export default async function Stats() {
   let EthSupply, Eth2Staking, BurntFees;
   let ethSupplyError = false;
 
+  let ethData, ethResponse;
   while (!EthSupply && !ethSupplyError) {
     try {
-      const response = await fetch(`https://api.etherscan.io/api?module=stats&action=ethsupply2&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`);
-      const data = await response.json();
-      ({ EthSupply, Eth2Staking, BurntFees } = data.result);
+      ethResponse = await fetch(`https://api.etherscan.io/api?module=stats&action=ethsupply2&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`);
+      ethData = await ethResponse.json();
+      ({ EthSupply, Eth2Staking, BurntFees } = ethData.result);
     } catch(error) {
       console.error('Etherscan Eth Supply Error: ', error);
+      console.log('Etherscan response object = ', ethResponse);
+      console.log('Etherscan data object = ', ethData);
       if (error instanceof SyntaxError) { // SyntaxError in json parsing
         ethSupplyError = true;
       }
@@ -27,16 +30,19 @@ export default async function Stats() {
   let totalTransactions, transactionsToday, ethPrice, averageGasPrice;
   let ethPriceError = false;
 
+  let blockscoutData, blockscoutResponse;
   while (!ethPrice && !ethPriceError) {
     try {
-      const response = await fetch('https://eth.blockscout.com/api/v2/stats');
-      const data = await response.json();
-      totalTransactions = (+data.total_transactions).toLocaleString('en-US');
-      transactionsToday = (+data.transactions_today).toLocaleString('en-US');
-      ethPrice = +data.coin_price;
-      averageGasPrice = +data.gas_prices.average;
+      blockscoutResponse = await fetch('https://eth.blockscout.com/api/v2/stats');
+      blockscoutData = await blockscoutResponse.json();
+      totalTransactions = (+blockscoutData.total_transactions).toLocaleString('en-US');
+      transactionsToday = (+blockscoutData.transactions_today).toLocaleString('en-US');
+      ethPrice = +blockscoutData.coin_price;
+      averageGasPrice = +blockscoutData.gas_prices.average;
     } catch(error) {
       console.error('Blockscout Transactions Stats Error: ', error);
+      console.log('Blockscout response object = ', blockscoutResponse);
+      console.log('Blockscout data object = ', blockscoutData);
       // SyntaxError in json parsing or TypeError due to undefined var:
       if (error instanceof SyntaxError || error instanceof TypeError) {
         ethPriceError = true;
