@@ -116,7 +116,7 @@ export default async function Stats() {
           </div>
           <Link
             href='/mainnet/gastracker'
-            className={`pl-12 hover:text-[var(--hover-fg-color)] dark:hover:text-[var(--inverse-bg-color-lighter)] ` +
+            className={`pl-12 text-[var(--link-color)] hover:text-[var(--hover-fg-color)] ` +
                       `${averageGasPriceUsd ? '' : 'hidden'}`}
           >
             { averageGasPriceUsd ? `${averageGasPriceGwei} gwei ($${averageGasPriceUsd})` : '' }

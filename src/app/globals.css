@@ -23,9 +23,9 @@ body {
   --main-fg-color: black;
   --grey-fg-color: rgb(85, 81, 81);
   --border-color: rgb(178, 192, 210);
-  --link-color: rgb(42, 145, 192);
+  --link-color: rgb(2, 132, 199);
   --hover-fg-color: rgb(65, 195, 255);
-  --hover-bg-color: rgb(239 246 255);
+  --hover-bg-color: rgb(239, 246, 255);
   --link-fg-color: rgb(9, 120, 171);
   --inverse-bg-color: rgb(6, 60, 84);
   --inverse-bg-color-lighter: rgb(18, 128, 179);
@@ -37,8 +37,9 @@ body {
   --main-fg-color: rgb(196, 196, 196);
   --grey-fg-color: rgb(156, 151, 151);
   --border-color: rgb(45, 42, 41);
+  --link-color: rgb(29, 182, 233);
   --hover-fg-color: rgb(141, 219, 255);
-  --hover-bg-color: rgb(39 39 42);
+  --hover-bg-color: rgb(39, 39, 42);
   --link-fg-color: rgb(27, 131, 179);
   --inverse-bg-color: rgb(3, 29, 41);
   --inverse-bg-color-lighter: rgb(14, 118, 166);

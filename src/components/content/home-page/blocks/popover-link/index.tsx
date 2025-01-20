@@ -20,8 +20,7 @@ export default function PopoverLink(props: Props) {
   return (
     <Link
       href={props.href}
-      className='relative font-mono w-40 h-8 text-sky-600 dark:text-blue-300
-        hover:text-[var(--hover-fg-color)] dark:hover:text-[var(--inverse-bg-color-lighter)]'
+      className='relative font-mono w-40 h-8 text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >

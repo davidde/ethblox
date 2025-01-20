@@ -55,8 +55,7 @@ export default async function Transactions(props: Props) {
             <span className='px-2 md:px-4 leading-5'>
               <Link
                 href={`/${props.network}/block/${props.blockNumber}`}
-                className='text-sky-600 dark:text-blue-300
-                  hover:text-[var(--hover-fg-color)] dark:hover:text-[var(--inverse-bg-color-lighter)]'
+                className='text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
               >
                 {props.blockNumber}
               </Link>
