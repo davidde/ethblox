@@ -12,7 +12,7 @@ type Props = {
 // `after:bottom-[-1rem]` = - `after:border-t-[1rem]`.
 // And finally, the left & right border-width `after:border-x-[1rem]` controls the angle
 // of the triangle, while left controls the horizontal position: `after:left-1/2`.
-export default function Popover(props: Props) { // from-[var(--inverse-bg-color)] to-[var(--inverse-bg-color-lighter)]
+export default function Popover(props: Props) {
   return (
       <span
         className={`${props.className} ` +

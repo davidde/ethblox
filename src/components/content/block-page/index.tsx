@@ -81,8 +81,7 @@ export default async function BlockPage(props: Props) {
               <span className='w-60'>Fee recipient:</span>
               <Link
                 href={`/${props.network}/address/${block.miner}`}
-                className='font-mono text-sky-600 dark:text-blue-300
-                  hover:text-[var(--hover-fg-color)] dark:hover:text-[var(--inverse-bg-color-lighter)]'
+                className='font-mono text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
               >
                 {block.miner}
               </Link>

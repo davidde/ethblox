@@ -58,8 +58,7 @@ export default async function TransactionPage(props: Props) {
             <span>
               <Link
                 href={`/${props.network}/block/${tx.blockNumber}`}
-                className='text-sky-600 dark:text-blue-300 ml-2 md:ml-0
-                  hover:text-[var(--hover-fg-color)] dark:hover:text-[var(--inverse-bg-color-lighter)]'
+                className='ml-2 md:ml-0 text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
               >
                 {tx.blockNumber}
               </Link>
@@ -83,8 +82,7 @@ export default async function TransactionPage(props: Props) {
             <span className='w-60 pl-2 md:pl-[5.8rem]'>From:</span>
             <Link
               href={`/${props.network}/address/${tx.from}`}
-              className='font-mono text-sky-600 dark:text-blue-300 ml-2 md:ml-0
-                hover:text-[var(--hover-fg-color)] dark:hover:text-[var(--inverse-bg-color-lighter)]'
+              className='font-mono ml-2 md:ml-0 text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
             >
               {tx.from}
             </Link>
@@ -95,8 +93,7 @@ export default async function TransactionPage(props: Props) {
             <span className='w-60 pl-2 md:pl-[7.05rem]'>To:</span>
             <Link
               href={`/${props.network}/address/${tx.to}`}
-              className='font-mono text-sky-600 dark:text-blue-300 ml-2 md:ml-0
-                hover:text-[var(--hover-fg-color)] dark:hover:text-[var(--inverse-bg-color-lighter)]'
+              className='font-mono ml-2 md:ml-0 text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
             >
               {tx.to}
             </Link>

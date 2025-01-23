@@ -116,8 +116,7 @@ export default async function Transactions(props: Props) {
                     <span>
                       <Link
                         href={`/${props.network}/block/${+transaction.blockNum}`}
-                        className='text-sky-600 dark:text-blue-300
-                          hover:text-[var(--hover-fg-color)] dark:hover:text-[var(--inverse-bg-color-lighter)]'
+                        className='text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
                       >
                         {+transaction.blockNum}
                       </Link>
@@ -222,8 +221,7 @@ export default async function Transactions(props: Props) {
                     <td className='whitespace-nowrap px-4 py-3'>
                       <Link
                           href={`/${props.network}/block/${+transaction.blockNum}`}
-                          className='text-sky-600 dark:text-blue-300
-                            hover:text-[var(--hover-fg-color)] dark:hover:text-[var(--inverse-bg-color-lighter)]'
+                          className='text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
                         >
                           {+transaction.blockNum}
                         </Link>
