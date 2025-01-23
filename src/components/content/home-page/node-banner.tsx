@@ -5,8 +5,6 @@ import { useRef, useEffect } from 'react';
 
 type Props = {
   className: string,
-  bgColor?: string,
-  fgColor?: string,
 }
 
 export default function NodeBanner(props: Props) {
@@ -20,11 +18,11 @@ export default function NodeBanner(props: Props) {
   let nodeAmount: number;
   let drawLineThreshold: number;
   let height: number;
+  let bgColor: string;
+  let nodeColor: string;
 
   // Settings:
   const colored = false; // gives nodes random colors when true, nodeColor when false
-  const bgColor = props.bgColor ?? '#15172e';
-  const nodeColor = props.fgColor ?? '#3f426a'; // Only when colored is false!
   const nodeSize = 3; // node radius in pixels
   const lineWidth = 2; // node connection line width in pixels
   const speed = 0.2; // speed multiplier
@@ -97,6 +95,9 @@ export default function NodeBanner(props: Props) {
     const canvas = ref.current;
     if (canvas == null) return; // ref is null before render
     const context = canvas.getContext('2d')!;
+
+    bgColor = window.getComputedStyle(document.body).getPropertyValue('--contrast-bg-color');
+    nodeColor = window.getComputedStyle(document.body).getPropertyValue('--contrast-fg-color');
 
     setupCanvasWithNodes(context, canvas);
 

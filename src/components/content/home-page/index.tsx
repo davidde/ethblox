@@ -23,11 +23,7 @@ export default async function HomePage(props: Props) {
 
   return (
     <main className='relative'>
-      <NodeBanner
-        className='relative top-0 left-0 mb-4 md:mb-8'
-        bgColor='#15172e'
-        fgColor='#3f426a'
-      />
+      <NodeBanner className='relative top-0 left-0 mb-4 md:mb-8' />
 
       <div className='absolute top-10 md:top-20 left-0 md:left-60' >
         <h1 className='ml-2 text-white text-2xl md:text-4xl font-semibold md:mb-8 p-2 md:p-0 text-pretty'>
