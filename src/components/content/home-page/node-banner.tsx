@@ -251,13 +251,13 @@ export default function NodeBanner(props: Props) {
       } : null;
   }
 
-  // convert from hex string to rgb number
+  // convert from rgb() string to rgb number
   function rgbToRgbNum(rgb: string) {
     var result = /^rgb\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)$/i.exec(rgb);
     return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
+        r: parseInt(result[1]),
+        g: parseInt(result[2]),
+        b: parseInt(result[3])
     } : null;
 }
 
