@@ -168,9 +168,17 @@ export default function NodeBanner(props: Props) {
 
         // if distance is greater than the threshold, draw the lines
         if (dist < drawLineThreshold) {
-          var finalOpacity = map_range(dist, 0, drawLineThreshold, 1, 0);
-          var rgbValues = hexToRgb(nodePositionArray[i][2]);
-          var color = 'rgba(' + rgbValues!.r + ',' + rgbValues!.g + ',' + rgbValues!.b + ',' + finalOpacity + ')';
+          let finalOpacity = map_range(dist, 0, drawLineThreshold, 1, 0);
+          let currentNodeColor = nodePositionArray[i][2];
+          let rgbValues;
+
+          if (currentNodeColor.startsWith('rgb')) {
+            rgbValues = rgbToRgbNum(currentNodeColor);
+          } else {
+            rgbValues = hexToRgbNum(currentNodeColor);
+          }
+
+          let color = 'rgba(' + rgbValues!.r + ',' + rgbValues!.g + ',' + rgbValues!.b + ',' + finalOpacity + ')';
 
           context.strokeStyle = color;
           line(x1, y1, x2, y2, context);
@@ -233,8 +241,8 @@ export default function NodeBanner(props: Props) {
     return !(n % 2);
   }
 
-  //convert from hex to rgb
-  function hexToRgb(hex: string) {
+  // convert from hex string to rgb number
+  function hexToRgbNum(hex: string) {
       var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
       return result ? {
           r: parseInt(result[1], 16),
@@ -242,6 +250,16 @@ export default function NodeBanner(props: Props) {
           b: parseInt(result[3], 16)
       } : null;
   }
+
+  // convert from hex string to rgb number
+  function rgbToRgbNum(rgb: string) {
+    var result = /^rgb\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)$/i.exec(rgb);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
 
   return (
     <canvas className={props.className} ref={ref} />
