@@ -20,15 +20,16 @@ export default function NodeBanner(props: Props) {
   let height: number;
   let bgColor: string;
   let nodeColor: string;
+  let lineColor: string;
 
   // Settings:
   const colored = false; // gives nodes random colors when true, nodeColor when false
-  const nodeSize = 3; // node radius in pixels
+  const nodeSize = 3; // medium node radius in pixels
   const lineWidth = 2; // node connection line width in pixels
   const speed = 0.2; // speed multiplier
   const nodeAmountMax = 100; // node amount, the more the slower
   const drawLineThresholdMax = 100; // distance threshold for drawing the lines between nodes; higher = more lines = slower
-  const heightMax = 460; // node canvas height
+  const heightMax = 460; // node canvas height in pixels
 
   // node class and constructor:
   class Node {
@@ -96,8 +97,9 @@ export default function NodeBanner(props: Props) {
     if (canvas == null) return; // ref is null before render
     const context = canvas.getContext('2d')!;
 
-    bgColor = window.getComputedStyle(document.body).getPropertyValue('--contrast-bg-color');
-    nodeColor = window.getComputedStyle(document.body).getPropertyValue('--contrast-fg-color');
+    bgColor = window.getComputedStyle(document.body).getPropertyValue('--banner-bg-color');
+    nodeColor = window.getComputedStyle(document.body).getPropertyValue('--banner-node-color');
+    lineColor = window.getComputedStyle(document.body).getPropertyValue('--banner-line-color');
 
     setupCanvasWithNodes(context, canvas);
 
@@ -157,7 +159,7 @@ export default function NodeBanner(props: Props) {
       var y1 = nodePositionArray[i][1];
 
       // this sub-loop is made to avoid drawing the nodes twice, which leads to consume more cpu and spoils the opacity effect
-      for (var j = 0; j < nodePositionArray.length - (i + 1); j++){
+      for (var j = 0; j < nodePositionArray.length - (i + 1); j++) {
 
         // get the destination point
         var x2 = nodePositionArray[j + i + 1][0];
@@ -169,13 +171,14 @@ export default function NodeBanner(props: Props) {
         // if distance is greater than the threshold, draw the lines
         if (dist < drawLineThreshold) {
           let finalOpacity = map_range(dist, 0, drawLineThreshold, 1, 0);
-          let currentNodeColor = nodePositionArray[i][2];
           let rgbValues;
 
-          if (currentNodeColor.startsWith('rgb')) {
-            rgbValues = rgbToRgbNum(currentNodeColor);
+          if (colored) lineColor = nodePositionArray[i][2];
+
+          if (lineColor.startsWith('rgb')) {
+            rgbValues = rgbToRgbNum(lineColor);
           } else {
-            rgbValues = hexToRgbNum(currentNodeColor);
+            rgbValues = hexToRgbNum(lineColor);
           }
 
           let color = 'rgba(' + rgbValues!.r + ',' + rgbValues!.g + ',' + rgbValues!.b + ',' + finalOpacity + ')';

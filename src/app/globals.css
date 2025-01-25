@@ -22,8 +22,9 @@ body {
   --main-bg-color: rgb(250, 250, 252);
   --main-fg-color: black;
   --comp-bg-color: rgb(235, 238, 244);
-  --contrast-bg-color: rgb(213, 218, 231);
-  --contrast-fg-color: rgb(131, 116, 178);
+  --banner-bg-color: rgb(213, 218, 231);
+  --banner-node-color: rgb(131, 116, 178);
+  --banner-line-color: rgb(99, 102, 255);
   --grey-fg-color: rgb(85, 81, 81);
   --border-color: rgb(178, 192, 210);
   --link-color: rgb(2, 132, 199);
@@ -36,8 +37,9 @@ body {
   --main-bg-color: black;
   --main-fg-color: rgb(196, 196, 196);
   --comp-bg-color: black;
-  --contrast-bg-color: rgb(21, 23, 46);
-  --contrast-fg-color: rgb(63, 66, 106);
+  --banner-bg-color: rgb(21, 23, 46);
+  --banner-node-color: rgb(63, 66, 106);
+  --banner-line-color: rgb(99, 102, 255);
   --grey-fg-color: rgb(156, 151, 151);
   --border-color: rgb(45, 42, 41);
   --link-color: rgb(29, 182, 233);
