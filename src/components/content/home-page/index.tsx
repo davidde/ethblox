@@ -23,7 +23,7 @@ export default async function HomePage(props: Props) {
 
   return (
     <main className='relative'>
-      <NodeBanner className='relative top-0 left-0 mb-4 md:mb-8' />
+      <NodeBanner className='relative top-0 left-0' />
 
       <div className='absolute top-10 md:top-20 left-0 md:left-60' >
         <h1 className='ml-2 text-2xl md:text-4xl font-semibold md:mb-8 p-2 md:p-0 text-pretty'>
@@ -43,7 +43,7 @@ export default async function HomePage(props: Props) {
         </span>
       </div>
 
-      <div className='relative -mt-[6rem] md:-mt-[10.2rem] p-2 md:pl-12 md:pr-0'>
+      <div className='relative -mt-[5rem] md:-mt-[8.2rem] p-2 md:pl-12 md:pr-0'>
         <div className='flex flex-col md:flex-row flex-wrap items-center md:items-start justify-center w-full'>
           {
             props.network === 'mainnet' ?
