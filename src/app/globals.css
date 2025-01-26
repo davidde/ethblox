@@ -37,9 +37,9 @@ body {
   --main-bg-color: black;
   --main-fg-color: rgb(196, 196, 196);
   --comp-bg-color: black;
-  --banner-bg-color: rgb(21, 23, 46);
-  --banner-node-color: rgb(63, 66, 106);
-  --banner-line-color: rgb(99, 102, 255);
+  --banner-bg-color: rgb(0, 13, 3);
+  --banner-node-color: rgb(20, 66, 23);
+  --banner-line-color: rgb(68, 134, 90);
   --grey-fg-color: rgb(156, 151, 151);
   --border-color: rgb(45, 42, 41);
   --link-color: rgb(29, 182, 233);
