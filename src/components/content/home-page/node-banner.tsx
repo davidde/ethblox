@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useEffect } from 'react';
+import { useTheme } from 'next-themes';
 
 
 type Props = {
@@ -21,6 +22,7 @@ export default function NodeBanner(props: Props) {
   let bgColor: string;
   let nodeColor: string;
   let lineColor: string;
+  const { resolvedTheme } = useTheme();
 
   // Settings:
   const colored = false; // gives nodes random colors when true, nodeColor when false
@@ -97,23 +99,22 @@ export default function NodeBanner(props: Props) {
     if (canvas == null) return; // ref is null before render
     const context = canvas.getContext('2d')!;
 
-    bgColor = window.getComputedStyle(document.body).getPropertyValue('--banner-bg-color');
-    nodeColor = window.getComputedStyle(document.body).getPropertyValue('--banner-node-color');
-    lineColor = window.getComputedStyle(document.body).getPropertyValue('--banner-line-color');
+    // Wait 1 millisec in order for CSS vars to be updated on theme switch;
+    // otherwise it appears to use the CSS vars of the old theme that was switched away from!
+    setTimeout(() => {
+      bgColor = window.getComputedStyle(document.documentElement).getPropertyValue('--banner-bg-color');
+      nodeColor = window.getComputedStyle(document.documentElement).getPropertyValue('--banner-node-color');
+      lineColor = window.getComputedStyle(document.documentElement).getPropertyValue('--banner-line-color');
 
-    setupCanvasWithNodes(context, canvas);
-
-    // run the loop
-    loop(context);
+      setupCanvasWithNodes(context, canvas);
+      loop(context);
+    }, 1);
 
     // resize event listener
     let onResize = () => setupCanvasWithNodes(context, canvas);
     window.addEventListener('resize', onResize);
-
-    return () => {
-      window.removeEventListener('resize', onResize);
-    }
-  }, [])
+    return () => window.removeEventListener('resize', onResize);
+  }, [resolvedTheme])
 
   function setupCanvasWithNodes(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
     width = window.innerWidth; // node canvas width
@@ -182,7 +183,7 @@ export default function NodeBanner(props: Props) {
     }
   }
 
-  // loop function
+  // loop function to animate the canvas
   function loop(context: CanvasRenderingContext2D) {
     // reset canvas
     clearCanvas(context);
