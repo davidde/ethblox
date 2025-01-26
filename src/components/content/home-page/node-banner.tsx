@@ -171,16 +171,8 @@ export default function NodeBanner(props: Props) {
         // if distance is greater than the threshold, draw the lines
         if (dist < drawLineThreshold) {
           let finalOpacity = map_range(dist, 0, drawLineThreshold, 1, 0);
-          let rgbValues;
-
           if (colored) lineColor = nodePositionArray[i][2];
-
-          if (lineColor.startsWith('rgb')) {
-            rgbValues = rgbToRgbNum(lineColor);
-          } else {
-            rgbValues = hexToRgbNum(lineColor);
-          }
-
+          let rgbValues = lineColor.startsWith('rgb') ? rgbToRgbNum(lineColor) : hexToRgbNum(lineColor);
           let color = 'rgba(' + rgbValues!.r + ',' + rgbValues!.g + ',' + rgbValues!.b + ',' + finalOpacity + ')';
 
           context.strokeStyle = color;
@@ -236,7 +228,7 @@ export default function NodeBanner(props: Props) {
 
   // range a numbers given a value and two ranges
   function map_range(value: number, low1: number, high1: number, low2: number, high2: number) {
-      return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
   }
 
   // check if n is even
@@ -246,12 +238,12 @@ export default function NodeBanner(props: Props) {
 
   // convert from hex string to rgb number
   function hexToRgbNum(hex: string) {
-      var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-      return result ? {
-          r: parseInt(result[1], 16),
-          g: parseInt(result[2], 16),
-          b: parseInt(result[3], 16)
-      } : null;
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
   }
 
   // convert from rgb() string to rgb number
@@ -262,7 +254,7 @@ export default function NodeBanner(props: Props) {
         g: parseInt(result[2]),
         b: parseInt(result[3])
     } : null;
-}
+  }
 
   return (
     <canvas className={props.className} ref={ref} />
