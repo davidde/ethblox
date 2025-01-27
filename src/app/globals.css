@@ -23,13 +23,16 @@ body {
   --main-fg-color: black;
   --comp-bg-color: rgb(235, 238, 244);
   --banner-bg-color: rgb(213, 218, 231);
-  --banner-node-color: rgb(131, 116, 178);
-  --banner-line-color: rgb(99, 102, 255);
+  --banner-node-color: rgb(164, 150, 209);
+  --banner-line-color: rgb(131, 133, 255);
   --grey-fg-color: rgb(85, 81, 81);
   --border-color: rgb(178, 192, 210);
-  --link-color: rgb(2, 132, 199);
-  --hover-fg-color: rgb(65, 195, 255);
-  --hover-bg-color: rgb(239, 246, 255);
+  --link-color: rgb(87, 41, 238);
+  --hover-fg-color: rgb(143, 109, 255);
+  --hover-bg-color: rgb(225, 217, 253);
+  --gradient-from-color: rgb(92, 39, 249);
+  --gradient-via-color: rgb(123, 60, 195);
+  --gradient-to-color: rgb(185, 94, 230);
   --eth-logo-url: url(/images/ethereum-logo-dark.svg);
 }
 
@@ -45,6 +48,9 @@ body {
   --link-color: rgb(29, 182, 233);
   --hover-fg-color: rgb(141, 219, 255);
   --hover-bg-color: rgb(39, 39, 42);
+  --gradient-from-color: rgb(87, 41, 238);
+  --gradient-via-color: rgb(123, 60, 195);
+  --gradient-to-color: rgb(153, 122, 255);
   --eth-logo-url: url(/images/ethereum-logo-light.svg);
 }
 

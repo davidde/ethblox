@@ -46,7 +46,7 @@ export default function Search(props: Props) {
         value={searchTerm}
         onChange={e => setSearchTerm(e.target.value.trim())}
         className='block w-full h-10 rounded-lg p-2
-                    focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-black/25
+                    focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-[--hover-fg-color]
                     bg-[var(--main-bg-color)] border-2 border-[var(--border-color)]'
       />
       <Button

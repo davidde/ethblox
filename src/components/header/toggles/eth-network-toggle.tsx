@@ -39,8 +39,8 @@ export default function EthNetworkToggle(props: Props) {
         <MenuItem
           as='div'
           className={`m-2 rounded cursor-pointer
-                    data-[focus]:bg-[var(--hover-bg-color)]
-                    ${sepolia ? `` : `text-[var(--hover-fg-color)]`}`}
+                    data-[focus]:text-[var(--link-color)]
+                    ${sepolia ? `` : `bg-[var(--hover-bg-color)]`}`}
         >
           {({ close }) => (
             <Link href='/mainnet' onClick={close}>
@@ -52,8 +52,8 @@ export default function EthNetworkToggle(props: Props) {
         <MenuItem
           as='div'
           className={`m-2 rounded cursor-pointer
-                    data-[focus]:bg-[var(--hover-bg-color)]
-                    ${sepolia ? `text-[var(--hover-fg-color)]` : ``}`}
+                    data-[focus]:text-[var(--link-color)]
+                    ${sepolia ? `bg-[var(--hover-bg-color)]` : ``}`}
         >
           {({ close }) => (
             <Link href='/sepolia' onClick={close}>

@@ -12,7 +12,8 @@ export default function EthBlox() {
     <div>
       <Link
         href='/mainnet'
-        className='text-3xl font-mono hover:text-[var(--hover-fg-color)]'
+        className='bg-gradient-to-r from-[--gradient-from-color] via-[--gradient-via-color] to-[--gradient-to-color]
+                   bg-clip-text text-transparent text-3xl font-mono font-bold hover:text-[var(--hover-fg-color)]'
       >
         ΞthBlox
       </Link>

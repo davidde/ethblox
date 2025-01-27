@@ -26,7 +26,8 @@ export default async function HomePage(props: Props) {
       <NodeBanner className='relative top-0 left-0' />
 
       <div className='absolute top-10 md:top-20 left-0 md:left-60' >
-        <h1 className='ml-2 text-2xl md:text-4xl font-semibold md:mb-8 p-2 md:p-0 text-pretty'>
+        <h1 className='bg-gradient-to-r from-[--gradient-from-color] via-[--gradient-via-color] to-[--gradient-to-color]
+                       bg-clip-text text-transparent text-3xl md:text-5xl font-bold md:mb-8 p-2 md:p-0 ml-2 text-pretty'>
           {
             props.network === 'mainnet' ?
                       'The Ethereum Blockchain Explorer' :
@@ -36,7 +37,7 @@ export default async function HomePage(props: Props) {
 
         <Searchbar className='w-full md:w-[50vw] md:mb-2 p-2 md:p-0' />
 
-        <span className='ml-2 md:ml-8 text-base font-light text-slate-400 p-2 md:p-0'>
+        <span className='ml-2 md:ml-8 text-base font-light text-[--grey-fg-color] p-2 md:p-0'>
           Network: { props.network === 'mainnet' ?
                       'Ethereum Mainnet' :
                       'Testnet Sepolia' }
