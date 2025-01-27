@@ -41,6 +41,7 @@ export default async function Transactions(props: Props) {
   }
 
   const showTransactions = transactions && transactions.length !== 0;
+  const numberOfTransactions = transactions && transactions.length < numberOfTransactionsToShow ? transactions.length : numberOfTransactionsToShow;
 
   if (txError) {
     return (
@@ -71,7 +72,12 @@ export default async function Transactions(props: Props) {
         {
           showTransactions ?
             <p className='pl-8 text-sm tracking-wider py-3 border-b border-[var(--border-color)]'>
-              {`Showing latest ${numberOfTransactionsToShow} of ${totalTransactions} transactions`}
+              {
+                numberOfTransactions > 1 ?
+                `Showing latest ${numberOfTransactions} external transactions of ${totalTransactions} transactions total`
+                :
+                `Showing last external transaction of ${totalTransactions} transactions total`
+              }
             </p>
             :
             <p>
