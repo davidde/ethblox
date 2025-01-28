@@ -17,7 +17,7 @@ export default function Popover(props: Props) {
       <span
         className={`${props.className} ` +
           `absolute rounded-lg text-[0.8rem] ` +
-          `bg-gradient-to-t from-[--gradient-from-color] to-[--gradient-to-color] text-[var(--main-bg-color)] dark:text-[var(--main-fg-color)] ` +
+          `bg-gradient-to-t from-[--gradient-from-color] to-[--gradient-to-color] text-white ` +
           `after:content-[''] after:block after:absolute after:w-0 after:left-[48%] ` +
           `after:bottom-[-.5rem] after:border-t-[.5rem] after:border-x-[0.5rem] after:border-b-[0rem] ` +
           `after:border-solid after:border-y-[--gradient-from-color] after:border-x-transparent`

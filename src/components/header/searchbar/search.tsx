@@ -46,13 +46,15 @@ export default function Search(props: Props) {
         value={searchTerm}
         onChange={e => setSearchTerm(e.target.value.trim())}
         className='block w-full h-10 rounded-lg p-2
-                    focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-[--hover-fg-color]
-                    bg-[var(--main-bg-color)] border-2 border-[var(--border-color)]'
+                    focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2
+                    data-[focus]:outline-[--hover-fg-color] dark:data-[focus]:outline-[--link-color]
+                    bg-[var(--main-bg-color)] border-2 border-[var(--border-color)] dark:placeholder-[#364236]'
       />
       <Button
         type='submit'
         className='w-11 h-10 leading-8 align-middle text-center rounded-lg ml-4
-                    bg-[var(--border-color)] hover:bg-[var(--hover-fg-color)] text-[var(--main-bg-color)]'
+                    bg-[var(--border-color)] hover:bg-[var(--hover-fg-color)] text-[var(--main-bg-color)]
+                    dark:text-[var(--link-color)] hover:dark:text-[white]'
       >
         <MagnifyingGlassIcon
           className='inline-block w-6 h-6 text-center'
