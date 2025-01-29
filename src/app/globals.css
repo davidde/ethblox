@@ -27,8 +27,8 @@ body {
   --banner-line-color: rgb(131, 133, 255);
   --grey-fg-color: rgb(85, 81, 81);
   --border-color: rgb(178, 192, 210);
-  --link-color: rgb(87, 41, 238);
-  --hover-fg-color: rgb(143, 109, 255);
+  --link-color: rgb(131, 78, 216);
+  --hover-fg-color: rgb(173, 102, 236);
   --hover-bg-color: rgb(225, 217, 253);
   --gradient-from-color: rgb(92, 39, 249);
   --gradient-via-color: rgb(123, 60, 195);
@@ -37,9 +37,9 @@ body {
 }
 
 .dark {
-  --main-bg-color: rgb(1, 8, 2);
+  --main-bg-color: black;
   --main-fg-color: rgb(158, 165, 158);
-  --comp-bg-color: black;
+  --comp-bg-color: rgb(1, 8, 2);
   --banner-bg-color: rgb(0, 13, 3);
   --banner-node-color: rgb(20, 66, 23);
   --banner-line-color: rgb(68, 134, 90);

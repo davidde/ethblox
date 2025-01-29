@@ -28,7 +28,7 @@ export default function NodeBanner(props: Props) {
   const colored = false; // gives nodes random colors when true, nodeColor when false
   const nodeSize = 3; // medium node radius in pixels
   const lineWidth = 2; // node connection line width in pixels
-  const speed = 0.2; // speed multiplier
+  let speed = 0.2; // speed multiplier
   const nodeAmountMax = 100; // node amount, the more the slower
   const drawLineThresholdMax = 100; // distance threshold for drawing the lines between nodes; higher = more lines = slower
   const heightMax = 460; // node canvas height in pixels
@@ -119,8 +119,9 @@ export default function NodeBanner(props: Props) {
   function setupCanvasWithNodes(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
     width = window.innerWidth; // node canvas width
     isMobile = width <= 768;
-    nodeAmount = isMobile ? 0.5 * nodeAmountMax : nodeAmountMax;
-    drawLineThreshold = isMobile ? 0.7 * drawLineThresholdMax : drawLineThresholdMax;
+    nodeAmount = isMobile ? 1/3 * nodeAmountMax : nodeAmountMax;
+    drawLineThreshold = isMobile ? 2/3 * drawLineThresholdMax : drawLineThresholdMax;
+    speed = isMobile ? 2/3 * speed : speed;
     height = isMobile ? 0.75 * heightMax : heightMax;
     canvas.width = width;
     canvas.height = height;

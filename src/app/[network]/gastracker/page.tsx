@@ -15,11 +15,13 @@ export default async function Page({params} : {params: Promise<{network: string}
   while (!ethPrice && !ethPriceError) {
     try {
       const response = await fetch('https://eth.blockscout.com/api/v2/stats');
-      const data = await response.json();
-      ethPrice = +data.coin_price;
-      lowGasPrice = +data.gas_prices.slow;
-      averageGasPrice = +data.gas_prices.average;
-      highGasPrice = +data.gas_prices.fast;
+      if (response.status === 200) {
+        const data = await response.json();
+        ethPrice = +data.coin_price;
+        lowGasPrice = +data.gas_prices.slow;
+        averageGasPrice = +data.gas_prices.average;
+        highGasPrice = +data.gas_prices.fast;
+      }
     } catch(error) {
       console.error('Blockscout Gastracker Error: ', error);
       // SyntaxError in json parsing or TypeError due to undefined var:

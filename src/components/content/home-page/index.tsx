@@ -27,7 +27,7 @@ export default async function HomePage(props: Props) {
 
       <div className='absolute top-10 md:top-20 left-0 md:left-60' >
         <h1 className='bg-gradient-to-r from-[--gradient-from-color] via-[--gradient-via-color] to-[--gradient-to-color]
-                       bg-clip-text text-transparent text-3xl md:text-5xl font-bold md:mb-8 p-2 md:p-0 ml-2 text-pretty'>
+                       bg-clip-text text-transparent text-4xl md:text-5xl font-bold md:mb-8 p-2 md:p-0 ml-2 text-pretty'>
           {
             props.network === 'mainnet' ?
                       'The Ethereum Blockchain Explorer' :

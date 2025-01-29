@@ -34,11 +34,13 @@ export default async function Stats() {
   while (!ethPrice && !ethPriceError) {
     try {
       blockscoutResponse = await fetch('https://eth.blockscout.com/api/v2/stats');
-      blockscoutData = await blockscoutResponse.json();
-      totalTransactions = (+blockscoutData.total_transactions).toLocaleString('en-US');
-      transactionsToday = (+blockscoutData.transactions_today).toLocaleString('en-US');
-      ethPrice = +blockscoutData.coin_price;
-      averageGasPrice = +blockscoutData.gas_prices.average;
+      if (blockscoutResponse.status === 200) {
+        blockscoutData = await blockscoutResponse.json();
+        totalTransactions = (+blockscoutData.total_transactions).toLocaleString('en-US');
+        transactionsToday = (+blockscoutData.transactions_today).toLocaleString('en-US');
+        ethPrice = +blockscoutData.coin_price;
+        averageGasPrice = +blockscoutData.gas_prices.average;
+      }
     } catch(error) {
       console.error('Blockscout Transactions Stats Error: ', error);
       console.log('Blockscout response object = ', blockscoutResponse);
