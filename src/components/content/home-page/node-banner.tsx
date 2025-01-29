@@ -120,9 +120,9 @@ export default function NodeBanner(props: Props) {
   function setupCanvasWithNodes(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
     width = window.innerWidth; // node canvas width
     isMobile = width <= 768;
-    nodeAmount = isMobile ? 1/3 * nodeAmountMax : nodeAmountMax;
-    drawLineThreshold = isMobile ? 9/10 * drawLineThresholdMax : drawLineThresholdMax;
-    speed = isMobile ? 3/4 * speedMultiplier : speedMultiplier;
+    nodeAmount = isMobile ? Math.floor(0.4 * nodeAmountMax) : nodeAmountMax;
+    drawLineThreshold = isMobile ? 0.9 * drawLineThresholdMax : drawLineThresholdMax;
+    speed = isMobile ? 0.7 * speedMultiplier : speedMultiplier;
     height = isMobile ? 0.75 * heightMax : heightMax;
     canvas.width = width;
     canvas.height = height;
@@ -130,6 +130,7 @@ export default function NodeBanner(props: Props) {
 
     // reset the nodes
     nodes = [];
+    nodePositionArray = [];
 
     // generate x random of nodes with random position and push them to the array
     for (var i = 0; i < nodeAmount; i++) {
