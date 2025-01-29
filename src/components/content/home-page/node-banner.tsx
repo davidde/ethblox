@@ -22,13 +22,14 @@ export default function NodeBanner(props: Props) {
   let bgColor: string;
   let nodeColor: string;
   let lineColor: string;
+  let speed: number;
   const { resolvedTheme } = useTheme();
 
   // Settings:
   const colored = false; // gives nodes random colors when true, nodeColor when false
   const nodeSize = 3; // medium node radius in pixels
   const lineWidth = 2; // node connection line width in pixels
-  let speed = 0.2; // speed multiplier
+  const speedMultiplier = 0.2; // speed multiplier
   const nodeAmountMax = 100; // node amount, the more the slower
   const drawLineThresholdMax = 100; // distance threshold for drawing the lines between nodes; higher = more lines = slower
   const heightMax = 460; // node canvas height in pixels
@@ -120,8 +121,8 @@ export default function NodeBanner(props: Props) {
     width = window.innerWidth; // node canvas width
     isMobile = width <= 768;
     nodeAmount = isMobile ? 1/3 * nodeAmountMax : nodeAmountMax;
-    drawLineThreshold = isMobile ? 2/3 * drawLineThresholdMax : drawLineThresholdMax;
-    speed = isMobile ? 2/3 * speed : speed;
+    drawLineThreshold = isMobile ? 9/10 * drawLineThresholdMax : drawLineThresholdMax;
+    speed = isMobile ? 3/4 * speedMultiplier : speedMultiplier;
     height = isMobile ? 0.75 * heightMax : heightMax;
     canvas.width = width;
     canvas.height = height;
