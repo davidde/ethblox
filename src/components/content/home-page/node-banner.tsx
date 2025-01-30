@@ -10,30 +10,28 @@ type Props = {
 
 export default function NodeBanner(props: Props) {
   const ref = useRef<HTMLCanvasElement>(null);
+  const { resolvedTheme } = useTheme();
 
-  let t = 0; // counter variable
   let nodes: Node[] = []; // node array
-  let width: number; // node canvas width
-  let isMobile: boolean;
+  let width: number; // node canvas width in pixels
+  let height: number; // node canvas height in pixels
   let nodeAmount: number;
   let drawLineThreshold: number;
-  let height: number;
+  let speed: number;
   let bgColor: string;
   let nodeColor: string;
   let lineColor: string;
-  let speed: number;
-  const { resolvedTheme } = useTheme();
 
   // Settings:
   const colored = false; // gives nodes random colors when true, nodeColor when false
   const nodeSize = 3; // medium node radius in pixels
   const lineWidth = 2; // node connection line width in pixels
   const speedMultiplier = 0.2; // speed multiplier
-  const nodeAmountMax = 100; // node amount, the more the slower
-  const drawLineThresholdMax = 100; // distance threshold for drawing the lines between nodes; higher = more lines = slower
-  const heightMax = 460; // node canvas height in pixels
+  const nodeAmountMax = 100; // node amount on desktop, will be less on mobile; the more the slower
+  const drawLineThresholdMax = 100; // distance threshold for drawing the lines between nodes on desktop; higher = more lines = slower
+  const heightMax = 460; // node canvas height in pixels on desktop, will be smaller on mobile
 
-  // node class and constructor:
+  // Node class and constructor:
   class Node {
     x: number; y: number; id: number;
     speedX: number; speedY: number;
@@ -47,7 +45,7 @@ export default function NodeBanner(props: Props) {
       this.y = y;
       this.id = id;
 
-      // if the node id is even, start moving them in the opposite direction
+      // If the node id is even, start moving them in the opposite direction:
       if (isEven(id)) {
         this.speedX = randomInt(1, 100)/100 * speed;
         this.speedY = randomInt(1, 100)/100 * speed;
@@ -58,16 +56,16 @@ export default function NodeBanner(props: Props) {
 
       this.size = nodeSize;
 
-      // color array for random color setting:
+      // Color array for random color setting:
       const colors = ['#4f91f9', '#a7f94f', '#f94f4f', '#f9f74f', '#8930ff', '#fc4edf', '#ff9c51'];
-      // set random color from array:
+      // Set random color from array if colored is true:
       this.color = colored ? colors[Math.floor(Math.random() * colors.length)] : nodeColor;
 
       this.move = function() {
         this.y += this.speedY;
         this.x += this.speedX;
 
-        // make them bounce
+        // Make them bounce:
         if (this.y < 1 || this.y > height - nodeSize * 2) {
           this.speedY = - this.speedY;
         }
@@ -76,7 +74,7 @@ export default function NodeBanner(props: Props) {
         }
       };
 
-      // draw the nodes
+      // Draw the nodes:
       this.draw = function() {
         context.fillStyle = this.color;
         // Create some variation in node sizes:
@@ -107,16 +105,16 @@ export default function NodeBanner(props: Props) {
       loop(context);
     }, 1);
 
-    // resize event listener
+    // Resize event listener:
     let onResize = () => setupCanvasWithNodes(context, canvas);
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, [resolvedTheme])
 
   function setupCanvasWithNodes(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
-    width = window.innerWidth; // node canvas width
-    isMobile = width <= 768;
-    nodeAmount = isMobile ? Math.floor(0.5 * nodeAmountMax) : nodeAmountMax;
+    width = window.innerWidth; // Set node canvas width
+    let isMobile = width <= 768;
+    nodeAmount = isMobile ? Math.floor(0.4 * nodeAmountMax) : nodeAmountMax;
     drawLineThreshold = isMobile ? 0.9 * drawLineThresholdMax : drawLineThresholdMax;
     speed = isMobile ? 0.7 * speedMultiplier : speedMultiplier;
     height = isMobile ? 0.75 * heightMax : heightMax;
@@ -124,16 +122,16 @@ export default function NodeBanner(props: Props) {
     canvas.height = height;
     clearCanvas(context);
 
-    // Reset the nodes
+    // Reset the nodes:
     nodes = [];
 
-    // generate x random of nodes with random position and push them to the array
+    // Generate 'nodeAmount' number of nodes with random positions and push them to the nodes array:
     for (var i = 0; i < nodeAmount; i++) {
       var node = new Node(randomInt(0, width), randomInt(0, height), i, context);
       nodes.push(node);
     }
 
-    // Set them nodes up!
+    // Set the nodes up:
     for (var i = 0; i < nodes.length; i++){
       nodes[i].move();
       nodes[i].draw();
@@ -145,11 +143,13 @@ export default function NodeBanner(props: Props) {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
+  // Clear the canvas from nodes and lines:
   function clearCanvas(context: CanvasRenderingContext2D) {
     context.fillStyle = bgColor;
     context.fillRect(0, 0, width, height);
   }
 
+  // Draw the lines between the nodes:
   function drawLines(context: CanvasRenderingContext2D) {
     for (var i = 0; i < nodes.length; i++) {
       // Get the origin point:
@@ -179,35 +179,30 @@ export default function NodeBanner(props: Props) {
     }
   }
 
-  // loop function to animate the canvas
+  // Loop function to animate the canvas:
   function loop(context: CanvasRenderingContext2D) {
-    // reset canvas
     clearCanvas(context);
 
-    // draw the lines
-    drawLines(context);
-
-    // move each node and draw it
+    // Move each node and draw it:
     for (var i = 0; i < nodes.length; i++){
       nodes[i].move();
       nodes[i].draw();
     }
 
-    // repeat loop
-    requestAnimationFrame(() => loop(context));
+    drawLines(context); // Draw lines again
 
-    // increase counter
-    t++;
+    // Repeat loop:
+    requestAnimationFrame(() => loop(context));
   }
 
-  // circle function (draws circle given x, y and radius)
+  // Draw circle given x, y and radius:
   function circle(x: number, y: number, radius: number, context: CanvasRenderingContext2D) {
     context.beginPath();
     context.arc(x, y, radius, 0, 2 * Math.PI);
     context.closePath();
   }
 
-  // line function (draws line given a set of two points(as x1, y1, x2, y2))
+  // Draw line given a set of two points (as x1, y1, x2 and y2):
   function line(x1: number, y1: number, x2: number, y2: number, context: CanvasRenderingContext2D){
     context.lineWidth = lineWidth;
     context.beginPath();
@@ -216,24 +211,24 @@ export default function NodeBanner(props: Props) {
     context.stroke();
   }
 
-  // calculate the distance between two points
+  // Calculate the distance between two points:
   function distance(x1: number, x2: number, y1: number, y2: number){
     var xDist = x2 - x1;
     var yDist = y2 - y1;
     return Math.sqrt(xDist * xDist + yDist * yDist);
   }
 
-  // range a numbers given a value and two ranges
+  // range a numbers given a value and two ranges:
   function map_range(value: number, low1: number, high1: number, low2: number, high2: number) {
     return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
   }
 
-  // check if n is even
+  // Check if n is even:
   function isEven(n: number) {
     return !(n % 2);
   }
 
-  // convert from hex string to rgb number
+  // Convert from hex string to rgb number:
   function hexToRgbNum(hex: string) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? {
@@ -243,7 +238,7 @@ export default function NodeBanner(props: Props) {
     } : null;
   }
 
-  // convert from rgb() string to rgb number
+  // Convert from rgb() string to rgb number:
   function rgbToRgbNum(rgb: string) {
     var result = /^rgb\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)$/i.exec(rgb);
     return result ? {
