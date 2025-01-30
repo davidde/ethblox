@@ -103,7 +103,7 @@ export default function NodeBanner(props: Props) {
       lineColor = window.getComputedStyle(document.documentElement).getPropertyValue('--banner-line-color');
 
       setupCanvasWithNodes();
-      loop();
+      requestAnimationFrame(loop); // Set up loop
     }, 1);
 
     // Resize event listener:
@@ -121,7 +121,6 @@ export default function NodeBanner(props: Props) {
     height = isMobile ? 0.75 * heightMax : heightMax;
     canvas.width = width;
     canvas.height = height;
-    clearCanvas();
 
     // Reset the nodes:
     nodes = [];
@@ -130,12 +129,6 @@ export default function NodeBanner(props: Props) {
     for (var i = 0; i < nodeAmount; i++) {
       var node = new Node(randomInt(0, width), randomInt(0, height), i);
       nodes.push(node);
-    }
-
-    // Set the nodes up:
-    for (var i = 0; i < nodes.length; i++){
-      nodes[i].move();
-      nodes[i].draw();
     }
   }
 
@@ -148,6 +141,14 @@ export default function NodeBanner(props: Props) {
   function clearCanvas() {
     context.fillStyle = bgColor;
     context.fillRect(0, 0, width, height);
+  }
+
+  // Move each node and draw it:
+  function moveNodes() {
+    for (let i = 0; i < nodes.length; i++) {
+      nodes[i].move();
+      nodes[i].draw();
+    }
   }
 
   // Draw the lines between the nodes:
@@ -183,14 +184,8 @@ export default function NodeBanner(props: Props) {
   // Loop function to animate the canvas:
   function loop() {
     clearCanvas();
-
-    // Move each node and draw it:
-    for (var i = 0; i < nodes.length; i++) {
-      nodes[i].move();
-      nodes[i].draw();
-    }
-
-    drawLines(); // Draw lines again
+    moveNodes();
+    drawLines();
     requestAnimationFrame(loop); // Repeat loop
   }
 
