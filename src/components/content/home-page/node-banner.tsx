@@ -10,8 +10,7 @@ type Props = {
 
 export default function NodeBanner(props: Props) {
   const ref = useRef<HTMLCanvasElement>(null);
-  // node position array for drawing the lines:
-  let nodePositionArray : [number, number, string][] = []; // indexed by node id, each id containing a sub-array of x, y and color.
+
   let t = 0; // counter variable
   let nodes: Node[] = []; // node array
   let width: number; // node canvas width
@@ -75,9 +74,6 @@ export default function NodeBanner(props: Props) {
         if (this.x < 1 || this.x > width - nodeSize * 2) {
           this.speedX = - this.speedX;
         }
-
-        // push the position and color to the array for drawing the lines
-        nodePositionArray[this.id] = [this.x, this.y, this.color];
       };
 
       // draw the nodes
@@ -120,7 +116,7 @@ export default function NodeBanner(props: Props) {
   function setupCanvasWithNodes(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
     width = window.innerWidth; // node canvas width
     isMobile = width <= 768;
-    nodeAmount = isMobile ? Math.floor(0.4 * nodeAmountMax) : nodeAmountMax;
+    nodeAmount = isMobile ? Math.floor(0.5 * nodeAmountMax) : nodeAmountMax;
     drawLineThreshold = isMobile ? 0.9 * drawLineThresholdMax : drawLineThresholdMax;
     speed = isMobile ? 0.7 * speedMultiplier : speedMultiplier;
     height = isMobile ? 0.75 * heightMax : heightMax;
@@ -128,9 +124,8 @@ export default function NodeBanner(props: Props) {
     canvas.height = height;
     clearCanvas(context);
 
-    // reset the nodes
+    // Reset the nodes
     nodes = [];
-    nodePositionArray = [];
 
     // generate x random of nodes with random position and push them to the array
     for (var i = 0; i < nodeAmount; i++) {
@@ -138,7 +133,7 @@ export default function NodeBanner(props: Props) {
       nodes.push(node);
     }
 
-    // set them nodes up! (for initializing the nodePositionArray)
+    // Set them nodes up!
     for (var i = 0; i < nodes.length; i++){
       nodes[i].move();
       nodes[i].draw();
@@ -156,26 +151,24 @@ export default function NodeBanner(props: Props) {
   }
 
   function drawLines(context: CanvasRenderingContext2D) {
-    for (var i = 0; i < nodePositionArray.length - 1; i++) {
+    for (var i = 0; i < nodes.length; i++) {
+      // Get the origin point:
+      var x1 = nodes[i].x;
+      var y1 = nodes[i].y;
 
-      // get the origin point
-      var x1 = nodePositionArray[i][0];
-      var y1 = nodePositionArray[i][1];
+      // Get the destination point in a subloop that only loops the remaining nodes, to avoid duplicate lines:
+      for (var j = i; j < nodes.length; j++) {
+        // Get the destination point:
+        var x2 = nodes[j].x;
+        var y2 = nodes[j].y;
 
-      // this sub-loop is made to avoid drawing the nodes twice, which leads to consume more cpu and spoils the opacity effect
-      for (var j = 0; j < nodePositionArray.length - (i + 1); j++) {
-
-        // get the destination point
-        var x2 = nodePositionArray[j + i + 1][0];
-        var y2 = nodePositionArray[j + i + 1][1];
-
-        // calculate distance between the origin and target points
+        // Calculate the distance between the origin and target points:
         var dist = distance(x1, x2, y1, y2);
 
-        // if distance is greater than the threshold, draw the lines
+        // If the distance is less than the threshold, draw the lines:
         if (dist < drawLineThreshold) {
           let finalOpacity = map_range(dist, 0, drawLineThreshold, 1, 0);
-          if (colored) lineColor = nodePositionArray[i][2];
+          if (colored) lineColor = nodes[i].color;
           let rgbValues = lineColor.startsWith('rgb') ? rgbToRgbNum(lineColor) : hexToRgbNum(lineColor);
           let color = 'rgba(' + rgbValues!.r + ',' + rgbValues!.g + ',' + rgbValues!.b + ',' + finalOpacity + ')';
 
