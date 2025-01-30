@@ -167,7 +167,7 @@ export default function NodeBanner(props: Props) {
 
         // If the distance is less than the threshold, draw the lines:
         if (dist < drawLineThreshold) {
-          let finalOpacity = map_range(dist, 0, drawLineThreshold, 1, 0);
+          let finalOpacity = 1 - (dist / drawLineThreshold);
           if (colored) lineColor = nodes[i].color;
           let rgbValues = lineColor.startsWith('rgb') ? rgbToRgbNum(lineColor) : hexToRgbNum(lineColor);
           let color = 'rgba(' + rgbValues!.r + ',' + rgbValues!.g + ',' + rgbValues!.b + ',' + finalOpacity + ')';
@@ -216,11 +216,6 @@ export default function NodeBanner(props: Props) {
     var xDist = x2 - x1;
     var yDist = y2 - y1;
     return Math.sqrt(xDist * xDist + yDist * yDist);
-  }
-
-  // range a numbers given a value and two ranges:
-  function map_range(value: number, low1: number, high1: number, low2: number, high2: number) {
-    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
   }
 
   // Check if n is even:
