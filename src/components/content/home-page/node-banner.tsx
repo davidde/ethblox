@@ -55,7 +55,9 @@ export default function NodeBanner(props: Props) {
         this.speedY = randomInt(1, 100)/100 * speed * -1;
       }
 
-      this.size = nodeSize;
+      // Create some variation in node sizes:
+      this.size = this.id > Math.floor(nodeAmount * 0.75) ? nodeSize + 1.5 :
+                  this.id <= Math.floor(nodeAmount * 0.25) ? nodeSize - 1 : nodeSize;
 
       // Color array for random color setting:
       const colors = ['#4f91f9', '#a7f94f', '#f94f4f', '#f9f74f', '#8930ff', '#fc4edf', '#ff9c51'];
@@ -67,10 +69,10 @@ export default function NodeBanner(props: Props) {
         this.x += this.speedX;
 
         // Make them bounce:
-        if (this.y < 1 || this.y > height - nodeSize * 2) {
+        if (this.y < this.size || this.y > height - this.size) {
           this.speedY = - this.speedY;
         }
-        if (this.x < 1 || this.x > width - nodeSize * 2) {
+        if (this.x < this.size || this.x > width - this.size) {
           this.speedX = - this.speedX;
         }
       };
@@ -78,13 +80,7 @@ export default function NodeBanner(props: Props) {
       // Draw the nodes:
       this.draw = function() {
         context.fillStyle = this.color;
-        // Create some variation in node sizes:
-        if (this.id <= Math.floor(nodeAmount * 0.25))
-          circle(this.x, this.y, nodeSize - 1);
-        else if (this.id > Math.floor(nodeAmount * 0.75))
-          circle(this.x, this.y, nodeSize + 1.5);
-        else
-          circle(this.x, this.y, nodeSize);
+        circle(this.x, this.y, this.size);
         context.fill();
       };
     }
