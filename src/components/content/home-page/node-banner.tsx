@@ -153,28 +153,29 @@ export default function NodeBanner(props: Props) {
 
   // Draw the lines between the nodes:
   function drawLines() {
-    for (var i = 0; i < nodes.length; i++) {
+    // Get the rgb values for the color of the line:
+    let rgbValues = lineColor.startsWith('rgb') ? rgbToRgbNums(lineColor) : hexToRgbNums(lineColor);
+
+    for (let i = 0; i < nodes.length; i++) {
+      if (colored) rgbValues = nodes[i].color.startsWith('rgb') ? rgbToRgbNums(nodes[i].color) : hexToRgbNums(nodes[i].color);
+
       // Get the origin point:
-      var x1 = nodes[i].x;
-      var y1 = nodes[i].y;
+      let x1 = nodes[i].x;
+      let y1 = nodes[i].y;
 
       // Get the destination point in a subloop that only loops the remaining nodes, to avoid duplicate lines:
-      for (var j = i; j < nodes.length; j++) {
+      for (let j = i+1; j < nodes.length; j++) {
         // Get the destination point:
-        var x2 = nodes[j].x;
-        var y2 = nodes[j].y;
+        let x2 = nodes[j].x;
+        let y2 = nodes[j].y;
 
         // Calculate the distance between the origin and target points:
-        var dist = distance(x1, x2, y1, y2);
+        let dist = distance(x1, x2, y1, y2);
 
         // If the distance is less than the threshold, draw the lines:
         if (dist < drawLineThreshold) {
           let finalOpacity = 1 - (dist / drawLineThreshold);
-          if (colored) lineColor = nodes[i].color;
-          let rgbValues = lineColor.startsWith('rgb') ? rgbToRgbNum(lineColor) : hexToRgbNum(lineColor);
-          let color = 'rgba(' + rgbValues!.r + ',' + rgbValues!.g + ',' + rgbValues!.b + ',' + finalOpacity + ')';
-
-          context.strokeStyle = color;
+          context.strokeStyle = `rgba(${rgbValues!.r}, ${rgbValues!.g}, ${rgbValues!.b}, ${finalOpacity})`;
           line(x1, y1, x2, y2);
         }
       }
@@ -211,7 +212,7 @@ export default function NodeBanner(props: Props) {
   }
 
   // Convert from hex string to rgb number:
-  function hexToRgbNum(hex: string) {
+  function hexToRgbNums(hex: string) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? {
         r: parseInt(result[1], 16),
@@ -221,7 +222,7 @@ export default function NodeBanner(props: Props) {
   }
 
   // Convert from rgb() string to rgb number:
-  function rgbToRgbNum(rgb: string) {
+  function rgbToRgbNums(rgb: string) {
     var result = /^rgb\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)$/i.exec(rgb);
     return result ? {
         r: parseInt(result[1]),
