@@ -39,7 +39,6 @@ export default function NodeBanner(props: Props) {
     size: number;
     color: string;
     move: () => void;
-    draw: () => void;
 
     constructor(x: number, y: number, id: number) {
       this.x = x;
@@ -64,6 +63,7 @@ export default function NodeBanner(props: Props) {
       // Set random color from array if colored is true:
       this.color = colored ? colors[Math.floor(Math.random() * colors.length)] : nodeColor;
 
+      // Move the nodes and draw them:
       this.move = function() {
         this.y += this.speedY;
         this.x += this.speedX;
@@ -75,10 +75,8 @@ export default function NodeBanner(props: Props) {
         if (this.x < this.size || this.x > width - this.size) {
           this.speedX = - this.speedX;
         }
-      };
 
-      // Draw the nodes:
-      this.draw = function() {
+        // Draw the nodes:
         context.fillStyle = this.color;
         circle(this.x, this.y, this.size);
         context.fill();
@@ -133,20 +131,6 @@ export default function NodeBanner(props: Props) {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
-  // Clear the canvas from nodes and lines:
-  function clearCanvas() {
-    context.fillStyle = bgColor;
-    context.fillRect(0, 0, width, height);
-  }
-
-  // Move each node and draw it:
-  function moveNodes() {
-    for (let i = 0; i < nodes.length; i++) {
-      nodes[i].move();
-      nodes[i].draw();
-    }
-  }
-
   // Draw the lines between the nodes:
   function drawLines() {
     // Get the rgb values for the color of the line:
@@ -168,7 +152,7 @@ export default function NodeBanner(props: Props) {
         // Calculate the distance between the origin and target points:
         let dist = distance(x1, x2, y1, y2);
 
-        // If the distance is less than the threshold, draw the lines:
+        // If the distance is less than the threshold, draw the line:
         if (dist < drawLineThreshold) {
           let finalOpacity = 1 - (dist / drawLineThreshold);
           context.strokeStyle = `rgba(${rgbValues!.r}, ${rgbValues!.g}, ${rgbValues!.b}, ${finalOpacity})`;
@@ -180,10 +164,15 @@ export default function NodeBanner(props: Props) {
 
   // Loop function to animate the canvas:
   function loop() {
-    clearCanvas();
-    moveNodes();
+    // Clear the canvas from nodes and lines:
+    context.fillStyle = bgColor;
+    context.fillRect(0, 0, width, height);
+    // Move all nodes:
+    for (let i = 0; i < nodes.length; i++) nodes[i].move();
+    // Draw the lines again:
     drawLines();
-    requestAnimationFrame(loop); // Repeat loop
+    // Repeat the loop:
+    requestAnimationFrame(loop);
   }
 
   // Draw circle given x, y and radius:
