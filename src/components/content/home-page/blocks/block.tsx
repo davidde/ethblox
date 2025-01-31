@@ -11,7 +11,7 @@ type Props = {
   alchemy: Alchemy
 }
 
-export default async function Transactions(props: Props) {
+export default async function Block(props: Props) {
   const blockRewardUrl = props.network === 'mainnet' ?
     `https://eth.blockscout.com/api?module=block&action=getblockreward&blockno=${props.blockNumber}`
     :

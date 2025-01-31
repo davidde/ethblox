@@ -9,7 +9,7 @@ type Props = {
   network: string
 }
 
-export default async function Transactions(props: Props) {
+export default async function Transaction(props: Props) {
   const transactionHash = props.transaction.hash;
   const transactionHashShort = truncateTransaction(props.transaction.hash, 18);
   const amount = getEtherValueFromWei(props.transaction.value, 6);

@@ -2,9 +2,13 @@
 import { Alchemy } from 'alchemy-sdk';
 import Searchbar from '@/components/header/searchbar';
 import Blocks from './blocks';
+import BlocksSkeleton from './blocks/blocks-skeleton';
 import Transactions from './transactions';
+import TransactionsSkeleton from './transactions/transactions-skeleton';
 import Stats from './stats';
+import StatsSkeleton from './stats/stats-skeleton';
 import NodeBanner from './node-banner';
+import { Suspense } from 'react';
 
 
 type Props = {
@@ -49,20 +53,26 @@ export default async function HomePage(props: Props) {
           {
             props.network === 'mainnet' ?
               <>
-                <Stats />
+                <Suspense fallback={<StatsSkeleton />}>
+                  <Stats />
+                </Suspense>
                 <div className='basis-full h-0' /> {/* Break the following flex item to a new row */}
               </> : ''
           }
-          <Blocks
-            blockNumber={blockNumber}
-            network={props.network}
-            alchemy={props.alchemy}
-          />
-          <Transactions
-            blockNumber={blockNumber}
-            network={props.network}
-            alchemy={props.alchemy}
-          />
+          <Suspense fallback={<BlocksSkeleton />}>
+            <Blocks
+              blockNumber={blockNumber}
+              network={props.network}
+              alchemy={props.alchemy}
+            />
+          </Suspense>
+          <Suspense fallback={<TransactionsSkeleton />}>
+            <Transactions
+              blockNumber={blockNumber}
+              network={props.network}
+              alchemy={props.alchemy}
+            />
+          </Suspense>
         </div>
       </div>
     </main>
