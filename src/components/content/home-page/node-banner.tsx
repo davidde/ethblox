@@ -9,6 +9,15 @@ type Props = {
 }
 
 export default function NodeBanner(props: Props) {
+  // Settings:
+  const colored = false; // gives nodes random colors when true, nodeColor when false
+  const nodeSize = 3; // medium node radius in pixels
+  const lineWidth = 2; // node connection line width in pixels
+  const speedMultiplier = 0.2; // speed multiplier
+  const nodeAmountMax = 100; // node amount on desktop, will be less on mobile; the more the slower
+  const drawLineThresholdMax = 100; // distance threshold for drawing the lines between nodes on desktop; higher = more lines = slower
+  const heightMax = 460; // node canvas height in pixels on desktop, will be smaller on mobile
+
   const { resolvedTheme } = useTheme();
   const ref = useRef<HTMLCanvasElement>(null);
   let canvas: HTMLCanvasElement | null;
@@ -22,15 +31,6 @@ export default function NodeBanner(props: Props) {
   let bgColor: string;
   let nodeColor: string;
   let lineColor: string;
-
-  // Settings:
-  const colored = false; // gives nodes random colors when true, nodeColor when false
-  const nodeSize = 3; // medium node radius in pixels
-  const lineWidth = 2; // node connection line width in pixels
-  const speedMultiplier = 0.2; // speed multiplier
-  const nodeAmountMax = 100; // node amount on desktop, will be less on mobile; the more the slower
-  const drawLineThresholdMax = 100; // distance threshold for drawing the lines between nodes on desktop; higher = more lines = slower
-  const heightMax = 460; // node canvas height in pixels on desktop, will be smaller on mobile
 
   // Node class and constructor:
   class Node {
@@ -217,6 +217,8 @@ export default function NodeBanner(props: Props) {
   }
 
   return (
-    <canvas className={props.className} ref={ref} />
+    <div className={`${props.className} w-full h-[345px] md:h-[460px] bg-[var(--banner-bg-color)]`} >
+      <canvas className={props.className} ref={ref} />
+    </div>
   );
 }
