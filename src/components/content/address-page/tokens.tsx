@@ -35,12 +35,17 @@ export default async function Tokens(props: Props) {
         {
           realTokens === undefined ? <p className='text-red-500'>Error getting tokens.</p> :
           realTokens.length === 0 ? '/' :
-            realTokens.map((token, i) =>
-              <li key={i} className='ml-4 list-disc text-[var(--grey-fg-color)]'>
-                <span className='text-[var(--main-fg-color)]'>
-                  {`${token.symbol}: ${parseFloat(parseFloat(token.balance ?? '0').toFixed(8))} (${token.name})`}
-                </span>
-              </li>)
+            realTokens.map((token, i) => {
+              let balance = parseFloat(token.balance ?? '0').toFixed(8);
+              balance = balance.includes('.') && balance.endsWith('0') ? parseFloat(balance).toString() : balance;
+              return (
+                <li key={i} className='ml-4 list-disc text-[var(--grey-fg-color)]'>
+                  <span className='text-[var(--main-fg-color)]'>
+                    {`${token.symbol}: ${balance} (${token.name})`}
+                  </span>
+                </li>
+              );
+            })
         }
       </ul>
     </div>
