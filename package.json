@@ -1,7 +1,23 @@
 {
-  "name": "blockexplorer_nextjs",
-  "version": "0.1.0",
-  "private": true,
+  "name": "ethblox",
+  "description": "Ethereum Blockchain Explorer",
+  "author": "David Deprost",
+  "version": "1.0.0",
+  "keywords": [
+    "ethereum",
+    "blockchain",
+    "block-explorer",
+    "alchemy-sdk",
+    "typescript",
+    "react",
+    "nextjs",
+    "tailwindcss"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/davidde/ethblox"
+  },
   "scripts": {
     "dev": "next dev -p 3005",
     "build": "next build",
