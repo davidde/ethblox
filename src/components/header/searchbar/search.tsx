@@ -12,8 +12,9 @@ type Props = {
 }
 
 export default function Search(props: Props) {
-  const searchParams = useSearchParams();
-  const [searchTerm, setSearchTerm] = useState(searchParams.get('query') ?? '');
+  // Read the current URL's query string:
+  const searchParams = useSearchParams(); // returns a read-only version of the URLSearchParams interface
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('query')?.toString());
 
   const pathname = usePathname();
   const network = pathname.split('/')[1];
@@ -21,6 +22,7 @@ export default function Search(props: Props) {
 
   const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // Create URLSearchParams object to access utility methods to work with the query string of a URL:
     const params = new URLSearchParams(searchParams);
 
     if (searchTerm) {
