@@ -41,10 +41,14 @@ export default async function TransactionPage(props: Props) {
             {
               txReceipt ?
                 txReceipt.status ?
-                  <span className='bg-green-100 text-green-700 border-green-400 border rounded-md p-1 px-4 w-[6.4rem] ml-4 md:ml-0'>
+                  <span className='bg-green-200 text-green-700 border-green-400
+                              dark:bg-green-400 dark:text-green-800 dark:border-green-800
+                              border rounded-md p-1 px-4 w-[6.4rem] ml-4 md:ml-0'>
                     Success
                   </span> :
-                  <span className='bg-red-100 text-red-700 border-red-400 border rounded-md p-1 px-4 w-[5rem] ml-4 md:ml-0'>
+                  <span className='bg-red-200 text-red-700 border-red-400
+                              dark:bg-red-500 dark:text-red-100 dark:border-red-300
+                              border rounded-md p-1 px-4 w-[5rem] ml-4 md:ml-0'>
                     Fail
                   </span>
                 :
