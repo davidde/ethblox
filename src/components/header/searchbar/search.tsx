@@ -19,10 +19,7 @@ export default function Search(props: Props) {
   const pathname = usePathname();
   const network = pathname.split('/')[1];
 
-  let router: any;
-  if (navigator.onLine && document.visibilityState === 'visible') {
-    router = useRouter();
-  }
+  const router = useRouter();
 
   const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -32,15 +29,21 @@ export default function Search(props: Props) {
     if (searchTerm) {
       if (isAddress(searchTerm)) {
         params.delete('query');
-        router.push(`/${network}/address/${searchTerm}`);
+        if (navigator.onLine && document.visibilityState === 'visible') {
+          router.push(`/${network}/address/${searchTerm}`);
+        }
         setSearchTerm('');
       } else {
         params.set('query', searchTerm);
-        router.replace(`${pathname}?${params.toString()}`);
+        if (navigator.onLine && document.visibilityState === 'visible') {
+          router.replace(`${pathname}?${params.toString()}`);
+        }
       }
     } else {
       params.delete('query');
-      router.replace(`${pathname}`);
+      if (navigator.onLine && document.visibilityState === 'visible') {
+        router.replace(`${pathname}`);
+      }
     }
   }
 
