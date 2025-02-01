@@ -1,10 +1,8 @@
-import { Utils } from 'alchemy-sdk';
 import { CurrencyDollarIcon } from '@heroicons/react/24/outline';
 import { GlobeAltIcon } from '@heroicons/react/24/outline';
 import { Square3Stack3DIcon } from '@heroicons/react/24/outline';
 import { FireIcon } from '@heroicons/react/24/outline';
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
 
 
 export default function StatsSkeleton() {
@@ -18,7 +16,7 @@ export default function StatsSkeleton() {
             <p className='pt-2 pl-4 text-xs tracking-wider text-[var(--grey-fg-color)]'>ETHER PRICE</p>
           </div>
           <div className='pl-12'>
-
+            &nbsp;
           </div>
         </div>
 
@@ -28,7 +26,7 @@ export default function StatsSkeleton() {
             <p className='pt-2 pl-4 text-xs tracking-wider text-[var(--grey-fg-color)]'>ETHER SUPPLY</p>
           </div>
           <div className='pl-12'>
-
+            &nbsp;
           </div>
         </div>
 
@@ -39,7 +37,7 @@ export default function StatsSkeleton() {
               <p className='pt-2 pl-4 text-xs tracking-wider text-[var(--grey-fg-color)]'>ETHER MARKET CAP</p>
             </div>
             <div className='pl-12'>
-
+              &nbsp;
             </div>
           </div>
         </div>
@@ -51,7 +49,7 @@ export default function StatsSkeleton() {
           <FireIcon className='w-8 h-8' />
             <p className='pt-2 pl-4 text-xs tracking-wider text-[var(--grey-fg-color)]'>AVERAGE GAS PRICE</p>
           </div>
-
+            &nbsp;
         </div>
 
         <div className='w-56 md:w-[calc(100%/3)] pl-4 md:pl-[calc(100%/18)] pt-4 md:py-4 md:border-x border-[var(--border-color)]'>
@@ -60,7 +58,7 @@ export default function StatsSkeleton() {
             <p className='pt-2 pl-4 text-xs tracking-wider text-[var(--grey-fg-color)]'>TRANSACTIONS TODAY</p>
           </div>
           <div className='pl-12'>
-
+            &nbsp;
           </div>
         </div>
 
@@ -71,7 +69,7 @@ export default function StatsSkeleton() {
               <p className='pt-2 pl-4 text-xs tracking-wider text-[var(--grey-fg-color)]'>TOTAL TRANSACTIONS</p>
             </div>
             <div className='pl-12'>
-
+              &nbsp;
             </div>
           </div>
         </div>
