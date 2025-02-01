@@ -1,4 +1,3 @@
-import { Utils } from 'alchemy-sdk';
 import { CurrencyDollarIcon } from '@heroicons/react/24/outline';
 import { GlobeAltIcon } from '@heroicons/react/24/outline';
 import { Square3Stack3DIcon } from '@heroicons/react/24/outline';
@@ -8,20 +7,20 @@ import Link from 'next/link';
 
 
 export default async function Stats() {
-  let EthSupply, Eth2Staking, BurntFees;
+  let ethSupply;
   let ethSupplyError = false;
 
-  let ethData, ethResponse;
-  while (!EthSupply && !ethSupplyError) {
+  while (!ethSupply && !ethSupplyError) {
     try {
-      ethResponse = await fetch(`https://api.etherscan.io/api?module=stats&action=ethsupply2&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`);
-      ethData = await ethResponse.json();
-      ({ EthSupply, Eth2Staking, BurntFees } = ethData.result);
+      let supplyResponse = await fetch('https://eth.blockscout.com/api/v2/stats/charts/market');
+      if (supplyResponse.status === 200) {
+        let supplyData = await supplyResponse.json();
+        ethSupply = +supplyData.available_supply;
+      }
     } catch(error) {
-      console.error('Etherscan Eth Supply Error: ', error);
-      console.log('Etherscan response object = ', ethResponse);
-      console.log('Etherscan data object = ', ethData);
-      if (error instanceof SyntaxError) { // SyntaxError in json parsing
+      console.error('Blockscout Supply Stats Error: ', error);
+      // SyntaxError in json parsing or TypeError due to undefined var:
+      if (error instanceof SyntaxError || error instanceof TypeError) {
         ethSupplyError = true;
       }
     }
@@ -30,21 +29,21 @@ export default async function Stats() {
   let totalTransactions, transactionsToday, ethPrice, averageGasPrice;
   let ethPriceError = false;
 
-  let blockscoutData, blockscoutResponse;
+  let statsData, statsResponse;
   while (!ethPrice && !ethPriceError) {
     try {
-      blockscoutResponse = await fetch('https://eth.blockscout.com/api/v2/stats');
-      if (blockscoutResponse.status === 200) {
-        blockscoutData = await blockscoutResponse.json();
-        totalTransactions = (+blockscoutData.total_transactions).toLocaleString('en-US');
-        transactionsToday = (+blockscoutData.transactions_today).toLocaleString('en-US');
-        ethPrice = +blockscoutData.coin_price;
-        averageGasPrice = +blockscoutData.gas_prices.average;
+      statsResponse = await fetch('https://eth.blockscout.com/api/v2/stats');
+      if (statsResponse.status === 200) {
+        statsData = await statsResponse.json();
+        totalTransactions = (+statsData.total_transactions).toLocaleString('en-US');
+        transactionsToday = (+statsData.transactions_today).toLocaleString('en-US');
+        ethPrice = +statsData.coin_price;
+        averageGasPrice = +statsData.gas_prices.average;
       }
     } catch(error) {
       console.error('Blockscout Transactions Stats Error: ', error);
-      console.log('Blockscout response object = ', blockscoutResponse);
-      console.log('Blockscout data object = ', blockscoutData);
+      console.log('Blockscout response object = ', statsResponse);
+      console.log('Blockscout data object = ', statsData);
       // SyntaxError in json parsing or TypeError due to undefined var:
       if (error instanceof SyntaxError || error instanceof TypeError) {
         ethPriceError = true;
@@ -59,18 +58,14 @@ export default async function Stats() {
   const averageGasPriceUsd = averageGasPrice && gweiPrice ?
     (averageGasPrice * avgGasAmountPerTransfer * gweiPrice).toLocaleString('en-US', { maximumFractionDigits: 2 }) : '';
 
-  let supply = ethSupplyError ? null : +Utils.formatEther(EthSupply)
-              + (+Utils.formatEther(Eth2Staking))
-              - (+Utils.formatEther(BurntFees));
-
   let ethMarketCap, supplyFormatted, ethPriceFormatted;
-  if (supply && ethPrice) {
-    ethMarketCap = (supply * ethPrice)
+  if (ethSupply && ethPrice) {
+    ethMarketCap = (ethSupply * ethPrice)
             .toLocaleString('en-US', {
               style: 'currency',
               currency: 'USD',
             });
-    supplyFormatted = supply.toLocaleString('en-US', {
+    supplyFormatted = ethSupply.toLocaleString('en-US', {
       maximumFractionDigits: 2,
     });
     ethPriceFormatted = ethPrice.toLocaleString('en-US', {
