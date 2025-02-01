@@ -82,9 +82,22 @@ export default function NodeBanner(props: Props) {
     let nodeAmount: number;
     let drawLineThreshold: number;
     let speed: number;
-    let bgColor = '';
-    let nodeColor = '';
-    let lineColor = '';
+    let bgColor: string, nodeColor: string, lineColor: string;
+
+    // This conditional fixes the CSS vars update on theme switch;
+    // when getting the CSS vars directly from document.documentElement,
+    // it uses the CSS vars of the old theme that was switched away from!
+    if (resolvedTheme === 'light') {
+      const light = document.querySelector('.light')!;
+      bgColor = window.getComputedStyle(light).getPropertyValue('--banner-bg-color')
+      nodeColor = window.getComputedStyle(light).getPropertyValue('--banner-node-color');
+      lineColor = window.getComputedStyle(light).getPropertyValue('--banner-line-color');
+    } else {
+      const dark = document.querySelector('.dark')!;
+      bgColor = window.getComputedStyle(dark).getPropertyValue('--banner-bg-color')
+      nodeColor = window.getComputedStyle(dark).getPropertyValue('--banner-node-color');
+      lineColor = window.getComputedStyle(dark).getPropertyValue('--banner-line-color');
+    }
 
     // Set up all canvas and node data:
     function setupCanvasData() {
@@ -166,16 +179,8 @@ export default function NodeBanner(props: Props) {
       context.closePath();
     }
 
-    // Wait 1 millisec in order for CSS vars to be updated on theme switch;
-    // otherwise it appears to use the CSS vars of the old theme that was switched away from!
-    setTimeout(() => {
-      bgColor = window.getComputedStyle(document.documentElement).getPropertyValue('--banner-bg-color');
-      nodeColor = window.getComputedStyle(document.documentElement).getPropertyValue('--banner-node-color');
-      lineColor = window.getComputedStyle(document.documentElement).getPropertyValue('--banner-line-color');
-
-      setupCanvasData();
-      requestAnimationFrame(loop); // Set up loop
-    }, 1);
+    setupCanvasData();
+    requestAnimationFrame(loop); // Set up loop
 
     // Resize event listener:
     window.addEventListener('resize', setupCanvasData);
@@ -214,6 +219,10 @@ export default function NodeBanner(props: Props) {
 
   return (
     <div className={`${props.className} w-full h-[345px] md:h-[460px] bg-[var(--banner-bg-color)]`} >
+      {/* The following 2 spans are required to make the conditional
+          `window.getComputedStyle()` on line 90 work properly: */}
+      <span className='hidden light' />
+      <span className='hidden dark' />
       <canvas className={props.className} ref={canvas} />
     </div>
   );
