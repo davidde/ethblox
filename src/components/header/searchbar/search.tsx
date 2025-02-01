@@ -18,7 +18,11 @@ export default function Search(props: Props) {
 
   const pathname = usePathname();
   const network = pathname.split('/')[1];
-  const router = useRouter();
+
+  let router: any;
+  if (navigator.onLine && document.visibilityState === 'visible') {
+    router = useRouter();
+  }
 
   const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
