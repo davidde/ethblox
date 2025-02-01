@@ -19,18 +19,18 @@ export default function NodeBanner(props: Props) {
   const heightMax = 460; // node canvas height in pixels on desktop, will be smaller on mobile
 
   const { resolvedTheme } = useTheme();
-  const ref = useRef<HTMLCanvasElement>(null);
-  let canvas: HTMLCanvasElement | null;
-  let context: CanvasRenderingContext2D;
+  const canvas = useRef<HTMLCanvasElement>(null);
+  // let canvas = useRef(ref.current);
+  let context = useRef(canvas.current?.getContext('2d'));
   let nodes: Node[] = []; // node array
   let width: number; // node canvas width in pixels
   let height: number; // node canvas height in pixels
   let nodeAmount: number;
   let drawLineThreshold: number;
   let speed: number;
-  let bgColor: string;
-  let nodeColor: string;
-  let lineColor: string;
+  let bgColor = useRef('');
+  let nodeColor = useRef('');
+  let lineColor = useRef('');
 
   // Node class and constructor:
   class Node {
@@ -61,7 +61,7 @@ export default function NodeBanner(props: Props) {
       // Color array for random color setting:
       const colors = ['#4f91f9', '#a7f94f', '#f94f4f', '#f9f74f', '#8930ff', '#fc4edf', '#ff9c51'];
       // Set random color from array if colored is true:
-      this.color = colored ? colors[Math.floor(Math.random() * colors.length)] : nodeColor;
+      this.color = colored ? colors[Math.floor(Math.random() * colors.length)] : nodeColor.current;
 
       // Move the nodes and draw them:
       this.move = function() {
@@ -77,24 +77,23 @@ export default function NodeBanner(props: Props) {
         }
 
         // Draw the nodes:
-        context.fillStyle = this.color;
+        context.current!.fillStyle = this.color;
         circle(this.x, this.y, this.size);
-        context.fill();
+        context.current!.fill();
       };
     }
   }
 
   useEffect(() => {
-    canvas = ref.current;
-    if (!canvas) return; // ref is null before render
-    context = canvas.getContext('2d')!;
+    if (!canvas.current) return; // canvas ref is null before render
+    context.current = canvas.current.getContext('2d');
 
     // Wait 1 millisec in order for CSS vars to be updated on theme switch;
     // otherwise it appears to use the CSS vars of the old theme that was switched away from!
     setTimeout(() => {
-      bgColor = window.getComputedStyle(document.documentElement).getPropertyValue('--banner-bg-color');
-      nodeColor = window.getComputedStyle(document.documentElement).getPropertyValue('--banner-node-color');
-      lineColor = window.getComputedStyle(document.documentElement).getPropertyValue('--banner-line-color');
+      bgColor.current = window.getComputedStyle(document.documentElement).getPropertyValue('--banner-bg-color');
+      nodeColor.current = window.getComputedStyle(document.documentElement).getPropertyValue('--banner-node-color');
+      lineColor.current = window.getComputedStyle(document.documentElement).getPropertyValue('--banner-line-color');
 
       setupCanvasWithNodes();
       requestAnimationFrame(loop); // Set up loop
@@ -106,15 +105,15 @@ export default function NodeBanner(props: Props) {
   }, [resolvedTheme])
 
   function setupCanvasWithNodes() {
-    if (!canvas) return;
+    if (!canvas.current) return;
     width = window.innerWidth; // Set node canvas width
     let isMobile = width <= 768;
     nodeAmount = isMobile ? Math.floor(0.4 * nodeAmountMax) : nodeAmountMax;
     drawLineThreshold = isMobile ? 0.9 * drawLineThresholdMax : drawLineThresholdMax;
     speed = isMobile ? 0.7 * speedMultiplier : speedMultiplier;
     height = isMobile ? 0.75 * heightMax : heightMax;
-    canvas.width = width;
-    canvas.height = height;
+    canvas.current.width = width;
+    canvas.current.height = height;
 
     // Reset the nodes:
     nodes = [];
@@ -134,7 +133,7 @@ export default function NodeBanner(props: Props) {
   // Draw the lines between the nodes:
   function drawLines() {
     // Get the rgb values for the color of the line:
-    let rgbValues = lineColor.startsWith('rgb') ? rgbToRgbNums(lineColor) : hexToRgbNums(lineColor);
+    let rgbValues = lineColor.current.startsWith('rgb') ? rgbToRgbNums(lineColor.current) : hexToRgbNums(lineColor.current);
 
     for (let i = 0; i < nodes.length; i++) {
       if (colored) rgbValues = nodes[i].color.startsWith('rgb') ? rgbToRgbNums(nodes[i].color) : hexToRgbNums(nodes[i].color);
@@ -155,7 +154,7 @@ export default function NodeBanner(props: Props) {
         // If the distance is less than the threshold, draw the line:
         if (dist < drawLineThreshold) {
           let finalOpacity = 1 - (dist / drawLineThreshold);
-          context.strokeStyle = `rgba(${rgbValues!.r}, ${rgbValues!.g}, ${rgbValues!.b}, ${finalOpacity})`;
+          context.current!.strokeStyle = `rgba(${rgbValues!.r}, ${rgbValues!.g}, ${rgbValues!.b}, ${finalOpacity})`;
           line(x1, y1, x2, y2);
         }
       }
@@ -165,8 +164,8 @@ export default function NodeBanner(props: Props) {
   // Loop function to animate the canvas:
   function loop() {
     // Clear the canvas from nodes and lines:
-    context.fillStyle = bgColor;
-    context.fillRect(0, 0, width, height);
+    context.current!.fillStyle = bgColor.current;
+    context.current!.fillRect(0, 0, width, height);
     // Move all nodes:
     for (let i = 0; i < nodes.length; i++) nodes[i].move();
     // Draw the lines again:
@@ -177,18 +176,18 @@ export default function NodeBanner(props: Props) {
 
   // Draw circle given x, y and radius:
   function circle(x: number, y: number, radius: number) {
-    context.beginPath();
-    context.arc(x, y, radius, 0, 2 * Math.PI);
-    context.closePath();
+    context.current!.beginPath();
+    context.current!.arc(x, y, radius, 0, 2 * Math.PI);
+    context.current!.closePath();
   }
 
   // Draw line given a set of two points (as x1, y1, x2 and y2):
   function line(x1: number, y1: number, x2: number, y2: number) {
-    context.lineWidth = lineWidth;
-    context.beginPath();
-    context.moveTo(x1, y1);
-    context.lineTo(x2, y2);
-    context.stroke();
+    context.current!.lineWidth = lineWidth;
+    context.current!.beginPath();
+    context.current!.moveTo(x1, y1);
+    context.current!.lineTo(x2, y2);
+    context.current!.stroke();
   }
 
   // Calculate the distance between two points:
@@ -218,7 +217,7 @@ export default function NodeBanner(props: Props) {
 
   return (
     <div className={`${props.className} w-full h-[345px] md:h-[460px] bg-[var(--banner-bg-color)]`} >
-      <canvas className={props.className} ref={ref} />
+      <canvas className={props.className} ref={canvas} />
     </div>
   );
 }
