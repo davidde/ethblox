@@ -48,7 +48,14 @@ export default nextConfig;
       REACT_APP_ALCHEMY_API_KEY: ${{ secrets.REACT_APP_ALCHEMY_API_KEY }}
       REACT_APP_ETHERSCAN_API_KEY: ${{ secrets.REACT_APP_ETHERSCAN_API_KEY }}
   ```
-- In the same file, also comment out the line that says `static_site_generator: next` under `- name: Setup Pages`. Additonally, you'll also need to comment out the `with:` header, because an empty field is invalid:
+- In the next section of that same file, update the `path` where the binaries are located; change `path: ./out` to `path: ./.next/standalone`:
+  ```yml
+  - name: Upload artifact
+    uses: actions/upload-pages-artifact@v3
+    with:
+      path: ./.next/standalone
+  ```
+- Still in that file, also comment out the line that says `static_site_generator: next` under `- name: Setup Pages`. Additonally, you'll also need to comment out the `with:` header, because an empty field is invalid:
   ```yml
   - name: Setup Pages
     uses: actions/configure-pages@v5
