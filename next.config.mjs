@@ -1,6 +1,5 @@
 
 const isProd = process.env.NODE_ENV === 'production';
-console.log('isProd = ', isProd);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -22,9 +21,6 @@ const nextConfig = {
   // This means that when running the build with `node .next/standalone/server.js` locally,
   // the base URL is `http://localhost:3000/ethblox/`, and the default
   // `http://localhost:3000/` will 404.
-
-  assetPrefix: '/ethblox/',
-  trailingSlash: true,
 
   async redirects() {
     return [
