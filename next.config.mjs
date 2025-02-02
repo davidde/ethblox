@@ -18,7 +18,6 @@ export default (phase) => {
     // Map all static assets to the project URL davidde.github.io/ethblox,
     // instead of the base davidde.github.io domain, but only for production:
     basePath: isProd ? '/ethblox' : undefined,
-    assetPrefix: isProd ? '/ethblox/' : undefined,
 
     async redirects() {
       return [
