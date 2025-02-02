@@ -1,4 +1,56 @@
 # Notes while building / learning
+## Deployment: Github Pages vs Vercel
+> This site was initially deployed to Vercel, but my free tier was canceled because of too much traffic. So now I'm documenting how to **deploy to Github Pages with Github Actions**.
+
+### 1. Configure the Next.js Build Process
+By default, Next.js uses Node.js to run the application, which is incompatible with GitHub Pages. We need to enable static page generation in Next.js in order to deploy to Github Pages.
+
+Add the following to `next.config.mjs`:
+```mjs
+/** @type {import('next').NextConfig} */
+
+const isProd = process.env.NODE_ENV === 'production';
+
+const nextConfig = {
+  // Enable standalone export for Github Pages:
+  output: 'standalone',
+  // Map all static assets to the project URL davidde.github.io/ethblox,
+  // instead of the base davidde.github.io domain, but only for production:
+  basePath: isProd ? '/ethblox' : undefined,
+};
+
+export default nextConfig;
+```
+
+> [!NOTE]
+> When using `output: 'export'` instead of `output: 'standalone'`, Nextjs will throw the runtime Error `Page "/[network]/page" is missing exported function "generateStaticParams()", which is required with "output: export" config.` because of the use of the dynamic route `[network]`.
+
+### 2. Add the environment variables to Github
+- On Github, navigate to the `Settings` tab of your project, and select `Environments` from the menu on the left-hand side.
+- Under `Environment secrets`, click `Add environment secret` and add `REACT_APP_ALCHEMY_API_KEY` and its value.
+- Click `Add environment secret` again and add `REACT_APP_ETHERSCAN_API_KEY` and its value.
+
+### 3. Activate GitHub Pages for Repository
+- Now, still under the `Settings` tab of your project, select `Pages` from the menu on the left-hand side.
+- Locate the `Source` dropdown, which is likely set to `Deploy from a branch`.
+- Click `Deploy from a branch` and switch it to `Github Actions`.
+- Click `Configure` in the Github Actions field, which will take you to a `/.github/workflows/nextjs.yml` action configuration file.
+- In this file, we need to also add the API keys to the build step. Find the following text:
+  ```yml
+  - name: Build with Next.js
+    run: ${{ steps.detect-package-manager.outputs.runner }} next build
+  ```
+  and add an `env` section to it:
+  ```yml
+  - name: Build with Next.js
+    run: ${{ steps.detect-package-manager.outputs.runner }} next build
+    env:
+      REACT_APP_ALCHEMY_API_KEY: ${{ secrets.REACT_APP_ALCHEMY_API_KEY }}
+      REACT_APP_ETHERSCAN_API_KEY: ${{ secrets.REACT_APP_ETHERSCAN_API_KEY }}
+  ```
+  Then click `Commit changes...` to commit it to the main branch.
+- After committing these changes to the `main` branch, GitHub will automatically initiate the deployment to GitHub Pages. You can inspect this process in your project's `Actions` tab, which you can find in the middle of the `Code` and `Settings` tabs.
+
 ## Security
 * After checking out [Key security Best practices](https://docs.alchemy.com/docs/best-practices-for-key-security-and-management) and [Using JWTs](https://docs.alchemy.com/docs/how-to-use-jwts-for-api-requests), it is not clear to me how one would go about updating the JWTs, since they are supposed to be short-lived. In the example, their expiration time is even 10 minutes! How to keep the service functioning if JWTs are expiring that fast?
 
@@ -94,5 +146,24 @@
   ```
   which means we are at least in the right file!
 
+  This bug seems to be caused by a cache for hot reloads in local development.
+
+  From Next 15 onwards, you can disable this cache like this in `next.config.js`:
+  ```js
+  /** @type {import('next').NextConfig} */
+  const nextConfig = {
+    experimental: {
+      serverComponentsHmrCache: false, // defaults to true
+    },
+  }
+  
+  module.exports = nextConfig
+  ```
+  See the [Nextjs serverComponentsHmrCache docs](https://nextjs.org/docs/app/api-reference/config/next-config-js/serverComponentsHmrCache) for more info.
+
+
 ## CSS
 * Commit `ea4e75d93567fc1b4e2494c6d5a6b6254fe39dce` has a really difficult bug to track down: it has a spacing at the bottom, right above the footer that I couldn't get rid off. It is caused by the negative positioning of the flex container that makes the Stats component overlap with the NodeBanner (line 50 in `src/components/content/home-page/index.tsx`). Changing `top: -6rem;` to `margin-top: -6rem;` fixes this, or in Tailwind speak `-top-[6rem]` to `-mt-[6rem]`.
+
+
+

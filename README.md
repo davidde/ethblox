@@ -12,6 +12,13 @@ Most prominent technologies used:
 * [Headless UI](https://headlessui.com/)
 
 ## Running the project locally
+> [!NOTE]
+> To run this project locally, you will also need an Alchemy and Etherscan API key. You can get these freely by creating an Alchemy and Etherscan account. Put these keys into an `.env` file in the root of the project, without quotes:
+> ```.env
+> REACT_APP_ALCHEMY_API_KEY=xyz
+> REACT_APP_ETHERSCAN_API_KEY=xyz
+> ```
+
 * Clone this repo, and cd into it in your terminal:
   ```bash
   git clone https://github.com/davidde/ethblox
