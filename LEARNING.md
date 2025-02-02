@@ -5,21 +5,24 @@
 ### 1. Configure the Next.js Build Process
 By default, Next.js uses Node.js to run the application, which is incompatible with GitHub Pages. We need to enable static page generation in Next.js in order to deploy to Github Pages.
 
-Add the following to `next.config.mjs`:
+Update `next.config.mjs` with the following:
 ```mjs
-/** @type {import('next').NextConfig} */
+import { PHASE_PRODUCTION_SERVER } from 'next/constants';
 
-const isProd = process.env.NODE_ENV === 'production';
+export default (phase) => {
+  const isProd = phase === PHASE_PRODUCTION_SERVER;
 
-const nextConfig = {
-  // Enable standalone export for Github Pages:
-  output: 'standalone',
-  // Map all static assets to the project URL davidde.github.io/ethblox,
-  // instead of the base davidde.github.io domain, but only for production:
-  basePath: isProd ? '/ethblox' : undefined,
-};
+  /** @type {import('next').NextConfig} */
+  const nextConfig = {
+    // Enable standalone export for Github Pages:
+    output: 'standalone',
+    // Map all static assets to the project URL davidde.github.io/ethblox,
+    // instead of the base davidde.github.io domain, but only for production:
+    basePath: isProd ? '/ethblox' : undefined,
+  };
 
-export default nextConfig;
+  return nextConfig;
+}
 ```
 
 > [!NOTE]
