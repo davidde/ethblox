@@ -83,6 +83,7 @@ jobs:
         run: |
           cp -r public .next/standalone/
           cp -r .next/static .next/standalone/.next/
+          touch .next/standalone/.nojekyll
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
