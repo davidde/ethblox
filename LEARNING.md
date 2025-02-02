@@ -48,19 +48,19 @@ export default nextConfig;
       REACT_APP_ALCHEMY_API_KEY: ${{ secrets.REACT_APP_ALCHEMY_API_KEY }}
       REACT_APP_ETHERSCAN_API_KEY: ${{ secrets.REACT_APP_ETHERSCAN_API_KEY }}
   ```
-- In the same file, also comment out the line that says `static_site_generator: next` under `- name: Setup Pages`:
+- In the same file, also comment out the line that says `static_site_generator: next` under `- name: Setup Pages`. Additonally, you'll also need to comment out the `with:` header, because an empty field is invalid:
   ```yml
   - name: Setup Pages
     uses: actions/configure-pages@v5
-    with:
+    # IF YOU DO NOT UNCOMMENT THIS SECTION, IT WILL IGNORE THE `next.config.mjs` FILE:
+    # with:
       # Automatically inject basePath in your Next.js configuration file and disable
       # server side image optimization (https://nextjs.org/docs/api-reference/next/image#unoptimized).
       #
       # You may remove this line if you want to manage the configuration yourself.
-      # IF YOU DO NOT UNCOMMENT THE FOLLOWING LINE, IT WILL IGNORE YOUR `next.config.mjs` FILE!
       # static_site_generator: next
   ```
-  If you do not comment out this last line, the build process will ignore the local `next.config.mjs` file, which is necessary for the proper configuration!
+  If you do not comment these out, the build process will ignore the local `next.config.mjs` file, which is necessary for the proper configuration!
 - Finally, click `Commit changes...` to commit it to the main branch. After committing, GitHub will automatically initiate the deployment to GitHub Pages. You can inspect this process in your project's `Actions` tab, which you can find in the middle of the `Code` and `Settings` tabs.
 
 ## Security
