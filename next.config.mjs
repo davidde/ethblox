@@ -1,10 +1,7 @@
-import { PHASE_PRODUCTION_SERVER } from 'next/constants.js';
+import { PHASE_PRODUCTION_BUILD, PHASE_PRODUCTION_SERVER } from 'next/constants.js';
 
 export default (phase) => {
-  const isProd = phase === PHASE_PRODUCTION_SERVER;
-  console.log("phase = ", phase);
-  console.log("PHASE_PRODUCTION_SERVER = ", PHASE_PRODUCTION_SERVER);
-  console.log("isProd = ", isProd);
+  const isProd = phase === PHASE_PRODUCTION_BUILD || phase === PHASE_PRODUCTION_SERVER;
 
   /** @type {import('next').NextConfig} */
   const nextConfig = {
@@ -20,7 +17,7 @@ export default (phase) => {
     output: 'standalone',
     // Map all static assets to the project URL davidde.github.io/ethblox,
     // instead of the base davidde.github.io domain, but only for production:
-    basePath: '/ethblox',
+    basePath: isProd ? '/ethblox' : undefined,
 
     async redirects() {
       return [

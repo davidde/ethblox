@@ -7,10 +7,10 @@ By default, Next.js uses Node.js to run the application, which is incompatible w
 
 Update `next.config.mjs` with the following:
 ```mjs
-import { PHASE_PRODUCTION_SERVER } from 'next/constants.js';
+import { PHASE_PRODUCTION_BUILD, PHASE_PRODUCTION_SERVER } from 'next/constants.js';
 
 export default (phase) => {
-  const isProd = phase === PHASE_PRODUCTION_SERVER;
+  const isProd = phase === PHASE_PRODUCTION_BUILD || phase === PHASE_PRODUCTION_SERVER;
 
   /** @type {import('next').NextConfig} */
   const nextConfig = {
@@ -30,7 +30,7 @@ export default (phase) => {
 
 ### 2. Add the environment variables to Github
 - On Github, navigate to the `Settings` tab of your project, and select `Environments` from the menu on the left-hand side.
-- Under `Environment secrets`, click `Add environment secret` and add `REACT_APP_ALCHEMY_API_KEY` and its value.
+- Select the`github-pages` environment, and under `Environment secrets`, click `Add environment secret` and add `REACT_APP_ALCHEMY_API_KEY` and its value.
 - Click `Add environment secret` again and add `REACT_APP_ETHERSCAN_API_KEY` and its value.
 
 ### 3. Activate GitHub Pages for Repository
