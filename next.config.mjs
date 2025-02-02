@@ -1,4 +1,4 @@
-import { PHASE_PRODUCTION_SERVER } from 'next/constants';
+import { PHASE_PRODUCTION_SERVER } from 'next/constants.js';
 
 export default (phase) => {
   const isProd = phase === PHASE_PRODUCTION_SERVER;

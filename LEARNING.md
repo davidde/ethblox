@@ -7,7 +7,7 @@ By default, Next.js uses Node.js to run the application, which is incompatible w
 
 Update `next.config.mjs` with the following:
 ```mjs
-import { PHASE_PRODUCTION_SERVER } from 'next/constants';
+import { PHASE_PRODUCTION_SERVER } from 'next/constants.js';
 
 export default (phase) => {
   const isProd = phase === PHASE_PRODUCTION_SERVER;
