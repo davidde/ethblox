@@ -75,7 +75,10 @@ jobs:
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
       - name: Build with Next.js
-        run: npm --no-install run build
+        run: |
+          ${{ steps.detect-package-manager.outputs.runner }} next build
+          cp -r ./public ./.next/standalone/
+          cp -r ./.next/static ./.next/standalone/.next/
         env:
           REACT_APP_ALCHEMY_API_KEY: ${{ secrets.REACT_APP_ALCHEMY_API_KEY }}
           REACT_APP_ETHERSCAN_API_KEY: ${{ secrets.REACT_APP_ETHERSCAN_API_KEY }}
