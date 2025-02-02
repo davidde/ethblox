@@ -79,9 +79,9 @@ jobs:
         env:
           REACT_APP_ALCHEMY_API_KEY: ${{ secrets.REACT_APP_ALCHEMY_API_KEY }}
           REACT_APP_ETHERSCAN_API_KEY: ${{ secrets.REACT_APP_ETHERSCAN_API_KEY }}
-      - name: Copy public and static folders to build output
+      - name: Copy public and static folders
         run: |
-          cp -r ./public ./.next/standalone/ ;
+          cp -r ./public ./.next/standalone/
           cp -r ./.next/static ./.next/standalone/.next/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
