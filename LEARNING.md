@@ -48,8 +48,20 @@ export default nextConfig;
       REACT_APP_ALCHEMY_API_KEY: ${{ secrets.REACT_APP_ALCHEMY_API_KEY }}
       REACT_APP_ETHERSCAN_API_KEY: ${{ secrets.REACT_APP_ETHERSCAN_API_KEY }}
   ```
-  Then click `Commit changes...` to commit it to the main branch.
-- After committing these changes to the `main` branch, GitHub will automatically initiate the deployment to GitHub Pages. You can inspect this process in your project's `Actions` tab, which you can find in the middle of the `Code` and `Settings` tabs.
+- In the same file, also comment out the line that says `static_site_generator: next` under `- name: Setup Pages`:
+  ```yml
+  - name: Setup Pages
+    uses: actions/configure-pages@v5
+    with:
+      # Automatically inject basePath in your Next.js configuration file and disable
+      # server side image optimization (https://nextjs.org/docs/api-reference/next/image#unoptimized).
+      #
+      # You may remove this line if you want to manage the configuration yourself.
+      # IF YOU DO NOT UNCOMMENT THE FOLLOWING LINE, IT WILL IGNORE YOUR `next.config.mjs` FILE!
+      # static_site_generator: next
+  ```
+  If you do not comment out this last line, the build process will ignore the local `next.config.mjs` file, which is necessary for the proper configuration!
+- Finally, click `Commit changes...` to commit it to the main branch. After committing, GitHub will automatically initiate the deployment to GitHub Pages. You can inspect this process in your project's `Actions` tab, which you can find in the middle of the `Code` and `Settings` tabs.
 
 ## Security
 * After checking out [Key security Best practices](https://docs.alchemy.com/docs/best-practices-for-key-security-and-management) and [Using JWTs](https://docs.alchemy.com/docs/how-to-use-jwts-for-api-requests), it is not clear to me how one would go about updating the JWTs, since they are supposed to be short-lived. In the example, their expiration time is even 10 minutes! How to keep the service functioning if JWTs are expiring that fast?
