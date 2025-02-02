@@ -25,34 +25,45 @@ const nextConfig = {
 
 export default nextConfig;
 ```
-
 > [!NOTE]
 > When using `output: 'export'` instead of `output: 'standalone'`, Nextjs will throw the runtime Error `Page "/[network]/page" is missing exported function "generateStaticParams()", which is required with "output: export" config.` because of the use of the dynamic route `[network]`.
 
-### 2. Add the environment variables to Github
+### 2. Update `package.json` for `output: 'standalone'`
+In `package.json`, update the `"build"` and `"start"` commands of the `"scripts"` field:
+```json
+"scripts": {
+  "dev": "next dev -p 3005",
+  "build": "next build && cp -r ./public ./.next/standalone/ && cp -r ./.next/static ./.next/standalone/.next/",
+  "start": "node .next/standalone/server.js",
+  "lint": "next lint"
+},
+```
+**Without this `start` command the page will 404!**  
+Without the `cp` command, the Github Pages URL will not find any CSS files. But note that `cp` will not run on Windows, so if you use Windows you should still manually copy these 2 folders after running `npm run build`. This is not a problem for Github Pages though, since it deploys to Linux.
+
+### 3. Add the environment variables to Github
 - On Github, navigate to the `Settings` tab of your project, and select `Environments` from the menu on the left-hand side.
 - Select the`github-pages` environment, and under `Environment secrets`, click `Add environment secret` and add `REACT_APP_ALCHEMY_API_KEY` and its value.
 - Click `Add environment secret` again and add `REACT_APP_ETHERSCAN_API_KEY` and its value.
 
-### 3. Activate GitHub Pages for Repository
+### 4. Activate GitHub Pages for Repository
 - Now, still under the `Settings` tab of your project, select `Pages` from the menu on the left-hand side.
 - Locate the `Source` dropdown, which is likely set to `Deploy from a branch`.
 - Click `Deploy from a branch` and switch it to `Github Actions`.
 - Click `Configure` in the Github Actions field, which will take you to a `/.github/workflows/nextjs.yml` action configuration file.
-- In this file, we need to add the API keys to the build step, as well as copy some extra folders to the build output because of the `output: 'standalone'`. Find the following text:
+- In this file, we need to add the API keys to the build step. Find the following text:
   ```yml
   - name: Build with Next.js
     run: ${{ steps.detect-package-manager.outputs.runner }} next build
   ```
-  Now, add ` && cp -r ./public ./.next/standalone/ && cp -r ./.next/static ./.next/standalone/.next/` to the build command, and add the following `env` section:
+  And add the following `env` section:
   ```yml
   - name: Build with Next.js
-    run: ${{ steps.detect-package-manager.outputs.runner }} next build && cp -r ./public ./.next/standalone/ && cp -r ./.next/static ./.next/standalone/.next/
+    run: ${{ steps.detect-package-manager.outputs.runner }} next build
     env:
       REACT_APP_ALCHEMY_API_KEY: ${{ secrets.REACT_APP_ALCHEMY_API_KEY }}
       REACT_APP_ETHERSCAN_API_KEY: ${{ secrets.REACT_APP_ETHERSCAN_API_KEY }}
   ```
-  **Without the `cp` command**, the Github Pages URL will not find the requested files, and **your page will 404!**
 - In the next section of that same file, update the `path` where the binaries are located; change `path: ./out` to `path: ./.next/standalone`:
   ```yml
   - name: Upload artifact
