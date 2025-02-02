@@ -3,26 +3,27 @@
 > This site was initially deployed to Vercel, but my free tier was canceled because of too much traffic. So now I'm documenting how to **deploy to Github Pages with Github Actions**.
 
 ### 1. Configure the Next.js Build Process
-By default, Next.js uses Node.js to run the application, which is incompatible with GitHub Pages. We need to enable static page generation in Next.js in order to deploy to Github Pages.
+By default, Next.js uses Node.js to run the application, which is incompatible with GitHub Pages. We need to enable static or standalone page generation in Next.js in order to deploy to Github Pages.
 
 Update `next.config.mjs` with the following:
 ```mjs
-import { PHASE_PRODUCTION_BUILD, PHASE_PRODUCTION_SERVER } from 'next/constants.js';
+const isProd = process.env.NODE_ENV === 'production';
 
-export default (phase) => {
-  const isProd = phase === PHASE_PRODUCTION_BUILD || phase === PHASE_PRODUCTION_SERVER;
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // Enable standalone export for Github Pages:
+  output: 'standalone',
+  // Map all static assets to the project URL davidde.github.io/ethblox,
+  // instead of the base davidde.github.io domain, but only for production:
+  basePath: isProd ? '/ethblox' : undefined,
+  // Note that all `npm run build` commands will get classified as 'production',
+  // so they will get the '/ethblox' basePath even when run locally.
+  // This means that when running the build with `node .next/standalone/server.js` locally,
+  // the base URL is `http://localhost:3000/ethblox/`, and the default
+  // `http://localhost:3000/` will 404.
+};
 
-  /** @type {import('next').NextConfig} */
-  const nextConfig = {
-    // Enable standalone export for Github Pages:
-    output: 'standalone',
-    // Map all static assets to the project URL davidde.github.io/ethblox,
-    // instead of the base davidde.github.io domain, but only for production:
-    basePath: isProd ? '/ethblox' : undefined,
-  };
-
-  return nextConfig;
-}
+export default nextConfig;
 ```
 
 > [!NOTE]
@@ -38,19 +39,20 @@ export default (phase) => {
 - Locate the `Source` dropdown, which is likely set to `Deploy from a branch`.
 - Click `Deploy from a branch` and switch it to `Github Actions`.
 - Click `Configure` in the Github Actions field, which will take you to a `/.github/workflows/nextjs.yml` action configuration file.
-- In this file, we need to also add the API keys to the build step. Find the following text:
+- In this file, we need to add the API keys to the build step, as well as copy some extra folders to the build output because of the `output: 'standalone'`. Find the following text:
   ```yml
   - name: Build with Next.js
     run: ${{ steps.detect-package-manager.outputs.runner }} next build
   ```
-  and add an `env` section to it:
+  Now, add ` && cp -r ./public ./.next/standalone/ && cp -r ./.next/static ./.next/standalone/.next/` to the build command, and add the following `env` section:
   ```yml
   - name: Build with Next.js
-    run: ${{ steps.detect-package-manager.outputs.runner }} next build
+    run: ${{ steps.detect-package-manager.outputs.runner }} next build && cp -r ./public ./.next/standalone/ && cp -r ./.next/static ./.next/standalone/.next/
     env:
       REACT_APP_ALCHEMY_API_KEY: ${{ secrets.REACT_APP_ALCHEMY_API_KEY }}
       REACT_APP_ETHERSCAN_API_KEY: ${{ secrets.REACT_APP_ETHERSCAN_API_KEY }}
   ```
+  **Without the `cp` command**, the Github Pages URL will not find the requested files, and **your page will 404!**
 - In the next section of that same file, update the `path` where the binaries are located; change `path: ./out` to `path: ./.next/standalone`:
   ```yml
   - name: Upload artifact
@@ -58,6 +60,7 @@ export default (phase) => {
     with:
       path: ./.next/standalone
   ```
+  Failing to do so will result in build errors because tar cannot find the proper directory to archive.
 - Still in that file, also comment out the line that says `static_site_generator: next` under `- name: Setup Pages`. Additonally, you'll also need to comment out the `with:` header, because an empty field is invalid:
   ```yml
   - name: Setup Pages
@@ -70,7 +73,7 @@ export default (phase) => {
       # You may remove this line if you want to manage the configuration yourself.
       # static_site_generator: next
   ```
-  If you do not comment these out, the build process will ignore the local `next.config.mjs` file, which is necessary for the proper configuration!
+  If you do not comment these out, the build process will ignore the local `next.config.mjs` file, and you will get build errors!
 - Finally, click `Commit changes...` to commit it to the main branch. After committing, GitHub will automatically initiate the deployment to GitHub Pages. You can inspect this process in your project's `Actions` tab, which you can find in the middle of the `Code` and `Settings` tabs.
 
 ## Security
