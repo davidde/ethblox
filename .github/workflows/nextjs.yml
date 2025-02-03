@@ -83,11 +83,10 @@ jobs:
         run: |
           cp -r public .next/standalone/
           cp -r .next/static .next/standalone/.next/
-          touch .next/standalone/.nojekyll
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./.next/standalone
+          path: .next/standalone
 
   # Deployment job
   deploy:
@@ -100,7 +99,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          branch: main
-          folder: .next/standalone # This is where the build output will be
-          target-folder: '/' # This deploys directly to the root of the GitHub Pages

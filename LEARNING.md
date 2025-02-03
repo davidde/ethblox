@@ -2,8 +2,18 @@
 ## Deployment: Github Pages vs Vercel
 > This site was initially deployed to Vercel, but my free tier was canceled because of too much traffic. So now I'm documenting how to **deploy to Github Pages with Github Actions**.
 
+### 0. Is it possible to deploy a Nextjs project with `output: 'standalone'` in nextConfig to Github Pages?
+**NO!!! GitHub pages is a static host and `standalone` is not a static export!**
+
+There are 3 ways to deploy/host Next.js:
+- Node.js Server
+- Docker Image
+- Static HTML Export
+
+So `output: 'standalone'` requires one of the first 2 options, which support all Next.js features. As the name implies, a static export does not support Next.js features that require a server.
+
 ### 1. Configure the Next.js Build Process
-By default, Next.js uses Node.js to run the application, which is incompatible with GitHub Pages. We need to enable static or standalone page generation in Next.js in order to deploy to Github Pages.
+By default, Next.js uses Node.js to run the application, which is incompatible with GitHub Pages. We need to enable static page generation in Next.js in order to deploy to Github Pages.
 
 Update `next.config.mjs` with the following:
 ```mjs
@@ -12,7 +22,7 @@ const isProd = process.env.NODE_ENV === 'production';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Enable standalone export for Github Pages:
-  output: 'standalone',
+  output: 'export',
   // Map all static assets to the project URL davidde.github.io/ethblox,
   // instead of the base davidde.github.io domain, but only for production:
   basePath: isProd ? '/ethblox' : undefined,
@@ -26,20 +36,26 @@ const nextConfig = {
 export default nextConfig;
 ```
 > [!NOTE]
-> When using `output: 'export'` instead of `output: 'standalone'`, Nextjs will throw the runtime Error `Page "/[network]/page" is missing exported function "generateStaticParams()", which is required with "output: export" config.` because of the use of the dynamic route `[network]`.
+> When using `output: 'export'` Nextjs will throw the runtime Error `Page "/[network]/page" is missing exported function "generateStaticParams()", which is required with "output: export" config.` because of the use of the dynamic route `[network]`:
+> - We could either switch to `output: 'standalone'`, but this is not compatible with Github Pages, meaning we should deploy to another hosting provider like [Deno Deploy](https://deno.com/deploy), [Render](https://render.com/), [Railway](https://railway.com/) or [Vercel](https://vercel.com/). See the [Nextjs Github](https://github.com/nextjs) for possible deploy templates.
+> - Or we could try to implement `generateStaticParams()` to statically generate the dynamic routes at build time. But it's not clear to me how this will work for dynamic routes that aren't known at build time. The [Nextjs Docs](https://nextjs.org/docs/app/api-reference/functions/generate-static-params#all-paths-at-runtime) inform us that to statically render all paths the first time they're visited, we should just return an empty array, and no paths will be rendered at build time. Supposedly if we return nothing, the route will be rendered dynamically.
+
+&nbsp;
+
+> [!CAUTION]
+> **The rest of these steps are for `output: 'standalone'`!!!**
 
 ### 2. Update `package.json` for `output: 'standalone'`
-In `package.json`, update the `"build"` and `"start"` commands of the `"scripts"` field:
+In `package.json`, update the `"start"` command of the `"scripts"` field:
 ```json
 "scripts": {
   "dev": "next dev -p 3005",
-  "build": "next build && cp -r ./public ./.next/standalone/ && cp -r ./.next/static ./.next/standalone/.next/",
+  "build": "next build",
   "start": "node .next/standalone/server.js",
   "lint": "next lint"
 },
 ```
-**Without this `start` command the page will 404!**  
-Without the `cp` command, the Github Pages URL will not find any CSS files. But note that `cp` will not run on Windows, so if you use Windows you should still manually copy these 2 folders after running `npm run build`. This is not a problem for Github Pages though, since it deploys to Linux.
+Nextjs in `standalone` mode puts its build in `.next/standalone`, where the executable server is located.
 
 ### 3. Add the environment variables to Github
 - On Github, navigate to the `Settings` tab of your project, and select `Environments` from the menu on the left-hand side.
@@ -56,20 +72,25 @@ Without the `cp` command, the Github Pages URL will not find any CSS files. But 
   - name: Build with Next.js
     run: ${{ steps.detect-package-manager.outputs.runner }} next build
   ```
-  And add the following `env` section:
+  And add the following `env` section, followed by a section to copy the `public` and `static` folders:
   ```yml
   - name: Build with Next.js
     run: ${{ steps.detect-package-manager.outputs.runner }} next build
     env:
       REACT_APP_ALCHEMY_API_KEY: ${{ secrets.REACT_APP_ALCHEMY_API_KEY }}
       REACT_APP_ETHERSCAN_API_KEY: ${{ secrets.REACT_APP_ETHERSCAN_API_KEY }}
+  - name: Copy public and static folders
+    run: |
+      cp -r public .next/standalone/
+      cp -r .next/static .next/standalone/.next/
   ```
+  Without the `cp` command, the build will not find any CSS files. Note that if you want to run an `npm run build` locally, you need to first manually copy these 2 folders, before starting the build with `node .next/standalone/server.js`.
 - In the next section of that same file, update the `path` where the binaries are located; change `path: ./out` to `path: ./.next/standalone`:
   ```yml
   - name: Upload artifact
     uses: actions/upload-pages-artifact@v3
     with:
-      path: ./.next/standalone
+      path: .next/standalone
   ```
   Failing to do so will result in build errors because tar cannot find the proper directory to archive.
 - Still in that file, also comment out the line that says `static_site_generator: next` under `- name: Setup Pages`. Additonally, you'll also need to comment out the `with:` header, because an empty field is invalid:
