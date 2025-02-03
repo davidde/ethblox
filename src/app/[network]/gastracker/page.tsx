@@ -2,7 +2,11 @@ import NotFoundPage from '@/components/content/error-page/not-found-page';
 import { ChartBarIcon } from '@heroicons/react/24/outline';
 
 
-export default async function Page({params} : {params: Promise<{network: string}>})
+export async function generateStaticParams() {
+  return [{ network: 'mainnet' }, { network: 'sepolia' }];
+}
+
+export default async function Page({params,} : {params: Promise<{network: string}>})
 {
   const network = (await params).network;
   if (network !== 'mainnet') {

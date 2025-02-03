@@ -12,7 +12,7 @@ const nextConfig = {
   // },
 
   // Enable standalone export for Github Pages:
-  output: 'standalone',
+  output: 'export',
   // Map all static assets to the project URL davidde.github.io/ethblox,
   // instead of the base davidde.github.io domain, but only for production:
   basePath: isProd ? '/ethblox' : undefined,
