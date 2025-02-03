@@ -100,3 +100,7 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          branch: main
+          folder: .next/standalone # This is where the build output will be
+          target-folder: '/' # This deploys directly to the root of the GitHub Pages
