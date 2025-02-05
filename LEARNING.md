@@ -1,6 +1,14 @@
 # Notes while building / learning
-## Deployment: Github Pages vs Vercel
-> This site was initially deployed to Vercel, but my free tier was canceled because of too much traffic. So now I'm documenting how to **deploy to Github Pages with Github Actions**.
+## Deployment: Deno Deploy vs Vercel
+> [!NOTE]
+> This site was initially deployed to Vercel, but my free tier was canceled because of too much traffic. 
+> I then wanted to migrate it to Github Pages, but this did not work out because Github Pages is only possible for static pages.
+> Even though Nextjs has the ability to export static pages (with `output: 'export'` in nextConfig), this requires limiting the code to the featureset that supports static site generation:  
+> When using `output: 'export'` Nextjs will throw the runtime Error `Page "/[network]/page" is missing exported function "generateStaticParams()", which is required with "output: export" config` because of the use of the dynamic route `[network]`:
+> - We could either switch to `output: 'standalone'`, but this is not compatible with Github Pages, meaning we should deploy to another hosting provider like [Deno Deploy](https://deno.com/deploy), [Render](https://render.com/), [Railway](https://railway.com/) or [Vercel](https://vercel.com/). See the [Nextjs Github](https://github.com/nextjs) for possible deploy templates.
+> - Or we could try to implement `generateStaticParams()` to statically generate the dynamic routes at build time. However, this is not possible due to the fact that there are dynamic routes that aren't known at build time, e.g. `mainnet/address/[hash]`.
+> 
+> As a consequence of all this, I will now document how to **deploy to Deno with Github Actions** (using `output: 'standalone'`).
 
 ### 0. Is it possible to deploy a Nextjs project with `output: 'standalone'` in nextConfig to Github Pages?
 **NO!!! GitHub pages is a static host and `standalone` is not a static export!**
@@ -13,37 +21,15 @@ There are 3 ways to deploy/host Next.js:
 So `output: 'standalone'` requires one of the first 2 options, which support all Next.js features. As the name implies, a static export does not support Next.js features that require a server.
 
 ### 1. Configure the Next.js Build Process
-By default, Next.js uses Node.js to run the application, which is incompatible with GitHub Pages. We need to enable static page generation in Next.js in order to deploy to Github Pages.
-
-Update `next.config.mjs` with the following:
+Enable `output: 'standalone'` in `next.config.mjs`:
 ```mjs
-const isProd = process.env.NODE_ENV === 'production';
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Enable standalone export for Github Pages:
-  output: 'export',
-  // Map all static assets to the project URL davidde.github.io/ethblox,
-  // instead of the base davidde.github.io domain, but only for production:
-  basePath: isProd ? '/ethblox' : undefined,
-  // Note that all `npm run build` commands will get classified as 'production',
-  // so they will get the '/ethblox' basePath even when run locally.
-  // This means that when running the build with `node .next/standalone/server.js` locally,
-  // the base URL is `http://localhost:3000/ethblox/`, and the default
-  // `http://localhost:3000/` will 404.
+  output: 'standalone',
 };
 
 export default nextConfig;
 ```
-> [!NOTE]
-> When using `output: 'export'` Nextjs will throw the runtime Error `Page "/[network]/page" is missing exported function "generateStaticParams()", which is required with "output: export" config.` because of the use of the dynamic route `[network]`:
-> - We could either switch to `output: 'standalone'`, but this is not compatible with Github Pages, meaning we should deploy to another hosting provider like [Deno Deploy](https://deno.com/deploy), [Render](https://render.com/), [Railway](https://railway.com/) or [Vercel](https://vercel.com/). See the [Nextjs Github](https://github.com/nextjs) for possible deploy templates.
-> - Or we could try to implement `generateStaticParams()` to statically generate the dynamic routes at build time. But it's not clear to me how this will work for dynamic routes that aren't known at build time. The [Nextjs Docs](https://nextjs.org/docs/app/api-reference/functions/generate-static-params#all-paths-at-runtime) inform us that to statically render all paths the first time they're visited, we should just return an empty array, and no paths will be rendered at build time. Supposedly if we return nothing, the route will be rendered dynamically.
-
-&nbsp;
-
-> [!CAUTION]
-> **The rest of these steps are for `output: 'standalone'`!!!**
 
 ### 2. Update `package.json` for `output: 'standalone'`
 In `package.json`, update the `"start"` command of the `"scripts"` field:
@@ -57,56 +43,14 @@ In `package.json`, update the `"start"` command of the `"scripts"` field:
 ```
 Nextjs in `standalone` mode puts its build in `.next/standalone`, where the executable server is located.
 
-### 3. Add the environment variables to Github
-- On Github, navigate to the `Settings` tab of your project, and select `Environments` from the menu on the left-hand side.
-- Select the`github-pages` environment, and under `Environment secrets`, click `Add environment secret` and add `REACT_APP_ALCHEMY_API_KEY` and its value.
-- Click `Add environment secret` again and add `REACT_APP_ETHERSCAN_API_KEY` and its value.
+### 3. Deno Deploy via Github
+There are 2 ways to deploy to Deno, either via Github, or through the command line tool [deployctl](https://github.com/denoland/deployctl). Since the project is already on Github, I'll just use that.
 
-### 4. Activate GitHub Pages for Repository
-- Now, still under the `Settings` tab of your project, select `Pages` from the menu on the left-hand side.
-- Locate the `Source` dropdown, which is likely set to `Deploy from a branch`.
-- Click `Deploy from a branch` and switch it to `Github Actions`.
-- Click `Configure` in the Github Actions field, which will take you to a `/.github/workflows/nextjs.yml` action configuration file.
-- In this file, we need to add the API keys to the build step. Find the following text:
-  ```yml
-  - name: Build with Next.js
-    run: ${{ steps.detect-package-manager.outputs.runner }} next build
-  ```
-  And add the following `env` section, followed by a section to copy the `public` and `static` folders:
-  ```yml
-  - name: Build with Next.js
-    run: ${{ steps.detect-package-manager.outputs.runner }} next build
-    env:
-      REACT_APP_ALCHEMY_API_KEY: ${{ secrets.REACT_APP_ALCHEMY_API_KEY }}
-      REACT_APP_ETHERSCAN_API_KEY: ${{ secrets.REACT_APP_ETHERSCAN_API_KEY }}
-  - name: Copy public and static folders
-    run: |
-      cp -r public .next/standalone/
-      cp -r .next/static .next/standalone/.next/
-  ```
-  Without the `cp` command, the build will not find any CSS files. Note that if you want to run an `npm run build` locally, you need to first manually copy these 2 folders, before starting the build with `node .next/standalone/server.js`.
-- In the next section of that same file, update the `path` where the binaries are located; change `path: ./out` to `path: ./.next/standalone`:
-  ```yml
-  - name: Upload artifact
-    uses: actions/upload-pages-artifact@v3
-    with:
-      path: .next/standalone
-  ```
-  Failing to do so will result in build errors because tar cannot find the proper directory to archive.
-- Still in that file, also comment out the line that says `static_site_generator: next` under `- name: Setup Pages`. Additonally, you'll also need to comment out the `with:` header, because an empty field is invalid:
-  ```yml
-  - name: Setup Pages
-    uses: actions/configure-pages@v5
-    # IF YOU DO NOT UNCOMMENT THIS SECTION, IT WILL IGNORE THE `next.config.mjs` FILE:
-    # with:
-      # Automatically inject basePath in your Next.js configuration file and disable
-      # server side image optimization (https://nextjs.org/docs/api-reference/next/image#unoptimized).
-      #
-      # You may remove this line if you want to manage the configuration yourself.
-      # static_site_generator: next
-  ```
-  If you do not comment these out, the build process will ignore the local `next.config.mjs` file, and you will get build errors!
-- Finally, click `Commit changes...` to commit it to the main branch. After committing, GitHub will automatically initiate the deployment to GitHub Pages. You can inspect this process in your project's `Actions` tab, which you can find in the middle of the `Code` and `Settings` tabs.
+* Go to https://dash.deno.com/new_project. If you do not have a Deno Deploy account, you will asked to sign up with your GitHub account for free.
+* Search for your Next.js project in the repository in the dropdown menu. Deno Deploy will automatically detect that you are using Next.js and prepare the necessary build configuration.
+* Click `Deploy project`. Deno Deploy will commit to your repository and run the new `deploy.yml` action, which will build and deploy your project on every push to the main branch. Note that afterwards you are free to customize the action by editing the `.github/workflows/deploy.yml` file.  
+  That's it, project should be live now!
+* Add the environment variables to Deno.
 
 ## Security
 * After checking out [Key security Best practices](https://docs.alchemy.com/docs/best-practices-for-key-security-and-management) and [Using JWTs](https://docs.alchemy.com/docs/how-to-use-jwts-for-api-requests), it is not clear to me how one would go about updating the JWTs, since they are supposed to be short-lived. In the example, their expiration time is even 10 minutes! How to keep the service functioning if JWTs are expiring that fast?
