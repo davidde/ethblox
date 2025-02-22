@@ -9,7 +9,7 @@ import { LightBulbIcon } from '@heroicons/react/24/solid';
 
 export default function Footer() {
   return (
-    <section className='w-screen border-t border-[var(--border-color)] bg-[var(--comp-bg-color)] p-4 mt-12'>
+    <footer className='w-screen border-t border-[var(--border-color)] bg-[var(--comp-bg-color)] p-4 mt-12'>
       <div className='flex justify-between pb-6 border-b border-[var(--border-color)]'>
         <Link
           href='https://github.com/davidde/ethblox'
@@ -94,6 +94,6 @@ export default function Footer() {
       <div className='pt-4 text-sm tracking-wider text-[var(--grey-fg-color)] border-t border-[var(--border-color)]'>
         EthBlox © 2024
       </div>
-    </section>
+    </footer>
   );
 }
