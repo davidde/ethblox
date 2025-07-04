@@ -75,7 +75,7 @@ export async function generateStaticParams() {
   - Replace ``href={`/${props.network}/address/`` by ``href={`/${props.network}/address?hash=``.
   - Replace ``href={`/${props.network}/block/`` by ``href={`/${props.network}/block?number=``.
   - Replace ``href={`/${props.network}/transaction/`` by ``href={`/${props.network}/transaction?hash=``.
-* We update their respective `pages.tsx` files with `useSearchParams()` to read the URL's query string. However, since `useSearchParams()` requires `use client;`, but `generateStaticParams()` is not compatible with Client Components, the `page.tsx` files need to remain a Server Components, and `useSearchParams()` needs to be moved to their children components which **can** be made a Client components. E.g. for `src/app/[network]/address/page.tsx`:
+* We update their respective `pages.tsx` files with `useSearchParams()` to read the URL's query string. However, since `useSearchParams()` requires `use client;`, but `generateStaticParams()` is not compatible with Client Components, the `page.tsx` files need to remain a Server Components, and `useSearchParams()` needs to be moved to their children components which **can** be made Client components. E.g. for `src/app/[network]/address/page.tsx`:
   ```tsx
   import { createAlchemy } from '@/lib/utilities';
   import AddressPage from '@/components/content/address-page';
@@ -135,8 +135,9 @@ export async function generateStaticParams() {
     ...
     // Replace other instances of `props.hash` with `hash` also!!!
   ```
-
-
+  Etc. etc.
+* To fix the 404 on the root domain (since we removed the redirect to /mainnet), we switch from the dynamic `[network]` URL param to an optional catch-all route param `[[...slug]]`. But this requires quite a few changes since now all the routing for all routes has to be done in `[[...slug]]/page.tsx`, and `generateStaticParams()` will have to generate params for all these routes.
+* 
 
 
 ## Security

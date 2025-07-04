@@ -9,16 +9,6 @@ const nextConfig = {
   },
 
   output: 'export',
-
-  // async redirects() {
-  //   return [
-  //     {
-  //       source: '/',
-  //       destination: '/mainnet',
-  //       permanent: true,
-  //     },
-  //   ]
-  // },
 };
 
 export default nextConfig;
