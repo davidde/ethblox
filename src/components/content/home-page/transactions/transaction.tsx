@@ -26,7 +26,7 @@ export default async function Transaction(props: Props) {
           <div className='flex flex-col ml-2 pt-1 md:pt-0 md:w-48'>
             <span className='px-2 md:px-4'>
               <PopoverLink
-                href={`/${props.network}/transaction/${transactionHash}`}
+                href={`/${props.network}/transaction?hash=${transactionHash}`}
                 content={transactionHashShort!}
                 popover={transactionHash}
                 className='left-[-100%] top-[-2.6rem] w-[30rem] py-1.5 px-2.5'
@@ -39,7 +39,7 @@ export default async function Transaction(props: Props) {
           <span className='pl-2 md:pl-4'>
             From:&nbsp;
             <PopoverLink
-              href={`/${props.network}/address/${from}`}
+              href={`/${props.network}/address?hash=${from}`}
               content={fromShort!}
               popover={from}
               className='left-[-35%] top-[-2.6rem] w-[19.5rem] py-1.5 px-2.5'
@@ -48,7 +48,7 @@ export default async function Transaction(props: Props) {
           <span className='pl-7 md:pl-9'>
             To:&nbsp;
             <PopoverLink
-              href={`/${props.network}/address/${to}`}
+              href={`/${props.network}/address?hash=${to}`}
               content={toShort!}
               popover={to}
               className='left-[-35%] top-[-2.6rem] w-[19.5rem] py-1.5 px-2.5'

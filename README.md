@@ -6,7 +6,7 @@ I migrated it to [Next.js](https://nextjs.org/), bootstrapped with [`create-next
 Most prominent technologies used:
 * [Alchemy SDK](https://docs.alchemy.com/)
 * [React](https://react.dev/)
-* [Next.js](https://nextjs.org/)
+* [Next.js](https://nextjs.org/)'s "new" [App Router](https://nextjs.org/docs/app)
 * [Typescript](https://www.typescriptlang.org/)
 * [Tailwind CSS](https://tailwindcss.com/)
 * [Headless UI](https://headlessui.com/)

@@ -2,6 +2,11 @@ import NotFoundPage from '@/components/content/error-page/not-found-page';
 import { ChartBarIcon } from '@heroicons/react/24/outline';
 
 
+// Return a list of `params` to populate the [network] dynamic segment:
+export function generateStaticParams() {
+   return [{ network: 'mainnet' }, { network: 'sepolia' }];
+}
+
 export default async function Page({params} : {params: Promise<{network: string}>})
 {
   const network = (await params).network;

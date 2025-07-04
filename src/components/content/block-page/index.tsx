@@ -1,44 +1,61 @@
-import { Alchemy, Utils } from 'alchemy-sdk';
+'use client';
+
+import { Alchemy, Utils, Block } from 'alchemy-sdk';
 import Link from 'next/link';
 import { getDateFromUnixSecs, getSecsFromUnixSecs, getBlockAgeFromSecs, getEtherValueFromWei } from '@/lib/utilities';
+import { useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 
 type Props = {
-  number: number,
   network: string,
   alchemy: Alchemy
 }
 
-export default async function BlockPage(props: Props) {
-  let block, finalizedBlock, blockReward;
+export default function BlockPage(props: Props) {
+  const searchParams = useSearchParams();
+  const number = +searchParams.get('number')!;
+
   const blockRewardUrl = props.network === 'mainnet' ?
-    `https://eth.blockscout.com/api?module=block&action=getblockreward&blockno=${props.number}`
+    `https://eth.blockscout.com/api?module=block&action=getblockreward&blockno=${number}`
     :
     `https://api-sepolia.etherscan.io/api?module=block&action=getblockreward` +
-    `&blockno=${props.number}` +
+    `&blockno=${number}` +
     `&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`;
 
-  while (!block || !finalizedBlock) {
-    try {
-      block = await props.alchemy.core.getBlock(props.number);
-      finalizedBlock = await props.alchemy.core.getBlock('finalized');
-    } catch (err) {
-      console.error('BlockPage getBlock()', err);
-    }
-  }
-  try {
-    const response = await fetch(blockRewardUrl);
-    const data = await response.json();
-    blockReward = data.result.blockReward;
-  } catch(error) {
-    console.error('BlockPage Etherscan getBlockReward', error);
-  }
+  const [block, setBlock] = useState<Block>();
+  const [finalizedBlock, setFinalizedBlock] = useState<Block>();
+  const [blockReward, setBlockReward] = useState<Number>();
 
-  const blockDate = getDateFromUnixSecs(block.timestamp);
-  const secs = getSecsFromUnixSecs(block.timestamp);
+  useEffect(() => {
+    async function getBlockData() {
+      while (!block || !finalizedBlock) {
+        try {
+          const blockData = await props.alchemy.core.getBlock(number);
+          setBlock(blockData);
+          const finalizedBlockData = await props.alchemy.core.getBlock('finalized');
+          setFinalizedBlock(finalizedBlockData);
+        } catch (err) {
+          console.error('BlockPage getBlock()', err);
+        }
+      }
+      try {
+        const response = await fetch(blockRewardUrl);
+        const data = await response.json();
+        if (data.result.blockReward)
+          setBlockReward(getEtherValueFromWei(data.result.blockReward, 4));
+      } catch(error) {
+        console.error('BlockPage Etherscan getBlockReward', error);
+      }
+    }
+
+    getBlockData();
+  }, [number, block, finalizedBlock, blockRewardUrl, props.alchemy]);
+
+  const blockDate = getDateFromUnixSecs(block!.timestamp);
+  const secs = getSecsFromUnixSecs(block!.timestamp);
   const blockAge = getBlockAgeFromSecs(secs);
-  if (blockReward) blockReward = getEtherValueFromWei(blockReward, 4);
-  const finalized = props.number <= finalizedBlock.number;
+  const finalized = number <= finalizedBlock!.number;
 
   return (
     <main>
@@ -50,13 +67,13 @@ export default async function BlockPage(props: Props) {
           <li className='list-disc ml-4 m-2'>
             <p className='flex flex-col md:flex-row'>
               <span className='w-60'>Block number:</span>
-              <span>{props.number}</span>
+              <span>{number}</span>
             </p>
           </li>
           <li className='list-disc ml-4 mt-4 m-2'>
             <p className='flex flex-col md:flex-row'>
               <span className='w-60'>Block hash:</span>
-              <span>{block.hash}</span>
+              <span>{block!.hash}</span>
             </p>
           </li>
           <li className='list-disc ml-4 mt-4 m-2'>
@@ -88,10 +105,10 @@ export default async function BlockPage(props: Props) {
             <p className='flex flex-col md:flex-row'>
               <span className='w-60'>Fee recipient:</span>
               <Link
-                href={`/${props.network}/address/${block.miner}`}
+                href={`/${props.network}/address?hash=${block!.miner}`}
                 className='font-mono text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
               >
-                {block.miner}
+                {block!.miner}
               </Link>
             </p>
           </li>
@@ -99,13 +116,13 @@ export default async function BlockPage(props: Props) {
             <p className='flex flex-col md:flex-row'>
 
               <span className='w-60'>Block reward:</span>
-              <span>Ξ{blockReward}</span>
+              <span>Ξ{blockReward!.toString()}</span>
             </p>
           </li>
           <li className='list-disc ml-4 mt-4 m-2'>
             <p className='flex flex-col md:flex-row'>
               <span className='w-60'>Gas Used:</span>
-              <span>{+Utils.formatEther(block.gasUsed) * Math.pow(10, 9)} Gwei (Ξ{Utils.formatEther(block.gasUsed)})</span>
+              <span>{+Utils.formatEther(block!.gasUsed) * Math.pow(10, 9)} Gwei (Ξ{Utils.formatEther(block!.gasUsed)})</span>
             </p>
           </li>
         </ul>

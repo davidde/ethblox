@@ -108,7 +108,7 @@ export default async function Transactions(props: Props) {
                     </p>
                     <p className='overflow-hidden whitespace-nowrap text-ellipsis'>
                       <PopoverLink
-                        href={`/${props.network}/transaction/${transaction.hash}`}
+                        href={`/${props.network}/transaction?hash=${transaction.hash}`}
                         content={truncateTransaction(transaction.hash, 25)!}
                         popover={transaction.hash}
                         className='left-[-100%] top-[-2.6rem] w-[30rem] py-1.5 px-2.5'
@@ -121,7 +121,7 @@ export default async function Transactions(props: Props) {
                     </span>
                     <span>
                       <Link
-                        href={`/${props.network}/block/${+transaction.blockNum}`}
+                        href={`/${props.network}/block?number=${+transaction.blockNum}`}
                         className='text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
                       >
                         {+transaction.blockNum}
@@ -142,7 +142,7 @@ export default async function Transactions(props: Props) {
                     </span>
                     <span>
                       <PopoverLink
-                        href={`/${props.network}/address/${transaction.from}`}
+                        href={`/${props.network}/address?hash=${transaction.from}`}
                         content={truncateAddress(transaction.from, 28)!}
                         popover={transaction.from}
                         className='left-[-12%] top-[-2.6rem] w-[19.5rem] py-1.5 px-2.5'
@@ -155,7 +155,7 @@ export default async function Transactions(props: Props) {
                     </span>
                     <span>
                       <PopoverLink
-                        href={`/${props.network}/address/${transaction.to}`}
+                        href={`/${props.network}/address?hash=${transaction.to}`}
                         content={truncateAddress(transaction.to!, 28)!}
                         popover={transaction.to!}
                         className='left-[-12%] top-[-2.6rem] w-[19.5rem] py-1.5 px-2.5'
@@ -218,7 +218,7 @@ export default async function Transactions(props: Props) {
                   >
                     <td className='whitespace-nowrap py-3 pr-3'>
                       <PopoverLink
-                        href={`/${props.network}/transaction/${transaction.hash}`}
+                        href={`/${props.network}/transaction?hash=${transaction.hash}`}
                         content={truncateTransaction(transaction.hash, 18)!}
                         popover={transaction.hash}
                         className='left-[-100%] top-[-2.6rem] w-[30rem] py-1.5 px-2.5'
@@ -226,7 +226,7 @@ export default async function Transactions(props: Props) {
                     </td>
                     <td className='whitespace-nowrap px-4 py-3'>
                       <Link
-                          href={`/${props.network}/block/${+transaction.blockNum}`}
+                          href={`/${props.network}/block?number=${+transaction.blockNum}`}
                           className='text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
                         >
                           {+transaction.blockNum}
@@ -237,7 +237,7 @@ export default async function Transactions(props: Props) {
                     </td>
                     <td className='whitespace-nowrap px-4 py-3'>
                       <PopoverLink
-                        href={`/${props.network}/address/${transaction.from}`}
+                        href={`/${props.network}/address?hash=${transaction.from}`}
                         content={truncateAddress(transaction.from, 21)!}
                         popover={transaction.from}
                         className='left-[-35%] top-[-2.6rem] w-[19.5rem] py-1.5 px-2.5'
@@ -245,7 +245,7 @@ export default async function Transactions(props: Props) {
                     </td>
                     <td className='whitespace-nowrap px-4 py-3'>
                       <PopoverLink
-                        href={`/${props.network}/address/${transaction.to}`}
+                        href={`/${props.network}/address?hash=${transaction.to}`}
                         content={truncateAddress(transaction.to!, 21)!}
                         popover={transaction.to!}
                         className='left-[-35%] top-[-2.6rem] w-[19.5rem] py-1.5 px-2.5'

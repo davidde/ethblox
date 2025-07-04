@@ -8,17 +8,17 @@ const nextConfig = {
     // serverComponentsHmrCache: false, // defaults to true
   // },
 
-  output: 'standalone',
+  output: 'export',
 
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/mainnet',
-        permanent: true,
-      },
-    ]
-  },
+  // async redirects() {
+  //   return [
+  //     {
+  //       source: '/',
+  //       destination: '/mainnet',
+  //       permanent: true,
+  //     },
+  //   ]
+  // },
 };
 
 export default nextConfig;

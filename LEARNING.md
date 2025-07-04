@@ -1,17 +1,18 @@
 # Notes while building / learning
-## Deployment: Deno Deploy vs Vercel
+## Deployment: Vercel vs Deno Deploy vs Github Pages
 > [!NOTE]
-> This site was initially deployed to Vercel, but my free tier was canceled because of too much traffic. 
-> I then wanted to migrate it to Github Pages, but this did not work out because Github Pages is only possible for static pages.
+> This site was initially deployed to Vercel, but my free tier was canceled because of too much traffic.  
+> Wanting to migrate it to Github Pages, it initially did not work out because Github Pages is only possible for static pages.
 > Even though Nextjs has the ability to export static pages (with `output: 'export'` in nextConfig), this requires limiting the code to the featureset that supports static site generation:  
 > When using `output: 'export'` Nextjs will throw the runtime Error `Page "/[network]/page" is missing exported function "generateStaticParams()", which is required with "output: export" config` because of the use of the dynamic route `[network]`:
-> - We could either switch to `output: 'standalone'`, but this is not compatible with Github Pages, meaning we should deploy to another hosting provider like [Deno Deploy](https://deno.com/deploy), [Render](https://render.com/), [Railway](https://railway.com/) or [Vercel](https://vercel.com/). See the [Nextjs Github](https://github.com/nextjs) for possible deploy templates.
-> - Or we could try to implement `generateStaticParams()` to statically generate the dynamic routes at build time. However, this is not possible due to the fact that there are dynamic routes that aren't known at build time, e.g. `mainnet/address/[hash]`.
-> 
-> As a consequence of all this, I will now document how to **deploy to Deno with Github Actions** (using `output: 'standalone'`).
+> - We could either switch to `output: 'standalone'`, but this is not compatible with Github Pages, meaning we should deploy to another hosting provider like [Deno Deploy](https://deno.com/deploy), [Render](https://render.com/) or [Railway](https://railway.com/). (See the [Nextjs Github](https://github.com/nextjs) for possible deploy templates.) I attempted using Deno Deploy, but this didn't work out because it is a total mess ...
+> - Or we could try to implement [generateStaticParams()](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) to statically generate the dynamic routes at build time. However, this is not possible due to the fact that there are dynamic routes that aren't known at build time, e.g. `mainnet/address/[hash]`.
+> - As a third option, we could implement [generateStaticParams()](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) for the `[network]` route, and switch to URL params for the other dynamic routes.
+>
+> I will now attempt to **deploy to Github Pages with Github Actions** (using `output: 'export'` and the third option above).
 
 ### 0. Is it possible to deploy a Nextjs project with `output: 'standalone'` in nextConfig to Github Pages?
-**NO!!! GitHub pages is a static host and `standalone` is not a static export!**
+**NO!!! GitHub Pages is a static host and `standalone` is not a static export! Github Pages explicitly requires `output: 'export'`!**
 
 There are 3 ways to deploy/host Next.js:
 - Node.js Server
@@ -20,37 +21,123 @@ There are 3 ways to deploy/host Next.js:
 
 So `output: 'standalone'` requires one of the first 2 options, which support all Next.js features. As the name implies, a static export does not support Next.js features that require a server.
 
-### 1. Configure the Next.js Build Process
-Enable `output: 'standalone'` in `next.config.mjs`:
+### 1. Configure the Next.js Build Process for Github Pages
+Enable `output: 'export'` in `next.config.mjs`:
 ```mjs
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  output: 'export',
 };
 
 export default nextConfig;
 ```
+After running `next build`, Next.js will create an `out` folder with the HTML/CSS/JS assets for your application.
 
-### 2. Update `package.json` for `output: 'standalone'`
-In `package.json`, update the `"start"` command of the `"scripts"` field:
-```json
-"scripts": {
-  "dev": "next dev -p 3005",
-  "build": "next build",
-  "start": "node .next/standalone/server.js",
-  "lint": "next lint"
-},
+### 2. `output: 'export'` is not compatible with `redirects()`
+Remove `redirects()` from `next.config.mjs`:
+```mjs
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: 'export',
+
+  // async redirects() {
+  //   return [
+  //     {
+  //       source: '/',
+  //       destination: '/mainnet',
+  //       permanent: true,
+  //     },
+  //   ]
+  // },
+};
+
+export default nextConfig;
 ```
-Nextjs in `standalone` mode puts its build in `.next/standalone`, where the executable server is located.
+This means the homepage will no longer redirect to `/mainnet`, so we'll need to find another solution for this later.
 
-### 3. Deno Deploy via Github
-There are 2 ways to deploy to Deno, either via Github, or through the command line tool [deployctl](https://github.com/denoland/deployctl). Since the project is already on Github, I'll just use that.
+### 3. Implement [generateStaticParams()](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) for the `[network]` route
+We add a `generateStaticParams()` to all `[network]` routes (i.e. **all `page.tsx` files** in the `[network]` folder):
+```tsx
+// Return a list of `params` to populate the [network] dynamic segment:
+export async function generateStaticParams() {
+   return [{ network: 'mainnet' }, { network: 'sepolia' }];
+}
+```
 
-* Go to https://dash.deno.com/new_project. If you do not have a Deno Deploy account, you will asked to sign up with your GitHub account for free.
-* Search for your Next.js project in the repository in the dropdown menu. Deno Deploy will automatically detect that you are using Next.js and prepare the necessary build configuration.
-* Click `Deploy project`. Deno Deploy will commit to your repository and run the new `deploy.yml` action, which will build and deploy your project on every push to the main branch. Note that afterwards you are free to customize the action by editing the `.github/workflows/deploy.yml` file.  
-  That's it, project should be live now!
-* Add the environment variables to Deno.
+### 4. Switch to URL params for the other dynamic routes
+* We remove the remaining dynamic URL params from the routes:
+  ```bash
+  git mv src/app/[network]/address/[hash]/page.tsx src/app/[network]/address/page.tsx
+  git mv src/app/[network]/block/[number]/page.tsx src/app/[network]/block/page.tsx
+  git mv src/app/[network]/transaction/[hash]/page.tsx src/app/[network]/transaction/page.tsx
+  ```
+* We search and replace their respective `href`instances:
+  - Replace ``href={`/${props.network}/address/`` by ``href={`/${props.network}/address?hash=``.
+  - Replace ``href={`/${props.network}/block/`` by ``href={`/${props.network}/block?number=``.
+  - Replace ``href={`/${props.network}/transaction/`` by ``href={`/${props.network}/transaction?hash=``.
+* We update their respective `pages.tsx` files with `useSearchParams()` to read the URL's query string. However, since `useSearchParams()` requires `use client;`, but `generateStaticParams()` is not compatible with Client Components, the `page.tsx` files need to remain a Server Components, and `useSearchParams()` needs to be moved to their children components which **can** be made a Client components. E.g. for `src/app/[network]/address/page.tsx`:
+  ```tsx
+  import { createAlchemy } from '@/lib/utilities';
+  import AddressPage from '@/components/content/address-page';
+  import NotFoundPage from '@/components/content/error-page/not-found-page';
+
+  export async function generateStaticParams() {
+    return [{ network: 'mainnet' }, { network: 'sepolia' }];
+  }
+
+  // Remove `hash: string` from params below:
+  export default async function Page({params} :
+    {params: Promise<{network: string}>}) /* <-- */
+  {
+    const network = (await params).network;
+    if (network !== 'mainnet' && network !== 'sepolia') {
+      return <NotFoundPage reason={
+        `"${network}" is not a valid Ethereum network.`} />;
+    }
+
+    return (
+      <AddressPage
+        // hash={hash!} // <-- Remove hash!
+        network={network}
+        alchemy={createAlchemy(network)}
+      />
+    );
+  }
+  ```
+  And its `AddressPage` `src/components/content/address-page/index.tsx`:
+  ```tsx
+  'use client'; // <-- Required for `useSearchParams`
+
+  import { Utils, Alchemy } from 'alchemy-sdk';
+  import Tokens from './tokens';
+  import Transactions from './transactions';
+  import EthBalance from './eth-balance';
+  import { useSearchParams } from 'next/navigation'; // <--
+
+  type Props = {
+    // hash: string, // <-- Remove hash!
+    network: string,
+    alchemy: Alchemy
+  }
+
+  export default async function AddressPage(props: Props) {
+    let ethBalance, badAddress;
+    let success = false;
+
+    const searchParams = useSearchParams(); // <--
+    const hash = searchParams.get('hash')!; // <--
+
+    while (!success) {
+      try {
+        ethBalance = Utils.formatEther(await props.alchemy.core.getBalance(hash, 'latest')); // <-- Replace `props.hash` with `hash`!
+        badAddress = false; success = true;
+      } catch(err) {
+    ...
+    // Replace other instances of `props.hash` with `hash` also!!!
+  ```
+
+
+
 
 ## Security
 * After checking out [Key security Best practices](https://docs.alchemy.com/docs/best-practices-for-key-security-and-management) and [Using JWTs](https://docs.alchemy.com/docs/how-to-use-jwts-for-api-requests), it is not clear to me how one would go about updating the JWTs, since they are supposed to be short-lived. In the example, their expiration time is even 10 minutes! How to keep the service functioning if JWTs are expiring that fast?

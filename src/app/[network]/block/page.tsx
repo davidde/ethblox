@@ -1,6 +1,7 @@
-import { createAlchemy } from '@/lib/utilities';
-import HomePage from '@/components/content/home-page';
+import { createAlchemy, sanitizeData } from '@/lib/utilities';
+import BlockPage from '@/components/content/block-page';
 import NotFoundPage from '@/components/content/error-page/not-found-page';
+import { Suspense } from 'react';
 
 
 // Return a list of `params` to populate the [network] dynamic segment:
@@ -8,16 +9,20 @@ export function generateStaticParams() {
    return [{ network: 'mainnet' }, { network: 'sepolia' }];
 }
 
-export default async function Page({params} : {params: Promise<{network: string}>}) {
+export default async function Page({params} : {params: Promise<{network: string}>})
+{
   const network = (await params).network;
   if (network !== 'mainnet' && network !== 'sepolia') {
     return <NotFoundPage reason={`"${network}" is not a valid Ethereum network.`} />;
   }
 
   return (
-    <HomePage
-      network={network}
-      alchemy={createAlchemy(network)}
-    />
+    // Suspense required because of `useSearchParams` in `BlockPage`:
+    <Suspense>
+      <BlockPage
+        network={network}
+        alchemy={await sanitizeData(createAlchemy(network))}
+      />
+    </Suspense>
   );
 }

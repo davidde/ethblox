@@ -1,32 +1,47 @@
+'use client';
+
 import { Utils, Alchemy } from 'alchemy-sdk';
 import Tokens from './tokens';
 import Transactions from './transactions';
 import EthBalance from './eth-balance';
+import { useSearchParams } from 'next/navigation';
+import { useState, useEffect, useRef } from 'react';
 
 
 type Props = {
-  hash: string,
   network: string,
   alchemy: Alchemy
 }
 
-export default async function AddressPage(props: Props) {
-  let ethBalance, badAddress;
-  let success = false;
+export default function AddressPage(props: Props) {
+  const searchParams = useSearchParams();
+  const hash = searchParams.get('hash')!;
 
-  while (!success) {
-    try {
-      ethBalance = Utils.formatEther(await props.alchemy.core.getBalance(props.hash, 'latest'));
-      badAddress = false; success = true;
-    } catch(err) {
-      if (err instanceof Error && err.message.startsWith('bad address checksum')) {
-        console.error('getBalance() Error: ', err.message);
-        badAddress = true; success = true;
-      } else {
-        badAddress = false; success = false;
+  const [ethBalance, setEthBalance] = useState('');
+  let badAddress = useRef(true);
+
+  useEffect(() => {
+    let success = false;
+
+    async function getBalance() {
+      while (!success) {
+        try {
+          const data = await props.alchemy.core.getBalance(hash, 'latest');
+          setEthBalance(Utils.formatEther(data));
+          badAddress.current = false; success = true;
+        } catch(err) {
+          if (err instanceof Error && err.message.startsWith('bad address checksum')) {
+            console.error('getBalance() Error: ', err.message);
+            badAddress.current = true; success = true;
+          } else {
+            badAddress.current = false; success = false;
+          }
+        }
       }
     }
-  }
+
+    getBalance();
+  }, [hash, props.alchemy]); // Re-run effect whenever the 'hash' changes
 
   return (
     <main className='m-4 mt-8 md:m-8'>
@@ -38,7 +53,7 @@ export default async function AddressPage(props: Props) {
           ADDRESS
         </h2>
         <p className='max-w-[90vw] break-words'>
-          {props.hash}
+          {hash}
         </p>
       </div>
       {
@@ -53,17 +68,17 @@ export default async function AddressPage(props: Props) {
           }>
             <div>
               <EthBalance
-                ethBalance={ethBalance!}
+                ethBalance={ethBalance}
                 network={props.network}
               />
               <Tokens
-                hash={props.hash}
+                hash={hash}
                 network={props.network}
                 alchemy={props.alchemy}
               />
             </div>
             <Transactions
-              hash={props.hash}
+              hash={hash}
               network={props.network}
               alchemy={props.alchemy}
             />

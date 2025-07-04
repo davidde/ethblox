@@ -1,27 +1,42 @@
-import { Alchemy, Utils } from 'alchemy-sdk';
+'use client';
+
+import { Alchemy, Utils, TransactionResponse, TransactionReceipt } from 'alchemy-sdk';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 
 type Props = {
-  hash: string,
   network: string,
   alchemy: Alchemy
 }
 
-export default async function TransactionPage(props: Props) {
-  let tx, txReceipt;
+export default function TransactionPage(props: Props) {
+  const searchParams = useSearchParams();
+  const hash = searchParams.get('hash')!;
 
-  try {
-    tx = await props.alchemy.transact.getTransaction(props.hash);
-  } catch (err) {
-    console.error('getTransaction()', err);
-  }
+  const [tx, setTx] = useState<TransactionResponse | null>(null);
+  const [txReceipt, setTxReceipt] = useState<TransactionReceipt | null>(null);
 
-  try {
-    txReceipt = await props.alchemy.core.getTransactionReceipt(props.hash);
-  } catch (err) {
-    console.error('getTransactionReceipt()', err);
-  }
+  useEffect(() => {
+    async function getTransactionData() {
+      try {
+        const txData = await props.alchemy.transact.getTransaction(hash);
+        setTx(txData);
+      } catch (err) {
+        console.error('getTransaction()', err);
+      }
+
+      try {
+        const txReceiptData = await props.alchemy.core.getTransactionReceipt(hash);
+        setTxReceipt(txReceiptData);
+      } catch (err) {
+        console.error('getTransactionReceipt()', err);
+      }
+    }
+
+    getTransactionData();
+  }, [hash, props.alchemy]);
 
   return (
     <main className='m-4 mt-8 md:m-8'>
@@ -32,7 +47,7 @@ export default async function TransactionPage(props: Props) {
         <li className='list-disc ml-4 m-2'>
           <p className='flex flex-col md:flex-row'>
             <span className='w-60'>Transaction Hash:</span>
-            <span>{props.hash}</span>
+            <span>{hash}</span>
           </p>
         </li>
         <div className='ml-4'>
@@ -63,7 +78,7 @@ export default async function TransactionPage(props: Props) {
               {
               tx ?
                 <Link
-                  href={`/${props.network}/block/${tx.blockNumber}`}
+                  href={`/${props.network}/block?number=${tx.blockNumber}`}
                   className='ml-2 md:ml-0 text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
                 >
                   {tx.blockNumber}
@@ -100,7 +115,7 @@ export default async function TransactionPage(props: Props) {
             {
               tx ?
                 <Link
-                  href={`/${props.network}/address/${tx.from}`}
+                  href={`/${props.network}/address?hash=${tx.from}`}
                   className='font-mono ml-2 md:ml-0 text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
                 >
                   {tx.from}
@@ -116,7 +131,7 @@ export default async function TransactionPage(props: Props) {
             {
               tx ?
                 <Link
-                  href={`/${props.network}/address/${tx.to}`}
+                  href={`/${props.network}/address?hash=${tx.to}`}
                   className='font-mono ml-2 md:ml-0 text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
                 >
                   {tx.to}
