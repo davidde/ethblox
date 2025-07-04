@@ -136,7 +136,7 @@ export async function generateStaticParams() {
     // Replace other instances of `props.hash` with `hash` also!!!
   ```
   Etc. etc.
-* To fix the 404 on the root domain (since we removed the redirect to /mainnet), we switch from the dynamic `[network]` URL param to an optional catch-all route param `[[...slug]]`. But this requires quite a few changes since now all the routing for all routes has to be done in `[[...slug]]/page.tsx`, and `generateStaticParams()` will have to generate params for all these routes.
+* To fix the 404 on the root domain (since we removed the redirect to /mainnet), we switch from the dynamic `[network]` URL param to an optional catch-all route param `[[...slug]]`. But this requires quite a few changes since now all the routing for all routes has to be done in `[[...slug]]/page.tsx`, and `generateStaticParams()` will have to generate params for all these routes (See commit 755ddeb3f7ce2a1af2b32ae19b0c209bf70f7119).
 * 
 
 

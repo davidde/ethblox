@@ -9,17 +9,19 @@ import { Suspense } from 'react';
 
 
 const networks = ['mainnet', 'sepolia'];
-const pages = ['address', 'block', 'gastracker', 'transaction'];
 
-// Return a list of `params` to populate the `[[...slug]]` dynamic segment:
-// This needs to generate the above pages for both networks,
+// Returns a list of `params` to populate the `[[...slug]]` dynamic segment
+// for the static site generation at build time.
+// This needs to generate all `pages` below for both networks,
 // as well as for the root `/`, which should default to `/mainnet`.
+// E.g.: - /, /address, /block, /transaction, /gastracker
+//       - /mainnet, /mainnet/address, /mainnet/block, /mainnet/transaction, /mainnet/gastracker
+//       - /sepolia, /sepolia/address, /sepolia/block, /sepolia/transaction, ~~/sepolia/gastracker~~
 export function generateStaticParams() {
-  const routes = pages.concat('');
-
   // The optional catch-all route param `[[...slug]]` is parsed as
   // an array, so paths should match that, and be an array too:
   const paths = [];
+  const pages = ['', 'address', 'block', 'gastracker', 'transaction'];
 
   // Add root page separately to render `/`:
   // (When slug is undefined, Next.js will generate the
@@ -27,11 +29,11 @@ export function generateStaticParams() {
   paths.push({ slug: undefined });
 
   for (const network of networks) {
-    for (const route of routes) {
-      if (route === '') {
+    for (const page of pages) {
+      if (page === '') {
         paths.push({ slug: [network] }); // e.g. /mainnet, /sepolia
       } else {
-        paths.push({ slug: [network, route] }); // e.g. /mainnet/gastracker, etc.
+        paths.push({ slug: [network, page] }); // e.g. /mainnet/gastracker, etc.
       }
     }
   }
@@ -50,17 +52,15 @@ export default async function Page({params} : { params: { slug?: string[] } }) {
     return <NotFoundPage reason={`"${network}" is not a valid Ethereum network.`} />;
   }
 
-  // === Dispatch ===
-  if (slug.length === 0 || subroute === '') {
-    return (
-      <HomePage
-        network={network}
-        alchemy={createAlchemy(network)}
-      />
-    );
-  }
-
+  // Dispatching:
   switch (subroute) {
+    case '':
+      return (
+        <HomePage
+          network={network}
+          alchemy={createAlchemy(network)}
+        />
+      );
     case 'address':
       return (
         // Suspense required because of `useSearchParams` in `AddressPage`:
@@ -82,6 +82,9 @@ export default async function Page({params} : { params: { slug?: string[] } }) {
         </Suspense>
       );
     case 'gastracker':
+      if (network !== 'mainnet') {
+        return <NotFoundPage reason={`There only exists a Gas Tracker for Ethereum Mainnet.`} />;
+      }
       return <GastrackerPage />;
     case 'transaction':
       return (
