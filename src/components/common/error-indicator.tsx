@@ -1,14 +1,9 @@
-export default function ErrorIndicator(props: { error: string }) {
+export default function ErrorIndicator(props: { error: string, className?: string }) {
   if (props.error) {
     return (
-      <div className='text-red-800'>
-        <h1 className='text-lg font-bold'>
-          Error:
-        </h1>
-        <p className='ml-[1rem]'>
-          {props.error}
-        </p>
-      </div>
+      <span className={`${props.className} text-red-800`}>
+        {props.error}
+      </span>
     );
   }
 }

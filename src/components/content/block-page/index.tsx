@@ -10,15 +10,19 @@ import {
   getAlchemy
 } from '@/lib/utilities';
 import { useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, JSX } from 'react';
 import ErrorIndicator from '@/components/common/error-indicator';
 import LoadingIndicator from '@/components/common/loading-indicator';
+import GreenSpan from '@/components/common/green-span';
+import RedSpan from '@/components/common/red-span';
 
 
 export default function BlockPage(props: { network: string }) {
   const searchParams = useSearchParams();
   const number = +(searchParams.get('number') ?? 0);
-  const [error, setError] = useState('');
+  const [blockError, setBlockError] = useState('');
+  const [finalizedError, setFinalizedError] = useState('');
+  const [blockRewardError, setBlockRewardError] = useState('');
 
   const blockRewardUrl = props.network === 'mainnet' ?
     `https://eth.blockscout.com/api?module=block&action=getblockreward&blockno=${number}`
@@ -32,27 +36,37 @@ export default function BlockPage(props: { network: string }) {
   const [blockReward, setBlockReward] = useState('');
 
   useEffect(() => {
-    async function getBlockData() {
+    (async () => {
+      const alchemy: Alchemy = getAlchemy(props.network);
       try {
-        const alchemy: Alchemy = getAlchemy(props.network);
         const blockData = await alchemy.core.getBlock(number);
         setBlock(blockData);
+      } catch (err) {
+        const error = 'BlockPage getBlock() ' + err;
+        console.error(error);
+        setBlockError(error);
+      }
+      try {
         const finalizedBlockData = await alchemy.core.getBlock('finalized');
         setFinalizedBlock(finalizedBlockData);
-
-        const response = await fetch(blockRewardUrl);
-        if (!response.ok) throw new Error(`getBlockReward() Error: ${response.status}`);
-        const data = await response.json();
-        if (data.result.blockReward)
-          setBlockReward(`Ξ${getEtherValueFromWei(data.result.blockReward, 4)}`);
       } catch (err) {
-        const error = 'BlockPage ' + err;
+        const error = "BlockPage getBlock('finalized') " + err;
         console.error(error);
-        setError(error);
+        setFinalizedError(error);
       }
-    }
-
-    getBlockData();
+      try {
+        const response = await fetch(blockRewardUrl);
+        if (!response.ok) throw new Error(`HTTP fetch error: ${response.status}`);
+        const data = await response.json();
+        if (data.result.blockReward) {
+          setBlockReward(`Ξ${getEtherValueFromWei(data.result.blockReward, 4)}`);
+        }
+      } catch (err) {
+        const error = 'BlockPage getBlockReward() ' + err;
+        console.error(error);
+        setBlockRewardError(error);
+      }
+    })();
   }, [number, blockRewardUrl, props.network]);
 
   let timestamp = ''; let gasUsed = '';
@@ -68,8 +82,7 @@ export default function BlockPage(props: { network: string }) {
   return (
     <main>
       <div className='m-4 mt-8 md:m-8'>
-        <ErrorIndicator error={error} />
-        <h1 className='text-lg font-bold mt-8'>
+        <h1 className='text-lg font-bold'>
           Block Details
         </h1>
         <ul className='max-w-[90vw] break-words mt-8'>
@@ -82,7 +95,10 @@ export default function BlockPage(props: { network: string }) {
           <li className='list-disc ml-4 mt-4 m-2'>
             <p className='flex flex-col md:flex-row'>
               <span className='w-60'>Block hash:</span>
-              <span>{block?.hash ?? <LoadingIndicator />}
+              <span>{block?.hash || (blockError ?
+                                  <ErrorIndicator error={blockError} />
+                                  :
+                                  <LoadingIndicator />)}
               </span>
             </p>
           </li>
@@ -91,27 +107,30 @@ export default function BlockPage(props: { network: string }) {
               <span className='w-60'>Status:</span>
               {
                 finalized ?
-                  <span className='bg-green-200 text-green-700 border-green-400
-                              dark:bg-green-400 dark:text-green-800 dark:border-green-800
-                              border rounded-md p-1 px-4 w-[6.4rem]'>
+                  <GreenSpan className='border rounded-md p-1 px-4 w-[6.4rem]'>
                     Finalized
-                  </span>
+                  </GreenSpan>
                   :
                   finalized === false ?
-                    <span className='bg-red-200 text-red-700 border-red-400
-                              dark:bg-red-500 dark:text-red-100 dark:border-red-300
-                                border rounded-md p-1 px-4 w-[7.6rem]'>
+                    <RedSpan className='border rounded-md p-1 px-4 w-[7.6rem]'>
                       Unfinalized
-                    </span>
+                    </RedSpan>
                     :
-                    <LoadingIndicator /> // Undefined case (initial render)
+                    finalizedError ?
+                      <ErrorIndicator error={finalizedError} /> // Undefined case: error
+                      :
+                      <LoadingIndicator /> // Undefined case: initial render
               }
             </p>
           </li>
           <li className='list-disc ml-4 mt-4 m-2'>
             <p className='flex flex-col md:flex-row'>
               <span className='w-60'>Timestamp:</span>
-              <span>{timestamp ? timestamp : <LoadingIndicator />}</span>
+              <span>{timestamp || (blockError ?
+                                  <ErrorIndicator error={blockError} />
+                                  :
+                                  <LoadingIndicator />)}
+              </span>
             </p>
           </li>
           <li className='list-disc ml-4 mt-4 m-2'>
@@ -126,7 +145,10 @@ export default function BlockPage(props: { network: string }) {
                     {block.miner}
                   </Link>
                   :
-                  <LoadingIndicator />
+                  (blockError ?
+                    <ErrorIndicator error={blockError} />
+                    :
+                    <LoadingIndicator />)
               }
             </p>
           </li>
@@ -134,13 +156,24 @@ export default function BlockPage(props: { network: string }) {
             <p className='flex flex-col md:flex-row'>
 
               <span className='w-60'>Block reward:</span>
-              <span>{blockReward ? blockReward : <LoadingIndicator />}</span>
+              <span>
+                {
+                    blockReward || (blockRewardError ?
+                                    <ErrorIndicator error={blockRewardError} />
+                                    :
+                                    <LoadingIndicator />)
+                }
+              </span>
             </p>
           </li>
           <li className='list-disc ml-4 mt-4 m-2'>
             <p className='flex flex-col md:flex-row'>
               <span className='w-60'>Gas Used:</span>
-              <span>{gasUsed ? gasUsed : <LoadingIndicator />}</span>
+              <span>{gasUsed || (blockError ?
+                                  <ErrorIndicator error={blockError} />
+                                  :
+                                  <LoadingIndicator />)}
+              </span>
             </p>
           </li>
         </ul>
