@@ -26,10 +26,10 @@ export default function EthNetworkToggle(props: Props) {
 
   return (
     <Menu>
-      <MenuButton className={`${props.className} bg-[image:var(--eth-logo-url)] bg-contain bg-no-repeat bg-right`} />
+      <MenuButton className={`${props.className} bg-(image:--eth-logo-url) bg-contain bg-no-repeat bg-right`} />
       <MenuItems
-        className='bg-[var(--main-bg-color)]
-                   border-2 border-[var(--border-color)]
+        className='bg-(--main-bg-color)
+                   border-2 border-(--border-color)
                    rounded-lg
                    z-50'
         anchor={{ to: 'bottom end',
@@ -39,8 +39,8 @@ export default function EthNetworkToggle(props: Props) {
         <MenuItem
           as='div'
           className={`m-2 rounded cursor-pointer
-                    data-[focus]:text-[var(--link-color)] dark:data-[focus]:text-[var(--hover-fg-color)]
-                    ${sepolia ? `` : `bg-[var(--hover-bg-color)]`}`}
+                    data-focus:text-(--link-color) dark:data-focus:text-(--hover-fg-color)
+                    ${sepolia ? `` : `bg-(--hover-bg-color)`}`}
         >
           {({ close }) => (
             <Link href='/mainnet' onClick={close}>
@@ -52,8 +52,8 @@ export default function EthNetworkToggle(props: Props) {
         <MenuItem
           as='div'
           className={`m-2 rounded cursor-pointer
-                    data-[focus]:text-[var(--link-color)] dark:data-[focus]:text-[var(--hover-fg-color)]
-                    ${sepolia ? `bg-[var(--hover-bg-color)]` : ``}`}
+                    data-focus:text-(--link-color) dark:data-focus:text-(--hover-fg-color)
+                    ${sepolia ? `bg-(--hover-bg-color)` : ``}`}
         >
           {({ close }) => (
             <Link href='/sepolia' onClick={close}>
@@ -66,7 +66,7 @@ export default function EthNetworkToggle(props: Props) {
           as='div'
           disabled={true}
           className='m-2 rounded
-                    data-[disabled]:opacity-50'
+                    data-disabled:opacity-50'
         >
           Testnet Holesky
         </MenuItem>

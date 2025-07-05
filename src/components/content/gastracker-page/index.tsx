@@ -45,8 +45,8 @@ export default async function GastrackerPage() {
           <ChartBarIcon className='w-8 h-8' />
           <p className='pl-4 text-2xl'>Ethereum Gas Tracker</p>
         </div>
-        <div className='flex flex-col md:flex-row items-start justify-between w-full max-w-[50rem] mt-2'>
-          <div className='border border-[var(--border-color)] rounded-lg px-16 py-4 w-[14.5rem] ml-auto mr-auto'>
+        <div className='flex flex-col md:flex-row items-start justify-between w-full max-w-200 mt-2'>
+          <div className='border border-(--border-color) rounded-lg px-16 py-4 w-58 ml-auto mr-auto'>
             <p className='font-bold'>
               <span className='text-xl mr-2' role="img" aria-label="smiling face with sunglasses">😎</span>
               Low
@@ -54,7 +54,7 @@ export default async function GastrackerPage() {
             <p className='text-lg tracking-wide text-green-600'>{ lowGasPriceGwei } gwei</p>
             <p className='text-sm tracking-wide text-green-600'>(${ lowGasPriceUsd })</p>
           </div>
-          <div className='border border-[var(--border-color)] rounded-lg my-4 md:my-0 px-16 py-4 w-[14.5rem] ml-auto mr-auto'>
+          <div className='border border-(--border-color) rounded-lg my-4 md:my-0 px-16 py-4 w-58 ml-auto mr-auto'>
             <p className='font-bold'>
               <span className='text-xl mr-2' role="img" aria-label="beaming face with smiling eyes">😁</span>
               Average
@@ -62,7 +62,7 @@ export default async function GastrackerPage() {
             <p className='text-lg tracking-wide text-blue-600'>{ averageGasPriceGwei } gwei</p>
             <p className='text-sm tracking-wide text-blue-600'>(${ averageGasPriceUsd })</p>
           </div>
-          <div className='border border-[var(--border-color)] rounded-lg px-16 py-4 w-[14.5rem] ml-auto mr-auto'>
+          <div className='border border-(--border-color) rounded-lg px-16 py-4 w-58 ml-auto mr-auto'>
             <p className='font-bold'>
               <span className='text-xl mr-2' role="img" aria-label="flushed face">😳</span>
               High

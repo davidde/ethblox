@@ -10,11 +10,11 @@ import Copyright from './copyright';
 
 export default function Footer() {
   return (
-    <footer className='w-screen border-t border-[var(--border-color)] bg-[var(--comp-bg-color)] p-4 mt-12'>
-      <div className='flex justify-between pb-6 border-b border-[var(--border-color)]'>
+    <footer className='w-screen border-t border-(--border-color) bg-(--comp-bg-color) p-4 mt-12'>
+      <div className='flex justify-between pb-6 border-b border-(--border-color)'>
         <Link
           href='https://github.com/davidde/ethblox'
-          className='hover:text-[var(--hover-fg-color)]'
+          className='hover:text-(--hover-fg-color)'
         >
           <GithubIcon className='w-6 h-6 inline mr-2' />
           <span className='align-middle'>Source Code</span>
@@ -28,7 +28,7 @@ export default function Footer() {
              in place of 'smooth' */
             });
           }}
-          className='hover:text-[var(--hover-fg-color)] cursor-pointer'
+          className='hover:text-(--hover-fg-color) cursor-pointer'
         >
           <span className='align-middle'>Back to Top</span>
           <BackToTopIcon className='w-5 h-5 inline ml-1' />
@@ -37,18 +37,18 @@ export default function Footer() {
 
       <div className='pt-6 text-center'>
         <div className='flex w-full justify-center'>
-          <span className='w-8 h-8 bg-[image:var(--eth-logo-url)] bg-contain bg-no-repeat bg-center' />
+          <span className='w-8 h-8 bg-(image:--eth-logo-url) bg-contain bg-no-repeat bg-center' />
           <span className='text-xl font-semibold pt-1 pl-1'>
             Powered by&nbsp;
             <Link
               href='https://ethereum.org/en/'
-              className='text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
+              className='text-(--link-color) hover:text-(--hover-fg-color)'
             >
               Ethereum
             </Link>
           </span>
         </div>
-        <p className='max-w-md m-auto pt-2 text-sm tracking-wider text-[var(--grey-fg-color)]'>
+        <p className='max-w-md m-auto pt-2 text-sm tracking-wider text-(--grey-fg-color)'>
           EthBlox is a Block Explorer and Analytics Platform for Ethereum,
           a decentralized smart contracts platform.
         </p>
@@ -62,13 +62,13 @@ export default function Footer() {
               Inspired by&nbsp;
               <Link
                 href='https://etherscan.io/'
-                className='text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
+                className='text-(--link-color) hover:text-(--hover-fg-color)'
               >
                 Etherscan
               </Link>
             </span>
           </div>
-          <p className='pl-[0.4rem] pt-1 text-xs tracking-wider text-[var(--grey-fg-color)]'>
+          <p className='pl-[0.4rem] pt-1 text-xs tracking-wider text-(--grey-fg-color)'>
             The leading Ethereum Block Explorer.
           </p>
         </div>
@@ -80,13 +80,13 @@ export default function Footer() {
               Made with ❤️ by&nbsp;
               <Link
                 href='https://github.com/davidde'
-                className='text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
+                className='text-(--link-color) hover:text-(--hover-fg-color)'
               >
                 davidde
               </Link>
             </span>
           </div>
-          <p className='pl-[0.4rem] pt-1 text-xs tracking-wider text-[var(--grey-fg-color)] md:text-center'>
+          <p className='pl-[0.4rem] pt-1 text-xs tracking-wider text-(--grey-fg-color) md:text-center'>
             Design and open-source tech lover.
           </p>
         </div>

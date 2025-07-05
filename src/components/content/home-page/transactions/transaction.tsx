@@ -19,7 +19,7 @@ export default async function Transaction(props: Props) {
   const toShort = truncateAddress(to, 21);
 
   return (
-    <div className='p-2 md:p-3 border-b border-[var(--border-color)] last:border-0'>
+    <div className='p-2 md:p-3 border-b border-(--border-color) last:border-0'>
       <div className='flex flex-col md:flex-row'>
         <div className='flex'>
           <DocumentTextIcon className='w-10 h-10 md:w-8 md:h-8' />
@@ -29,7 +29,7 @@ export default async function Transaction(props: Props) {
                 href={`/${props.network}/transaction?hash=${transactionHash}`}
                 content={transactionHashShort!}
                 popover={transactionHash}
-                className='left-[-100%] top-[-2.6rem] w-[30rem] py-1.5 px-2.5'
+                className='-left-full top-[-2.6rem] w-120 py-1.5 px-2.5'
               />
             </span>
             <span className='px-2 md:pl-4'>Amount: {`Ξ${amount}`}</span>
@@ -42,7 +42,7 @@ export default async function Transaction(props: Props) {
               href={`/${props.network}/address?hash=${from}`}
               content={fromShort!}
               popover={from}
-              className='left-[-35%] top-[-2.6rem] w-[19.5rem] py-1.5 px-2.5'
+              className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
             />
           </span>
           <span className='pl-7 md:pl-9'>
@@ -51,7 +51,7 @@ export default async function Transaction(props: Props) {
               href={`/${props.network}/address?hash=${to}`}
               content={toShort!}
               popover={to}
-              className='left-[-35%] top-[-2.6rem] w-[19.5rem] py-1.5 px-2.5'
+              className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
             />
           </span>
         </div>

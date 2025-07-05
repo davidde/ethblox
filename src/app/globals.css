@@ -1,61 +1,87 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-* {
-  /* outline: 1px solid red; */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --background-image-gradient-radial: radial-gradient(var(--tw-gradient-stops));
+  --background-image-gradient-conic: conic-gradient(
+    from 180deg at 50% 50%,
+    var(--tw-gradient-stops)
+  );
 }
 
-body {
-  min-height: 100vh;
-  max-width: 100%;
-  /* This also prevents scrolling on tablets, which be a problem for wide content in portrait mode: */
-  overflow-x: hidden;
-  margin: 0;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  background-color: var(--main-bg-color);
-  color: var(--main-fg-color);
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
 }
 
-.light {
-  --main-bg-color: rgb(250, 250, 252);
-  --main-fg-color: black;
-  --comp-bg-color: rgb(235, 238, 244);
-  --banner-bg-color: rgb(213, 218, 231);
-  --banner-node-color: rgb(164, 150, 209);
-  --banner-line-color: rgb(131, 133, 255);
-  --grey-fg-color: rgb(85, 81, 81);
-  --border-color: rgb(178, 192, 210);
-  --link-color: rgb(131, 78, 216);
-  --hover-fg-color: rgb(173, 102, 236);
-  --hover-bg-color: rgb(225, 217, 253);
-  --gradient-from-color: rgb(92, 39, 249);
-  --gradient-via-color: rgb(123, 60, 195);
-  --gradient-to-color: rgb(185, 94, 230);
-  --eth-logo-url: url(/images/ethereum-logo-dark.svg);
-}
-
-.dark {
-  --main-bg-color: black;
-  --main-fg-color: rgb(158, 165, 158);
-  --comp-bg-color: rgb(1, 8, 2);
-  --banner-bg-color: rgb(0, 13, 3);
-  --banner-node-color: rgb(20, 66, 23);
-  --banner-line-color: rgb(68, 134, 90);
-  --grey-fg-color: rgb(125, 129, 122);
-  --border-color: rgb(2, 44, 11);
-  --link-color: rgb(11, 108, 28);
-  --hover-fg-color: rgb(33, 201, 64);
-  --hover-bg-color: rgb(7, 59, 16);
-  --gradient-from-color: rgb(3, 91, 43);
-  --gradient-via-color: rgb(60, 195, 155);
-  --gradient-to-color: rgb(4, 208, 14);
-  --eth-logo-url: url(/images/ethereum-logo-light.svg);
+@utility text-balance {
+  text-wrap: balance;
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  * {
+    /* outline: 1px solid red; */
+  }
+
+  body {
+    min-height: 100vh;
+    max-width: 100%;
+    /* This also prevents scrolling on tablets, which be a problem for wide content in portrait mode: */
+    overflow-x: hidden;
+    margin: 0;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    background-color: var(--main-bg-color);
+    color: var(--main-fg-color);
+  }
+
+  .light {
+    --main-bg-color: rgb(250, 250, 252);
+    --main-fg-color: black;
+    --comp-bg-color: rgb(235, 238, 244);
+    --banner-bg-color: rgb(213, 218, 231);
+    --banner-node-color: rgb(164, 150, 209);
+    --banner-line-color: rgb(131, 133, 255);
+    --grey-fg-color: rgb(85, 81, 81);
+    --border-color: rgb(178, 192, 210);
+    --link-color: rgb(131, 78, 216);
+    --hover-fg-color: rgb(173, 102, 236);
+    --hover-bg-color: rgb(225, 217, 253);
+    --gradient-from-color: rgb(92, 39, 249);
+    --gradient-via-color: rgb(123, 60, 195);
+    --gradient-to-color: rgb(185, 94, 230);
+    --eth-logo-url: url(/images/ethereum-logo-dark.svg);
+  }
+
+  .dark {
+    --main-bg-color: black;
+    --main-fg-color: rgb(158, 165, 158);
+    --comp-bg-color: rgb(1, 8, 2);
+    --banner-bg-color: rgb(0, 13, 3);
+    --banner-node-color: rgb(20, 66, 23);
+    --banner-line-color: rgb(68, 134, 90);
+    --grey-fg-color: rgb(125, 129, 122);
+    --border-color: rgb(2, 44, 11);
+    --link-color: rgb(11, 108, 28);
+    --hover-fg-color: rgb(33, 201, 64);
+    --hover-bg-color: rgb(7, 59, 16);
+    --gradient-from-color: rgb(3, 91, 43);
+    --gradient-via-color: rgb(60, 195, 155);
+    --gradient-to-color: rgb(4, 208, 14);
+    --eth-logo-url: url(/images/ethereum-logo-light.svg);
   }
 }

@@ -30,7 +30,7 @@ export default async function Tokens(props: Props) {
 
   return (
     <div className={`${showTokens} pr-12 my-4`}>
-      <h2 className='text-sm tracking-wider text-[var(--grey-fg-color)]'>TOKEN HOLDINGS</h2>
+      <h2 className='text-sm tracking-wider text-(--grey-fg-color)'>TOKEN HOLDINGS</h2>
       <ul>
         {
           realTokens === undefined ? <p className='text-red-500'>Error getting tokens.</p> :
@@ -39,8 +39,8 @@ export default async function Tokens(props: Props) {
               let balance = parseFloat(token.balance ?? '0').toFixed(8);
               balance = balance.includes('.') && balance.endsWith('0') ? parseFloat(balance).toString() : balance;
               return (
-                <li key={i} className='ml-4 list-disc text-[var(--grey-fg-color)]'>
-                  <span className='text-[var(--main-fg-color)]'>
+                <li key={i} className='ml-4 list-disc text-(--grey-fg-color)'>
+                  <span className='text-(--main-fg-color)'>
                     {`${token.symbol}: ${balance} (${token.name})`}
                   </span>
                 </li>

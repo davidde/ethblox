@@ -49,7 +49,7 @@ export default function AddressPage(props: Props) {
         <h1 className='text-lg font-bold mb-8'>
           Address Details
         </h1>
-        <h2 className='text-sm tracking-wider text-[var(--grey-fg-color)]'>
+        <h2 className='text-sm tracking-wider text-(--grey-fg-color)'>
           ADDRESS
         </h2>
         <p className='max-w-[90vw] break-words'>

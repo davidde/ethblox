@@ -3,7 +3,7 @@ import { DocumentTextIcon } from '@heroicons/react/24/outline';
 
 export default function TransactionSkeleton() {
   return (
-    <div className='p-2 md:p-3 border-b border-[var(--border-color)] last:border-0'>
+    <div className='p-2 md:p-3 border-b border-(--border-color) last:border-0'>
       <div className='flex flex-col md:flex-row'>
         <div className='flex'>
           <DocumentTextIcon className='w-10 h-10 md:w-8 md:h-8' />

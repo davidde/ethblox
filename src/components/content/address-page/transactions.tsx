@@ -48,7 +48,7 @@ export default async function Transactions(props: Props) {
       <>
         <div className={`basis-full ${showTransactions ? 'hidden' : ''}`} />
         <div className='w-min'>
-          <p className='mt-4 text-sm tracking-wider text-[var(--grey-fg-color)]'>
+          <p className='mt-4 text-sm tracking-wider text-(--grey-fg-color)'>
             TRANSACTIONS
           </p>
           <p className='text-red-500 w-[95vw]'>
@@ -66,12 +66,12 @@ export default async function Transactions(props: Props) {
       that takes the full width of the container (flex-basis: 100%), so it will sit on its own row. */}
       <div className={`basis-full ${showTransactions ? 'hidden' : ''}`} />
       <div className='w-min'>
-        <p className={`mt-4 text-sm tracking-wider text-[var(--grey-fg-color)] ${showTransactions ? 'pb-4 border-b border-[var(--border-color)]' : ''}`}>
+        <p className={`mt-4 text-sm tracking-wider text-(--grey-fg-color) ${showTransactions ? 'pb-4 border-b border-(--border-color)' : ''}`}>
           TRANSACTIONS
         </p>
         {
           showTransactions ?
-            <p className='pl-8 text-sm tracking-wider py-3 border-b border-[var(--border-color)]'>
+            <p className='pl-8 text-sm tracking-wider py-3 border-b border-(--border-color)'>
               {
                 numberOfTransactions > 1 ?
                 `Showing latest ${numberOfTransactions} external transactions of ${totalTransactions} transactions total`
@@ -100,7 +100,7 @@ export default async function Transactions(props: Props) {
               return (
                 <div
                   key={i}
-                  className='mb-2 w-full py-2 border-b border-[var(--border-color)] last-of-type:border-none'
+                  className='mb-2 w-full py-2 border-b border-(--border-color) last-of-type:border-none'
                 >
                   <div className='pb-1 flex max-sm:w-[92vw]'>
                     <p className='text-nowrap font-medium'>
@@ -111,7 +111,7 @@ export default async function Transactions(props: Props) {
                         href={`/${props.network}/transaction?hash=${transaction.hash}`}
                         content={truncateTransaction(transaction.hash, 25)!}
                         popover={transaction.hash}
-                        className='left-[-100%] top-[-2.6rem] w-[30rem] py-1.5 px-2.5'
+                        className='-left-full top-[-2.6rem] w-120 py-1.5 px-2.5'
                       />
                     </p>
                   </div>
@@ -122,7 +122,7 @@ export default async function Transactions(props: Props) {
                     <span>
                       <Link
                         href={`/${props.network}/block?number=${+transaction.blockNum}`}
-                        className='text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
+                        className='text-(--link-color) hover:text-(--hover-fg-color)'
                       >
                         {+transaction.blockNum}
                       </Link>
@@ -145,7 +145,7 @@ export default async function Transactions(props: Props) {
                         href={`/${props.network}/address?hash=${transaction.from}`}
                         content={truncateAddress(transaction.from, 28)!}
                         popover={transaction.from}
-                        className='left-[-12%] top-[-2.6rem] w-[19.5rem] py-1.5 px-2.5'
+                        className='left-[-12%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                       />
                     </span>
                   </div>
@@ -158,7 +158,7 @@ export default async function Transactions(props: Props) {
                         href={`/${props.network}/address?hash=${transaction.to}`}
                         content={truncateAddress(transaction.to!, 28)!}
                         popover={transaction.to!}
-                        className='left-[-12%] top-[-2.6rem] w-[19.5rem] py-1.5 px-2.5'
+                        className='left-[-12%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                       />
                     </span>
                   </div>
@@ -179,7 +179,7 @@ export default async function Transactions(props: Props) {
         {/* Desktop display only: */}
         <table className={`hidden portrait:hidden ${showTransactions ? 'lg:table' : ''}`}>
           <thead className='rounded-lg text-left font-normal'>
-            <tr className='border-b border-[var(--border-color)]'>
+            <tr className='border-b border-(--border-color)'>
               <th scope='col' className='py-5 font-medium'>
                 Transaction Hash
               </th>
@@ -214,20 +214,20 @@ export default async function Transactions(props: Props) {
                 return (
                   <tr
                     key={i}
-                    className='w-full border-b border-[var(--border-color)] last-of-type:border-none py-3'
+                    className='w-full border-b border-(--border-color) last-of-type:border-none py-3'
                   >
                     <td className='whitespace-nowrap py-3 pr-3'>
                       <PopoverLink
                         href={`/${props.network}/transaction?hash=${transaction.hash}`}
                         content={truncateTransaction(transaction.hash, 18)!}
                         popover={transaction.hash}
-                        className='left-[-100%] top-[-2.6rem] w-[30rem] py-1.5 px-2.5'
+                        className='-left-full top-[-2.6rem] w-120 py-1.5 px-2.5'
                       />
                     </td>
                     <td className='whitespace-nowrap px-4 py-3'>
                       <Link
                           href={`/${props.network}/block?number=${+transaction.blockNum}`}
-                          className='text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
+                          className='text-(--link-color) hover:text-(--hover-fg-color)'
                         >
                           {+transaction.blockNum}
                         </Link>
@@ -240,7 +240,7 @@ export default async function Transactions(props: Props) {
                         href={`/${props.network}/address?hash=${transaction.from}`}
                         content={truncateAddress(transaction.from, 21)!}
                         popover={transaction.from}
-                        className='left-[-35%] top-[-2.6rem] w-[19.5rem] py-1.5 px-2.5'
+                        className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                       />
                     </td>
                     <td className='whitespace-nowrap px-4 py-3'>
@@ -248,7 +248,7 @@ export default async function Transactions(props: Props) {
                         href={`/${props.network}/address?hash=${transaction.to}`}
                         content={truncateAddress(transaction.to!, 21)!}
                         popover={transaction.to!}
-                        className='left-[-35%] top-[-2.6rem] w-[19.5rem] py-1.5 px-2.5'
+                        className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                       />
                     </td>
                     <td className='whitespace-nowrap px-4 py-3'>

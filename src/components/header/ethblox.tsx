@@ -12,12 +12,12 @@ export default function EthBlox() {
     <div>
       <Link
         href='/mainnet'
-        className='bg-gradient-to-r from-[--gradient-from-color] via-[--gradient-via-color] to-[--gradient-to-color]
-                   bg-clip-text text-transparent text-3xl font-mono font-bold hover:text-[var(--hover-fg-color)]'
+        className='bg-linear-to-r from-(--gradient-from-color) via-(--gradient-via-color) to-(--gradient-to-color)
+                   bg-clip-text text-transparent text-3xl font-mono font-bold hover:text-(--hover-fg-color)'
       >
         ΞthBlox
       </Link>
-      <p className='pl-[2.5rem] mt-[-0.6rem] text-lg font-mono tracking-wider text-[var(--grey-fg-color)]'>
+      <p className='pl-10 mt-[-0.6rem] text-lg font-mono tracking-wider text-(--grey-fg-color)'>
         {network}
       </p>
     </div>

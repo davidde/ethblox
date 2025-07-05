@@ -52,7 +52,7 @@ export default function TransactionPage(props: Props) {
         </li>
         <div className='ml-4'>
           <p className='md:flex'>
-            <span className='w-60 md:pl-[5.25rem]'>Status:</span>
+            <span className='w-60 md:pl-21'>Status:</span>
             {
               txReceipt ?
                 txReceipt.status ?
@@ -63,7 +63,7 @@ export default function TransactionPage(props: Props) {
                   </span> :
                   <span className='bg-red-200 text-red-700 border-red-400
                               dark:bg-red-500 dark:text-red-100 dark:border-red-300
-                              border rounded-md p-1 px-4 w-[5rem] ml-4 md:ml-0'>
+                              border rounded-md p-1 px-4 w-20 ml-4 md:ml-0'>
                     Fail
                   </span>
                 :
@@ -79,7 +79,7 @@ export default function TransactionPage(props: Props) {
               tx ?
                 <Link
                   href={`/${props.network}/block?number=${tx.blockNumber}`}
-                  className='ml-2 md:ml-0 text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
+                  className='ml-2 md:ml-0 text-(--link-color) hover:text-(--hover-fg-color)'
                 >
                   {tx.blockNumber}
                 </Link>
@@ -116,7 +116,7 @@ export default function TransactionPage(props: Props) {
               tx ?
                 <Link
                   href={`/${props.network}/address?hash=${tx.from}`}
-                  className='font-mono ml-2 md:ml-0 text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
+                  className='font-mono ml-2 md:ml-0 text-(--link-color) hover:text-(--hover-fg-color)'
                 >
                   {tx.from}
                 </Link>
@@ -132,7 +132,7 @@ export default function TransactionPage(props: Props) {
               tx ?
                 <Link
                   href={`/${props.network}/address?hash=${tx.to}`}
-                  className='font-mono ml-2 md:ml-0 text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
+                  className='font-mono ml-2 md:ml-0 text-(--link-color) hover:text-(--hover-fg-color)'
                 >
                   {tx.to}
                 </Link>

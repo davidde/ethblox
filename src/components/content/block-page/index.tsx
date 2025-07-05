@@ -140,7 +140,7 @@ export default function BlockPage(props: { network: string }) {
                 block?.miner ?
                   <Link
                     href={`/${props.network}/address?hash=${block.miner}`}
-                    className='font-mono text-[var(--link-color)] hover:text-[var(--hover-fg-color)]'
+                    className='font-mono text-(--link-color) hover:text-(--hover-fg-color)'
                   >
                     {block.miner}
                   </Link>
