@@ -1,7 +1,7 @@
 import { DocumentTextIcon } from '@heroicons/react/24/outline';
 import { TransactionResponse } from 'alchemy-sdk';
 import { truncateAddress, truncateTransaction, getEtherValueFromWei } from '@/lib/utilities';
-import PopoverLink from '@/components/content/home-page/blocks/popover-link';
+import PopoverLink from '@/components/common/popover-link';
 
 
 type Props = {

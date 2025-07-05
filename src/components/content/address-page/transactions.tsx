@@ -1,6 +1,6 @@
 import { Alchemy, AssetTransfersCategory, SortingOrder } from 'alchemy-sdk';
 import { truncateTransaction, truncateAddress, getSecsFromDateTimeString, getBlockAgeFromSecs } from '@/lib/utilities';
-import PopoverLink from '@/components/content/home-page/blocks/popover-link';
+import PopoverLink from '@/components/common/popover-link';
 import Link from 'next/link';
 
 

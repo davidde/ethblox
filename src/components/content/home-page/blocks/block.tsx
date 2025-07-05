@@ -2,7 +2,7 @@ import { CubeIcon } from '@heroicons/react/24/outline';
 import { Alchemy } from 'alchemy-sdk';
 import { getSecsFromUnixSecs, truncateAddress, getEtherValueFromWei } from '@/lib/utilities';
 import Link from 'next/link';
-import PopoverLink from './popover-link';
+import PopoverLink from '../../../common/popover-link';
 
 
 type Props = {

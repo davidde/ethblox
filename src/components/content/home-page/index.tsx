@@ -1,6 +1,6 @@
 // Alchemy SDK Docs: https://docs.alchemy.com/reference/alchemy-sdk-api-surface-overview#api-surface
 import { Alchemy } from 'alchemy-sdk';
-import Searchbar from '@/components/header/searchbar';
+import Searchbar from '@/components/common/searchbar';
 import Blocks from './blocks';
 import BlocksSkeleton from './blocks/blocks-skeleton';
 import Transactions from './transactions';
