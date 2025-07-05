@@ -17,7 +17,7 @@ export default async function Block(props: Props) {
     :
     `https://api-sepolia.etherscan.io/api?module=block&action=getblockreward` +
     `&blockno=${props.blockNumber}` +
-    `&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`;
+    `&apikey=${process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY}`;
   let block;
   let secsSinceAdded;
   let blockReward;

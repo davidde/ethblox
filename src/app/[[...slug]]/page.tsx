@@ -1,4 +1,4 @@
-import { createAlchemy, sanitizeData } from '@/lib/utilities';
+import { getAlchemy, sanitizeData } from '@/lib/utilities';
 import NotFoundPage from '@/components/content/error-page/not-found-page';
 import HomePage from '@/components/content/home-page';
 import AddressPage from '@/components/content/address-page';
@@ -41,7 +41,7 @@ export function generateStaticParams() {
   return paths;
 }
 
-export default async function Page({params} : { params: { slug?: string[] } }) {
+export default async function Page({params} : { params: Promise<{ slug?: string[] }> }) {
   const { slug = [] } = await params;
 
   const network = slug[0] ?? 'mainnet';
@@ -58,7 +58,7 @@ export default async function Page({params} : { params: { slug?: string[] } }) {
       return (
         <HomePage
           network={network}
-          alchemy={createAlchemy(network)}
+          alchemy={getAlchemy(network)}
         />
       );
     case 'address':
@@ -67,7 +67,7 @@ export default async function Page({params} : { params: { slug?: string[] } }) {
         <Suspense>
           <AddressPage
             network={network}
-            alchemy={await sanitizeData(createAlchemy(network))}
+            alchemy={await sanitizeData(getAlchemy(network))}
           />
         </Suspense>
       );
@@ -77,7 +77,6 @@ export default async function Page({params} : { params: { slug?: string[] } }) {
         <Suspense>
           <BlockPage
             network={network}
-            alchemy={await sanitizeData(createAlchemy(network))}
           />
         </Suspense>
       );
@@ -92,7 +91,7 @@ export default async function Page({params} : { params: { slug?: string[] } }) {
         <Suspense>
           <TransactionPage
             network={network}
-            alchemy={await sanitizeData(createAlchemy(network))}
+            alchemy={await sanitizeData(getAlchemy(network))}
           />
         </Suspense>
       );

@@ -8,10 +8,8 @@
 > - We could either switch to `output: 'standalone'`, but this is not compatible with Github Pages, meaning we should deploy to another hosting provider like [Deno Deploy](https://deno.com/deploy), [Render](https://render.com/) or [Railway](https://railway.com/). (See the [Nextjs Github](https://github.com/nextjs) for possible deploy templates.) I attempted using Deno Deploy, but this didn't work out because it is a total mess ...
 > - Or we could try to implement [generateStaticParams()](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) to statically generate the dynamic routes at build time. However, this is not possible due to the fact that there are dynamic routes that aren't known at build time, e.g. `mainnet/address/[hash]`.
 > - As a third option, we could implement [generateStaticParams()](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) for the `[network]` route, and switch to URL params for the other dynamic routes.
->
-> I will now attempt to **deploy to Github Pages with Github Actions** (using `output: 'export'` and the third option above).
 
-### 0. Is it possible to deploy a Nextjs project with `output: 'standalone'` in nextConfig to Github Pages?
+### Is it possible to deploy a Nextjs project with `output: 'standalone'` in nextConfig to Github Pages?
 **NO!!! GitHub Pages is a static host and `standalone` is not a static export! Github Pages explicitly requires `output: 'export'`!**
 
 There are 3 ways to deploy/host Next.js:
@@ -20,6 +18,9 @@ There are 3 ways to deploy/host Next.js:
 - Static HTML Export
 
 So `output: 'standalone'` requires one of the first 2 options, which support all Next.js features. As the name implies, a static export does not support Next.js features that require a server.
+
+## Convert the project for static site generation with `output: export`
+I will now document how to **deploy to Github Pages with Github Actions**, using the third option above, with `output: 'export'`, `generateStaticParams()` for the `[network]` route, and switch the other dynamic routes to URL parameters.
 
 ### 1. Configure the Next.js Build Process for Github Pages
 Enable `output: 'export'` in `next.config.mjs`:
@@ -75,7 +76,7 @@ export async function generateStaticParams() {
   - Replace ``href={`/${props.network}/address/`` by ``href={`/${props.network}/address?hash=``.
   - Replace ``href={`/${props.network}/block/`` by ``href={`/${props.network}/block?number=``.
   - Replace ``href={`/${props.network}/transaction/`` by ``href={`/${props.network}/transaction?hash=``.
-* We update their respective `pages.tsx` files with `useSearchParams()` to read the URL's query string. However, since `useSearchParams()` requires `use client;`, but `generateStaticParams()` is not compatible with Client Components, the `page.tsx` files need to remain a Server Components, and `useSearchParams()` needs to be moved to their children components which **can** be made Client components. E.g. for `src/app/[network]/address/page.tsx`:
+* We update their respective `pages.tsx` files with `useSearchParams()` to read the URL's query string. `useSearchParams()` requires `use client` (regular `searchParams` can be used in server components, but this is not compatible with `output: export` for static sites). Since `generateStaticParams()` requires a Server Component, the `page.tsx` files need to remain Server Components, and `useSearchParams()` needs to be moved to their children components which **can** be made Client components. E.g. for `src/app/[network]/address/page.tsx`:
   ```tsx
   import { createAlchemy } from '@/lib/utilities';
   import AddressPage from '@/components/content/address-page';
@@ -135,9 +136,14 @@ export async function generateStaticParams() {
     ...
     // Replace other instances of `props.hash` with `hash` also!!!
   ```
+  Also, since `AddressPage` now becomes a client component because of `useSearchParams()`, this component can no longer be async (not allowed for Client Components). This means the async data fetching also has to be moved to a `useEffect()` hook, and the `useState()` hook will have to be used to persist the data outside of `useEffect`.  
   Etc. etc.
-* To fix the 404 on the root domain (since we removed the redirect to /mainnet), we switch from the dynamic `[network]` URL param to an optional catch-all route param `[[...slug]]`. But this requires quite a few changes since now all the routing for all routes has to be done in `[[...slug]]/page.tsx`, and `generateStaticParams()` will have to generate params for all these routes (See commit 755ddeb3f7ce2a1af2b32ae19b0c209bf70f7119).
-* 
+* To fix the 404 on the root domain (since we removed the redirect to `/mainnet`), we switch from the dynamic `[network]` URL param to an optional catch-all route param `[[...slug]]`. But this requires quite a few changes since now all the routing for all routes has to be done in `[[...slug]]/page.tsx`, and `generateStaticParams()` will have to generate params for all these routes (See commit 755ddeb3f7ce2a1af2b32ae19b0c209bf70f7119).
+* Now there are still quite a few errors remaining because `useEffect()` runs **after the first render**! This means the data it fetches is undefined on first render. This means we need to provide a fallback for undefined values, e.g.:
+  ```tsx
+  <span>{blockReward ? blockReward : loadingIndicator}</span>
+  ```
+* Additionally, passing the `Alchemy` object from server to client components is not possible, so it needs to be recreated in the client component. It is still possible to cache it in `lib/utilities.ts`, and only conditionally create it if it doesn't exist yet.
 
 
 ## Security
