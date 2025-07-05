@@ -5,6 +5,7 @@ import GithubIcon from './icons/github-icon';
 import BackToTopIcon from './icons/back-to-top-icon';
 import { WrenchIcon } from '@heroicons/react/24/solid';
 import { LightBulbIcon } from '@heroicons/react/24/solid';
+import Copyright from './copyright';
 
 
 export default function Footer() {
@@ -91,9 +92,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className='pt-4 text-sm tracking-wider text-[var(--grey-fg-color)] border-t border-[var(--border-color)]'>
-        EthBlox © 2024
-      </div>
+      <Copyright />
     </footer>
   );
 }
