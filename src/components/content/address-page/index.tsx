@@ -1,19 +1,16 @@
 'use client';
 
-import { Utils, Alchemy } from 'alchemy-sdk';
+import { Utils } from 'alchemy-sdk';
 import Tokens from './tokens';
 import Transactions from './transactions';
 import EthBalance from './eth-balance';
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
+import { getAlchemy } from '@/lib/utilities';
 
 
-type Props = {
-  network: string,
-  alchemy: Alchemy
-}
-
-export default function AddressPage(props: Props) {
+export default function AddressPage(props: {network: string}) {
+  const alchemy = getAlchemy(props.network);
   const searchParams = useSearchParams();
   const hash = searchParams.get('hash')!;
 
@@ -26,7 +23,7 @@ export default function AddressPage(props: Props) {
     async function getBalance() {
       while (!success) {
         try {
-          const data = await props.alchemy.core.getBalance(hash, 'latest');
+          const data = await alchemy.core.getBalance(hash, 'latest');
           setEthBalance(Utils.formatEther(data));
           badAddress.current = false; success = true;
         } catch(err) {
@@ -41,7 +38,7 @@ export default function AddressPage(props: Props) {
     }
 
     getBalance();
-  }, [hash, props.alchemy]); // Re-run effect whenever the 'hash' changes
+  }, [hash, alchemy]); // Re-run effect whenever the 'hash' changes
 
   return (
     <main className='m-4 mt-8 md:m-8'>
@@ -74,13 +71,13 @@ export default function AddressPage(props: Props) {
               <Tokens
                 hash={hash}
                 network={props.network}
-                alchemy={props.alchemy}
+                alchemy={alchemy}
               />
             </div>
             <Transactions
               hash={hash}
               network={props.network}
-              alchemy={props.alchemy}
+              alchemy={alchemy}
             />
           </div>
       }

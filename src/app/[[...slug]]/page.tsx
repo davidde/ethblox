@@ -1,4 +1,3 @@
-import { getAlchemy, sanitizeData } from '@/lib/utilities';
 import NotFoundPage from '@/components/content/error-page/not-found-page';
 import HomePage from '@/components/content/home-page';
 import AddressPage from '@/components/content/address-page';
@@ -10,9 +9,9 @@ import { Suspense } from 'react';
 
 const networks = ['mainnet', 'sepolia'];
 
-// Returns a list of `params` to populate the `[[...slug]]` dynamic segment
-// for the static site generation at build time.
-// This needs to generate all `pages` below for both networks,
+// `generateStaticParams()` returns an array of "URL segment" arrays to populate the
+// `[[...slug]]` dynamic segment for the static site generation at build time.
+// This needs to generate the URLs for all pages (~ line 23) for both networks,
 // as well as for the root `/`, which should default to `/mainnet`.
 // E.g.: - /, /address, /block, /transaction, /gastracker
 //       - /mainnet, /mainnet/address, /mainnet/block, /mainnet/transaction, /mainnet/gastracker
@@ -43,7 +42,6 @@ export function generateStaticParams() {
 
 export default async function Page({params} : { params: Promise<{ slug?: string[] }> }) {
   const { slug = [] } = await params;
-
   const network = slug[0] ?? 'mainnet';
   const subroute = slug[1] ?? '';
 
@@ -52,32 +50,22 @@ export default async function Page({params} : { params: Promise<{ slug?: string[
     return <NotFoundPage reason={`"${network}" is not a valid Ethereum network.`} />;
   }
 
-  // Dispatching:
+  // Route dispatching:
   switch (subroute) {
     case '':
-      return (
-        <HomePage
-          network={network}
-          alchemy={getAlchemy(network)}
-        />
-      );
+      return <HomePage network={network} />;
     case 'address':
       return (
         // Suspense required because of `useSearchParams` in `AddressPage`:
         <Suspense>
-          <AddressPage
-            network={network}
-            alchemy={await sanitizeData(getAlchemy(network))}
-          />
+          <AddressPage network={network} />
         </Suspense>
       );
     case 'block':
       return (
         // Suspense required because of `useSearchParams` in `BlockPage`:
         <Suspense>
-          <BlockPage
-            network={network}
-          />
+          <BlockPage network={network} />
         </Suspense>
       );
     case 'gastracker':
@@ -89,10 +77,7 @@ export default async function Page({params} : { params: Promise<{ slug?: string[
       return (
         // Suspense required because of `useSearchParams` in `TransactionPage`:
         <Suspense>
-          <TransactionPage
-            network={network}
-            alchemy={await sanitizeData(getAlchemy(network))}
-          />
+          <TransactionPage network={network} />
         </Suspense>
       );
     default:

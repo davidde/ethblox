@@ -91,7 +91,3 @@ export function isAddress(hash: string) {
   const allowed = /^[0-9a-zA-Z]+$/;
   return hash.length === 42 && hash.startsWith('0x') && allowed.test(hash);
 }
-
-export async function sanitizeData(data: any) {
-  return JSON.parse(JSON.stringify(data));
-}

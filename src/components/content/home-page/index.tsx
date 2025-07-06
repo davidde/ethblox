@@ -1,5 +1,4 @@
 // Alchemy SDK Docs: https://docs.alchemy.com/reference/alchemy-sdk-api-surface-overview#api-surface
-import { Alchemy } from 'alchemy-sdk';
 import Searchbar from '@/components/common/searchbar';
 import Blocks from './blocks';
 import BlocksSkeleton from './blocks/blocks-skeleton';
@@ -9,18 +8,15 @@ import Stats from './stats';
 import StatsSkeleton from './stats/stats-skeleton';
 import NodeBanner from './node-banner';
 import { Suspense } from 'react';
+import { getAlchemy } from '@/lib/utilities';
 
 
-type Props = {
-  network: string,
-  alchemy: Alchemy
-}
-
-export default async function HomePage(props: Props) {
+export default async function HomePage(props: {network: string}) {
+  const alchemy = getAlchemy(props.network);
   let blockNumber;
 
   try {
-    blockNumber = await props.alchemy.core.getBlockNumber();
+    blockNumber = await alchemy.core.getBlockNumber();
   } catch(error) {
     console.error('getBlockNumber()', error);
   }
@@ -63,14 +59,14 @@ export default async function HomePage(props: Props) {
             <Blocks
               blockNumber={blockNumber}
               network={props.network}
-              alchemy={props.alchemy}
+              alchemy={alchemy}
             />
           </Suspense>
           <Suspense fallback={<TransactionsSkeleton />}>
             <Transactions
               blockNumber={blockNumber}
               network={props.network}
-              alchemy={props.alchemy}
+              alchemy={alchemy}
             />
           </Suspense>
         </div>

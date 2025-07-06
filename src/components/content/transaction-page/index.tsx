@@ -1,17 +1,16 @@
 'use client';
 
-import { Alchemy, Utils, TransactionResponse, TransactionReceipt } from 'alchemy-sdk';
+import { getAlchemy } from '@/lib/utilities';
+import { Utils, TransactionResponse, TransactionReceipt } from 'alchemy-sdk';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import GreenSpan from '@/components/common/green-span';
+import RedSpan from '@/components/common/red-span';
 
 
-type Props = {
-  network: string,
-  alchemy: Alchemy
-}
-
-export default function TransactionPage(props: Props) {
+export default function TransactionPage(props: {network: string}) {
+  const alchemy = getAlchemy(props.network);
   const searchParams = useSearchParams();
   const hash = searchParams.get('hash')!;
 
@@ -21,14 +20,14 @@ export default function TransactionPage(props: Props) {
   useEffect(() => {
     async function getTransactionData() {
       try {
-        const txData = await props.alchemy.transact.getTransaction(hash);
+        const txData = await alchemy.transact.getTransaction(hash);
         setTx(txData);
       } catch (err) {
         console.error('getTransaction()', err);
       }
 
       try {
-        const txReceiptData = await props.alchemy.core.getTransactionReceipt(hash);
+        const txReceiptData = await alchemy.core.getTransactionReceipt(hash);
         setTxReceipt(txReceiptData);
       } catch (err) {
         console.error('getTransactionReceipt()', err);
@@ -36,7 +35,7 @@ export default function TransactionPage(props: Props) {
     }
 
     getTransactionData();
-  }, [hash, props.alchemy]);
+  }, [hash, alchemy]);
 
   return (
     <main className='m-4 mt-8 md:m-8'>
@@ -56,16 +55,13 @@ export default function TransactionPage(props: Props) {
             {
               txReceipt ?
                 txReceipt.status ?
-                  <span className='bg-green-200 text-green-700 border-green-400
-                              dark:bg-green-400 dark:text-green-800 dark:border-green-800
-                              border rounded-md p-1 px-4 w-[6.4rem] ml-4 md:ml-0'>
+                  <GreenSpan className='border rounded-md p-1 px-4 w-[6.4rem] ml-4 md:ml-0'>
                     Success
-                  </span> :
-                  <span className='bg-red-200 text-red-700 border-red-400
-                              dark:bg-red-500 dark:text-red-100 dark:border-red-300
-                              border rounded-md p-1 px-4 w-20 ml-4 md:ml-0'>
+                  </GreenSpan>
+                  :
+                  <RedSpan className='border rounded-md p-1 px-4 w-[5rem] ml-4 md:ml-0'>
                     Fail
-                  </span>
+                  </RedSpan>
                 :
                 <span className='text-red-500 ml-4 md:ml-0'>Error getting data.</span>
             }
