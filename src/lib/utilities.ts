@@ -86,8 +86,3 @@ export function truncateTransaction(transaction: string, toLength: number) {
 
   return transaction.substring(0, charsToShow) + suffix;
 };
-
-export function isAddress(hash: string) {
-  const allowed = /^[0-9a-zA-Z]+$/;
-  return hash.length === 42 && hash.startsWith('0x') && allowed.test(hash);
-}

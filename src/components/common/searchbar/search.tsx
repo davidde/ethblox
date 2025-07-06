@@ -4,20 +4,16 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { Input, Button } from '@headlessui/react';
 import { useState } from 'react';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
-import { isAddress } from '@/lib/utilities';
+import { isAddress } from 'ethers';
 
 
-type Props = {
-  className?: string,
-}
-
-export default function Search(props: Props) {
+export default function Search(props: { className?: string }) {
   // Read the current URL's query string:
   const searchParams = useSearchParams(); // returns a read-only version of the URLSearchParams interface
-  const [searchTerm, setSearchTerm] = useState(searchParams.get('query')?.toString());
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('address')?.toString());
 
   const pathname = usePathname();
-  const network = pathname.split('/')[1];
+  const network = pathname.split('/')[1] || 'mainnet';
 
   const router = useRouter();
 
@@ -28,19 +24,22 @@ export default function Search(props: Props) {
 
     if (searchTerm) {
       if (isAddress(searchTerm)) {
-        params.delete('query');
+        params.delete('address');
+        // Run only when online AND tab is visible/active:
         if (navigator.onLine && document.visibilityState === 'visible') {
-          router.push(`/${network}/address/${searchTerm}`);
+          router.push(`/${network}/address?hash=${searchTerm}`);
         }
         setSearchTerm('');
       } else {
-        params.set('query', searchTerm);
+        params.set('address', searchTerm);
+        // Run only when online AND tab is visible/active:
         if (navigator.onLine && document.visibilityState === 'visible') {
           router.replace(`${pathname}?${params.toString()}`);
         }
       }
     } else {
-      params.delete('query');
+      params.delete('address');
+      // Run only when online AND tab is visible/active:
       if (navigator.onLine && document.visibilityState === 'visible') {
         router.replace(`${pathname}`);
       }
