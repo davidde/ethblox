@@ -6,12 +6,12 @@ import Link from 'next/link';
 
 export default function EthBlox() {
   const pathname = usePathname();
-  const network = pathname.split('/')[1];
+  const network = pathname.split('/')[1] || 'mainnet';
 
   return (
     <div>
       <Link
-        href='/mainnet'
+        href='/'
         className='bg-linear-to-r from-(--gradient-from-color) via-(--gradient-via-color) to-(--gradient-to-color)
                    bg-clip-text text-transparent text-3xl font-mono font-bold hover:text-(--hover-fg-color)'
       >
