@@ -49,6 +49,17 @@
     color: var(--main-fg-color);
   }
 
+  /* Keep grid layout correct when main does not exist due to error: */
+  header {
+    grid-row: 1;
+  }
+  main {
+    grid-row: 2;
+  }
+  footer {
+    grid-row: 3;
+  }
+
   .light {
     --main-bg-color: rgb(250, 250, 252);
     --main-fg-color: black;
