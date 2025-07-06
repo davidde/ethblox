@@ -1,3 +1,5 @@
+const repoBase = '/' + process.env.NEXT_PUBLIC_APP_NAME ?? 'ethblox';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
@@ -9,6 +11,11 @@ const nextConfig = {
   },
 
   output: 'export',
+  images: {
+    unoptimized: true
+  },
+  basePath: repoBase,
+  // basePath: process.env.NODE_ENV === 'production' ? repoBase : '',
 };
 
 export default nextConfig;

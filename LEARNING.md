@@ -23,11 +23,12 @@ So `output: 'standalone'` requires one of the first 2 options, which support all
 I will now document how to **deploy to Github Pages with Github Actions**, using the third option above, with `output: 'export'`, `generateStaticParams()` for the `[network]` route, and switch the other dynamic routes to URL parameters.
 
 ### 1. Configure the Next.js Build Process for Github Pages
-Enable `output: 'export'` in `next.config.mjs`:
+Enable `output: 'export'` in `next.config.mjs`, and add the project as `basePath`:
 ```mjs
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
+  basePath: '/ethblox',
 };
 
 export default nextConfig;

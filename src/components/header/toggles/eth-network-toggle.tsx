@@ -17,16 +17,17 @@ export default function EthNetworkToggle(props: Props) {
 
   // useEffect only runs on the client, so now we can safely show the UI:
   useEffect(() => {
-    setMounted(true)
+    setMounted(true);
   }, [])
 
   if (!mounted) {
-    return null
+    return null;
   }
 
   return (
     <Menu>
-      <MenuButton className={`${props.className} bg-(image:--eth-logo-url) bg-contain bg-no-repeat bg-right`} />
+      <MenuButton className={`${props.className}
+        bg-(image:--eth-logo-url) bg-contain bg-no-repeat bg-right`} />
       <MenuItems
         className='bg-(--main-bg-color)
                    border-2 border-(--border-color)

@@ -75,7 +75,6 @@
     --gradient-from-color: rgb(92, 39, 249);
     --gradient-via-color: rgb(123, 60, 195);
     --gradient-to-color: rgb(185, 94, 230);
-    --eth-logo-url: url(/images/ethereum-logo-dark.svg);
   }
 
   .dark {
@@ -93,6 +92,5 @@
     --gradient-from-color: rgb(3, 91, 43);
     --gradient-via-color: rgb(60, 195, 155);
     --gradient-to-color: rgb(4, 208, 14);
-    --eth-logo-url: url(/images/ethereum-logo-light.svg);
   }
 }

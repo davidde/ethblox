@@ -15,8 +15,8 @@ Most prominent technologies used:
 > [!NOTE]
 > To run this project locally, you will also need an Alchemy and Etherscan API key. You can get these freely by creating an Alchemy and Etherscan account. Put these keys into an `.env` file in the root of the project, without quotes:
 > ```.env
-> REACT_APP_ALCHEMY_API_KEY=xyz
-> REACT_APP_ETHERSCAN_API_KEY=xyz
+> NEXT_PUBLIC_ALCHEMY_API_KEY=xyz
+> NEXT_PUBLIC_ETHERSCAN_API_KEY=xyz
 > ```
 
 * Clone this repo, and cd into it in your terminal:
@@ -45,4 +45,7 @@ Most prominent technologies used:
   bun dev
   ```
   This will start the Next.js development server on port 3005 (set in `package.json > scripts > dev`), so open http://localhost:3005 in the browser to see the result.
+
+  > [!NOTE]
+  > The homepage will 404 because on Github it is hosted on `github.io/ethblox`. Browse to `http://localhost:3005/ethblox` for the homepage.
 
