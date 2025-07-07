@@ -1,4 +1,4 @@
-const repoBase = '/' + process.env.NEXT_PUBLIC_APP_NAME ?? 'ethblox';
+const repoBase = '/' + (process.env.NEXT_PUBLIC_APP_NAME ?? 'ethblox');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
