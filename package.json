@@ -19,9 +19,8 @@
     "url": "https://github.com/davidde/ethblox"
   },
   "scripts": {
-    "set-app-name": "node -e \"process.stdout.write('NEXT_PUBLIC_APP_NAME=' + require('./package.json').name)\"",
-    "dev": "npm run set-app-name && next dev -p 3005",
-    "build": "npm run set-app-name && next build",
+    "dev": "next dev -p 3005",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },

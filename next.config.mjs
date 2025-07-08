@@ -1,7 +1,19 @@
-const repoBase = '/' + (process.env.NEXT_PUBLIC_APP_NAME ?? 'ethblox');
+const { name: appName } = require('./package.json');
+const repoBase = '/' + appName;
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export',
+  images: {
+    unoptimized: true
+  },
+  basePath: repoBase,
+  // basePath: process.env.NODE_ENV === 'production' ? repoBase : '',
+
+  env: {
+    NEXT_PUBLIC_APP_NAME: appName,
+  },
+
   experimental: {
     /* Fix: "Failed to generate cache key for"
     // https://github.com/connectrpc/connect-es/issues/1326
@@ -9,13 +21,6 @@ const nextConfig = {
     */
     serverComponentsHmrCache: false, // defaults to true
   },
-
-  output: 'export',
-  images: {
-    unoptimized: true
-  },
-  basePath: repoBase,
-  // basePath: process.env.NODE_ENV === 'production' ? repoBase : '',
 };
 
 export default nextConfig;
