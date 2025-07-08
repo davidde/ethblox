@@ -1,24 +1,23 @@
 import { CubeIcon } from '@heroicons/react/24/outline';
 import { Alchemy } from 'alchemy-sdk';
-import { getSecsFromUnixSecs, truncateAddress, getEtherValueFromWei } from '@/lib/utilities';
+import {
+  getSecsFromUnixSecs,
+  truncateAddress,
+  getEtherValueFromWei,
+  getBlockRewardUrl
+} from '@/lib/utilities';
 import Link from 'next/link';
 import PopoverLink from '../../../common/popover-link';
 
 
 type Props = {
-  blockNumber: number | undefined,
+  blockNumber: number,
   network: string,
   alchemy: Alchemy
 }
 
 export default async function Block(props: Props) {
-  const blockRewardUrl = props.network === 'mainnet' ?
-    `https://eth.blockscout.com/api?module=block&action=getblockreward&blockno=${props.blockNumber}`
-    :
-    `https://api.etherscan.io/v2/api?chainid=11155111` + // Sepolia Testnet
-    `&module=block&action=getblockreward` +
-    `&blockno=${props.blockNumber}` +
-    `&apikey=${process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY}`;
+  const blockRewardUrl = getBlockRewardUrl(props.network, props.blockNumber);
   let block;
   let secsSinceAdded;
   let blockReward;
@@ -33,7 +32,6 @@ export default async function Block(props: Props) {
     try {
       const response = await fetch(blockRewardUrl);
       const data = await response.json();
-      console.log('data = ', data); // For some reason some blocks return 'No Record Found' ...
       blockReward = data.result?.blockReward;
     } catch(error) {
       console.error('Etherscan getBlockReward', error);

@@ -7,7 +7,8 @@ import {
   getSecsFromUnixSecs,
   getBlockAgeFromSecs,
   getEtherValueFromWei,
-  getAlchemy
+  getAlchemy,
+  getBlockRewardUrl
 } from '@/lib/utilities';
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect, JSX } from 'react';
@@ -24,13 +25,7 @@ export default function BlockPage(props: { network: string }) {
   const [finalizedError, setFinalizedError] = useState('');
   const [blockRewardError, setBlockRewardError] = useState('');
 
-  const blockRewardUrl = props.network === 'mainnet' ?
-    `https://eth.blockscout.com/api?module=block&action=getblockreward&blockno=${number}`
-    :
-    `https://api.etherscan.io/v2/api?chainid=11155111` + // Sepolia Testnet
-    `&module=block&action=getblockreward` +
-    `&blockno=${number}` +
-    `&apikey=${process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY}`;
+  const blockRewardUrl = getBlockRewardUrl(props.network, number);
 
   const [block, setBlock] = useState<Block>();
   const [finalizedBlock, setFinalizedBlock] = useState<Block>();

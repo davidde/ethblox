@@ -1,5 +1,6 @@
 import { Alchemy } from 'alchemy-sdk';
 import Transaction from './transaction';
+import ErrorIndicator from '@/components/common/error-indicator';
 
 
 type Props = {
@@ -24,16 +25,19 @@ export default async function Transactions(props: Props) {
         Latest Transactions
       </h2>
       {
-        blockWithTransactions?.transactions.map((transaction, i) => {
-          if (i < 6)
-            return (
-              <Transaction
-                key={i}
-                transaction={transaction!}
-                network={props.network}
-              />
-            );
-        })
+        blockWithTransactions ?
+          blockWithTransactions.transactions.map((transaction, i) => {
+            if (i < 6)
+              return (
+                <Transaction
+                  key={i}
+                  transaction={transaction!}
+                  network={props.network}
+                />
+              );
+          })
+          :
+          <ErrorIndicator error='Error: Failed getting latest transactions' />
       }
     </div>
   );

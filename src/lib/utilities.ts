@@ -86,3 +86,10 @@ export function truncateTransaction(transaction: string, toLength: number) {
 
   return transaction.substring(0, charsToShow) + suffix;
 };
+
+export function getBlockRewardUrl(network: string, block: number) {
+  return network === 'mainnet' ?
+    `https://eth.blockscout.com/api?module=block&action=getblockreward&blockno=${block}`
+    :
+    `https://eth-sepolia.blockscout.com/api?module=block&action=getblockreward&blockno=${block}`;
+}
