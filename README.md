@@ -1,4 +1,7 @@
-# Ethereum Blockexplorer with Next.js, Typescript and Tailwind CSS
+<img src='src/app/favicon.ico' width=70 align='left'>
+
+# ΞthBlox
+## Ethereum Blockexplorer with Next.js, Typescript and TailwindCSS
 This is the Alchemy Ethereum Developer Bootcamp Week 3 project.  
 The starter code and assignment are available [here](https://github.com/alchemyplatform/blockexplorer).  
 I migrated it to [Next.js](https://nextjs.org/), bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
@@ -8,7 +11,7 @@ Most prominent technologies used:
 * [React](https://react.dev/)
 * [Next.js](https://nextjs.org/)'s "new" [App Router](https://nextjs.org/docs/app)
 * [Typescript](https://www.typescriptlang.org/)
-* [Tailwind CSS](https://tailwindcss.com/)
+* [TailwindCSS](https://tailwindcss.com/)
 * [Headless UI](https://headlessui.com/)
 
 ## Running the project locally
@@ -45,7 +48,3 @@ Most prominent technologies used:
   bun dev
   ```
   This will start the Next.js development server on port 3005 (set in `package.json > scripts > dev`), so open http://localhost:3005 in the browser to see the result.
-
-  > [!NOTE]
-  > The homepage will 404 because on Github it is hosted on `github.io/ethblox`. Browse to `http://localhost:3005/ethblox` for the homepage.
-
