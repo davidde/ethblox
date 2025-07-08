@@ -8,6 +8,27 @@
     from 180deg at 50% 50%,
     var(--tw-gradient-stops)
   );
+
+  --animate-glow: glow 1.5s ease-out infinite normal;
+
+  @keyframes glow {
+    0% {
+      color: var(--loading-glow-color);
+      text-shadow: 0 0 1px var(--loading-text-color);
+    }
+    12% {
+      color: var(--loading-superglow-color);
+      text-shadow: 0 0 2px var(--loading-superglow-color);
+    }
+    24% {
+      color: var(--loading-glow-color);
+      text-shadow: 0 0 1px var(--loading-text-color);
+    }
+    36% {
+      color: var(--loading-text-color);
+      text-shadow: none;
+    }
+  }
 }
 
 @layer utilities {
@@ -51,6 +72,10 @@
     --gradient-from-color: rgb(92, 39, 249);
     --gradient-via-color: rgb(123, 60, 195);
     --gradient-to-color: rgb(185, 94, 230);
+
+    --loading-text-color: var(--banner-bg-color);
+    --loading-glow-color: var(--grey-fg-color);
+    --loading-superglow-color: grey;
   }
 
   .dark {
@@ -68,5 +93,9 @@
     --gradient-from-color: rgb(3, 91, 43);
     --gradient-via-color: rgb(60, 195, 155);
     --gradient-to-color: rgb(4, 208, 14);
+
+    --loading-text-color: var(--banner-bg-color);
+    --loading-glow-color: var(--grey-fg-color);
+    --loading-superglow-color: var(--main-fg-color);
   }
 }
