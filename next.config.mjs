@@ -1,5 +1,7 @@
-const { name: appName } = require('./package.json');
-const repoBase = '/' + appName;
+import { readFileSync } from 'fs';
+
+const appName = JSON.parse(readFileSync('./package.json', 'utf-8')).name;
+const basePath = process.env.NODE_ENV === 'production' ? '/' + appName : '';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -7,11 +9,10 @@ const nextConfig = {
   images: {
     unoptimized: true
   },
-  basePath: repoBase,
-  // basePath: process.env.NODE_ENV === 'production' ? repoBase : '',
+  basePath: basePath,
 
   env: {
-    NEXT_PUBLIC_APP_NAME: appName,
+    NEXT_PUBLIC_BASE_PATH: basePath,
   },
 
   experimental: {

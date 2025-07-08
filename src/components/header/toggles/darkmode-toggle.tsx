@@ -13,7 +13,7 @@ export default function DarkmodeToggle(props: Props) {
   const { resolvedTheme, setTheme } = useTheme();
   const [ mounted, setMounted ] = useState(false);
 
-  const appName = process.env.NEXT_PUBLIC_APP_NAME;
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH;
   // Use dark eth logo on light theme, and vice versa:
   const ethLogo = resolvedTheme === 'light' ? 'ethereum-logo-dark.svg' : 'ethereum-logo-light.svg';
 
@@ -28,7 +28,7 @@ export default function DarkmodeToggle(props: Props) {
 
     // Set the ethereum logo URL as CSS var on html:
     if (typeof window !== 'undefined') {
-      document.documentElement.style.setProperty('--eth-logo-url', `url(/${appName}/images/${ethLogo})`);
+      document.documentElement.style.setProperty('--eth-logo-url', `url(${basePath}/images/${ethLogo})`);
     }
   }, [ethLogo]);
 
