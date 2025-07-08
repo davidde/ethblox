@@ -15,7 +15,8 @@ export default async function Block(props: Props) {
   const blockRewardUrl = props.network === 'mainnet' ?
     `https://eth.blockscout.com/api?module=block&action=getblockreward&blockno=${props.blockNumber}`
     :
-    `https://api-sepolia.etherscan.io/api?module=block&action=getblockreward` +
+    `https://api.etherscan.io/v2/api?chainid=11155111` + // Sepolia Testnet
+    `&module=block&action=getblockreward` +
     `&blockno=${props.blockNumber}` +
     `&apikey=${process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY}`;
   let block;

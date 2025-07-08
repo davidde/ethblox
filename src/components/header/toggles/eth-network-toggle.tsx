@@ -44,7 +44,7 @@ export default function EthNetworkToggle(props: Props) {
                     ${sepolia ? `` : `bg-(--hover-bg-color)`}`}
         >
           {({ close }) => (
-            <Link href='/mainnet' onClick={close}>
+            <Link href='/' onClick={close}>
               Ethereum Mainnet
             </Link>
           )}

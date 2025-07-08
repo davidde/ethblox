@@ -27,7 +27,8 @@ export default function BlockPage(props: { network: string }) {
   const blockRewardUrl = props.network === 'mainnet' ?
     `https://eth.blockscout.com/api?module=block&action=getblockreward&blockno=${number}`
     :
-    `https://api-sepolia.etherscan.io/api?module=block&action=getblockreward` +
+    `https://api.etherscan.io/v2/api?chainid=11155111` + // Sepolia Testnet
+    `&module=block&action=getblockreward` +
     `&blockno=${number}` +
     `&apikey=${process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY}`;
 
