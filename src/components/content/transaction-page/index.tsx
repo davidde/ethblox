@@ -55,11 +55,11 @@ export default function TransactionPage(props: {network: string}) {
             {
               txReceipt ?
                 txReceipt.status ?
-                  <GreenSpan className='border rounded-md p-1 px-4 w-[6.4rem] ml-4 md:ml-0'>
+                  <GreenSpan className='border rounded-md p-1 px-4 w-[6.4rem] h-[2.2rem] ml-4 md:ml-0'>
                     Success
                   </GreenSpan>
                   :
-                  <RedSpan className='border rounded-md p-1 px-4 w-[5rem] ml-4 md:ml-0'>
+                  <RedSpan className='border rounded-md p-1 px-4 w-[5rem] h-[2.2rem] ml-4 md:ml-0'>
                     Fail
                   </RedSpan>
                 :

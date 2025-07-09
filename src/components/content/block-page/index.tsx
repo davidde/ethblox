@@ -77,102 +77,105 @@ export default function BlockPage(props: { network: string }) {
 
   return (
     <main>
-      <div className='m-4 mt-8 md:m-8'>
-        <h1 className='text-lg font-bold'>
-          Block Details
-        </h1>
-        <ul className='max-w-[90vw] break-words mt-8'>
-          <li className='list-disc ml-4 m-2'>
-            <p className='flex flex-col md:flex-row'>
-              <span className='w-60'>Block number:</span>
-              <span>{number}</span>
-            </p>
-          </li>
-          <li className='list-disc ml-4 mt-4 m-2'>
-            <p className='flex flex-col md:flex-row'>
-              <span className='w-60'>Block hash:</span>
-              <span>{block?.hash || (blockError ?
-                                  <ErrorIndicator error={blockError} />
-                                  :
-                                  <LoadingIndicator />)}
-              </span>
-            </p>
-          </li>
-          <li className='list-disc ml-4 mt-4 m-2'>
-            <p className='flex flex-col md:flex-row'>
-              <span className='w-60'>Status:</span>
-              {
-                finalized ?
-                  <GreenSpan className='border rounded-md p-1 px-4 w-[6.4rem]'>
-                    Finalized
-                  </GreenSpan>
-                  :
-                  finalized === false ?
-                    <RedSpan className='border rounded-md p-1 px-4 w-[7.6rem]'>
-                      Unfinalized
-                    </RedSpan>
-                    :
-                    finalizedError ?
-                      <ErrorIndicator error={finalizedError} /> // Undefined case: error
-                      :
-                      <LoadingIndicator /> // Undefined case: initial render
-              }
-            </p>
-          </li>
-          <li className='list-disc ml-4 mt-4 m-2'>
-            <p className='flex flex-col md:flex-row'>
-              <span className='w-60'>Timestamp:</span>
-              <span>{timestamp || (blockError ?
-                                  <ErrorIndicator error={blockError} />
-                                  :
-                                  <LoadingIndicator />)}
-              </span>
-            </p>
-          </li>
-          <li className='list-disc ml-4 mt-4 m-2'>
-            <p className='flex flex-col md:flex-row'>
-              <span className='w-60'>Fee recipient:</span>
-              {
-                block?.miner ?
-                  <Link
-                    href={`/${props.network}/address?hash=${block.miner}`}
-                    className='font-mono text-(--link-color) hover:text-(--hover-fg-color)'
-                  >
-                    {block.miner}
-                  </Link>
-                  :
-                  (blockError ?
-                    <ErrorIndicator error={blockError} />
-                    :
-                    <LoadingIndicator />)
-              }
-            </p>
-          </li>
-          <li className='list-disc ml-4 mt-4 m-2'>
-            <p className='flex flex-col md:flex-row'>
-
-              <span className='w-60'>Block reward:</span>
-              <span>
-                {
-                    blockReward || (blockRewardError ?
-                                    <ErrorIndicator error={blockRewardError} />
+      <div className='flex items-center justify-center w-full mt-8'>
+        <div className='p-4 md:p-8 w-full max-w-[58rem] border
+         border-(--border-color) bg-(--comp-bg-color) rounded-lg'>
+          <h1 className='text-lg font-bold'>
+            Block Details
+          </h1>
+          <ul className='max-w-[90vw] break-words mt-8'>
+            <li className='list-disc ml-4 m-2'>
+              <p className='flex flex-col md:flex-row'>
+                <span className='min-w-60'>Block number:</span>
+                <span>{number}</span>
+              </p>
+            </li>
+            <li className='list-disc ml-4 mt-4 m-2'>
+              <p className='flex flex-col md:flex-row'>
+                <span className='min-w-60'>Block hash:</span>
+                <span className='break-all min-h-[3.3rem]'>{block?.hash || (blockError ?
+                                    <ErrorIndicator error={blockError} />
                                     :
-                                    <LoadingIndicator />)
+                                    <LoadingIndicator />)}
+                </span>
+              </p>
+            </li>
+            <li className='list-disc ml-4 mt-4 m-2'>
+              <p className='flex flex-col md:flex-row'>
+                <span className='min-w-60 min-h-[2.2rem]'>Status:</span>
+                {
+                  finalized ?
+                    <GreenSpan className='border rounded-md p-1 px-4 w-[6.4rem] h-[2.2rem]'>
+                      Finalized
+                    </GreenSpan>
+                    :
+                    finalized === false ?
+                      <RedSpan className='border rounded-md p-1 px-4 w-[7.6rem] h-[2.2rem]'>
+                        Unfinalized
+                      </RedSpan>
+                      :
+                      finalizedError ?
+                        <ErrorIndicator error={finalizedError} /> // Undefined case: error
+                        :
+                        <LoadingIndicator /> // Undefined case: initial render
                 }
-              </span>
-            </p>
-          </li>
-          <li className='list-disc ml-4 mt-4 m-2'>
-            <p className='flex flex-col md:flex-row'>
-              <span className='w-60'>Gas Used:</span>
-              <span>{gasUsed || (blockError ?
-                                  <ErrorIndicator error={blockError} />
-                                  :
-                                  <LoadingIndicator />)}
-              </span>
-            </p>
-          </li>
-        </ul>
+              </p>
+            </li>
+            <li className='list-disc ml-4 mt-4 m-2'>
+              <p className='flex flex-col md:flex-row'>
+                <span className='min-w-60'>Timestamp:</span>
+                <span className='min-h-[3.3rem]'>{timestamp || (blockError ?
+                                    <ErrorIndicator error={blockError} />
+                                    :
+                                    <LoadingIndicator />)}
+                </span>
+              </p>
+            </li>
+            <li className='list-disc ml-4 mt-4 m-2'>
+              <p className='flex flex-col md:flex-row'>
+                <span className='min-w-60'>Fee recipient:</span>
+                {
+                  block?.miner ?
+                    <Link
+                      href={`/${props.network}/address?hash=${block.miner}`}
+                      className='font-mono text-(--link-color) hover:text-(--hover-fg-color)'
+                    >
+                      {block.miner}
+                    </Link>
+                    :
+                    (blockError ?
+                      <ErrorIndicator error={blockError} />
+                      :
+                      <LoadingIndicator />)
+                }
+              </p>
+            </li>
+            <li className='list-disc ml-4 mt-4 m-2'>
+              <p className='flex flex-col md:flex-row'>
+
+                <span className='min-w-60'>Block reward:</span>
+                <span>
+                  {
+                      blockReward || (blockRewardError ?
+                                      <ErrorIndicator error={blockRewardError} />
+                                      :
+                                      <LoadingIndicator />)
+                  }
+                </span>
+              </p>
+            </li>
+            <li className='list-disc ml-4 mt-4 m-2'>
+              <p className='flex flex-col md:flex-row'>
+                <span className='min-w-60'>Gas Used:</span>
+                <span>{gasUsed || (blockError ?
+                                    <ErrorIndicator error={blockError} />
+                                    :
+                                    <LoadingIndicator />)}
+                </span>
+              </p>
+            </li>
+          </ul>
+        </div>
       </div>
     </main>
   );
