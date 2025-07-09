@@ -65,7 +65,7 @@ export default function BlockPage(props: { network: string }) {
     })();
   }, [number, blockRewardUrl, props.network]);
 
-  let timestamp = ''; let gasUsed = '';
+  let timestamp, gasUsed;
   if (block) {
     const secs = getSecsFromUnixSecs(block.timestamp);
     timestamp = `${getBlockAgeFromSecs(secs)} ago (${getDateFromUnixSecs(block.timestamp)})`;
@@ -77,9 +77,9 @@ export default function BlockPage(props: { network: string }) {
 
   return (
     <main>
-      <div className='flex items-center justify-center w-full'>
-        <div className='p-4 md:p-8 w-full max-w-[58rem] border
-         border-(--border-color) bg-(--comp-bg-color) rounded-lg'>
+      <div className='flex items-center justify-center w-full px-4 md:px-8'>
+        <div className='p-4 md:p-8 w-full max-w-[calc(100vw-2rem)] md:max-w-[62rem]
+         border border-(--border-color) bg-(--comp-bg-color) rounded-lg'>
           <h1 className='text-lg font-bold'>
             Block Details
           </h1>
@@ -93,7 +93,7 @@ export default function BlockPage(props: { network: string }) {
             <li className='list-disc ml-4 mt-4 m-2'>
               <p className='flex flex-col md:flex-row'>
                 <span className='min-w-60'>Block hash:</span>
-                <span className='break-all min-h-[3.3rem]'>{block?.hash || (blockError ?
+                <span className='break-all min-h-[4.5rem] md:min-h-[3.3rem]'>{block?.hash || (blockError ?
                                     <ErrorIndicator error={blockError} />
                                     :
                                     <LoadingIndicator />)}
@@ -101,8 +101,8 @@ export default function BlockPage(props: { network: string }) {
               </p>
             </li>
             <li className='list-disc ml-4 mt-4 m-2'>
-              <p className='flex flex-col md:flex-row'>
-                <span className='min-w-60 min-h-[2.2rem]'>Status:</span>
+              <p className='flex'>
+                <span className='min-w-20 md:min-w-60 min-h-[3rem] md:min-h-[2.2rem]'>Status:</span>
                 {
                   finalized ?
                     <GreenSpan className='border rounded-md p-1 px-4 w-[6.4rem] h-[2.2rem]'>
@@ -124,7 +124,8 @@ export default function BlockPage(props: { network: string }) {
             <li className='list-disc ml-4 mt-4 m-2'>
               <p className='flex flex-col md:flex-row'>
                 <span className='min-w-60'>Timestamp:</span>
-                <span className='min-h-[3.3rem]'>{timestamp || (blockError ?
+                <span className='min-h-[4.5rem] md:min-h-[3.3rem]'>
+                  {timestamp || (blockError ?
                                     <ErrorIndicator error={blockError} />
                                     :
                                     <LoadingIndicator />)}
@@ -134,6 +135,7 @@ export default function BlockPage(props: { network: string }) {
             <li className='list-disc ml-4 mt-4 m-2'>
               <p className='flex flex-col md:flex-row'>
                 <span className='min-w-60'>Fee recipient:</span>
+                <span className='min-h-[3.3rem] md:min-h-auto'>
                 {
                   block?.miner ?
                     <Link
@@ -148,6 +150,7 @@ export default function BlockPage(props: { network: string }) {
                       :
                       <LoadingIndicator />)
                 }
+                </span>
               </p>
             </li>
             <li className='list-disc ml-4 mt-4 m-2'>
@@ -167,7 +170,8 @@ export default function BlockPage(props: { network: string }) {
             <li className='list-disc ml-4 mt-4 m-2'>
               <p className='flex flex-col md:flex-row'>
                 <span className='min-w-60'>Gas Used:</span>
-                <span>{gasUsed || (blockError ?
+                <span className='min-h-[3.3rem] md:min-h-auto'>
+                  {gasUsed || (blockError ?
                                     <ErrorIndicator error={blockError} />
                                     :
                                     <LoadingIndicator />)}
