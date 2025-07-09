@@ -77,8 +77,8 @@ export default function BlockPage(props: { network: string }) {
 
   return (
     <main>
-      <div className='flex items-center justify-center w-full px-4 md:px-8'>
-        <div className='p-4 md:p-8 w-full max-w-[calc(100vw-2rem)] md:max-w-[62rem]
+      <div className='flex items-center justify-center w-full px-[0.5rem] md:px-8'>
+        <div className='p-4 md:p-8 w-full max-w-[calc(100vw-1rem)] md:max-w-[62rem]
          border border-(--border-color) bg-(--comp-bg-color) rounded-lg'>
           <h1 className='text-lg font-bold'>
             Block Details
