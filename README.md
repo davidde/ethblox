@@ -48,3 +48,15 @@ Most prominent technologies used:
   bun dev
   ```
   This will start the Next.js development server on port 3005 (set in `package.json > scripts > dev`), so open http://localhost:3005 in the browser to see the result.
+
+> [!NOTE]
+> **The development server will not fully reflect the production state** of the application, since we're using `output: export` for fully static site generation for Github Pages. The hot reload is still useful for quick iteration and feedback, but it is still necessary to frequently check the actual static site output with `serve out` (after `npm run build`). It is also necessary to set the `LOCAL_BUILD` environment variable **before building**, otherwise the incorrect `basePath` will be applied in `nextConfig`, and all asset files (including CSS!) will **404**.
+> 
+> For example, in PowerShell:
+> ```powershell
+>  $env:LOCAL_BUILD='true'; npm run build; serve out
+> ```
+> The `cross-env` version of the above is specified for `npm run start`, so you can just run `npm run start` to start the production application, regardless of platform. Note that this obviously isn't "live", and will need to be repeated after code changes.
+
+&nbsp;
+

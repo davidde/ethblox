@@ -1,7 +1,11 @@
 import { readFileSync } from 'fs';
 
 const appName = JSON.parse(readFileSync('./package.json', 'utf-8')).name;
-const basePath = process.env.NODE_ENV === 'production' ? '/' + appName : '';
+let basePath;
+if (process.env.NODE_ENV === 'production') {
+  basePath = '/' + appName;
+  if (process.env.LOCAL_BUILD === 'true') basePath = '';
+} else basePath = '';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

@@ -21,7 +21,7 @@
   "scripts": {
     "dev": "next dev -p 3005",
     "build": "next build",
-    "start": "next start",
+    "start": "cross-env LOCAL_BUILD=true next build && serve out",
     "lint": "next lint"
   },
   "dependencies": {
@@ -39,6 +39,7 @@
     "@types/node": "^20",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8",
     "eslint-config-next": "15.1.2",
     "postcss": "^8",
