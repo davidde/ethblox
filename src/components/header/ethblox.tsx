@@ -2,11 +2,14 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { NETWORKS } from '@/lib/utilities';
 
 
 export default function EthBlox() {
   const pathname = usePathname();
-  const network = pathname.split('/')[1] || 'mainnet';
+  let network = pathname.split('/')[1];
+  // Prevent faulty network display for incorrect URLs:
+  if (!NETWORKS.includes(network)) network = 'mainnet';
 
   return (
     <div>

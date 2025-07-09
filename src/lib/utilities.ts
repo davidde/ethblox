@@ -2,6 +2,7 @@
 import { Alchemy, Network, Utils, BigNumber } from 'alchemy-sdk';
 
 
+export const NETWORKS = ['mainnet', 'sepolia'];
 let alchemyInstance: Alchemy | null = null;
 
 export function getAlchemy(network: string) {

@@ -5,9 +5,8 @@ import BlockPage from '@/components/content/block-page';
 import GastrackerPage from '@/components/content/gastracker-page';
 import TransactionPage from '@/components/content/transaction-page';
 import { Suspense } from 'react';
+import { NETWORKS } from '@/lib/utilities';
 
-
-const networks = ['mainnet', 'sepolia'];
 
 // `generateStaticParams()` returns an array of "URL segment" arrays to populate the
 // `[[...slug]]` dynamic segment for the static site generation at build time.
@@ -27,7 +26,7 @@ export function generateStaticParams() {
   // static root path `/`, which will render `/mainnet`)
   paths.push({ slug: undefined });
 
-  for (const network of networks) {
+  for (const network of NETWORKS) {
     for (const page of pages) {
       if (page === '') {
         paths.push({ slug: [network] }); // e.g. /mainnet, /sepolia
@@ -55,7 +54,7 @@ export default async function Page({params} : { params: Promise<{ slug?: string[
   const subroute = slug[1] ?? '';
 
   // Validate network:
-  if (!networks.includes(network)) {
+  if (!NETWORKS.includes(network)) {
     return <NotFoundPage reason={`"${network}" is not a valid Ethereum network.`} />;
   }
 
