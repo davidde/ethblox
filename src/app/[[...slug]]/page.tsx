@@ -41,7 +41,16 @@ export function generateStaticParams() {
 }
 
 export default async function Page({params} : { params: Promise<{ slug?: string[] }> }) {
+  // Default to empty array if slug is `undefined`:
+  // (When a user visits `/`, the slug is `undefined`!)
   const { slug = [] } = await params;
+  const lastSegment = slug?.at(-1);
+  // Prevent Static Asset Overlap:
+  // (Ignore static file-like routes at runtime, e.g. .svg, .ico)
+  if (typeof lastSegment === 'string' && lastSegment.includes('.')) {
+    return <NotFoundPage reason={`"${lastSegment}": static asset access forbidden.`} />;
+  }
+
   const network = slug[0] ?? 'mainnet';
   const subroute = slug[1] ?? '';
 
