@@ -13,7 +13,7 @@ export default function NotFoundPage(props: Props) {
           <p className='mb-4 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl dark:text-white'>Not Found.</p>
           <p className='text-lg font-light text-gray-500 dark:text-gray-400'>Sorry, we can&apos;t find that page.</p>
           <p className='mb-4 text-lg font-light text-gray-500 dark:text-gray-400'>{props.reason}</p>
-          <Link href='/mainnet' className='inline-flex text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:outline-hidden focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-primary-900 my-4'>Back to Homepage</Link>
+          <Link href='/' className='inline-flex text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:outline-hidden focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-primary-900 my-4'>Back to Homepage</Link>
         </div>
       </div>
     </main>
