@@ -31,7 +31,6 @@ jobs:
         run: npm run build
         env:
           NEXT_PUBLIC_ALCHEMY_API_KEY: ${{ secrets.NEXT_PUBLIC_ALCHEMY_API_KEY }}
-          NEXT_PUBLIC_ETHERSCAN_API_KEY: ${{ secrets.NEXT_PUBLIC_ETHERSCAN_API_KEY }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

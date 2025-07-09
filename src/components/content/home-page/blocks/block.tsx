@@ -34,7 +34,7 @@ export default async function Block(props: Props) {
       const data = await response.json();
       blockReward = data.result?.blockReward;
     } catch(error) {
-      console.error('Etherscan getBlockReward', error);
+      console.error('getBlockReward()', error);
     }
   }
 
