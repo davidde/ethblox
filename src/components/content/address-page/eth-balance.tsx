@@ -1,37 +1,42 @@
-type Props = {
+'use client';
+
+import ErrorIndicator from '@/components/common/error-indicator';
+import LoadingIndicator from '@/components/common/loading-indicator';
+import { useState, useEffect } from 'react';
+
+
+export default function EthBalance(props: {
   ethBalance: string,
   network: string
-}
-
-export default async function EthBalance(props: Props) {
-  let valueEur, valueUsd;
-  let error = false;
+}) {
+  const [ethPrice, setEthPrice] = useState<{eur: number, usd: number}>();
+  const [ethPriceError, setEthPriceError] = useState<string>();
   const showEthValue = props.network === 'mainnet' ? '' : 'hidden';
 
-  if (props.network === 'mainnet') {
-    let price;
-
-    while (!price) {
-      try {
-        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=eur,usd');
-        const data = await response.json();
-        price = data.ethereum;
-      } catch(err) {
-        console.error('Coingecko Error: ', err);
-        error = true;
+  useEffect(() => {
+    (async () => {
+      if (props.network === 'mainnet') {
+        try {
+          const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=eur,usd');
+          if (!res.ok) throw new Error(`Response NOT OK, status: ${res.status}`);
+          const data = await res.json();
+          setEthPrice(data.ethereum);
+        } catch(err) {
+          const error = 'AddressPage EthBalance price:' + err;
+          console.error(error);
+          setEthPriceError(error);
+        }
       }
-    }
+    })();
+  }, [props.network]); // Re-run effect whenever props.network changes
 
-    valueEur = (+props.ethBalance * price.eur).toLocaleString('en-US',
-      {
-        style: 'currency',
-        currency: 'EUR',
-      });
-    valueUsd = (+props.ethBalance * price.usd).toLocaleString('en-US',
-      {
-        style: 'currency',
-        currency: 'USD',
-      });
+  let ethValue;
+  if (ethPrice) {
+    const valueEur = (+props.ethBalance * ethPrice.eur).toLocaleString(
+      'en-US', { style: 'currency', currency: 'EUR' });
+    const valueUsd = (+props.ethBalance * ethPrice.usd).toLocaleString(
+      'en-US', { style: 'currency', currency: 'USD' });
+    ethValue = `${valueUsd} (${valueEur})`;
   }
 
   return (
@@ -42,16 +47,10 @@ export default async function EthBalance(props: Props) {
       </div>
       <div className={`my-4 ${showEthValue}`}>
         <h2 className='text-sm tracking-wider text-(--grey-fg-color)'>TOTAL ETH VALUE</h2>
-        {
-          error ?
-            <div className='text-red-500'>
-              Error getting ether value.
-            </div>
-            :
-            <div>
-              <p>{valueUsd} ({valueEur})</p>
-            </div>
-        }
+        {ethValue || (ethPriceError ?
+                      <ErrorIndicator error={'Error getting Ether value'} />
+                      :
+                      <LoadingIndicator />)}
       </div>
     </div>
   );

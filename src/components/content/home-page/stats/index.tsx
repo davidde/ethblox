@@ -27,7 +27,7 @@ export default function Stats() {
       const json = await res.json();
       setEthSupply(+json.available_supply);
     } catch (err) {
-      const error = 'ETH supply Stats fetch error:' + err;
+      const error = 'HomePage Stats ETH supply:' + err;
       console.error(error);
       setEthSupplyError(error);
     }
@@ -43,7 +43,7 @@ export default function Stats() {
       setTransactionsToday((+json.transactions_today).toLocaleString('en-US'));
       setTotalTransactions((+json.total_transactions).toLocaleString('en-US'));
     } catch (err) {
-      const error = 'ETH price/transaction Stats fetch error:' + err;
+      const error = 'HomePage Stats ETH price/transaction:' + err;
       console.error(error);
       setEthPriceError(error);
     }

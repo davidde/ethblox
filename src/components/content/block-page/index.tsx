@@ -46,19 +46,19 @@ export default function BlockPage(props: { network: string }) {
         const finalizedBlockData = await alchemy.core.getBlock('finalized');
         setFinalizedBlock(finalizedBlockData);
       } catch (err) {
-        const error = "BlockPage getBlock('finalized') " + err;
+        const error = "BlockPage getBlock('finalized')" + err;
         console.error(error);
         setFinalizedError(error);
       }
       try {
-        const response = await fetch(blockRewardUrl);
-        if (!response.ok) throw new Error(`HTTP fetch error: ${response.status}`);
-        const data = await response.json();
+        const res = await fetch(blockRewardUrl);
+        if (!res.ok) throw new Error(`Response NOT OK, status: ${res.status}`);
+        const data = await res.json();
         if (data.result.blockReward) {
           setBlockReward(`Ξ${getEtherValueFromWei(data.result.blockReward, 4)}`);
         }
       } catch (err) {
-        const error = 'BlockPage getBlockReward() ' + err;
+        const error = 'BlockPage getBlockReward()' + err;
         console.error(error);
         setBlockRewardError(error);
       }

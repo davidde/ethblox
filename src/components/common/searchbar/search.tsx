@@ -9,8 +9,9 @@ import { isAddress } from 'ethers';
 
 export default function Search(props: { className?: string }) {
   // Read the current URL's query string:
-  const searchParams = useSearchParams(); // returns a read-only version of the URLSearchParams interface
-  const [searchTerm, setSearchTerm] = useState(searchParams.get('address')?.toString());
+  // (returns a read-only version of the URLSearchParams interface)
+  const searchParams = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState('');
 
   const pathname = usePathname();
   const network = pathname.split('/')[1] || 'mainnet';
@@ -23,27 +24,30 @@ export default function Search(props: { className?: string }) {
     const params = new URLSearchParams(searchParams);
 
     if (searchTerm) {
-      if (isAddress(searchTerm)) {
-        params.delete('address');
+      // if (isAddress(searchTerm)) {
+        // params.delete('address');
+
         // Run only when online AND tab is visible/active:
         if (navigator.onLine && document.visibilityState === 'visible') {
           router.push(`/${network}/address?hash=${searchTerm}`);
         }
         setSearchTerm('');
-      } else {
-        params.set('address', searchTerm);
-        // Run only when online AND tab is visible/active:
-        if (navigator.onLine && document.visibilityState === 'visible') {
-          router.replace(`${pathname}?${params.toString()}`);
-        }
       }
-    } else {
-      params.delete('address');
-      // Run only when online AND tab is visible/active:
-      if (navigator.onLine && document.visibilityState === 'visible') {
-        router.replace(`${pathname}`);
-      }
-    }
+    //   else {
+    //     params.set('address', searchTerm);
+    //     // Run only when online AND tab is visible/active:
+    //     if (navigator.onLine && document.visibilityState === 'visible') {
+    //       router.replace(`${pathname}?${params.toString()}`);
+    //     }
+    //   }
+    // }
+    // else {
+    //   params.delete('address');
+    //   // Run only when online AND tab is visible/active:
+    //   if (navigator.onLine && document.visibilityState === 'visible') {
+    //     router.replace(`${pathname}`);
+    //   }
+    // }
   }
 
   return (

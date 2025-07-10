@@ -5,17 +5,18 @@ import Tokens from './tokens';
 import Transactions from './transactions';
 import EthBalance from './eth-balance';
 import { useSearchParams } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { getAlchemy } from '@/lib/utilities';
+import { isAddress } from 'ethers';
 
 
 export default function AddressPage(props: {network: string}) {
   const alchemy = getAlchemy(props.network);
   const searchParams = useSearchParams();
-  const hash = searchParams.get('hash')!;
+  const hash = searchParams.get('hash') ?? '';
+  const okAddress = isAddress(hash);
 
   const [ethBalance, setEthBalance] = useState('');
-  let badAddress = useRef(true);
 
   useEffect(() => {
     let success = false;
@@ -25,13 +26,13 @@ export default function AddressPage(props: {network: string}) {
         try {
           const data = await alchemy.core.getBalance(hash, 'latest');
           setEthBalance(Utils.formatEther(data));
-          badAddress.current = false; success = true;
+          success = true;
         } catch(err) {
           if (err instanceof Error && err.message.startsWith('bad address checksum')) {
             console.error('getBalance() Error: ', err.message);
-            badAddress.current = true; success = true;
+            success = true;
           } else {
-            badAddress.current = false; success = false;
+            success = false;
           }
         }
       }
@@ -54,7 +55,7 @@ export default function AddressPage(props: {network: string}) {
         </p>
       </div>
       {
-        badAddress ?
+        !okAddress ?
           <div>This address does not exist.</div>
           :
           <div className={props.network === 'mainnet' ?
