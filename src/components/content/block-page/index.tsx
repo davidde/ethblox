@@ -1,6 +1,6 @@
 'use client';
 
-import { Alchemy, Utils, Block } from 'alchemy-sdk';
+import { Utils, Block } from 'alchemy-sdk';
 import Link from 'next/link';
 import {
   getDateFromUnixSecs,
@@ -33,7 +33,7 @@ export default function BlockPage(props: { network: string }) {
 
   useEffect(() => {
     (async () => {
-      const alchemy: Alchemy = getAlchemy(props.network);
+      const alchemy = getAlchemy(props.network);
       try {
         const blockData = await alchemy.core.getBlock(number);
         setBlock(blockData);
@@ -93,10 +93,11 @@ export default function BlockPage(props: { network: string }) {
             <li className='list-disc ml-4 mt-4 m-2'>
               <p className='flex flex-col md:flex-row'>
                 <span className='min-w-60'>Block hash:</span>
-                <span className='break-all min-h-[4.5rem] md:min-h-[3.3rem]'>{block?.hash || (blockError ?
-                                    <ErrorIndicator error={blockError} />
-                                    :
-                                    <LoadingIndicator />)}
+                <span className='break-all min-h-[4.5rem] md:min-h-[3.3rem]'>
+                  {block?.hash || (blockError ?
+                                  <ErrorIndicator error={blockError} />
+                                  :
+                                  <LoadingIndicator />)}
                 </span>
               </p>
             </li>
@@ -126,9 +127,9 @@ export default function BlockPage(props: { network: string }) {
                 <span className='min-w-60'>Timestamp:</span>
                 <span className='min-h-[4.5rem] md:min-h-[3.3rem]'>
                   {timestamp || (blockError ?
-                                    <ErrorIndicator error={blockError} />
-                                    :
-                                    <LoadingIndicator />)}
+                                <ErrorIndicator error={blockError} />
+                                :
+                                <LoadingIndicator />)}
                 </span>
               </p>
             </li>
@@ -158,12 +159,10 @@ export default function BlockPage(props: { network: string }) {
 
                 <span className='min-w-60'>Block reward:</span>
                 <span>
-                  {
-                      blockReward || (blockRewardError ?
-                                      <ErrorIndicator error={blockRewardError} />
-                                      :
-                                      <LoadingIndicator />)
-                  }
+                  {blockReward || (blockRewardError ?
+                                  <ErrorIndicator error={blockRewardError} />
+                                  :
+                                  <LoadingIndicator />)}
                 </span>
               </p>
             </li>
@@ -172,9 +171,9 @@ export default function BlockPage(props: { network: string }) {
                 <span className='min-w-60'>Gas Used:</span>
                 <span className='min-h-[3.3rem] md:min-h-auto'>
                   {gasUsed || (blockError ?
-                                    <ErrorIndicator error={blockError} />
-                                    :
-                                    <LoadingIndicator />)}
+                              <ErrorIndicator error={blockError} />
+                              :
+                              <LoadingIndicator />)}
                 </span>
               </p>
             </li>

@@ -72,7 +72,6 @@ export default function AddressPage(props: {network: string}) {
               <Tokens
                 hash={hash}
                 network={props.network}
-                alchemy={alchemy}
               />
             </div>
             <Transactions
