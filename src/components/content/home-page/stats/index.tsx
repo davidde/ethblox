@@ -1,3 +1,5 @@
+'use client';
+
 import ErrorIndicator from '@/components/common/error-indicator';
 import LoadingIndicator from '@/components/common/loading-indicator';
 import { CurrencyDollarIcon } from '@heroicons/react/24/outline';
@@ -6,42 +8,75 @@ import { Square3Stack3DIcon } from '@heroicons/react/24/outline';
 import { FireIcon } from '@heroicons/react/24/outline';
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 
-export default async function Stats() {
-  let { ethSupply, ethSupplyError } = await getEthSupply();
-  let {
-    ethPrice,
-    averageGasPrice,
-    transactionsToday,
-    totalTransactions,
-    ethPriceError
-  } = await getPriceAndTransactions();
+export default function Stats() {
+  const [ethSupply, setEthSupply] = useState<number>();
+  const [ethSupplyError, setEthSupplyError] = useState<string>();
+
+  const [ethPrice, setEthPrice] = useState<number>();
+  const [averageGasPrice, setAverageGasPrice] = useState<number>();
+  const [transactionsToday, setTransactionsToday] = useState<string>();
+  const [totalTransactions, setTotalTransactions] = useState<string>();
+  const [ethPriceError, setEthPriceError] = useState<string>();
+
+  async function getEthSupply() {
+    try {
+      const res = await fetch('https://eth.blockscout.com/api/v2/stats/charts/market');
+      if (!res.ok) throw new Error(`Response NOT OK, status: ${res.status}`);
+      const json = await res.json();
+      setEthSupply(+json.available_supply);
+    } catch (err) {
+      const error = 'ETH supply Stats fetch error:' + err;
+      console.error(error);
+      setEthSupplyError(error);
+    }
+  }
+
+  async function getPriceAndTransactions() {
+    try {
+      const res = await fetch('https://eth.blockscout.com/api/v2/stats');
+      if (!res.ok) throw new Error(`Response NOT OK, status: ${res.status}`);
+      const json = await res.json();
+      setEthPrice(+json.coin_price);
+      setAverageGasPrice(+json.gas_prices.average);
+      setTransactionsToday((+json.transactions_today).toLocaleString('en-US'));
+      setTotalTransactions((+json.total_transactions).toLocaleString('en-US'));
+    } catch (err) {
+      const error = 'ETH price/transaction Stats fetch error:' + err;
+      console.error(error);
+      setEthPriceError(error);
+    }
+  }
+
+  useEffect(() => {
+    getEthSupply();
+    getPriceAndTransactions();
+  }, []);
 
   const avgGasAmountPerTransfer = 21000;
   const gweiPrice = ethPrice ? (ethPrice / 1e9) : undefined;
-
-  const averageGasPriceGwei = averageGasPrice ? averageGasPrice.toLocaleString('en-US', { maximumFractionDigits: 3 }) : '';
   const averageGasPriceUsd = averageGasPrice && gweiPrice ?
     (averageGasPrice * avgGasAmountPerTransfer * gweiPrice).toLocaleString('en-US', { maximumFractionDigits: 2 }) : '';
 
-  let ethPriceFormatted, ethSupplyFormatted, ethMarketCap;
-  ethPriceFormatted = ethPrice?.toLocaleString('en-US', {
+  const averageGasPriceGwei = averageGasPrice?.toLocaleString('en-US', { maximumFractionDigits: 3 });
+
+  const ethPriceFormatted = ethPrice?.toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
   });
-  if (ethSupply) {
-    ethSupplyFormatted = `Ξ${ethSupply.toLocaleString('en-US', {
+  const ethSupplyFormatted = ethSupply ?
+    `Ξ${ethSupply.toLocaleString('en-US', {
       maximumFractionDigits: 2,
-    })}`;
-  }
-  if (ethPrice && ethSupply) {
-    ethMarketCap = (ethPrice * ethSupply)
-        .toLocaleString('en-US', {
-          style: 'currency',
-          currency: 'USD',
-        });
-  }
+    })}`
+    : undefined;
+  const ethMarketCap = ethPrice && ethSupply ?
+    (ethPrice * ethSupply).toLocaleString('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    })
+    : undefined;
 
   return (
     <div className='border border-(--border-color) bg-(--comp-bg-color)
@@ -141,54 +176,4 @@ export default async function Stats() {
       </div>
     </div>
   );
-}
-
-async function getEthSupply() {
-  let ethSupply, ethSupplyError;
-
-  try {
-    const supplyResponse = await fetch('https://eth.blockscout.com/api/v2/stats/charts/market');
-    if (supplyResponse.status === 200) {
-      const supplyData = await supplyResponse.json();
-      ethSupply = +supplyData.available_supply;
-    } else {
-      ethSupplyError = `Blockscout Supply Stats Response NOT OK, status: ${supplyResponse.status}`;
-      console.error(ethSupplyError);
-    }
-  } catch(error) {
-    ethSupplyError = 'Blockscout Supply Stats' + error;
-    console.error(ethSupplyError);
-  }
-
-  return { ethSupply, ethSupplyError };
-}
-
-async function getPriceAndTransactions() {
-  let totalTransactions, transactionsToday, ethPrice, averageGasPrice;
-  let ethPriceError;
-
-  try {
-    const statsResponse = await fetch('https://eth.blockscout.com/api/v2/stats');
-    if (statsResponse.status === 200) {
-      const statsData = await statsResponse.json();
-      totalTransactions = (+statsData.total_transactions).toLocaleString('en-US');
-      transactionsToday = (+statsData.transactions_today).toLocaleString('en-US');
-      ethPrice = +statsData.coin_price;
-      averageGasPrice = +statsData.gas_prices.average;
-    } else {
-      ethPriceError = `Blockscout Price/Transaction Stats Response NOT OK, status: ${statsResponse.status}`;
-      console.error(ethPriceError);
-    }
-  } catch(error) {
-    ethPriceError = 'Blockscout Price/Transaction Stats' + error;
-    console.error(ethPriceError);
-  }
-
-  return {
-    ethPrice,
-    averageGasPrice,
-    transactionsToday,
-    totalTransactions,
-    ethPriceError
-  };
 }
