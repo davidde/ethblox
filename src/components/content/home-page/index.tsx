@@ -5,7 +5,6 @@ import BlocksSkeleton from './blocks/blocks-skeleton';
 import Transactions from './transactions';
 import TransactionsSkeleton from './transactions/transactions-skeleton';
 import Stats from './stats';
-import StatsSkeleton from './stats/stats-skeleton';
 import NodeBanner from './node-banner';
 import { Suspense } from 'react';
 import { getAlchemy } from '@/lib/utilities';
@@ -49,9 +48,7 @@ export default async function HomePage(props: {network: string}) {
           {
             props.network === 'mainnet' ?
               <>
-                <Suspense fallback={<StatsSkeleton />}>
-                  <Stats />
-                </Suspense>
+                <Stats />
                 <div className='basis-full h-0' /> {/* Break the following flex item to a new row */}
               </> : ''
           }

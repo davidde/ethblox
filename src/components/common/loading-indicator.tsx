@@ -1,8 +1,8 @@
-export default function LoadingIndicator() {
+export default function LoadingIndicator(props: { className?: string }) {
   const letters = ['L', 'o', 'a', 'd', 'i', 'n', 'g', '\u00A0', '.', '.', '.'];
 
   return (
-    <span className='inline-flex p-0 m-0'>
+    <span className={`${props.className} inline-flex`}>
       {
         letters.map((char, index) =>
           <span
