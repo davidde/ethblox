@@ -42,11 +42,11 @@ export default function EthBalance(props: {
   return (
     <div className='pr-12'>
       <div className='my-4'>
-        <h2 className='text-sm tracking-wider text-(--grey-fg-color)'>ETH BALANCE</h2>
+        <h2 className='capsTitle'>ETH BALANCE</h2>
         Ξ{props.ethBalance}
       </div>
       <div className={`my-4 ${showEthValue}`}>
-        <h2 className='text-sm tracking-wider text-(--grey-fg-color)'>TOTAL ETH VALUE</h2>
+        <h2 className='capsTitle'>TOTAL ETH VALUE</h2>
         {ethValue || (ethPriceError ?
                       <ErrorIndicator error={'Error getting Ether value'} />
                       :

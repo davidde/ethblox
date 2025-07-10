@@ -61,6 +61,12 @@
     grid-row: 3;
   }
 
+  .capsTitle {
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    color: var(--grey-fg-color);
+  }
+
   .light {
     --main-bg-color: rgb(250, 250, 252);
     --main-fg-color: black;

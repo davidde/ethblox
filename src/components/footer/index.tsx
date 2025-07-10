@@ -48,7 +48,7 @@ export default function Footer() {
             </Link>
           </span>
         </div>
-        <p className='max-w-md m-auto pt-2 text-sm tracking-wider text-(--grey-fg-color)'>
+        <p className='max-w-md m-auto pt-2 capsTitle'>
           EthBlox is a Block Explorer and Analytics Platform for Ethereum,
           a decentralized smart contracts platform.
         </p>

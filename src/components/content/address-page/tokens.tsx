@@ -30,7 +30,7 @@ export default async function Tokens(props: Props) {
 
   return (
     <div className={`${showTokens} pr-12 my-4`}>
-      <h2 className='text-sm tracking-wider text-(--grey-fg-color)'>TOKEN HOLDINGS</h2>
+      <h2 className='capsTitle'>TOKEN HOLDINGS</h2>
       <ul>
         {
           realTokens === undefined ? <p className='text-red-500'>Error getting tokens.</p> :

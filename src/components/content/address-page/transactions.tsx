@@ -48,7 +48,7 @@ export default async function Transactions(props: Props) {
       <>
         <div className={`basis-full ${showTransactions ? 'hidden' : ''}`} />
         <div className='w-min'>
-          <p className='mt-4 text-sm tracking-wider text-(--grey-fg-color)'>
+          <p className='mt-4 capsTitle'>
             TRANSACTIONS
           </p>
           <p className='text-red-500 w-[95vw]'>
@@ -66,7 +66,7 @@ export default async function Transactions(props: Props) {
       that takes the full width of the container (flex-basis: 100%), so it will sit on its own row. */}
       <div className={`basis-full ${showTransactions ? 'hidden' : ''}`} />
       <div className='w-min'>
-        <p className={`mt-4 text-sm tracking-wider text-(--grey-fg-color) ${showTransactions ? 'pb-4 border-b border-(--border-color)' : ''}`}>
+        <p className={`mt-4 capsTitle ${showTransactions ? 'pb-4 border-b border-(--border-color)' : ''}`}>
           TRANSACTIONS
         </p>
         {

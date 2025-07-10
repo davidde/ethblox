@@ -47,7 +47,7 @@ export default function AddressPage(props: {network: string}) {
         <h1 className='text-lg font-bold mb-8'>
           Address Details
         </h1>
-        <h2 className='text-sm tracking-wider text-(--grey-fg-color)'>
+        <h2 className='capsTitle'>
           ADDRESS
         </h2>
         <p className='max-w-[90vw] break-words'>
