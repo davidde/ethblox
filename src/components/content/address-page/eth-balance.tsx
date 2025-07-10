@@ -1,8 +1,8 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import ErrorIndicator from '@/components/common/error-indicator';
 import LoadingIndicator from '@/components/common/loading-indicator';
-import { useState, useEffect } from 'react';
 
 
 export default function EthBalance(props: {

@@ -1,10 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { Input, Button } from '@headlessui/react';
-import { useState } from 'react';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
-import { isAddress } from 'ethers';
 
 
 export default function Search(props: { className?: string }) {

@@ -1,10 +1,10 @@
+import { Suspense } from 'react';
 import NotFoundPage from '@/components/content/error-page/not-found-page';
 import HomePage from '@/components/content/home-page';
 import AddressPage from '@/components/content/address-page';
 import BlockPage from '@/components/content/block-page';
 import GastrackerPage from '@/components/content/gastracker-page';
 import TransactionPage from '@/components/content/transaction-page';
-import { Suspense } from 'react';
 import { NETWORKS } from '@/lib/utilities';
 
 

@@ -1,4 +1,5 @@
 // Alchemy SDK Docs: https://docs.alchemy.com/reference/alchemy-sdk-api-surface-overview#api-surface
+import { Suspense } from 'react';
 import Searchbar from '@/components/common/searchbar';
 import Blocks from './blocks';
 import BlocksSkeleton from './blocks/blocks-skeleton';
@@ -6,7 +7,6 @@ import Transactions from './transactions';
 import TransactionsSkeleton from './transactions/transactions-skeleton';
 import Stats from './stats';
 import NodeBanner from './node-banner';
-import { Suspense } from 'react';
 import { getAlchemy } from '@/lib/utilities';
 
 

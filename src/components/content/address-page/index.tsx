@@ -1,11 +1,11 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Utils } from 'alchemy-sdk';
 import Tokens from './tokens';
 import Transactions from './transactions';
 import EthBalance from './eth-balance';
 import { useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
 import { getAlchemy } from '@/lib/utilities';
 import { isAddress } from 'ethers';
 

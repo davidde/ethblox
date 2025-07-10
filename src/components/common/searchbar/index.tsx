@@ -1,5 +1,5 @@
-import Search from './search';
 import { Suspense } from 'react';
+import Search from './search';
 import SearchSkeleton from './search-skeleton';
 
 

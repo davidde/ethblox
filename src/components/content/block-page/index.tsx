@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Utils, Block } from 'alchemy-sdk';
 import Link from 'next/link';
 import {
@@ -11,7 +12,6 @@ import {
   getBlockRewardUrl
 } from '@/lib/utilities';
 import { useSearchParams } from 'next/navigation';
-import { useState, useEffect, JSX } from 'react';
 import ErrorIndicator from '@/components/common/error-indicator';
 import LoadingIndicator from '@/components/common/loading-indicator';
 import GreenSpan from '@/components/common/green-span';
