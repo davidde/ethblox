@@ -1,7 +1,5 @@
 'use client';
 
-import ErrorIndicator from '@/components/common/error-indicator';
-import LoadingIndicator from '@/components/common/loading-indicator';
 import { CurrencyDollarIcon } from '@heroicons/react/24/outline';
 import { GlobeAltIcon } from '@heroicons/react/24/outline';
 import { Square3Stack3DIcon } from '@heroicons/react/24/outline';
@@ -9,6 +7,7 @@ import { FireIcon } from '@heroicons/react/24/outline';
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import StatCard from './stat-card';
 
 
 export default function Stats() {
@@ -79,100 +78,61 @@ export default function Stats() {
     : undefined;
 
   return (
-    <div className='border border-(--border-color) bg-(--comp-bg-color)
-                    rounded-lg w-full max-w-xl md:max-w-300 my-4 md:my-8 md:mr-12'>
+    <div className='border border-(--border-color) bg-(--comp-bg-color) rounded-lg
+                    w-full max-w-xl md:max-w-300 my-4 md:my-8 md:mr-12 py-2 md:py-0'>
       <div className='flex flex-col md:flex-row justify-between'>
-        <div className='w-56 md:w-[calc(100%/3)] pl-4 py-4 md:border-b border-(--border-color)'>
-          <div className='flex'>
-            <CurrencyDollarIcon className='w-8 h-8' />
-            <p className='pt-2 pl-4 text-xs tracking-wider text-(--grey-fg-color)'>ETHER PRICE</p>
-          </div>
-          <div className='pl-12'>
-            {ethPriceFormatted || (ethPriceError ?
-                                  <ErrorIndicator error='Error' />
-                                  :
-                                  <LoadingIndicator />)}
-          </div>
-        </div>
-
-        <div className='w-56 md:w-[calc(100%/3)] pl-4 md:pl-[calc(100%/18)] py-0 md:py-4 md:border-b md:border-x border-(--border-color)'>
-          <div className='flex'>
-            <div className='w-8 h-8 bg-(image:--eth-logo-url) bg-contain bg-no-repeat bg-center' />
-            <p className='pt-2 pl-4 text-xs tracking-wider text-(--grey-fg-color)'>ETHER SUPPLY</p>
-          </div>
-          <div className='pl-12'>
-            { ethSupplyFormatted || (ethSupplyError ?
-                                  <ErrorIndicator error='Error' />
-                                  :
-                                  <LoadingIndicator />)}
-          </div>
-        </div>
-
-        <div className='w-60 md:w-[calc(100%/3)] px-4 py-4 md:border-b border-(--border-color)'>
-          <div className='block w-60 ml-auto mr-auto'>
-            <div className='flex'>
-              <GlobeAltIcon className='w-8 h-8' />
-              <p className='pt-2 pl-4 text-xs tracking-wider text-(--grey-fg-color)'>ETHER MARKET CAP</p>
-            </div>
-            <div className='pl-12'>
-              {ethMarketCap || ((ethPriceError || ethSupplyError) ?
-                                <ErrorIndicator error='Error' />
-                                :
-                                <LoadingIndicator />)}
-            </div>
-          </div>
-        </div>
+        <StatCard
+          label="ETHER PRICE"
+          icon={<CurrencyDollarIcon className='w-8 h-8' />}
+          value={ethPriceFormatted}
+          error={ethPriceError}
+          className='md:border-b'
+        />
+        <StatCard
+          label="ETHER SUPPLY"
+          icon={<div className='w-8 h-8 bg-(image:--eth-logo-url) bg-contain bg-no-repeat bg-center' />}
+          value={ethSupplyFormatted}
+          error={ethSupplyError}
+          className='md:border-b md:border-x'
+        />
+        <StatCard
+          label="ETHER MARKET CAP"
+          icon={<GlobeAltIcon className='w-8 h-8' />}
+          value={ethMarketCap}
+          error={ethPriceError || ethSupplyError}
+          className='md:border-b'
+        />
       </div>
 
       <div className='flex flex-col md:flex-row justify-between'>
-        <div className='w-56 md:w-[calc(100%/3)] pl-4 py-0 md:py-4'>
-          <div className='flex'>
-          <FireIcon className='w-8 h-8' />
-            <p className='pt-2 pl-4 text-xs tracking-wider text-(--grey-fg-color)'>AVERAGE GAS PRICE</p>
-          </div>
-          {
-            averageGasPriceUsd ?
-            <Link
-              href='/mainnet/gastracker'
-              className='pl-12 text-(--link-color) hover:text-(--hover-fg-color)'
-            >
-              {`${averageGasPriceGwei} gwei ($${averageGasPriceUsd})`}
-            </Link>
-            :
-            (ethPriceError ?
-                <ErrorIndicator error='Error' className='pl-12' />
-                :
-                <LoadingIndicator className='pl-12' />)
+        <StatCard
+          label="AVERAGE GAS PRICE"
+          icon={<FireIcon className='w-8 h-8' />}
+          value={
+            averageGasPriceUsd && averageGasPriceGwei ? (
+              <Link
+                href='/mainnet/gastracker'
+                className='text-(--link-color) hover:text-(--hover-fg-color)'
+              >
+                {`${averageGasPriceGwei} gwei ($${averageGasPriceUsd})`}
+              </Link>
+            ) : undefined
           }
-        </div>
-
-        <div className='w-56 md:w-[calc(100%/3)] pl-4 md:pl-[calc(100%/18)] pt-4 md:py-4 md:border-x border-(--border-color)'>
-          <div className='flex'>
-          <ClipboardDocumentListIcon className='w-8 h-8' />
-            <p className='pt-2 pl-4 text-xs tracking-wider text-(--grey-fg-color)'>TRANSACTIONS TODAY</p>
-          </div>
-          <div className='pl-12'>
-            {transactionsToday || (ethPriceError ?
-                                  <ErrorIndicator error='Error' />
-                                  :
-                                  <LoadingIndicator />)}
-          </div>
-        </div>
-
-        <div className='w-60 md:w-[calc(100%/3)] px-4 py-4'>
-          <div className='block w-60 ml-auto mr-auto'>
-            <div className='flex'>
-              <Square3Stack3DIcon className='w-8 h-8' />
-              <p className='pt-2 pl-4 text-xs tracking-wider text-(--grey-fg-color)'>TOTAL TRANSACTIONS</p>
-            </div>
-            <div className='pl-12'>
-              {totalTransactions || (ethPriceError ?
-                                    <ErrorIndicator error='Error' />
-                                    :
-                                    <LoadingIndicator />)}
-            </div>
-          </div>
-        </div>
+          error={ethPriceError}
+        />
+        <StatCard
+          label="TRANSACTIONS TODAY"
+          icon={<ClipboardDocumentListIcon className='w-8 h-8' />}
+          value={transactionsToday}
+          error={ethPriceError}
+          className='md:border-x'
+        />
+        <StatCard
+          label="TOTAL TRANSACTIONS"
+          icon={<Square3Stack3DIcon className='w-8 h-8' />}
+          value={totalTransactions}
+          error={ethPriceError}
+        />
       </div>
     </div>
   );
