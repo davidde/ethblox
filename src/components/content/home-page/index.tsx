@@ -22,7 +22,7 @@ export default async function HomePage(props: {network: string}) {
 
   return (
     <main className='relative'>
-      <NodeBanner className='relative -top-12 left-0' />
+      <NodeBanner className='relative -mt-(--header-bottom-margin) left-0' />
 
       <div className='absolute top-10 md:top-20 left-0 md:left-60' >
         <h1 className='bg-linear-to-r from-(--gradient-from-color) via-(--gradient-via-color) to-(--gradient-to-color)

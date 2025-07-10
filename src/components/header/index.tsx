@@ -5,8 +5,9 @@ import EthBlox from './ethblox';
 
 export default function Header() {
   return (
-    <header className='sticky w-screen h-30 md:h-16 top-0 z-50
-        bg-(--comp-bg-color) text-(--main-fg-color) border-b border-(--border-color) mb-12'>
+    <header className='sticky w-screen top-0 mb-(--header-bottom-margin)
+    h-(--header-height) md:h-(--header-height-md) bg-(--comp-bg-color)
+    text-(--main-fg-color) border-b border-(--border-color) z-50'>
         <nav className='flex flex-wrap justify-between items-center
                         absolute z-40 w-full py-1.5 px-2 md:px-5'
         >

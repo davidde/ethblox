@@ -218,7 +218,7 @@ export default function NodeBanner(props: Props) {
   }
 
   return (
-    <div className={`${props.className} w-full h-[345px] md:h-[460px] bg-(--banner-bg-color)`} >
+    <div className={`${props.className} w-full h-[380px] md:h-[500px] bg-(--banner-bg-color)`} >
       {/* The following 2 spans are required to make the conditional
           `window.getComputedStyle()` on line 90 work properly: */}
       <span className='hidden light' />

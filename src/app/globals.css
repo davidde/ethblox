@@ -44,6 +44,10 @@
     grid-template-rows: auto 1fr auto;
     background-color: var(--main-bg-color);
     color: var(--main-fg-color);
+
+    --header-height: 7.5rem;
+    --header-height-md: 4rem;
+    --header-bottom-margin: 3rem;
   }
 
   /* Keep grid layout correct when main does not exist due to error: */
