@@ -21,10 +21,7 @@ export default function Tokens(props: {
         const alchemy = getAlchemy(props.network);
         try {
           let tokens = await alchemy.core.getTokensForOwner(props.hash);
-          // apparently, getTokensForOwner() randomly returns an array with almost everything undefined,
-          // which ruins the filter function, so we redo the function when balance is undefined:
-          // while (!tokens.tokens[0].balance) tokens = await alchemy.core.getTokensForOwner(props.hash);
-          // Remove tokens with zero balance or undefined logo or symbol:
+          // Remove scam tokens; everything with zero balance or undefined logo or symbol:
           let filteredTokens = tokens.tokens.filter(token => token.balance !== '0.0' && token.logo !== undefined && token.symbol !== undefined);
           // Sort tokens alphabetically by symbol:
           filteredTokens.sort((a, b) => a.symbol!.localeCompare(b.symbol!));
