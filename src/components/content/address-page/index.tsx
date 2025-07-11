@@ -28,32 +28,32 @@ export default function AddressPage(props: {network: string}) {
       </div>
       {
         hash.length !== 42 ?
-        <NotFoundPage reason={`Clearly you're joking, right? "${hash}" is not an Ethereum address.`} />
-        :
-        !hashOK ?
-          <div>This is not a valid Ethereum address.</div>
+          <NotFoundPage reason={`Surely you're joking, right?\n"${hash}" is not an Ethereum address.`} />
           :
-          <div className={props.network === 'mainnet' ?
-            'flex flex-col md:flex-row flex-wrap'
+          !hashOK ?
+            <div>This is not a valid Ethereum address.</div>
             :
-            'flex flex-col' // Testnet shows no tokens,
-            // so Transactions should show instead (and not to the right)
-          }>
-            <div>
-              <EthBalance
-                hash={hash}
-                network={props.network}
-              />
-              <Tokens
+            <div className={props.network === 'mainnet' ?
+              'flex flex-col md:flex-row flex-wrap'
+              :
+              'flex flex-col' // Testnet shows no tokens,
+              // so Transactions should show instead (and not to the right)
+            }>
+              <div>
+                <EthBalance
+                  hash={hash}
+                  network={props.network}
+                />
+                <Tokens
+                  hash={hash}
+                  network={props.network}
+                />
+              </div>
+              <Transactions
                 hash={hash}
                 network={props.network}
               />
             </div>
-            <Transactions
-              hash={hash}
-              network={props.network}
-            />
-          </div>
       }
     </main>
   );
