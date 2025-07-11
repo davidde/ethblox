@@ -1,45 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Utils } from 'alchemy-sdk';
 import Tokens from './tokens';
 import Transactions from './transactions';
 import EthBalance from './eth-balance';
 import { useSearchParams } from 'next/navigation';
-import { getAlchemy } from '@/lib/utilities';
 import { isAddress } from 'ethers';
+import NotFoundPage from '../error-page/not-found-page';
 
 
 export default function AddressPage(props: {network: string}) {
-  const alchemy = getAlchemy(props.network);
   const searchParams = useSearchParams();
   const hash = searchParams.get('hash') ?? '';
-  const okAddress = isAddress(hash);
-
-  const [ethBalance, setEthBalance] = useState('');
-
-  useEffect(() => {
-    let success = false;
-
-    async function getBalance() {
-      while (!success) {
-        try {
-          const data = await alchemy.core.getBalance(hash, 'latest');
-          setEthBalance(Utils.formatEther(data));
-          success = true;
-        } catch(err) {
-          if (err instanceof Error && err.message.startsWith('bad address checksum')) {
-            console.error('getBalance() Error: ', err.message);
-            success = true;
-          } else {
-            success = false;
-          }
-        }
-      }
-    }
-
-    getBalance();
-  }, [hash, alchemy]); // Re-run effect whenever the 'hash' changes
+  const hashOK = isAddress(hash);
 
   return (
     <main className='m-4 mt-8 md:m-8'>
@@ -55,8 +27,11 @@ export default function AddressPage(props: {network: string}) {
         </p>
       </div>
       {
-        !okAddress ?
-          <div>This address does not exist.</div>
+        hash.length !== 42 ?
+        <NotFoundPage reason={`Clearly you're joking, right? "${hash}" is not an Ethereum address.`} />
+        :
+        !hashOK ?
+          <div>This is not a valid Ethereum address.</div>
           :
           <div className={props.network === 'mainnet' ?
             'flex flex-col md:flex-row flex-wrap'
@@ -66,7 +41,7 @@ export default function AddressPage(props: {network: string}) {
           }>
             <div>
               <EthBalance
-                ethBalance={ethBalance}
+                hash={hash}
                 network={props.network}
               />
               <Tokens
