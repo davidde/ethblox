@@ -63,7 +63,7 @@ export default function BlockPage(props: { network: string }) {
         setBlockRewardError(error);
       }
     })();
-  }, [number, blockRewardUrl, props.network]);
+  }, [alchemy, number, blockRewardUrl]);
 
   let timestamp, gasUsed;
   if (block) {

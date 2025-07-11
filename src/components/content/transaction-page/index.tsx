@@ -35,7 +35,7 @@ export default function TransactionPage(props: {network: string}) {
     }
 
     getTransactionData();
-  }, [hash, alchemy]);
+  }, [alchemy, hash]);
 
   return (
     <main className='m-4 mt-8 md:m-8'>

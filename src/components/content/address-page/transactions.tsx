@@ -59,7 +59,7 @@ export default function Transactions(props: {
         console.error(error);
       }
     })();
-  }, [props.hash, props.network]);
+  }, [alchemy, props.hash]);
 
   const transactionsPresent = transactions && transactions.length !== 0;
   const numberOfTransactionsToShow = transactions && transactions.length

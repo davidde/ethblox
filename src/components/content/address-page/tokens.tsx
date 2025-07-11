@@ -33,7 +33,7 @@ export default function Tokens(props: {
         }
       }
     })();
-  }, [props.hash, props.network]);
+  }, [alchemy, props.hash, props.network]);
 
   return (
     <div className={`${showTokens} pr-12 my-4`}>
