@@ -1,49 +1,70 @@
-import { Alchemy, AssetTransfersCategory, SortingOrder } from 'alchemy-sdk';
-import { truncateTransaction, truncateAddress, getSecsFromDateTimeString, getBlockAgeFromSecs } from '@/lib/utilities';
+'use client';
+
+import { useState, useEffect } from 'react';
+import {
+  AssetTransfersCategory,
+  SortingOrder,
+  AssetTransfersWithMetadataResult
+} from 'alchemy-sdk';
+import {
+  truncateTransaction,
+  truncateAddress,
+  getSecsFromDateTimeString,
+  getBlockAgeFromSecs,
+  getAlchemy
+}
+from '@/lib/utilities';
 import PopoverLink from '@/components/common/popover-link';
 import Link from 'next/link';
+import ErrorIndicator from '@/components/common/error-indicator';
 
 
-type Props = {
+export default function Transactions(props: {
   hash: string,
   network: string,
-  alchemy: Alchemy
-}
+}) {
+  const maxNumberOfTransactionsToShow = 10;
+  const [transactions, setTransactions] = useState<AssetTransfersWithMetadataResult[]>();
+  const [totalTransactions, setTotalTransactions] = useState<string>();
+  const [transactionsError, setTransactionsError] = useState<string>();
 
-export default async function Transactions(props: Props) {
-  let transactions, totalTransactions, txError;
-  const numberOfTransactionsToShow = 10;
+  useEffect(() => {
+    (async () => {
+      const alchemy = getAlchemy(props.network);
+      try {
+        // By default returns a max of 1000 transfers:
+        const txResp = await alchemy.core.getAssetTransfers({
+          fromAddress: props.hash,
+          order: SortingOrder.DESCENDING, // Latest block numbers first!
+          category: [ AssetTransfersCategory.EXTERNAL ],
+          // EXTERNAL: Ethereum transaction initiated by an EOA (= externally-owned account),
+          // an account managed by a human, not a contract.
+          withMetadata: true,
+        });
+        setTransactions(txResp.transfers);
+        // console.log('transactions = ', transactions);
+      } catch(err) {
+        const error = 'AddressPage Transactions getAssetTransfers()' + err;
+        console.error(error);
+        setTransactionsError(error);
+      }
 
-  try {
-    // By default returns a max of 1000 transfers:
-    const txResp = await props.alchemy.core.getAssetTransfers({
-      fromAddress: props.hash,
-      order: SortingOrder.DESCENDING, // Latest block numbers first!
-      category: [ AssetTransfersCategory.EXTERNAL ],
-      // EXTERNAL: Ethereum transaction initiated by an EOA (= externally-owned account),
-      // an account managed by a human, not a contract.
-      withMetadata: true,
-    });
-    transactions = txResp.transfers;
-    txError = false;
-    // console.log('transactions = ', transactions);
-  } catch(err) {
-    console.error('getAssetTransfers()', err);
-    txError = true;
-  }
-
-  try {
-    const cntResp = await props.alchemy.core.getTransactionCount(props.hash);
-    totalTransactions = cntResp.toLocaleString('en-US');
-  } catch(err) {
-    console.error('getTransactionCount()', err);
-    totalTransactions = 'unknown number of';
-  }
+      try {
+        const cntResp = await alchemy.core.getTransactionCount(props.hash);
+        setTotalTransactions(cntResp.toLocaleString('en-US'));
+      } catch(err) {
+        setTotalTransactions('unknown number of');
+        const error = 'AddressPage Transactions getTransactionCount()' + err;
+        console.error(error);
+      }
+    })();
+  }, [props.hash, props.network]);
 
   const showTransactions = transactions && transactions.length !== 0;
-  const numberOfTransactions = transactions && transactions.length < numberOfTransactionsToShow ? transactions.length : numberOfTransactionsToShow;
+  const numberOfTransactionsToShow = transactions && transactions.length
+    < maxNumberOfTransactionsToShow ? transactions.length : maxNumberOfTransactionsToShow;
 
-  if (txError) {
+  if (transactionsError) {
     return (
       <>
         <div className={`basis-full ${showTransactions ? 'hidden' : ''}`} />
@@ -51,9 +72,10 @@ export default async function Transactions(props: Props) {
           <p className='mt-4 capsTitle'>
             TRANSACTIONS
           </p>
-          <p className='text-red-500 w-[95vw]'>
-            An error occurred while getting the transactions. Please reload.
-          </p>
+          <ErrorIndicator
+            error='An error occurred while getting the transactions. Please reload.'
+            className='w-[95vw]'
+          />
         </div>
       </>
     );
@@ -73,8 +95,8 @@ export default async function Transactions(props: Props) {
           showTransactions ?
             <p className='pl-8 text-sm tracking-wider py-3 border-b border-(--border-color)'>
               {
-                numberOfTransactions > 1 ?
-                `Showing latest ${numberOfTransactions} external transactions of ${totalTransactions} transactions total`
+                numberOfTransactionsToShow > 1 ?
+                `Showing latest ${numberOfTransactionsToShow} external transactions of ${totalTransactions} transactions total`
                 :
                 `Showing last external transaction of ${totalTransactions} transactions total`
               }
@@ -88,8 +110,13 @@ export default async function Transactions(props: Props) {
         {/* Mobile display only: */}
         <div className='lg:hidden portrait:block'>
           {
-            transactions === undefined ? <p className='text-red-500 py-2'>Error getting transactions.</p> :
-            transactions.slice(0, numberOfTransactionsToShow).map((transaction, i) => {
+            transactions === undefined ?
+            <ErrorIndicator
+              error='Error getting transactions.'
+              className='py-2'
+            />
+            :
+            transactions.slice(0, maxNumberOfTransactionsToShow).map((transaction, i) => {
               const secs = getSecsFromDateTimeString(transaction.metadata.blockTimestamp);
               const blockAge = getBlockAgeFromSecs(secs);
               const amount = transaction.asset === 'ETH' ?
@@ -177,89 +204,97 @@ export default async function Transactions(props: Props) {
         </div>
 
         {/* Desktop display only: */}
-        <table className={`hidden portrait:hidden ${showTransactions ? 'lg:table' : ''}`}>
-          <thead className='rounded-lg text-left font-normal'>
-            <tr className='border-b border-(--border-color)'>
-              <th scope='col' className='py-5 font-medium'>
-                Transaction Hash
-              </th>
-              <th scope='col' className='px-4 py-5 font-medium'>
-                Block
-              </th>
-              <th scope='col' className='px-4 py-5 font-medium'>
-                Age
-              </th>
-              <th scope='col' className='px-4 py-5 font-medium'>
-                From
-              </th>
-              <th scope='col' className='px-4 py-5 font-medium'>
-                To
-              </th>
-              <th scope='col' className='px-4 py-5 font-medium'>
-                Amount
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              transactions === undefined ? <p className='text-red-500 py-2'>Error getting transactions.</p> :
-              transactions.slice(0, numberOfTransactionsToShow).map((transaction, i) => {
-                const secs = getSecsFromDateTimeString(transaction.metadata.blockTimestamp);
-                const blockAge = getBlockAgeFromSecs(secs);
-                const amount = transaction.asset === 'ETH' ?
-                  `Ξ${transaction.value?.toFixed(8)}`
-                  :
-                  `${transaction.value?.toFixed(8)} ${transaction.asset}`;
+        {
+          transactions === undefined ?
+            <ErrorIndicator
+              error='Error getting transactions.'
+              className='py-2'
+            />
+            :
+            <table className={`hidden portrait:hidden ${showTransactions ? 'lg:table' : ''}`}>
+              <thead className='rounded-lg text-left font-normal'>
+                <tr className='border-b border-(--border-color)'>
+                  <th scope='col' className='py-5 font-medium'>
+                    Transaction Hash
+                  </th>
+                  <th scope='col' className='px-4 py-5 font-medium'>
+                    Block
+                  </th>
+                  <th scope='col' className='px-4 py-5 font-medium'>
+                    Age
+                  </th>
+                  <th scope='col' className='px-4 py-5 font-medium'>
+                    From
+                  </th>
+                  <th scope='col' className='px-4 py-5 font-medium'>
+                    To
+                  </th>
+                  <th scope='col' className='px-4 py-5 font-medium'>
+                    Amount
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  
+                  transactions.slice(0, maxNumberOfTransactionsToShow).map((transaction, i) => {
+                    const secs = getSecsFromDateTimeString(transaction.metadata.blockTimestamp);
+                    const blockAge = getBlockAgeFromSecs(secs);
+                    const amount = transaction.asset === 'ETH' ?
+                      `Ξ${transaction.value?.toFixed(8)}`
+                      :
+                      `${transaction.value?.toFixed(8)} ${transaction.asset}`;
 
-                return (
-                  <tr
-                    key={i}
-                    className='w-full border-b border-(--border-color) last-of-type:border-none py-3'
-                  >
-                    <td className='whitespace-nowrap py-3 pr-3'>
-                      <PopoverLink
-                        href={`/${props.network}/transaction?hash=${transaction.hash}`}
-                        content={truncateTransaction(transaction.hash, 18)!}
-                        popover={transaction.hash}
-                        className='-left-full top-[-2.6rem] w-120 py-1.5 px-2.5'
-                      />
-                    </td>
-                    <td className='whitespace-nowrap px-4 py-3'>
-                      <Link
-                          href={`/${props.network}/block?number=${+transaction.blockNum}`}
-                          className='text-(--link-color) hover:text-(--hover-fg-color)'
-                        >
-                          {+transaction.blockNum}
-                        </Link>
-                    </td>
-                    <td className='whitespace-nowrap px-4 py-3'>
-                      { blockAge }
-                    </td>
-                    <td className='whitespace-nowrap px-4 py-3'>
-                      <PopoverLink
-                        href={`/${props.network}/address?hash=${transaction.from}`}
-                        content={truncateAddress(transaction.from, 21)!}
-                        popover={transaction.from}
-                        className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
-                      />
-                    </td>
-                    <td className='whitespace-nowrap px-4 py-3'>
-                      <PopoverLink
-                        href={`/${props.network}/address?hash=${transaction.to}`}
-                        content={truncateAddress(transaction.to!, 21)!}
-                        popover={transaction.to!}
-                        className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
-                      />
-                    </td>
-                    <td className='whitespace-nowrap px-4 py-3'>
-                      {amount}
-                    </td>
-                  </tr>
-                );
-              })
-            }
-          </tbody>
-        </table>
+                    return (
+                      <tr
+                        key={i}
+                        className='w-full border-b border-(--border-color) last-of-type:border-none py-3'
+                      >
+                        <td className='whitespace-nowrap py-3 pr-3'>
+                          <PopoverLink
+                            href={`/${props.network}/transaction?hash=${transaction.hash}`}
+                            content={truncateTransaction(transaction.hash, 18)!}
+                            popover={transaction.hash}
+                            className='-left-full top-[-2.6rem] w-120 py-1.5 px-2.5'
+                          />
+                        </td>
+                        <td className='whitespace-nowrap px-4 py-3'>
+                          <Link
+                              href={`/${props.network}/block?number=${+transaction.blockNum}`}
+                              className='text-(--link-color) hover:text-(--hover-fg-color)'
+                            >
+                              {+transaction.blockNum}
+                            </Link>
+                        </td>
+                        <td className='whitespace-nowrap px-4 py-3'>
+                          { blockAge }
+                        </td>
+                        <td className='whitespace-nowrap px-4 py-3'>
+                          <PopoverLink
+                            href={`/${props.network}/address?hash=${transaction.from}`}
+                            content={truncateAddress(transaction.from, 21)!}
+                            popover={transaction.from}
+                            className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
+                          />
+                        </td>
+                        <td className='whitespace-nowrap px-4 py-3'>
+                          <PopoverLink
+                            href={`/${props.network}/address?hash=${transaction.to}`}
+                            content={truncateAddress(transaction.to!, 21)!}
+                            popover={transaction.to!}
+                            className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
+                          />
+                        </td>
+                        <td className='whitespace-nowrap px-4 py-3'>
+                          {amount}
+                        </td>
+                      </tr>
+                    );
+                  })
+                }
+              </tbody>
+            </table>
+        }
       </div>
     </>
   );
