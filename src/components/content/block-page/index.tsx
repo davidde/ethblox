@@ -19,6 +19,7 @@ import RedSpan from '@/components/common/red-span';
 
 
 export default function BlockPage(props: { network: string }) {
+  const alchemy = getAlchemy(props.network);
   const searchParams = useSearchParams();
   const number = +(searchParams.get('number') ?? 0);
   const [blockError, setBlockError] = useState('');
@@ -33,7 +34,6 @@ export default function BlockPage(props: { network: string }) {
 
   useEffect(() => {
     (async () => {
-      const alchemy = getAlchemy(props.network);
       try {
         const blockData = await alchemy.core.getBlock(number);
         setBlock(blockData);

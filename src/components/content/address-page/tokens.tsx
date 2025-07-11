@@ -11,6 +11,7 @@ export default function Tokens(props: {
   hash: string,
   network: string
 }) {
+  const alchemy = getAlchemy(props.network);
   const [realTokens, setRealTokens] = useState<OwnedToken[]>();
   const [realTokensError, setRealTokensError] = useState<string>();
   const showTokens = props.network === 'mainnet' ? '' : 'hidden';
@@ -18,7 +19,6 @@ export default function Tokens(props: {
   useEffect(() => {
     (async () => {
       if (props.network === 'mainnet') {
-        const alchemy = getAlchemy(props.network);
         try {
           let tokens = await alchemy.core.getTokensForOwner(props.hash);
           // Remove scam tokens; everything with zero balance or undefined logo or symbol:

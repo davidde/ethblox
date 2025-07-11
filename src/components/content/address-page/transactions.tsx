@@ -24,6 +24,7 @@ export default function Transactions(props: {
   hash: string,
   network: string,
 }) {
+  const alchemy = getAlchemy(props.network);
   const maxNumberOfTransactionsToShow = 10;
   const [transactions, setTransactions] = useState<AssetTransfersWithMetadataResult[]>();
   const [totalTransactions, setTotalTransactions] = useState<string>();
@@ -31,7 +32,6 @@ export default function Transactions(props: {
 
   useEffect(() => {
     (async () => {
-      const alchemy = getAlchemy(props.network);
       try {
         // By default returns a max of 1000 transfers:
         const txResp = await alchemy.core.getAssetTransfers({
