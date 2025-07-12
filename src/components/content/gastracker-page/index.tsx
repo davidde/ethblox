@@ -40,12 +40,16 @@ export default function GastrackerPage() {
 
   return (
     <main>
-      <div className='flex flex-col items-center py-4'>
-        <div className='flex py-10 ml-auto mr-auto'>
-          <ChartBarIcon className='w-8 h-8' />
-          <p className='pl-4 text-2xl'>Ethereum Gas Tracker</p>
+      <div className='flex flex-col items-center'>
+        <div className='flex flex-col md:flex-row md:pb-5 my-5 md:my-10 ml-auto mr-auto md:border-b border-slate-400 justify-between items-center'>
+          <ChartBarIcon className='w-8 h-8 text-slate-500 self-start' />
+          <p className='text-3xl text-slate-500 italic font-medium
+            tracking-wide wordsp-[0.8em] mx-[1.6em]'>
+            ETHEREUM <br className='md:hidden'/>GAS TRACKER
+          </p>
+          <ChartBarIcon className='w-8 h-8 text-slate-500 scale-x-[-1] self-end' />
         </div>
-        <div className='flex flex-col md:flex-row items-start justify-between w-full max-w-200 mt-2'>
+        <div className='flex flex-col md:flex-row items-start justify-between w-full max-w-200 my-10'>
           <div className='border border-(--border-color) rounded-lg px-16 py-4 w-58 ml-auto mr-auto'>
             <p className='font-bold mb-3'>
               <span className='text-xl mr-2' role="img" aria-label="smiling face with sunglasses">😎</span>

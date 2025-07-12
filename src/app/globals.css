@@ -2,6 +2,11 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* E.g: wordsp-[0.35em] */
+@utility wordsp-* {
+  word-spacing: --value([length]);
+}
+
 @theme {
   --background-image-gradient-radial: radial-gradient(var(--tw-gradient-stops));
   --background-image-gradient-conic: conic-gradient(
