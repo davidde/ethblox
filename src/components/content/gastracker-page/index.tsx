@@ -1,3 +1,4 @@
+import { getGasPriceGwei, getGasPriceUsd } from '@/lib/utilities';
 import { ChartBarIcon } from '@heroicons/react/24/outline';
 
 
@@ -24,19 +25,12 @@ export default async function GastrackerPage() {
     }
   }
 
-  const avgGasAmountPerTransfer = 21000;
-  const gweiPrice = ethPrice ? (ethPrice / 1e9) : undefined;
-  const lowGasPriceGwei = lowGasPrice ? lowGasPrice.toLocaleString('en-US', { maximumFractionDigits: 3 }) : '';
-  const lowGasPriceUsd = lowGasPrice && gweiPrice ?
-    (lowGasPrice * avgGasAmountPerTransfer * gweiPrice ).toLocaleString('en-US', { maximumFractionDigits: 2 }) : '';
-
-  const averageGasPriceGwei = averageGasPrice ? averageGasPrice.toLocaleString('en-US', { maximumFractionDigits: 3 }) : '';
-  const averageGasPriceUsd = averageGasPrice && gweiPrice ?
-    (averageGasPrice * avgGasAmountPerTransfer * gweiPrice).toLocaleString('en-US', { maximumFractionDigits: 2 }) : '';
-
-  const highGasPriceGwei = highGasPrice ? highGasPrice.toLocaleString('en-US', { maximumFractionDigits: 3 }) : '';
-  const highGasPriceUsd = highGasPrice && gweiPrice ?
-    (highGasPrice * avgGasAmountPerTransfer * gweiPrice).toLocaleString('en-US', { maximumFractionDigits: 2 }) : '';
+  const lowGasPriceGwei = getGasPriceGwei(lowGasPrice);
+  const lowGasPriceUsd = getGasPriceUsd(lowGasPrice, ethPrice);
+  const averageGasPriceGwei = getGasPriceGwei(averageGasPrice);
+  const averageGasPriceUsd = getGasPriceUsd(averageGasPrice, ethPrice);
+  const highGasPriceGwei = getGasPriceGwei(highGasPrice);
+  const highGasPriceUsd = getGasPriceUsd(highGasPrice, ethPrice);
 
   return (
     <main>
@@ -51,24 +45,24 @@ export default async function GastrackerPage() {
               <span className='text-xl mr-2' role="img" aria-label="smiling face with sunglasses">😎</span>
               Low
             </p>
-            <p className='text-lg tracking-wide text-green-600'>{ lowGasPriceGwei } gwei</p>
-            <p className='text-sm tracking-wide text-green-600'>(${ lowGasPriceUsd })</p>
+            <p className='text-lg tracking-wide text-green-600'>{ lowGasPriceGwei }</p>
+            <p className='text-sm tracking-wide text-green-600'>{ lowGasPriceUsd }</p>
           </div>
           <div className='border border-(--border-color) rounded-lg my-4 md:my-0 px-16 py-4 w-58 ml-auto mr-auto'>
             <p className='font-bold'>
               <span className='text-xl mr-2' role="img" aria-label="beaming face with smiling eyes">😁</span>
               Average
             </p>
-            <p className='text-lg tracking-wide text-blue-600'>{ averageGasPriceGwei } gwei</p>
-            <p className='text-sm tracking-wide text-blue-600'>(${ averageGasPriceUsd })</p>
+            <p className='text-lg tracking-wide text-blue-600'>{ averageGasPriceGwei }</p>
+            <p className='text-sm tracking-wide text-blue-600'>{ averageGasPriceUsd }</p>
           </div>
           <div className='border border-(--border-color) rounded-lg px-16 py-4 w-58 ml-auto mr-auto'>
             <p className='font-bold'>
               <span className='text-xl mr-2' role="img" aria-label="flushed face">😳</span>
               High
             </p>
-            <p className='text-lg tracking-wide text-red-600'>{ highGasPriceGwei } gwei</p>
-            <p className='text-sm tracking-wide text-red-600'>(${ highGasPriceUsd })</p>
+            <p className='text-lg tracking-wide text-red-600'>{ highGasPriceGwei }</p>
+            <p className='text-sm tracking-wide text-red-600'>{ highGasPriceUsd }</p>
           </div>
         </div>
       </div>

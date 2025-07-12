@@ -94,3 +94,24 @@ export function getBlockRewardUrl(network: string, block: number) {
     :
     `https://eth-sepolia.blockscout.com/api?module=block&action=getblockreward&blockno=${block}`;
 }
+
+export function getGasPriceGwei(gasPrice: number | undefined) {
+  return gasPrice ?
+    `${gasPrice.toLocaleString('en-US', { maximumFractionDigits: 3 })} gwei`
+    :
+    undefined;
+}
+
+export function getGasPriceUsd(
+  gasPrice: number | undefined,
+  ethPrice: number | undefined
+) {
+  const avgGasAmountPerTransfer = 21000;
+  if (gasPrice && ethPrice) {
+    const gweiPrice = ethPrice / 1e9;
+    const gasPriceUsd = (gasPrice * avgGasAmountPerTransfer * gweiPrice);
+    return `($${ gasPriceUsd.toLocaleString('en-US', { maximumFractionDigits: 2 }) })`;
+  }
+  return undefined;
+}
+

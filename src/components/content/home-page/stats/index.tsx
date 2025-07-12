@@ -8,6 +8,7 @@ import { FireIcon } from '@heroicons/react/24/outline';
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import StatCard from './stat-card';
+import { getGasPriceGwei, getGasPriceUsd } from '@/lib/utilities';
 
 
 export default function Stats() {
@@ -54,12 +55,9 @@ export default function Stats() {
     getPriceAndTransactions();
   }, []);
 
-  const avgGasAmountPerTransfer = 21000;
-  const gweiPrice = ethPrice ? (ethPrice / 1e9) : undefined;
-  const averageGasPriceUsd = averageGasPrice && gweiPrice ?
-    (averageGasPrice * avgGasAmountPerTransfer * gweiPrice).toLocaleString('en-US', { maximumFractionDigits: 2 }) : '';
-
-  const averageGasPriceGwei = averageGasPrice?.toLocaleString('en-US', { maximumFractionDigits: 3 });
+  const averageGasPriceUsd = getGasPriceUsd(averageGasPrice, ethPrice);
+  const averageGasPriceGwei = getGasPriceGwei(averageGasPrice);
+  const averageGasPriceFormatted = `${averageGasPriceGwei} ${averageGasPriceUsd}`;
 
   const ethPriceFormatted = ethPrice?.toLocaleString('en-US', {
     style: 'currency',
@@ -109,12 +107,12 @@ export default function Stats() {
           label="AVERAGE GAS PRICE"
           icon={<FireIcon className='w-8 h-8' />}
           value={
-            averageGasPriceUsd && averageGasPriceGwei ? (
+            averageGasPriceFormatted ? (
               <Link
                 href='/mainnet/gastracker'
                 className='text-(--link-color) hover:text-(--hover-fg-color)'
               >
-                {`${averageGasPriceGwei} gwei ($${averageGasPriceUsd})`}
+                {averageGasPriceFormatted}
               </Link>
             ) : undefined
           }
