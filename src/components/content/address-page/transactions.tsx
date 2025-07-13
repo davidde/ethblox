@@ -18,6 +18,7 @@ import PopoverLink from '@/components/common/popover-link';
 import Link from 'next/link';
 import ErrorIndicator from '@/components/common/error-indicator';
 import LoadingIndicator from '@/components/common/loading-indicator';
+import ValueDisplay from '@/components/common/value-display';
 
 
 export default function Transactions(props: {
@@ -61,61 +62,40 @@ export default function Transactions(props: {
     })();
   }, [alchemy, props.hash]);
 
-  const transactionsPresent = transactions && transactions.length !== 0;
-  const numberOfTransactionsToShow = transactions && transactions.length
-    < maxNumberOfTransactionsToShow ? transactions.length : maxNumberOfTransactionsToShow;
+  let transactionsDigest, transactionsPresent;
+  if (transactions) {
+    transactionsPresent = transactions.length !== 0;
+    const numberOfTransactionsToShow = transactions.length < maxNumberOfTransactionsToShow ? transactions.length : maxNumberOfTransactionsToShow;
 
-  if (transactionsError) {
-    return (
-      <>
-        <div className={`basis-full ${transactionsPresent ? 'hidden' : ''}`} />
-        <div className='w-min'>
-          <p className='mt-4 capsTitle'>
-            TRANSACTIONS
-          </p>
-          <ErrorIndicator
-            error='An error occurred while getting the transactions. Please reload.'
-            className='w-[95vw]'
-          />
-        </div>
-      </>
-    );
+    transactionsDigest = transactions.length !== 0 ?
+      <p className='pl-8 mt-4 text-sm tracking-wider py-3 border-y border-(--border-color)'>
+        { numberOfTransactionsToShow > 1 ?
+            `Showing latest ${numberOfTransactionsToShow} external transactions of ${totalTransactions} transactions total`
+            :
+            `Showing last external transaction of ${totalTransactions} transactions total` }
+      </p>
+      :
+      <p>
+        /
+      </p>
   }
 
   return (
     <>
       {/* If there are no transactions, just put the next div (the TRANSACTIONS header)
-      directly below the Token Holdings. This is done by introducing this invisible extra flex item
-      that takes the full width of the container (flex-basis: 100%), so it will sit on its own row. */}
+      directly below the Token Holdings. This is done by introducing this invisible
+      extra flex item that takes the full width of the container (flex-basis: 100%),
+      so it will sit on its own row. */}
       <div className={`basis-full ${transactionsPresent ? 'hidden' : ''}`} />
       <div className='w-min'>
-        <p className={`mt-4 capsTitle ${transactionsPresent ? 'pb-4 border-b border-(--border-color)' : ''}`}>
+        <p className='mt-4 capsTitle'>
           TRANSACTIONS
         </p>
-        {
-          transactionsError ?
-            <ErrorIndicator
-              error='Error getting transactions.'
-              className='py-2'
-            />
-            :
-            !transactions ?
-              <LoadingIndicator />
-              :
-              transactionsPresent ?
-                <p className='pl-8 text-sm tracking-wider py-3 border-b border-(--border-color)'>
-                  {
-                    numberOfTransactionsToShow > 1 ?
-                      `Showing latest ${numberOfTransactionsToShow} external transactions of ${totalTransactions} transactions total`
-                      :
-                      `Showing last external transaction of ${totalTransactions} transactions total`
-                  }
-                </p>
-                :
-                <p>
-                  /
-                </p>
-        }
+        <ValueDisplay
+          value={transactionsDigest}
+          error={transactionsError} // ErrorIndicator className='py-2 w-[95vw]'
+          err='Error getting transactions. Please reload.'
+        />
 
         {/* Mobile display only: */}
         <div className='lg:hidden portrait:block'>
