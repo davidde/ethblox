@@ -53,7 +53,7 @@ export default function GastrackerPage() {
         <div className='flex flex-col md:flex-row items-start
           justify-between w-full max-w-200 my-10'>
           <GastrackerCard
-            header='Low'
+            title='Low'
             gasPriceGwei={lowGasPriceGwei}
             gasPriceUsd={lowGasPriceUsd}
             priceError={priceError}
@@ -62,8 +62,7 @@ export default function GastrackerPage() {
             colorClass='text-green-600'
           />
           <GastrackerCard
-            className='my-4 md:my-0'
-            header='Average'
+            title='Average'
             gasPriceGwei={averageGasPriceGwei}
             gasPriceUsd={averageGasPriceUsd}
             priceError={priceError}
@@ -72,7 +71,7 @@ export default function GastrackerPage() {
             colorClass='text-blue-600'
           />
           <GastrackerCard
-            header='High'
+            title='High'
             gasPriceGwei={highGasPriceGwei}
             gasPriceUsd={highGasPriceUsd}
             priceError={priceError}
