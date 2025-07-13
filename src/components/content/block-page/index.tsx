@@ -101,9 +101,9 @@ export default function BlockPage(props: { network: string }) {
           <ul className='max-w-[90vw] break-words mt-8'>
 
             <li className='list-disc ml-4 mt-4 m-2'>
-              <p className='flex flex-col md:flex-row'>
-                <span className='min-w-60'>Block number:</span>
-                <span>{number}</span>
+              <p className='flex'>
+                <span className='min-w-35 md:min-w-60'>Block number:</span>
+                <span className='font-semibold'>{number}</span>
               </p>
             </li>
 
@@ -157,13 +157,13 @@ export default function BlockPage(props: { network: string }) {
             </li>
 
             <li className='list-disc ml-4 mt-4 m-2'>
-              <p className='flex flex-col md:flex-row'>
-                <span className='min-w-60'>Block reward:</span>
+              <p className='flex'>
+                <span className='min-w-35 md:min-w-60'>Block reward:</span>
                 <span>
                   <ValueDisplay
                     value={blockReward}
                     error={blockRewardError}
-                    err='Error fetching block reward'
+                    err='Error fetching'
                   />
                 </span>
               </p>
