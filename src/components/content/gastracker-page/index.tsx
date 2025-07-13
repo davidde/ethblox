@@ -75,8 +75,8 @@ export default function GastrackerPage() {
             gasPriceGwei={highGasPriceGwei}
             gasPriceUsd={highGasPriceUsd}
             priceError={priceError}
-            smiley='😳'
-            smileyLabel='flushed face'
+            smiley='😵'
+            smileyLabel='face with crossed-out eyes'
             colorClass='text-red-600'
           />
         </div>
