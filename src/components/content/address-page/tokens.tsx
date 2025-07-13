@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import ErrorIndicator from '@/components/common/error-indicator';
-import LoadingIndicator from '@/components/common/loading-indicator';
+import ValueDisplay from '@/components/common/value-display';
 import { getAlchemy } from '@/lib/utilities';
 import { OwnedToken } from 'alchemy-sdk';
 
@@ -35,31 +34,28 @@ export default function Tokens(props: {
     })();
   }, [alchemy, props.hash, props.network]);
 
+  function getTokenList(tokens: OwnedToken[] | undefined ) {
+    return tokens?.map(
+      (token, i) => {
+        let balance = parseFloat(token.balance ?? '0').toFixed(8);
+        balance = balance.includes('.') && balance.endsWith('0') ?
+          parseFloat(balance).toString() : balance;
+        return <li key={i} className='ml-4 list-disc text-(--grey-fg-color)'>
+          <span className='text-(--main-fg-color)'>
+            {`${token.symbol}: ${balance} (${token.name})`}
+          </span>
+        </li>;
+      });
+  }
+
   return (
     <div className={`${showTokens} pr-12 my-4`}>
       <h2 className='capsTitle'>TOKEN HOLDINGS</h2>
-      <ul>
-        {
-          realTokens !== undefined ?
-            ( realTokens.length !== 0 ?
-              (realTokens.map((token, i) => {
-                let balance = parseFloat(token.balance ?? '0').toFixed(8);
-                balance = balance.includes('.') && balance.endsWith('0') ? parseFloat(balance).toString() : balance;
-                return <li key={i} className='ml-4 list-disc text-(--grey-fg-color)'>
-                    <span className='text-(--main-fg-color)'>
-                      {`${token.symbol}: ${balance} (${token.name})`}
-                    </span>
-                </li>}))
-              :
-              '/'
-            )
-            :
-            (realTokensError ?
-              <ErrorIndicator error='Error getting tokens.' />
-              :
-              <LoadingIndicator />)
-        }
-      </ul>
+      <ValueDisplay
+        value={getTokenList(realTokens)}
+        error={realTokensError}
+        err='Error getting tokens'
+      />
     </div>
   );
 }
