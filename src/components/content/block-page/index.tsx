@@ -12,10 +12,9 @@ import {
   getBlockRewardUrl
 } from '@/lib/utilities';
 import { useSearchParams } from 'next/navigation';
-import ErrorIndicator from '@/components/common/error-indicator';
-import LoadingIndicator from '@/components/common/loading-indicator';
 import GreenSpan from '@/components/common/green-span';
 import RedSpan from '@/components/common/red-span';
+import ValueDisplay from '@/components/common/value-display';
 
 
 export default function BlockPage(props: { network: string }) {
@@ -46,7 +45,7 @@ export default function BlockPage(props: { network: string }) {
         const finalizedBlockData = await alchemy.core.getBlock('finalized');
         setFinalizedBlock(finalizedBlockData);
       } catch (err) {
-        const error = "BlockPage getBlock('finalized')" + err;
+        const error = "BlockPage getBlock('finalized') " + err;
         console.error(error);
         setFinalizedError(error);
       }
@@ -58,7 +57,7 @@ export default function BlockPage(props: { network: string }) {
           setBlockReward(`Ξ${getEtherValueFromWei(data.result.blockReward, 4)}`);
         }
       } catch (err) {
-        const error = 'BlockPage getBlockReward()' + err;
+        const error = 'BlockPage getBlockReward() ' + err;
         console.error(error);
         setBlockRewardError(error);
       }
@@ -73,7 +72,23 @@ export default function BlockPage(props: { network: string }) {
     gasUsed = `${+gasUsedEther * Math.pow(10, 9)} Gwei (Ξ${gasUsedEther})`;
   }
   let finalized;
-  if (finalizedBlock) finalized = number <= finalizedBlock.number;
+  if (finalizedBlock) {
+    finalized = number <= finalizedBlock.number ?
+      <GreenSpan className='border rounded-md p-1 px-4 w-[6.4rem] h-[2.2rem]'>
+        Finalized
+      </GreenSpan>
+      :
+      <RedSpan className='border rounded-md p-1 px-4 w-[7.6rem] h-[2.2rem]'>
+        Unfinalized
+      </RedSpan>;
+  }
+  let recipient = block?.miner ?
+    <Link href={`/${props.network}/address?hash=${block.miner}`}
+      className='font-mono text-(--link-color) hover:text-(--hover-fg-color)'>
+      {block.miner}
+    </Link>
+    :
+    undefined;
 
   return (
     <main>
@@ -84,99 +99,88 @@ export default function BlockPage(props: { network: string }) {
             Block Details
           </h1>
           <ul className='max-w-[90vw] break-words mt-8'>
-            <li className='list-disc ml-4 m-2'>
+
+            <li className='list-disc ml-4 mt-4 m-2'>
               <p className='flex flex-col md:flex-row'>
                 <span className='min-w-60'>Block number:</span>
                 <span>{number}</span>
               </p>
             </li>
+
             <li className='list-disc ml-4 mt-4 m-2'>
               <p className='flex flex-col md:flex-row'>
                 <span className='min-w-60'>Block hash:</span>
                 <span className='break-all min-h-[4.5rem] md:min-h-[3.3rem]'>
-                  {block?.hash || (blockError ?
-                                  <ErrorIndicator error={blockError} />
-                                  :
-                                  <LoadingIndicator />)}
+                  <ValueDisplay
+                    value={block?.hash}
+                    error={blockError}
+                  />
                 </span>
               </p>
             </li>
+
             <li className='list-disc ml-4 mt-4 m-2'>
               <p className='flex'>
-                <span className='min-w-20 md:min-w-60 min-h-[3rem] md:min-h-[2.2rem]'>Status:</span>
-                {
-                  finalized ?
-                    <GreenSpan className='border rounded-md p-1 px-4 w-[6.4rem] h-[2.2rem]'>
-                      Finalized
-                    </GreenSpan>
-                    :
-                    finalized === false ?
-                      <RedSpan className='border rounded-md p-1 px-4 w-[7.6rem] h-[2.2rem]'>
-                        Unfinalized
-                      </RedSpan>
-                      :
-                      finalizedError ?
-                        <ErrorIndicator error={finalizedError} /> // Undefined case: error
-                        :
-                        <LoadingIndicator /> // Undefined case: initial render
-                }
+                <span className='min-w-20 md:min-w-60 min-h-[3rem] md:min-h-[2.2rem]'>
+                  Status:
+                </span>
+                <ValueDisplay
+                  value={finalized}
+                  error={finalizedError}
+                  err='Error getting final block'
+                />
               </p>
             </li>
+
             <li className='list-disc ml-4 mt-4 m-2'>
               <p className='flex flex-col md:flex-row'>
                 <span className='min-w-60'>Timestamp:</span>
                 <span className='min-h-[4.5rem] md:min-h-[3.3rem]'>
-                  {timestamp || (blockError ?
-                                <ErrorIndicator error={blockError} />
-                                :
-                                <LoadingIndicator />)}
+                  <ValueDisplay
+                    value={timestamp}
+                    error={blockError}
+                  />
                 </span>
               </p>
             </li>
+
             <li className='list-disc ml-4 mt-4 m-2'>
               <p className='flex flex-col md:flex-row'>
                 <span className='min-w-60'>Fee recipient:</span>
                 <span className='min-h-[3.3rem] md:min-h-auto'>
-                {
-                  block?.miner ?
-                    <Link
-                      href={`/${props.network}/address?hash=${block.miner}`}
-                      className='font-mono text-(--link-color) hover:text-(--hover-fg-color)'
-                    >
-                      {block.miner}
-                    </Link>
-                    :
-                    (blockError ?
-                      <ErrorIndicator error={blockError} />
-                      :
-                      <LoadingIndicator />)
-                }
+                  <ValueDisplay
+                    value={recipient}
+                    error={blockError}
+                  />
                 </span>
               </p>
             </li>
+
             <li className='list-disc ml-4 mt-4 m-2'>
               <p className='flex flex-col md:flex-row'>
-
                 <span className='min-w-60'>Block reward:</span>
                 <span>
-                  {blockReward || (blockRewardError ?
-                                  <ErrorIndicator error={blockRewardError} />
-                                  :
-                                  <LoadingIndicator />)}
+                  <ValueDisplay
+                    value={blockReward}
+                    error={blockRewardError}
+                    err='Error fetching block reward'
+                  />
                 </span>
               </p>
             </li>
+
             <li className='list-disc ml-4 mt-4 m-2'>
               <p className='flex flex-col md:flex-row'>
                 <span className='min-w-60'>Gas Used:</span>
                 <span className='min-h-[3.3rem] md:min-h-auto'>
-                  {gasUsed || (blockError ?
-                              <ErrorIndicator error={blockError} />
-                              :
-                              <LoadingIndicator />)}
+                  <ValueDisplay
+                    value={gasUsed}
+                    error={blockError}
+                  />
                 </span>
               </p>
             </li>
+
           </ul>
         </div>
       </div>
