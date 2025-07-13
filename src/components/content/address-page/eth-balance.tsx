@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import ErrorIndicator from '@/components/common/error-indicator';
-import LoadingIndicator from '@/components/common/loading-indicator';
+import ValueDisplay from '@/components/common/value-display';
 import { Utils } from 'alchemy-sdk';
 import { getAlchemy } from '@/lib/utilities';
 
@@ -59,17 +58,13 @@ export default function EthBalance(props: {
     <div className='pr-12'>
       <div className='my-4'>
         <h2 className='capsTitle'>ETH BALANCE</h2>
-        {ethBalanceFormatted || (ethBalanceError ?
-                                <ErrorIndicator error={'Error getting Ether balance'} />
-                                :
-                                <LoadingIndicator />)}
+        <ValueDisplay value={ethBalanceFormatted} error={ethBalanceError}
+          err='Error getting Ether balance' />
       </div>
       <div className={`my-4 ${showEthValue}`}>
         <h2 className='capsTitle'>TOTAL ETH VALUE</h2>
-        {ethValue || (ethPriceError || ethBalanceError ?
-                      <ErrorIndicator error={'Error getting Ether value'} />
-                      :
-                      <LoadingIndicator />)}
+        <ValueDisplay value={ethValue} error={ethPriceError || ethBalanceError}
+          err='Error getting Ether value' />
       </div>
     </div>
   );
