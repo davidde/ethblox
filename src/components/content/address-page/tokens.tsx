@@ -21,7 +21,8 @@ export default function Tokens(props: {
         try {
           let tokens = await alchemy.core.getTokensForOwner(props.hash);
           // Remove scam tokens; everything with zero balance or undefined logo or symbol:
-          let filteredTokens = tokens.tokens.filter(token => token.balance !== '0.0' && token.logo !== undefined && token.symbol !== undefined);
+          let filteredTokens = tokens.tokens.filter(token => token.balance !== '0.0' &&
+            token.logo !== undefined && token.symbol !== undefined);
           // Sort tokens alphabetically by symbol:
           filteredTokens.sort((a, b) => a.symbol!.localeCompare(b.symbol!));
           setRealTokens(filteredTokens);
@@ -35,6 +36,7 @@ export default function Tokens(props: {
   }, [alchemy, props.hash, props.network]);
 
   function getTokenList(tokens: OwnedToken[] | undefined ) {
+    if (tokens && tokens.length === 0) return '/';
     return tokens?.map(
       (token, i) => {
         let balance = parseFloat(token.balance ?? '0').toFixed(8);

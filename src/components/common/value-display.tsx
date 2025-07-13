@@ -8,15 +8,8 @@ export default function ValueDisplay({ value, error, err, load = true }: {
   err?: string,  // Optional short error to display
   load?: boolean // Show loading indicator
 }) {
-  const displayError = err ? err : error.toString();
-console.log('value:', value);
-  return value ||
-    (error ?
-      <ErrorIndicator error={displayError} />
-      :
-      load ?
-        <LoadingIndicator />
-        :
-        <span>&nbsp;</span>
-    );
+  if (value) return value;
+  else if (error) return <ErrorIndicator error={err ? err : error.toString()} />;
+  else if (load) return <LoadingIndicator />;
+  else return <span>&nbsp;</span>;
 }
