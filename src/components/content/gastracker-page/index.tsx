@@ -59,7 +59,7 @@ export default function GastrackerPage() {
               <ValueDisplay value={lowGasPriceGwei} error={priceError} err='Error' />
             </p>
             <p className='text-sm tracking-wide text-green-600'>
-              <ValueDisplay value={lowGasPriceUsd} error={priceError} err='Error' load={false} />
+              <ValueDisplay value={lowGasPriceUsd} error={priceError} err='Error' loading={false} />
             </p>
           </div>
           <div className='border border-(--border-color) rounded-lg my-4 md:my-0 px-16 py-4 w-58 ml-auto mr-auto'>
@@ -71,7 +71,7 @@ export default function GastrackerPage() {
               <ValueDisplay value={averageGasPriceGwei} error={priceError} err='Error' />
             </p>
             <p className='text-sm tracking-wide text-blue-600'>
-              <ValueDisplay value={averageGasPriceUsd} error={priceError} err='Error' load={false} />
+              <ValueDisplay value={averageGasPriceUsd} error={priceError} err='Error' loading={false} />
             </p>
           </div>
           <div className='border border-(--border-color) rounded-lg px-16 py-4 w-58 ml-auto mr-auto'>
@@ -83,7 +83,7 @@ export default function GastrackerPage() {
               <ValueDisplay value={highGasPriceGwei} error={priceError} err='Error' />
             </p>
             <p className='text-sm tracking-wide text-red-600'>
-              <ValueDisplay value={highGasPriceUsd} error={priceError} err='Error' load={false} />
+              <ValueDisplay value={highGasPriceUsd} error={priceError} err='Error' loading={false} />
             </p>
           </div>
         </div>
