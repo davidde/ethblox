@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import ValueDisplay from '@/components/common/value-display';
 import { getGasPriceGwei, getGasPriceUsd } from '@/lib/utilities';
 import { ChartBarIcon } from '@heroicons/react/24/outline';
+import GastrackerCard from './gastracker-card';
+import BreakMobile from '@/components/common/break-mobile';
 
 
 export default function GastrackerPage() {
@@ -45,47 +46,40 @@ export default function GastrackerPage() {
           <ChartBarIcon className='w-8 h-8 text-slate-500 self-start' />
           <p className='text-3xl text-slate-500 italic font-medium
             tracking-wide wordsp-[0.8em] mx-[1.6em]'>
-            ETHEREUM <br className='md:hidden'/>GAS TRACKER
+            ETHEREUM <BreakMobile />GAS TRACKER
           </p>
           <ChartBarIcon className='w-8 h-8 text-slate-500 scale-x-[-1] self-end' />
         </div>
-        <div className='flex flex-col md:flex-row items-start justify-between w-full max-w-200 my-10'>
-          <div className='border border-(--border-color) rounded-lg px-16 py-4 w-58 ml-auto mr-auto'>
-            <p className='font-bold mb-3'>
-              <span className='text-xl mr-2' role="img" aria-label="smiling face with sunglasses">😎</span>
-              Low
-            </p>
-            <p className='text-lg tracking-wide text-green-600'>
-              <ValueDisplay value={lowGasPriceGwei} error={priceError} err='Error' />
-            </p>
-            <p className='text-sm tracking-wide text-green-600'>
-              <ValueDisplay value={lowGasPriceUsd} error={priceError} err='Error' loading={false} />
-            </p>
-          </div>
-          <div className='border border-(--border-color) rounded-lg my-4 md:my-0 px-16 py-4 w-58 ml-auto mr-auto'>
-            <p className='font-bold mb-3'>
-              <span className='text-xl mr-2' role="img" aria-label="beaming face with smiling eyes">😁</span>
-              Average
-            </p>
-            <p className='text-lg tracking-wide text-blue-600'>
-              <ValueDisplay value={averageGasPriceGwei} error={priceError} err='Error' />
-            </p>
-            <p className='text-sm tracking-wide text-blue-600'>
-              <ValueDisplay value={averageGasPriceUsd} error={priceError} err='Error' loading={false} />
-            </p>
-          </div>
-          <div className='border border-(--border-color) rounded-lg px-16 py-4 w-58 ml-auto mr-auto'>
-            <p className='font-bold mb-3'>
-              <span className='text-xl mr-2' role="img" aria-label="flushed face">😳</span>
-              High
-            </p>
-            <p className='text-lg tracking-wide text-red-600'>
-              <ValueDisplay value={highGasPriceGwei} error={priceError} err='Error' />
-            </p>
-            <p className='text-sm tracking-wide text-red-600'>
-              <ValueDisplay value={highGasPriceUsd} error={priceError} err='Error' loading={false} />
-            </p>
-          </div>
+        <div className='flex flex-col md:flex-row items-start
+          justify-between w-full max-w-200 my-10'>
+          <GastrackerCard
+            header='Low'
+            gasPriceGwei={lowGasPriceGwei}
+            gasPriceUsd={lowGasPriceUsd}
+            priceError={priceError}
+            smiley='😎'
+            smileyLabel='smiling face with sunglasses'
+            colorClass='text-green-600'
+          />
+          <GastrackerCard
+            className='my-4 md:my-0'
+            header='Average'
+            gasPriceGwei={averageGasPriceGwei}
+            gasPriceUsd={averageGasPriceUsd}
+            priceError={priceError}
+            smiley='😁'
+            smileyLabel='beaming face with smiling eyes'
+            colorClass='text-blue-600'
+          />
+          <GastrackerCard
+            header='High'
+            gasPriceGwei={highGasPriceGwei}
+            gasPriceUsd={highGasPriceUsd}
+            priceError={priceError}
+            smiley='😳'
+            smileyLabel='flushed face'
+            colorClass='text-red-600'
+          />
         </div>
       </div>
     </main>
