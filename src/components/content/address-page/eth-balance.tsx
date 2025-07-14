@@ -11,7 +11,6 @@ export default function EthBalance(props: {
   network: string
 }) {
   const alchemy = getAlchemy(props.network);
-  const showEthValue = props.network === 'mainnet' ? '' : 'hidden';
 
   const [ethBalance, setEthBalance] = useState<string>('');
   const [ethBalanceError, setEthBalanceError] = useState<string>();
@@ -61,7 +60,7 @@ export default function EthBalance(props: {
         <ValueDisplay value={ethBalanceFormatted} error={ethBalanceError}
           err='Error getting Ether balance' />
       </div>
-      <div className={`my-4 ${showEthValue}`}>
+      <div className={props.network !== 'mainnet' ? 'hidden' : 'my-4'}>
         <h2 className='capsTitle'>TOTAL ETH VALUE</h2>
         <ValueDisplay value={ethValue} error={ethPriceError || ethBalanceError}
           err='Error getting Ether value' />
