@@ -17,7 +17,6 @@ from '@/lib/utilities';
 import PopoverLink from '@/components/common/popover-link';
 import Link from 'next/link';
 import ErrorIndicator from '@/components/common/error-indicator';
-import LoadingIndicator from '@/components/common/loading-indicator';
 import ValueDisplay from '@/components/common/value-display';
 
 
@@ -26,10 +25,10 @@ export default function Transactions(props: {
   network: string,
 }) {
   const alchemy = getAlchemy(props.network);
-  const maxNumberOfTransactionsToShow = 10;
-  const [transactionsResult, setTransactionsResult] = useState<AssetTransfersWithMetadataResult[]>();
-  const [totalTransactions, setTotalTransactions] = useState<string>();
-  const [transactionsError, setTransactionsError] = useState<string>();
+  const maxNumTxsToShow = 10;
+  const [txsResult, setTxsResult] = useState<AssetTransfersWithMetadataResult[]>();
+  const [txsTotal, setTxsTotal] = useState<string>();
+  const [txsError, setTxsError] = useState<string>();
 
   useEffect(() => {
     (async () => {
@@ -43,40 +42,35 @@ export default function Transactions(props: {
           category: [ AssetTransfersCategory.EXTERNAL ],
           withMetadata: true,
         });
-        setTransactionsResult(resp.transfers);
+        setTxsResult(resp.transfers);
       } catch(err) {
         const error = 'AddressPage Transactions getAssetTransfers()' + err;
         console.error(error);
-        setTransactionsError(error);
+        setTxsError(error);
       }
 
       try {
         const resp = await alchemy.core.getTransactionCount(props.hash);
-        setTotalTransactions(resp.toLocaleString('en-US'));
+        setTxsTotal(resp.toLocaleString('en-US'));
       } catch(err) {
-        setTotalTransactions('unknown number of');
+        setTxsTotal('unknown number of');
         const error = 'AddressPage Transactions getTransactionCount()' + err;
         console.error(error);
       }
     })();
   }, [alchemy, props.hash]);
 
-  let transactionsDigest, transactionsPresent, transactions;
-  if (transactionsResult) {
-    transactionsPresent = transactionsResult.length !== 0;
-    if (transactionsPresent) {
-      const numberOfTransactionsToShow = transactionsResult.length < maxNumberOfTransactionsToShow ?
-        transactionsResult.length : maxNumberOfTransactionsToShow;
+  let transactions, transactionsDigest;
+  if (txsResult) {
+    if (txsResult.length === 0) transactionsDigest = '/';
+    else {
+      const numTxsToShow = Math.min(txsResult.length, maxNumTxsToShow);
+      transactionsDigest = numTxsToShow > 1 ?
+        `Showing latest ${numTxsToShow} external transactions of ${txsTotal} transactions total`
+        :
+        `Showing last external transaction of ${txsTotal} transactions total`;
 
-      transactionsDigest = <p className='pl-8 mt-4 text-sm tracking-wider
-                                        py-3 border-y border-(--border-color)'>{
-        numberOfTransactionsToShow > 1 ?
-          `Showing latest ${numberOfTransactionsToShow} external transactions of ${totalTransactions} transactions total`
-          :
-          `Showing last external transaction of ${totalTransactions} transactions total`
-      }</p>;
-
-      transactions = transactionsResult.slice(0, maxNumberOfTransactionsToShow).map(
+      transactions = txsResult.slice(0, maxNumTxsToShow).map(
         tx => ({
             hash: tx.hash,
             block: +tx.blockNum,
@@ -87,7 +81,7 @@ export default function Transactions(props: {
                   : `${tx.value?.toFixed(8) || ''} ${tx.asset || '/'}`,
         })
       );
-    } else transactionsDigest = <p>/</p>;
+    }
   }
 
   return (
@@ -96,16 +90,18 @@ export default function Transactions(props: {
       directly below the Token Holdings. This is done by introducing this invisible
       extra flex item that takes the full width of the container (flex-basis: 100%),
       so it will sit on its own row. */}
-      <div className={`basis-full ${transactionsPresent ? 'hidden' : ''}`} />
+      <div className={`basis-full ${transactions ? 'hidden' : ''}`} />
       <div className='w-min'>
         <p className='mt-4 capsTitle'>
           TRANSACTIONS
         </p>
-        <ValueDisplay
-          value={transactionsDigest}
-          error={transactionsError} // ErrorIndicator className='py-2 w-[95vw]'
-          err='Error getting transactions. Please reload.'
-        />
+        <p className='pl-8 mt-4 text-sm tracking-wider py-3 border-y border-(--border-color)'>
+          <ValueDisplay
+            value={transactionsDigest}
+            error={txsError} // ErrorIndicator className='py-2 w-[95vw]'
+            err='Error getting transactions. Please reload.'
+          />
+        </p>
 
         {/* Mobile display only: */}
         <div className='lg:hidden portrait:block'>
@@ -191,7 +187,7 @@ export default function Transactions(props: {
                 </div>
               ))
               :
-              (transactionsError ?
+              (txsError ?
                   <ErrorIndicator
                     error='Error getting transactions.'
                     className='py-2'
@@ -204,7 +200,7 @@ export default function Transactions(props: {
         {/* Desktop display only: */}
         {
           transactions ?
-            <table className={`hidden ${transactionsPresent ? 'lg:table' : ''}`}>
+            <table className={`hidden ${transactions ? 'lg:table' : ''}`}>
               <thead className='rounded-lg text-left font-normal'>
                 <tr className='border-b border-(--border-color)'>
                   <th scope='col' className='py-5 font-medium'>
@@ -262,12 +258,16 @@ export default function Transactions(props: {
                         />
                       </td>
                       <td className='whitespace-nowrap px-4 py-3'>
-                        <PopoverLink
-                          href={`/${props.network}/address?hash=${transaction.to}`}
-                          content={truncateAddress(transaction.to!, 21)!}
-                          popover={transaction.to!}
-                          className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
-                        />
+                        { transaction.to ?
+                          <PopoverLink
+                            href={`/${props.network}/address?hash=${transaction.to}`}
+                            content={truncateAddress(transaction.to, 21)}
+                            popover={transaction.to}
+                            className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
+                          />
+                          :
+                          <span>/</span>
+                        }
                       </td>
                       <td className='whitespace-nowrap px-4 py-3'>
                         {transaction.amount}
@@ -278,10 +278,10 @@ export default function Transactions(props: {
               </tbody>
             </table>
             :
-            (transactionsError ?
+            (txsError ?
               <ErrorIndicator
                 error='Error getting transactions.'
-                className={`py-2 hidden portrait:hidden ${transactionsPresent ? 'lg:inline' : ''}`}
+                className={`py-2 hidden portrait:hidden ${transactions ? 'lg:inline' : ''}`}
               />
               :
               '')
