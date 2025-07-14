@@ -13,8 +13,7 @@ import {
 }
 from '@/lib/utilities';
 import ValueDisplay from '@/components/common/value-display';
-import TransactionsMobile from './transactions-mobile';
-import TransactionsDesktop from './transactions-desktop';
+import TransactionsView from './transactions-view';
 
 
 export default function Transactions(props: {
@@ -82,40 +81,22 @@ export default function Transactions(props: {
   }
 
   return (
-    <>
-      {/* If there are no transactions, just put the next div (the TRANSACTIONS header)
-      directly below the Token Holdings. This is done by introducing this invisible
-      extra flex item that takes the full width of the container (flex-basis: 100%),
-      so it will sit on its own row. */}
-      <div className={`basis-full ${transactions ? 'hidden' : ''}`} />
-      <div className='w-min'>
-        <p className='mt-4 capsTitle'>
-          TRANSACTIONS
-        </p>
-        <p className='pl-8 mt-4 text-sm tracking-wider py-3 border-y border-(--border-color)'>
-          <ValueDisplay
-            value={transactionsDigest}
-            error={txsError} // ErrorIndicator className='py-2 w-[95vw]'
-            err='Error getting transactions. Please reload.'
-          />
-        </p>
+    <div>
+      <p className='mt-4 capsTitle'>
+        TRANSACTIONS
+      </p>
+      <p className='pl-8 mt-4 text-sm tracking-wider py-3 border-y border-(--border-color)'>
+        <ValueDisplay
+          value={transactionsDigest}
+          error={txsError}
+          err='Error getting transactions. Please reload.'
+        />
+      </p>
 
-        {/* Mobile display only: */}
-        <div className='lg:hidden'>
-          <TransactionsMobile
-            network={props.network}
-            transactions={transactions}
-          />
-        </div>
-
-        {/* Desktop display only: */}
-        <div className={`hidden ${transactions ? 'lg:block' : ''}`}>
-          <TransactionsDesktop
-            network={props.network}
-            transactions={transactions}
-          />
-        </div>
-      </div>
-    </>
+      <TransactionsView // Only returns something when transactions is non-empty
+        network={props.network}
+        transactions={transactions}
+      />
+    </div>
   );
 }

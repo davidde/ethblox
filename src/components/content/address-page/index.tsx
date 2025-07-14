@@ -23,14 +23,14 @@ export default function AddressPage(props: {network: string}) {
   const wrapTransactions = props.network === 'mainnet' ? 'md:flex-row flex-wrap' : '';
 
   return (
-    <main className='m-4 mt-8 md:m-8'>
+    <main className='m-4 mt-0 md:m-8'>
       <div className='mb-8'>
         <span className='text-[1.25rem] font-bold'>Address: &nbsp;</span>
         <BreakMobile />
         <span className='break-all font-medium'>{hash}</span>
       </div>
       <div className={`flex flex-col ${wrapTransactions}`}>
-        <div>
+        <div className='md:min-w-[25rem]'>
           <EthBalance
             hash={hash}
             network={props.network}
