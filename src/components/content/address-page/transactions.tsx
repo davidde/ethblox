@@ -27,7 +27,7 @@ export default function Transactions(props: {
 }) {
   const alchemy = getAlchemy(props.network);
   const maxNumberOfTransactionsToShow = 10;
-  const [transactions, setTransactions] = useState<AssetTransfersWithMetadataResult[]>();
+  const [transactionsResult, setTransactionsResult] = useState<AssetTransfersWithMetadataResult[]>();
   const [totalTransactions, setTotalTransactions] = useState<string>();
   const [transactionsError, setTransactionsError] = useState<string>();
 
@@ -35,16 +35,15 @@ export default function Transactions(props: {
     (async () => {
       try {
         // By default returns a max of 1000 transfers:
-        const txResp = await alchemy.core.getAssetTransfers({
+        const resp = await alchemy.core.getAssetTransfers({
           fromAddress: props.hash,
           order: SortingOrder.DESCENDING, // Latest block numbers first!
-          category: [ AssetTransfersCategory.EXTERNAL ],
           // EXTERNAL: Ethereum transaction initiated by an EOA (= externally-owned account),
-          // an account managed by a human, not a contract.
+          // an account managed by a human, not a contract:
+          category: [ AssetTransfersCategory.EXTERNAL ],
           withMetadata: true,
         });
-        setTransactions(txResp.transfers);
-        // console.log('transactions = ', transactions);
+        setTransactionsResult(resp.transfers);
       } catch(err) {
         const error = 'AddressPage Transactions getAssetTransfers()' + err;
         console.error(error);
@@ -52,8 +51,8 @@ export default function Transactions(props: {
       }
 
       try {
-        const cntResp = await alchemy.core.getTransactionCount(props.hash);
-        setTotalTransactions(cntResp.toLocaleString('en-US'));
+        const resp = await alchemy.core.getTransactionCount(props.hash);
+        setTotalTransactions(resp.toLocaleString('en-US'));
       } catch(err) {
         setTotalTransactions('unknown number of');
         const error = 'AddressPage Transactions getTransactionCount()' + err;
@@ -62,22 +61,33 @@ export default function Transactions(props: {
     })();
   }, [alchemy, props.hash]);
 
-  let transactionsDigest, transactionsPresent;
-  if (transactions) {
-    transactionsPresent = transactions.length !== 0;
-    const numberOfTransactionsToShow = transactions.length < maxNumberOfTransactionsToShow ? transactions.length : maxNumberOfTransactionsToShow;
+  let transactionsDigest, transactionsPresent, transactions;
+  if (transactionsResult) {
+    transactionsPresent = transactionsResult.length !== 0;
+    if (transactionsPresent) {
+      const numberOfTransactionsToShow = transactionsResult.length < maxNumberOfTransactionsToShow ?
+        transactionsResult.length : maxNumberOfTransactionsToShow;
 
-    transactionsDigest = transactions.length !== 0 ?
-      <p className='pl-8 mt-4 text-sm tracking-wider py-3 border-y border-(--border-color)'>
-        { numberOfTransactionsToShow > 1 ?
-            `Showing latest ${numberOfTransactionsToShow} external transactions of ${totalTransactions} transactions total`
-            :
-            `Showing last external transaction of ${totalTransactions} transactions total` }
-      </p>
-      :
-      <p>
-        /
-      </p>
+      transactionsDigest = <p className='pl-8 mt-4 text-sm tracking-wider
+                                        py-3 border-y border-(--border-color)'>{
+        numberOfTransactionsToShow > 1 ?
+          `Showing latest ${numberOfTransactionsToShow} external transactions of ${totalTransactions} transactions total`
+          :
+          `Showing last external transaction of ${totalTransactions} transactions total`
+      }</p>;
+
+      transactions = transactionsResult.slice(0, maxNumberOfTransactionsToShow).map(
+        tx => ({
+            hash: tx.hash,
+            block: +tx.blockNum,
+            age: getBlockAgeFromSecs(getSecsFromDateTimeString(tx.metadata.blockTimestamp)),
+            from: tx.from,
+            to: tx.to,
+            amount: tx.asset === 'ETH' ? `Ξ${tx.value?.toFixed(8) || ''}`
+                  : `${tx.value?.toFixed(8) || ''} ${tx.asset || '/'}`,
+        })
+      );
+    } else transactionsDigest = <p>/</p>;
   }
 
   return (
@@ -100,91 +110,86 @@ export default function Transactions(props: {
         {/* Mobile display only: */}
         <div className='lg:hidden portrait:block'>
           {
-            transactions !== undefined ?
-              transactions.slice(0, maxNumberOfTransactionsToShow).map((transaction, i) => {
-                const secs = getSecsFromDateTimeString(transaction.metadata.blockTimestamp);
-                const blockAge = getBlockAgeFromSecs(secs);
-                const amount = transaction.asset === 'ETH' ?
-                    `Ξ${transaction.value?.toFixed(8)}`
-                    :
-                    `${transaction.value?.toFixed(8)} ${transaction.asset}`;
-
-                return (
-                  <div
-                    key={i}
-                    className='mb-2 w-full py-2 border-b border-(--border-color) last-of-type:border-none'
-                  >
-                    <div className='pb-1 flex max-sm:w-[92vw]'>
-                      <p className='text-nowrap font-medium'>
-                        Transaction Hash:&nbsp;
-                      </p>
-                      <p className='overflow-hidden whitespace-nowrap text-ellipsis'>
-                        <PopoverLink
-                          href={`/${props.network}/transaction?hash=${transaction.hash}`}
-                          content={truncateTransaction(transaction.hash, 25)!}
-                          popover={transaction.hash}
-                          className='-left-full top-[-2.6rem] w-120 py-1.5 px-2.5'
-                        />
-                      </p>
-                    </div>
-                    <div className='pb-1'>
-                      <span className='font-medium'>
-                        Block:&nbsp;
-                      </span>
-                      <span>
-                        <Link
-                          href={`/${props.network}/block?number=${+transaction.blockNum}`}
-                          className='text-(--link-color) hover:text-(--hover-fg-color)'
-                        >
-                          {+transaction.blockNum}
-                        </Link>
-                      </span>
-                    </div>
-                    <div className='pb-1'>
-                      <span className='font-medium'>
-                        Age:&nbsp;
-                      </span>
-                      <span>
-                        {blockAge}
-                      </span>
-                    </div>
-                    <div className='pb-1'>
-                      <span className='font-medium'>
-                        From:&nbsp;
-                      </span>
-                      <span>
-                        <PopoverLink
-                          href={`/${props.network}/address?hash=${transaction.from}`}
-                          content={truncateAddress(transaction.from, 28)!}
-                          popover={transaction.from}
-                          className='left-[-12%] top-[-2.6rem] w-78 py-1.5 px-2.5'
-                        />
-                      </span>
-                    </div>
-                    <div className='pb-1'>
-                      <span className='pl-5 font-medium'>
-                        To:&nbsp;
-                      </span>
-                      <span>
+            transactions ?
+              transactions.map((transaction, i) => (
+                <div
+                  key={i}
+                  className='mb-2 w-full py-2 border-b border-(--border-color) last-of-type:border-none'
+                >
+                  <div className='pb-1 flex max-sm:w-[92vw]'>
+                    <p className='text-nowrap font-medium'>
+                      Transaction Hash:&nbsp;
+                    </p>
+                    <p className='overflow-hidden whitespace-nowrap text-ellipsis'>
+                      <PopoverLink
+                        href={`/${props.network}/transaction?hash=${transaction.hash}`}
+                        content={truncateTransaction(transaction.hash, 25)!}
+                        popover={transaction.hash}
+                        className='-left-full top-[-2.6rem] w-120 py-1.5 px-2.5'
+                      />
+                    </p>
+                  </div>
+                  <div className='pb-1'>
+                    <span className='font-medium'>
+                      Block:&nbsp;
+                    </span>
+                    <span>
+                      <Link
+                        href={`/${props.network}/block?number=${transaction.block}`}
+                        className='text-(--link-color) hover:text-(--hover-fg-color)'
+                      >
+                        {transaction.block}
+                      </Link>
+                    </span>
+                  </div>
+                  <div className='pb-1'>
+                    <span className='font-medium'>
+                      Age:&nbsp;
+                    </span>
+                    <span>
+                      {transaction.age}
+                    </span>
+                  </div>
+                  <div className='pb-1'>
+                    <span className='font-medium'>
+                      From:&nbsp;
+                    </span>
+                    <span>
+                      <PopoverLink
+                        href={`/${props.network}/address?hash=${transaction.from}`}
+                        content={truncateAddress(transaction.from, 28)}
+                        popover={transaction.from}
+                        className='left-[-12%] top-[-2.6rem] w-78 py-1.5 px-2.5'
+                      />
+                    </span>
+                  </div>
+                  <div className='pb-1'>
+                    <span className='pl-5 font-medium'>
+                      To:&nbsp;
+                    </span>
+                    <span>
+                    { transaction.to ?
                         <PopoverLink
                           href={`/${props.network}/address?hash=${transaction.to}`}
-                          content={truncateAddress(transaction.to!, 28)!}
-                          popover={transaction.to!}
+                          content={truncateAddress(transaction.to, 28)}
+                          popover={transaction.to}
                           className='left-[-12%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                         />
-                      </span>
-                    </div>
-                    <div className='pb-1'>
-                      <span className='font-medium'>
-                        Amount:&nbsp;
-                      </span>
-                      <span>
-                        {amount}
-                      </span>
-                    </div>
+                        :
+                        <span>/</span>
+                    }
+                    </span>
                   </div>
-                );
-              })
+                  <div className='pb-1'>
+                    <span className='font-medium'>
+                      Amount:&nbsp;
+                    </span>
+                    <span>
+                      {transaction.amount}
+                    </span>
+                  </div>
+                </div>
+              ))
               :
               (transactionsError ?
                   <ErrorIndicator
@@ -198,8 +203,8 @@ export default function Transactions(props: {
 
         {/* Desktop display only: */}
         {
-          transactions !== undefined ?
-            <table className={`hidden portrait:hidden ${transactionsPresent ? 'lg:table' : ''}`}>
+          transactions ?
+            <table className={`hidden ${transactionsPresent ? 'lg:table' : ''}`}>
               <thead className='rounded-lg text-left font-normal'>
                 <tr className='border-b border-(--border-color)'>
                   <th scope='col' className='py-5 font-medium'>
@@ -224,60 +229,51 @@ export default function Transactions(props: {
               </thead>
               <tbody>
                 {
-                  transactions.slice(0, maxNumberOfTransactionsToShow).map((transaction, i) => {
-                    const secs = getSecsFromDateTimeString(transaction.metadata.blockTimestamp);
-                    const blockAge = getBlockAgeFromSecs(secs);
-                    const amount = transaction.asset === 'ETH' ?
-                      `Ξ${transaction.value?.toFixed(8)}`
-                      :
-                      `${transaction.value?.toFixed(8)} ${transaction.asset}`;
-
-                    return (
-                      <tr
-                        key={i}
-                        className='w-full border-b border-(--border-color) last-of-type:border-none py-3'
-                      >
-                        <td className='whitespace-nowrap py-3 pr-3'>
-                          <PopoverLink
-                            href={`/${props.network}/transaction?hash=${transaction.hash}`}
-                            content={truncateTransaction(transaction.hash, 18)!}
-                            popover={transaction.hash}
-                            className='-left-full top-[-2.6rem] w-120 py-1.5 px-2.5'
-                          />
-                        </td>
-                        <td className='whitespace-nowrap px-4 py-3'>
-                          <Link
-                              href={`/${props.network}/block?number=${+transaction.blockNum}`}
-                              className='text-(--link-color) hover:text-(--hover-fg-color)'
-                            >
-                              {+transaction.blockNum}
-                            </Link>
-                        </td>
-                        <td className='whitespace-nowrap px-4 py-3'>
-                          { blockAge }
-                        </td>
-                        <td className='whitespace-nowrap px-4 py-3'>
-                          <PopoverLink
-                            href={`/${props.network}/address?hash=${transaction.from}`}
-                            content={truncateAddress(transaction.from, 21)!}
-                            popover={transaction.from}
-                            className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
-                          />
-                        </td>
-                        <td className='whitespace-nowrap px-4 py-3'>
-                          <PopoverLink
-                            href={`/${props.network}/address?hash=${transaction.to}`}
-                            content={truncateAddress(transaction.to!, 21)!}
-                            popover={transaction.to!}
-                            className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
-                          />
-                        </td>
-                        <td className='whitespace-nowrap px-4 py-3'>
-                          {amount}
-                        </td>
-                      </tr>
-                    );
-                  })
+                  transactions.map((transaction, i) => (
+                    <tr
+                      key={i}
+                      className='w-full border-b border-(--border-color) last-of-type:border-none py-3'
+                    >
+                      <td className='whitespace-nowrap py-3 pr-3'>
+                        <PopoverLink
+                          href={`/${props.network}/transaction?hash=${transaction.hash}`}
+                          content={truncateTransaction(transaction.hash, 18)!}
+                          popover={transaction.hash}
+                          className='-left-full top-[-2.6rem] w-120 py-1.5 px-2.5'
+                        />
+                      </td>
+                      <td className='whitespace-nowrap px-4 py-3'>
+                        <Link
+                            href={`/${props.network}/block?number=${transaction.block}`}
+                            className='text-(--link-color) hover:text-(--hover-fg-color)'
+                          >
+                            {transaction.block}
+                          </Link>
+                      </td>
+                      <td className='whitespace-nowrap px-4 py-3'>
+                        {transaction.age}
+                      </td>
+                      <td className='whitespace-nowrap px-4 py-3'>
+                        <PopoverLink
+                          href={`/${props.network}/address?hash=${transaction.from}`}
+                          content={truncateAddress(transaction.from, 21)!}
+                          popover={transaction.from}
+                          className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
+                        />
+                      </td>
+                      <td className='whitespace-nowrap px-4 py-3'>
+                        <PopoverLink
+                          href={`/${props.network}/address?hash=${transaction.to}`}
+                          content={truncateAddress(transaction.to!, 21)!}
+                          popover={transaction.to!}
+                          className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
+                        />
+                      </td>
+                      <td className='whitespace-nowrap px-4 py-3'>
+                        {transaction.amount}
+                      </td>
+                    </tr>
+                  ))
                 }
               </tbody>
             </table>
