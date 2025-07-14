@@ -4,12 +4,10 @@ import { truncateAddress, truncateTransaction, getEtherValueFromWei } from '@/li
 import PopoverLink from '@/components/common/popover-link';
 
 
-type Props = {
+export default function Transaction(props: {
   transaction: TransactionResponse,
   network: string
-}
-
-export default async function Transaction(props: Props) {
+}) {
   const transactionHash = props.transaction.hash;
   const transactionHashShort = truncateTransaction(props.transaction.hash, 18);
   const amount = getEtherValueFromWei(props.transaction.value, 6);
@@ -35,6 +33,7 @@ export default async function Transaction(props: Props) {
             <span className='px-2 md:pl-4'>Amount: {`Ξ${amount}`}</span>
           </div>
         </div>
+
         <div className='flex flex-col ml-12 md:ml-4 my-2 md:my-0'>
           <span className='pl-2 md:pl-4'>
             From:&nbsp;
