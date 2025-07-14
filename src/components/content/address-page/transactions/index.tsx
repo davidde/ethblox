@@ -105,7 +105,6 @@ export default function Transactions(props: {
           <TransactionsMobile
             network={props.network}
             transactions={transactions}
-            txsError={txsError}
           />
         </div>
 
@@ -114,7 +113,6 @@ export default function Transactions(props: {
           <TransactionsDesktop
             network={props.network}
             transactions={transactions}
-            txsError={txsError}
           />
         </div>
       </div>
