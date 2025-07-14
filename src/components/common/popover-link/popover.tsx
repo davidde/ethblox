@@ -1,8 +1,3 @@
-type Props = {
-  className: string,
-  content: string,
-}
-
 // This is a popover in the shape of a speech bubble;
 // to figure out how it works, check out https://codepen.io/davidde/pen/emONpNe.
 // Basically the span element is the speech bubble, and the ::after pseudo element is the triangle.
@@ -12,7 +7,10 @@ type Props = {
 // `after:-bottom-4` = - `after:border-t-[1rem]`.
 // And finally, the left & right border-width `after:border-x-[1rem]` controls the angle
 // of the triangle, while left controls the horizontal position: `after:left-1/2`.
-export default function Popover(props: Props) {
+export default function Popover(props: {
+  className: string,
+  content: string,
+}) {
   return (
       <span
         className={`${props.className} ` +
