@@ -3,50 +3,24 @@
 import { useState } from 'react';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { Input, Button } from '@headlessui/react';
-import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 
 export default function Search(props: { className?: string }) {
-  // Read the current URL's query string:
-  // (returns a read-only version of the URLSearchParams interface)
-  const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
-
+  const router = useRouter();
   const pathname = usePathname();
   const network = pathname.split('/')[1] || 'mainnet';
 
-  const router = useRouter();
-
   const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Create URLSearchParams object to access utility methods to work with the query string of a URL:
-    const params = new URLSearchParams(searchParams);
-
     if (searchTerm) {
-      // if (isAddress(searchTerm)) {
-        // params.delete('address');
-
-        // Run only when online AND tab is visible/active:
-        if (navigator.onLine && document.visibilityState === 'visible') {
-          router.push(`/${network}/address?hash=${searchTerm}`);
-        }
-        setSearchTerm('');
+      // Run only when online AND tab is visible/active:
+      if (navigator.onLine && document.visibilityState === 'visible') {
+        router.push(`/${network}/address?hash=${searchTerm}`);
       }
-    //   else {
-    //     params.set('address', searchTerm);
-    //     // Run only when online AND tab is visible/active:
-    //     if (navigator.onLine && document.visibilityState === 'visible') {
-    //       router.replace(`${pathname}?${params.toString()}`);
-    //     }
-    //   }
-    // }
-    // else {
-    //   params.delete('address');
-    //   // Run only when online AND tab is visible/active:
-    //   if (navigator.onLine && document.visibilityState === 'visible') {
-    //     router.replace(`${pathname}`);
-    //   }
-    // }
+      setSearchTerm('');
+    }
   }
 
   return (
