@@ -30,7 +30,7 @@ export default function DarkmodeToggle(props: Props) {
     if (typeof window !== 'undefined') {
       document.documentElement.style.setProperty('--eth-logo-url', `url(${basePath}/images/${ethLogo})`);
     }
-  }, [ethLogo]);
+  }, [ethLogo, basePath]);
 
   if (!mounted) {
     return null;

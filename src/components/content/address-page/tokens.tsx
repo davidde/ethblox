@@ -10,14 +10,12 @@ export default function Tokens(props: {
   hash: string,
   network: string
 }) {
-  if (props.network !== 'mainnet') return '';
-
   const alchemy = getAlchemy(props.network);
   const [tokens, setTokens] = useState<OwnedToken[]>();
   const [tokensError, setTokensError] = useState<string>();
 
   useEffect(() => {
-    (async () => {
+    if (props.network === 'mainnet') (async () => {
       try {
         const resp = await alchemy.core.getTokensForOwner(props.hash);
         // Remove scam tokens; everything without logo/symbol or zero balance:
@@ -47,7 +45,7 @@ export default function Tokens(props: {
   }
 
   return (
-    <div className='pr-12 my-4'>
+    <div className={props.network === 'mainnet' ? 'pr-12 my-4' : 'hidden'}>
       <h2 className='capsTitle'>TOKEN HOLDINGS</h2>
       <ValueDisplay
         value={getTokenList(tokens)}
