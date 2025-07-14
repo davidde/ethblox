@@ -55,10 +55,11 @@ export default function Stats() {
     getPriceAndTransactions();
   }, []);
 
-  const averageGasPriceUsd = getGasPriceUsd(averageGasPrice, ethPrice);
-  const averageGasPriceGwei = getGasPriceGwei(averageGasPrice);
-  const averageGasPriceFormatted = `${averageGasPriceGwei} ${averageGasPriceUsd}`;
-
+  const averageGasPriceLink = (averageGasPrice && ethPrice) ?
+    <Link href='/mainnet/gastracker'
+      className='text-(--link-color) hover:text-(--hover-fg-color)'>
+      {getGasPriceGwei(averageGasPrice)} {getGasPriceUsd(averageGasPrice, ethPrice)}
+    </Link> : undefined;
   const ethPriceFormatted = ethPrice?.toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -66,14 +67,12 @@ export default function Stats() {
   const ethSupplyFormatted = ethSupply ?
     `Ξ${ethSupply.toLocaleString('en-US', {
       maximumFractionDigits: 2,
-    })}`
-    : undefined;
+    })}` : undefined;
   const ethMarketCap = ethPrice && ethSupply ?
     (ethPrice * ethSupply).toLocaleString('en-US', {
       style: 'currency',
       currency: 'USD',
-    })
-    : undefined;
+    }) : undefined;
 
   return (
     <div className='border border-(--border-color) bg-(--comp-bg-color) rounded-lg
@@ -106,16 +105,7 @@ export default function Stats() {
         <StatCard
           label="AVERAGE GAS PRICE"
           icon={<FireIcon className='w-8 h-8' />}
-          value={
-            averageGasPriceFormatted ? (
-              <Link
-                href='/mainnet/gastracker'
-                className='text-(--link-color) hover:text-(--hover-fg-color)'
-              >
-                {averageGasPriceFormatted}
-              </Link>
-            ) : undefined
-          }
+          value={averageGasPriceLink}
           error={ethPriceError}
         />
         <StatCard

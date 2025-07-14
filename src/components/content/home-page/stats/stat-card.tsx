@@ -1,5 +1,5 @@
-import ErrorIndicator from "@/components/common/error-indicator";
-import LoadingIndicator from "@/components/common/loading-indicator";
+import ValueDisplay from '@/components/common/value-display';
+
 
 export default function StatCard(props: {
   label: string,
@@ -14,16 +14,16 @@ export default function StatCard(props: {
       <div className='block w-56 ml-auto mr-auto'>
         <div className='flex'>
           {props.icon}
-          <p className='pt-2 pl-4 text-xs tracking-wider text-(--grey-fg-color)'>{props.label}
+          <p className='pt-2 pl-4 text-xs tracking-wider text-(--grey-fg-color)'>
+            {props.label}
           </p>
         </div>
         <div className='pl-12'>
-          {
-            props.value || (props.error ?
-              <ErrorIndicator error="Error" />
-              :
-              <LoadingIndicator />)
-          }
+        <ValueDisplay
+          value={props.value}
+          error={props.error}
+          err='Error'
+        />
         </div>
       </div>
     </div>
