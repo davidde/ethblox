@@ -6,7 +6,7 @@ import { Input, Button } from '@headlessui/react';
 import { usePathname, useRouter } from 'next/navigation';
 
 
-export default function Search(props: { className?: string }) {
+export default function Searchbar(props: { className?: string }) {
   const [searchTerm, setSearchTerm] = useState('');
   const router = useRouter();
   const pathname = usePathname();
