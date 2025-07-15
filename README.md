@@ -52,3 +52,12 @@ Most prominent technologies used:
   # npm install -g serve
   npm run start
   ```
+
+## Observations on static sites vs server-side rendering
+This project was started as a Next.js application with server-side rendering hosted on Vercel, and later converted to a static site with `output: export` (see [some notes on the process](./LEARNING.md)). I'm listing some important nuances here for reference:
+* Dynamic routes like `[network]/address/[hash]/0x...` are not supported on static sites (since it needs to generate an actual `.html` file for every page):
+  - For `[network]` we can implement [generateStaticParams()](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) to statically generate the dynamic route `[network]` at build time, since we only need `mainnet` and `sepolia` network parameters.
+  - However, for `[hash]` this is not possible, since it isn't known at build time, and we can't generate pages for all possible hashes. As a consequence, this dynamic route needs to be switched to use URL parameters like `mainnet/address?hash=0x...`.
+  - To make the above URL params work, we need `useSearchParams()` to read the URL's query string. This in turn requires `use client`, so we also need to convert those pages to client components. This means removing `async` from the component, and as a result requires us to move all data fetching into `useEffect()` hooks.
+* If after all that you manage to get things to compile, you might notice you don't get **live data** everywhere, some pages simply don't update on reload... This is because those pages haven't been converted to client components yet! **When a server component gets compiled as static site, server-side data fetching gets baked into output!** This means you can refresh as much as you want, the data will always remain the same as what it was when the project was built. So, the solution? **Convert everything to client components!**
+
