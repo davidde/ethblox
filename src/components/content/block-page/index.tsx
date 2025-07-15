@@ -20,21 +20,21 @@ import ValueDisplay from '@/components/common/value-display';
 export default function BlockPage(props: { network: string }) {
   const alchemy = getAlchemy(props.network);
   const searchParams = useSearchParams();
-  const number = +(searchParams.get('number') ?? 0);
-  const [blockError, setBlockError] = useState('');
-  const [finalizedError, setFinalizedError] = useState('');
-  const [blockRewardError, setBlockRewardError] = useState('');
-
-  const blockRewardUrl = getBlockRewardUrl(props.network, number);
+  const blockNum = +(searchParams.get('number') ?? 0);
+  const blockRewardUrl = getBlockRewardUrl(props.network, blockNum);
 
   const [block, setBlock] = useState<Block>();
   const [finalizedBlock, setFinalizedBlock] = useState<Block>();
   const [blockReward, setBlockReward] = useState('');
 
+  const [blockError, setBlockError] = useState('');
+  const [finalizedError, setFinalizedError] = useState('');
+  const [blockRewardError, setBlockRewardError] = useState('');
+
   useEffect(() => {
     (async () => {
       try {
-        const blockData = await alchemy.core.getBlock(number);
+        const blockData = await alchemy.core.getBlock(blockNum);
         setBlock(blockData);
       } catch (err) {
         const error = 'BlockPage getBlock() ' + err;
@@ -53,16 +53,15 @@ export default function BlockPage(props: { network: string }) {
         const res = await fetch(blockRewardUrl);
         if (!res.ok) throw new Error(`Response NOT OK, status: ${res.status}`);
         const data = await res.json();
-        if (data.result.blockReward) {
-          setBlockReward(`Ξ${getEtherValueFromWei(data.result.blockReward, 4)}`);
-        }
+        if (!data.result.blockReward) throw new Error('Block reward missing from response.');
+        setBlockReward(`Ξ${getEtherValueFromWei(data.result.blockReward, 4)}`);
       } catch (err) {
         const error = 'BlockPage getBlockReward() ' + err;
         console.error(error);
         setBlockRewardError(error);
       }
     })();
-  }, [alchemy, number, blockRewardUrl]);
+  }, [alchemy, blockNum, blockRewardUrl]);
 
   let timestamp, gasUsed;
   if (block) {
@@ -73,7 +72,7 @@ export default function BlockPage(props: { network: string }) {
   }
   let finalized;
   if (finalizedBlock) {
-    finalized = number <= finalizedBlock.number ?
+    finalized = blockNum <= finalizedBlock.number ?
       <GreenSpan className='border rounded-md p-1 px-4 w-[6.4rem] h-[2.2rem]'>
         Finalized
       </GreenSpan>
@@ -103,7 +102,7 @@ export default function BlockPage(props: { network: string }) {
             <li className='list-disc ml-4 mt-4 m-2'>
               <p className='flex'>
                 <span className='min-w-35 md:min-w-60'>Block number:</span>
-                <span className='font-semibold'>{number}</span>
+                <span className='font-semibold'>{blockNum}</span>
               </p>
             </li>
 
