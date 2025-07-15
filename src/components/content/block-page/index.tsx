@@ -73,11 +73,11 @@ export default function BlockPage(props: { network: string }) {
   let finalized;
   if (finalizedBlock) {
     finalized = blockNum <= finalizedBlock.number ?
-      <GreenSpan className='border rounded-md p-1 px-4 w-[6.4rem] h-[2.2rem]'>
+      <GreenSpan className='w-[6.4rem]'>
         Finalized
       </GreenSpan>
       :
-      <RedSpan className='border rounded-md p-1 px-4 w-[7.6rem] h-[2.2rem]'>
+      <RedSpan className='w-[7.6rem]'>
         Unfinalized
       </RedSpan>;
   }
