@@ -67,8 +67,7 @@ export default function BlockPage(props: { network: string }) {
   if (block) {
     const secs = getSecsFromUnixSecs(block.timestamp);
     timestamp = `${getBlockAgeFromSecs(secs)} ago (${getDateFromUnixSecs(block.timestamp)})`;
-    const gasUsedEther = Utils.formatEther(block.gasUsed);
-    gasUsed = `${+gasUsedEther * Math.pow(10, 9)} Gwei (Ξ${gasUsedEther})`;
+    gasUsed = (+block.gasUsed).toLocaleString('en-US');
   }
   let finalized;
   if (finalizedBlock) {

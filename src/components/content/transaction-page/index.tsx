@@ -8,7 +8,6 @@ import { useSearchParams } from 'next/navigation';
 import GreenSpan from '@/components/common/green-span';
 import RedSpan from '@/components/common/red-span';
 import ValueDisplay from '@/components/common/value-display';
-import BreakMobile from '@/components/common/break-mobile';
 
 
 export default function TransactionPage(props: {network: string}) {
@@ -57,9 +56,10 @@ export default function TransactionPage(props: {network: string}) {
         Fail
       </RedSpan>;
 
-    gasUsed = `${+Utils.formatEther(txReceipt.gasUsed) * Math.pow(10, 9)} Gwei (Ξ${Utils.formatEther(txReceipt.gasUsed)})`;
-
-    if (tx) txFee = `Ξ${Utils.formatEther(tx.gasPrice!.mul(txReceipt.gasUsed))} (= Gas Price * Gas Used)`;
+    gasUsed = (+txReceipt.gasUsed).toLocaleString('en-US');
+    if (tx && tx.gasPrice)
+      txFee = `Ξ${Utils.formatEther(tx.gasPrice.mul(
+              +txReceipt.gasUsed))} (= Gas Price * Gas Used)`;
   }
 
   let block, confirmations, value, from, to, gasPrice;
