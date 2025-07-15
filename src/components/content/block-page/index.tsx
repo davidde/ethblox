@@ -119,8 +119,8 @@ export default function BlockPage(props: { network: string }) {
             </li>
 
             <li className='list-disc ml-4 mt-4 m-2'>
-              <p className='flex'>
-                <span className='min-w-20 md:min-w-60 min-h-[3rem] md:min-h-[2.2rem]'>
+              <p className='flex h-[2.2rem]'>
+                <span className='min-w-20 md:min-w-60'>
                   Status:
                 </span>
                 <ValueDisplay

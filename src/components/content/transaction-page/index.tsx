@@ -8,6 +8,7 @@ import { useSearchParams } from 'next/navigation';
 import GreenSpan from '@/components/common/green-span';
 import RedSpan from '@/components/common/red-span';
 import ValueDisplay from '@/components/common/value-display';
+import BreakMobile from '@/components/common/break-mobile';
 
 
 export default function TransactionPage(props: {network: string}) {
@@ -48,11 +49,11 @@ export default function TransactionPage(props: {network: string}) {
   let status, txFee, gasUsed;
   if (txReceipt) {
     status = txReceipt.status ?
-      <GreenSpan className='w-[6.4rem] ml-4 md:ml-0'>
+      <GreenSpan className='w-[6.4rem]'>
         Success
       </GreenSpan>
       :
-      <RedSpan className='w-[5rem] ml-4 md:ml-0'>
+      <RedSpan className='w-[5rem]'>
         Fail
       </RedSpan>;
 
@@ -64,16 +65,16 @@ export default function TransactionPage(props: {network: string}) {
   let block, confirmations, value, from, to, gasPrice;
   if (tx) {
     block = <Link href={`/${props.network}/block?number=${tx.blockNumber}`}
-             className='ml-2 md:ml-0 text-(--link-color) hover:text-(--hover-fg-color)'>
+             className='text-(--link-color) hover:text-(--hover-fg-color)'>
               {tx.blockNumber}</Link>;
     confirmations = tx.confirmations;
     value = `Ξ${Utils.formatEther(tx.value)}`;
     from = <Link href={`/${props.network}/address?hash=${tx.from}`}
-            className='font-mono ml-2 md:ml-0 text-(--link-color) hover:text-(--hover-fg-color)'>
+            className='break-all font-mono text-(--link-color) hover:text-(--hover-fg-color)'>
               {tx.from}
             </Link>;
     to = <Link href={`/${props.network}/address?hash=${tx.to}`}
-          className='font-mono ml-2 md:ml-0 text-(--link-color) hover:text-(--hover-fg-color)'>
+          className='break-all font-mono text-(--link-color) hover:text-(--hover-fg-color)'>
             {tx.to}
           </Link>;
     gasPrice = `${+Utils.formatEther(tx.gasPrice!) * Math.pow(10, 9)} Gwei (Ξ${Utils.formatEther(tx.gasPrice!)})`;
@@ -82,111 +83,112 @@ export default function TransactionPage(props: {network: string}) {
   return (
     <main>
       <div className='flex items-center justify-center w-full px-[0.5rem] md:px-8'>
-        <div className='mt-8 p-4 md:p-8 w-full max-w-[calc(100vw-1rem)] md:max-w-[62rem]
+        <div className='p-4 md:p-8 w-full max-w-[calc(100vw-1rem)] md:max-w-[62rem]
          border border-(--border-color) bg-(--comp-bg-color) rounded-lg'>
           <h1 className='text-lg font-bold'>
             Transaction Details
           </h1>
           <ul className='max-w-[90vw] break-words mt-8'>
             <li className='list-disc ml-4 m-2'>
-              <p className='flex flex-col md:flex-row'>
-                <span className='w-60'>Transaction Hash:</span>
-                <span>{hash}</span>
-              </p>
+              <div className='flex flex-col md:flex-row'>
+                <span className='min-w-35 md:min-w-60'>Transaction Hash:</span>
+                <span className='font-semibold'>{hash}</span>
+              </div>
             </li>
             <div className='ml-4'>
-              <p className='md:flex'>
-                <span className='w-60 md:pl-21'>Status:</span>
+              <div className='flex h-[2.2rem]'>
+                <span className='min-w-20 md:min-w-60 md:pl-21'>Status:</span>
                 <ValueDisplay
                   value={status}
                   error={txReceiptError}
-                  fallbackClass='h-[2.2rem]'
+                  fallbackClass=''
                 />
-              </p>
+              </div>
             </div>
             <li className='list-disc ml-4 mt-4 m-2'>
-              <p className='md:flex'>
-                <span className='w-60'>Block:</span>
+              <div className='flex'>
+                <span className='min-w-20 md:min-w-60'>Block:</span>
                 <span>
                   <ValueDisplay
                     value={block}
                     error={txError}
                   />
                 </span>
-              </p>
+              </div>
             </li>
             <div className='ml-4'>
-              <p className='md:flex'>
-                <span className='w-60 md:pl-[1.55rem]'>Confirmations:</span>
-                <span className='ml-2 md:ml-0'>
+              <div className='flex'>
+                <span className='min-w-35 md:min-w-60 md:pl-[1.55rem]'>Confirmations:</span>
+                <span>
                   <ValueDisplay
                     value={confirmations}
                     error={txError}
                   />
                 </span>
-              </p>
+              </div>
             </div>
             <li className='list-disc ml-4 mt-4 m-2'>
-              <p className='md:flex'>
-                <span className='w-60'>Value:</span>
-                <span className='ml-2 md:ml-0'>
+              <div className='flex'>
+                <span className='min-w-20 md:min-w-60'>Value:</span>
+                <span>
                   <ValueDisplay
                     value={value}
                     error={txError}
                   />
                 </span>
-              </p>
+              </div>
             </li>
             <div className='ml-4'>
-              <p className='md:flex'>
-                <span className='w-60 pl-2 md:pl-[5.8rem]'>From:</span>
+              <div className='flex min-h-[3rem] md:min-h-auto'>
+                <span className='min-w-20 md:min-w-60 pl-4 md:pl-[5.8rem]'>From:</span>
                 <ValueDisplay
                   value={from}
                   error={txError}
                 />
-              </p>
+              </div>
             </div>
             <div className='ml-4 pt-2 md:pt-0'>
-              <p className='md:flex'>
-                <span className='w-60 pl-2 md:pl-[7.05rem]'>To:</span>
+              <div className='flex min-h-[3rem] md:min-h-auto'>
+                <span className='min-w-20 md:min-w-60 pl-[2.125rem] md:pl-[7.05rem]'>To:</span>
                 <ValueDisplay
                   value={to}
                   error={txError}
                 />
-              </p>
+              </div>
             </div>
             <li className='list-disc ml-4 mt-4 m-2'>
-              <p className='md:flex'>
-                <span className='w-60 text-nowrap'>Transaction Fee:</span>
-                <span className='ml-2 md:ml-0'>
+              <div className='flex flex-wrap md:flex-nowrap min-h-[3rem] md:min-h-auto'>
+                <span className='min-w-35 md:min-w-60 text-nowrap'>Transaction Fee:</span>
+                <div className='basis-full md:hidden' />
+                <span className='pl-4 md:pl-0'>
                   <ValueDisplay
                     value={txFee}
                     error={txError || txReceiptError}
                   />
                 </span>
-              </p>
+              </div>
             </li>
             <div className='ml-4 pt-2 md:pt-0'>
-              <p className='md:flex'>
-                <span className='w-60 pl-2 md:pl-[3.7rem]'>Gas Price:</span>
-                <span className='ml-2 md:ml-0'>
+              <div className='flex'>
+                <span className='min-w-25 md:min-w-60 md:pl-[3.7rem]'>Gas Price:</span>
+                <span>
                   <ValueDisplay
                     value={gasPrice}
                     error={txError}
                   />
                 </span>
-              </p>
+              </div>
             </div>
             <div className='ml-4 pt-2 md:pt-0'>
-              <p className='md:flex'>
-                <span className='w-60 pl-2 md:pl-[3.65rem]'>Gas Used:</span>
-                <span className='ml-2 md:ml-0'>
+              <div className='flex min-h-[3rem] md:min-h-auto'>
+                <span className='min-w-25 md:min-w-60 md:pl-[3.65rem]'>Gas Used:</span>
+                <span>
                   <ValueDisplay
                     value={gasUsed}
                     error={txReceiptError}
                   />
                 </span>
-              </p>
+              </div>
             </div>
           </ul>
         </div>
