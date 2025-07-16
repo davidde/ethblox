@@ -58,13 +58,13 @@ export default function Transactions(props: {
 
   let transactions, transactionsDigest;
   if (txsResult) {
-    if (txsResult.length === 0) transactionsDigest = '/';
+    if (txsResult.length === 0) transactionsDigest = 'No external transactions.';
     else {
       const numTxsToShow = Math.min(txsResult.length, maxNumTxsToShow);
       transactionsDigest = numTxsToShow > 1 ?
-        `Showing latest ${numTxsToShow} external transactions of ${txsTotal} transactions total`
+        `Showing latest ${numTxsToShow} external transactions of ${txsTotal} transactions total.`
         :
-        `Showing last external transaction of ${txsTotal} transactions total`;
+        `Showing last external transaction of ${txsTotal} transactions total.`;
 
       transactions = txsResult.slice(0, maxNumTxsToShow).map(
         tx => ({
