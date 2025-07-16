@@ -82,7 +82,7 @@ export default function Transactions(props: {
 
   return (
     <div>
-      <p className='mt-8'>
+      <p className='mt-14 md:mt-8'>
         <span>▶ &nbsp;</span>
         <span className='capsTitle italic !text-base !text-(--main-fg-color)
                         w-fit border-b border-b-(--main-fg-color)'>

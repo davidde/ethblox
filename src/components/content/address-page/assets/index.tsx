@@ -53,7 +53,7 @@ export default function Assets(props: {
     ethValue = `${valueUsd} (${valueEur})`;
   }
   const ethBalanceFormatted = ethBalance ? `Ξ${ethBalance}` : undefined;
-  let columnClass = 'flex flex-col justify-between my-4 h-[3rem] min-w-[17rem]';
+  let columnClass = 'flex flex-col justify-between my-3 md:my-4 h-[3rem] min-w-[17rem]';
   const hideOnTestnet = props.network !== 'mainnet' ? 'hidden' : columnClass;
 
   return (
@@ -65,7 +65,7 @@ export default function Assets(props: {
           ASSETS
         </span>
       </p>
-      <div className='flex justify-between gap-[2rem] ml-[1.5rem]'>
+      <div className='flex flex-col md:flex-row justify-between md:gap-[2rem] ml-[1.5rem]'>
         <div className={columnClass}>
           <h2 className='capsTitle'>ETH BALANCE</h2>
           <ValueDisplay value={ethBalanceFormatted} error={ethBalanceError}
