@@ -7,6 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import { isAddress } from 'ethers';
 import NotFoundPage from '../error-page/not-found-page';
 import BreakMobile from '@/components/common/break-mobile';
+import PageWrapper from '@/components/common/page-wrapper';
 
 
 export default function AddressPage(props: {network: string}) {
@@ -19,32 +20,31 @@ export default function AddressPage(props: {network: string}) {
       "${hash}" is not an Ethereum address.`} />;
   else if (!hashOK) return <div>This is not a valid Ethereum address.</div>
 
-  // Testnet shows no tokens, so Transactions should show instead, and not to the right:
-  const wrapTransactions = props.network === 'mainnet' ? 'md:flex-row flex-wrap' : '';
-
   return (
-    <main className='m-4 mt-0 md:m-8'>
-      <div className='mb-8'>
-        <span className='text-[1.25rem] font-bold'>Address: &nbsp;</span>
-        <BreakMobile />
-        <span className='break-all font-medium'>{hash}</span>
-      </div>
-      <div className={`flex flex-col ${wrapTransactions}`}>
-        <div className='md:min-w-[25rem]'>
-          <EthBalance
-            hash={hash}
-            network={props.network}
-          />
-          <Tokens
+    <main>
+      <PageWrapper maxWidthMd='65rem'>
+        <div className='mb-8'>
+          <span className='text-[1.25rem] font-bold'>Address: &nbsp;</span>
+          <BreakMobile />
+          <span className='break-all font-medium'>{hash}</span>
+        </div>
+        <div className='flex flex-col'>
+          <div className='md:min-w-[25rem]'>
+            <EthBalance
+              hash={hash}
+              network={props.network}
+            />
+            <Tokens
+              hash={hash}
+              network={props.network}
+            />
+          </div>
+          <Transactions
             hash={hash}
             network={props.network}
           />
         </div>
-        <Transactions
-          hash={hash}
-          network={props.network}
-        />
-      </div>
+      </PageWrapper>
     </main>
   );
 }
