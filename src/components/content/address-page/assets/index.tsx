@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react';
 import ValueDisplay from '@/components/common/value-display';
 import { Utils } from 'alchemy-sdk';
 import { getAlchemy } from '@/lib/utilities';
+import Tokens from './tokens';
 
 
-export default function EthBalance(props: {
+export default function Assets(props: {
   hash: string,
   network: string
 }) {
@@ -52,18 +53,35 @@ export default function EthBalance(props: {
     ethValue = `${valueUsd} (${valueEur})`;
   }
   const ethBalanceFormatted = ethBalance ? `Ξ${ethBalance}` : undefined;
+  let columnClass = 'flex flex-col justify-between my-4 h-[3rem] min-w-[17rem]';
+  const hideOnTestnet = props.network !== 'mainnet' ? 'hidden' : columnClass;
 
   return (
-    <div className='pr-12'>
-      <div className='my-4'>
-        <h2 className='capsTitle'>ETH BALANCE</h2>
-        <ValueDisplay value={ethBalanceFormatted} error={ethBalanceError}
-          err='Error getting Ether balance' />
-      </div>
-      <div className={props.network !== 'mainnet' ? 'hidden' : 'my-4'}>
-        <h2 className='capsTitle'>TOTAL ETH VALUE</h2>
-        <ValueDisplay value={ethValue} error={ethPriceError || ethBalanceError}
-          err='Error getting Ether value' />
+    <div>
+      <p className='mt-4'>
+        <span>▶ &nbsp;</span>
+        <span className='capsTitle italic !text-base !text-(--main-fg-color)
+                        w-fit border-b border-b-(--main-fg-color)'>
+          ASSETS
+        </span>
+      </p>
+      <div className='flex justify-between gap-[2rem] ml-[1.5rem]'>
+        <div className={columnClass}>
+          <h2 className='capsTitle'>ETH BALANCE</h2>
+          <ValueDisplay value={ethBalanceFormatted} error={ethBalanceError}
+            err='Error getting Ether balance' />
+        </div>
+        <div className={hideOnTestnet}>
+          <h2 className='capsTitle'>TOTAL ETH VALUE</h2>
+          <ValueDisplay value={ethValue} error={ethPriceError || ethBalanceError}
+            err='Error getting Ether value' />
+        </div>
+        <div className={hideOnTestnet}>
+          <Tokens
+            hash={props.hash}
+            network={props.network}
+          />
+        </div>
       </div>
     </div>
   );

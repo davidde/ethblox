@@ -100,8 +100,9 @@ export default function Tokens(props: {
     );
   }
 
+
   return (
-    <div className={props.network === 'mainnet' ? 'pr-12 my-4' : 'hidden'}>
+    <div>
       <h2 className='capsTitle'>TOKEN HOLDINGS</h2>
       <ValueDisplay
         value={TokenDropdown(tokens)}

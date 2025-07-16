@@ -1,8 +1,7 @@
 'use client';
 
-import Tokens from './tokens';
+import Assets from './assets';
 import Transactions from './transactions';
-import EthBalance from './eth-balance';
 import { useSearchParams } from 'next/navigation';
 import { isAddress } from 'ethers';
 import NotFoundPage from '../error-page/not-found-page';
@@ -30,16 +29,10 @@ export default function AddressPage(props: {network: string}) {
           <span className='font-medium'>{hash}</span>
         </div>
         <div className='flex flex-col'>
-          <div className='md:min-w-[25rem]'>
-            <EthBalance
-              hash={hash}
-              network={props.network}
-            />
-            <Tokens
-              hash={hash}
-              network={props.network}
-            />
-          </div>
+          <Assets
+            hash={hash}
+            network={props.network}
+          />
           <Transactions
             hash={hash}
             network={props.network}
