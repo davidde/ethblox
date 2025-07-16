@@ -50,11 +50,19 @@
     background-color: var(--main-bg-color);
     color: var(--main-fg-color);
 
+    /* Header height on mobile: */
     --header-height: 7.5rem;
-    --header-height-md: 4rem;
-    /* Header bottom and footer top margins on mobile and desktop: */
+    /* Header bottom and footer top margins on mobile: */
     --content-y-margin: 3rem;
-    --content-y-margin-md: 5rem;
+    /* Node banner height in pixels on mobile; dont specify 'px', only number! */
+    --node-banner-height: 380;
+    --node-banner-height-px: calc(var(--node-banner-height) * 1px);
+    /* Tailwind `md:` breakpoint for desktop versions of the vars: */
+    @media (width >= 48rem) {
+      --header-height: 4rem;
+      --content-y-margin: 5rem;
+      --node-banner-height: 500;
+    }
   }
 
   /* Keep grid layout correct when main does not exist due to error: */

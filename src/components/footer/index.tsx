@@ -10,8 +10,8 @@ import Copyright from './copyright';
 
 export default function Footer() {
   return (
-    <footer className='w-screen mt-(--content-y-margin) md:mt-(--content-y-margin-md)
-                      p-4 border-t border-(--border-color) bg-(--comp-bg-color)'>
+    <footer className='w-screen mt-(--content-y-margin) p-4
+                      border-t border-(--border-color) bg-(--comp-bg-color)'>
       <div className='flex justify-between pb-6 border-b border-(--border-color)'>
         <Link
           href='https://github.com/davidde/ethblox'

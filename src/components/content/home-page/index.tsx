@@ -22,7 +22,7 @@ export default async function HomePage(props: {network: string}) {
 
   return (
     <main className='relative'>
-      <NodeBanner className='-mt-(--content-y-margin) md:-mt-(--content-y-margin-md)' />
+      <NodeBanner />
 
       <div className='absolute top-10 md:top-20 left-0 md:left-60' >
         <h1 className='bg-clip-text text-transparent bg-linear-to-r

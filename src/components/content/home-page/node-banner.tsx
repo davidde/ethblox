@@ -4,11 +4,7 @@ import { useRef, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 
 
-type Props = {
-  className: string,
-}
-
-export default function NodeBanner(props: Props) {
+export default function NodeBanner(props: { className?: string }) {
   // Settings:
   const colored = false; // gives nodes random colors when true, nodeColor when false
   const nodeSize = 3; // medium node radius in pixels
@@ -16,7 +12,6 @@ export default function NodeBanner(props: Props) {
   const speedMultiplier = 0.2; // speed multiplier
   const nodeAmountMax = 100; // node amount on desktop, will be less on mobile; the more the slower
   const drawLineThresholdMax = 100; // distance threshold for drawing the lines between nodes on desktop; higher = more lines = slower
-  const heightMax = 460; // node canvas height in pixels on desktop, will be smaller on mobile
   const { resolvedTheme } = useTheme(); // theme is required to update NodeBanner colors on theme switch
   const canvas = useRef<HTMLCanvasElement>(null);
 
@@ -103,11 +98,11 @@ export default function NodeBanner(props: Props) {
     function setupCanvasData() {
       if (!canvas.current) return;
       width = window.innerWidth; // Set node canvas width
-      let isMobile = width <= 768;
+      let isMobile = width <= 768; // Tailwind `md:` = `@media (width >= 48rem)` = 768px
       nodeAmount = isMobile ? Math.floor(0.4 * nodeAmountMax) : nodeAmountMax;
       drawLineThreshold = isMobile ? 0.9 * drawLineThresholdMax : drawLineThresholdMax;
       speed = isMobile ? 0.7 * speedMultiplier : speedMultiplier;
-      height = isMobile ? 0.75 * heightMax : heightMax;
+      height = Number(window.getComputedStyle(document.body).getPropertyValue('--node-banner-height'));
       canvas.current.width = width;
       canvas.current.height = height;
       nodes = []; // Reset the nodes for resize event listener
@@ -218,12 +213,13 @@ export default function NodeBanner(props: Props) {
   }
 
   return (
-    <div className={`${props.className} w-full h-[380px] md:h-[500px] bg-(--banner-bg-color)`} >
+    <div className={`${props.className} bg-(--banner-bg-color) w-full
+                h-(--node-banner-height-px) -mt-(--content-y-margin)`}>
       {/* The following 2 spans are required to make the conditional
           `window.getComputedStyle()` on line 90 work properly: */}
       <span className='hidden light' />
       <span className='hidden dark' />
-      <canvas className={props.className} ref={canvas} />
+      <canvas ref={canvas} />
     </div>
   );
 }
