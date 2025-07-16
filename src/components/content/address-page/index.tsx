@@ -22,11 +22,12 @@ export default function AddressPage(props: {network: string}) {
 
   return (
     <main>
-      <PageWrapper maxWidthMd='65rem'>
+      {/* The min-width is applied to keep the width of the whole page constant while data reloads: */}
+      <PageWrapper className='min-w-[min(65rem,_100%)]'>
         <div className='mb-8'>
           <span className='text-[1.25rem] font-bold'>Address: &nbsp;</span>
           <BreakMobile />
-          <span className='break-all font-medium'>{hash}</span>
+          <span className='font-medium'>{hash}</span>
         </div>
         <div className='flex flex-col'>
           <div className='md:min-w-[25rem]'>

@@ -91,11 +91,12 @@ export default function BlockPage(props: { network: string }) {
 
   return (
     <main>
-      <PageWrapper>
+      {/* The min-width is applied to keep the width of the whole page constant while data reloads: */}
+      <PageWrapper className='min-w-[min(62rem,_100%)]'>
         <h1 className='text-lg font-bold'>
           Block Details
         </h1>
-        <ul className='max-w-[90vw] break-words mt-8'>
+        <ul className='mt-8'>
 
           <li className='list-disc ml-4 mt-4 m-2'>
             <p className='flex'>
@@ -107,7 +108,7 @@ export default function BlockPage(props: { network: string }) {
           <li className='list-disc ml-4 mt-4 m-2'>
             <p className='flex flex-col md:flex-row'>
               <span className='min-w-60'>Block hash:</span>
-              <span className='break-all min-h-[4.5rem] md:min-h-[3.3rem]'>
+              <span className='min-h-[4.5rem] md:min-h-[3.3rem]'>
                 <ValueDisplay
                   value={block?.hash}
                   error={blockError}

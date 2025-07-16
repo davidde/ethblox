@@ -42,7 +42,8 @@ export default function GastrackerPage() {
 
   return (
     <main>
-      <PageWrapper>
+      {/* The min-width is applied to keep the width of the whole page constant while data reloads: */}
+      <PageWrapper className='min-w-[min(62rem,_100%)]'>
         <div className='flex flex-col items-center'>
           <div className='w-full md:w-[85%] flex flex-col md:flex-row justify-between items-center
                           my-5 md:my-10 mx-auto p-1 md:py-5 md:px-3 bg-(--card-bg-color)

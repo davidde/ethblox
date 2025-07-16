@@ -71,11 +71,11 @@ export default function TransactionPage(props: {network: string}) {
     confirmations = tx.confirmations;
     value = `Ξ${Utils.formatEther(tx.value)}`;
     from = <Link href={`/${props.network}/address?hash=${tx.from}`}
-            className='break-all font-mono text-(--link-color) hover:text-(--hover-fg-color)'>
+            className='font-mono text-(--link-color) hover:text-(--hover-fg-color)'>
               {tx.from}
             </Link>;
     to = <Link href={`/${props.network}/address?hash=${tx.to}`}
-          className='break-all font-mono text-(--link-color) hover:text-(--hover-fg-color)'>
+          className='font-mono text-(--link-color) hover:text-(--hover-fg-color)'>
             {tx.to}
           </Link>;
     gasPrice = `${+Utils.formatEther(tx.gasPrice!) * Math.pow(10, 9)} Gwei (Ξ${Utils.formatEther(tx.gasPrice!)})`;
@@ -87,10 +87,13 @@ export default function TransactionPage(props: {network: string}) {
         <h1 className='text-lg font-bold'>
           Transaction Details
         </h1>
-        <ul className='max-w-[90vw] break-words mt-8'>
+        <ul className='mt-8'>
           <li className='list-disc ml-4 m-2'>
             <div className='flex flex-col md:flex-row'>
               <span className='min-w-35 md:min-w-60'>Transaction Hash:</span>
+              {/* Because the Transaction Hash is fixed while data fetching,
+               this span holds the width of the entire page fixed while reloading!
+               Other pages dont have such a long field, and need explicit min-widths. */}
               <span className='font-semibold'>{hash}</span>
             </div>
           </li>
