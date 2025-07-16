@@ -13,8 +13,11 @@ export default function Transaction(props: {
   const amount = getEtherValueFromWei(props.transaction.value, 6);
   const from = props.transaction.from;
   const fromShort = truncateAddress(from, 21);
-  const to = props.transaction.to!;
-  const toShort = truncateAddress(to, 21);
+  let to, toShort;
+  if (props.transaction.to) {
+    to = props.transaction.to;
+    toShort = truncateAddress(to, 21);
+  }
 
   return (
     <div className='p-2 md:p-3 border-b border-(--border-color) last:border-0'>
@@ -25,7 +28,7 @@ export default function Transaction(props: {
             <span className='px-2 md:px-4'>
               <PopoverLink
                 href={`/${props.network}/transaction?hash=${transactionHash}`}
-                content={transactionHashShort!}
+                content={transactionHashShort}
                 popover={transactionHash}
                 className='-left-full top-[-2.6rem] w-120 py-1.5 px-2.5'
               />
@@ -39,19 +42,22 @@ export default function Transaction(props: {
             From:&nbsp;
             <PopoverLink
               href={`/${props.network}/address?hash=${from}`}
-              content={fromShort!}
+              content={fromShort}
               popover={from}
               className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
             />
           </span>
           <span className='pl-7 md:pl-9'>
             To:&nbsp;
-            <PopoverLink
-              href={`/${props.network}/address?hash=${to}`}
-              content={toShort!}
-              popover={to}
-              className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
-            />
+            { to ?
+                  <PopoverLink
+                    href={`/${props.network}/address?hash=${to}`}
+                    content={toShort!}
+                    popover={to}
+                    className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
+                  />
+                  : <span>/</span>
+            }
           </span>
         </div>
       </div>

@@ -77,7 +77,6 @@ export function truncateAddress(address: string, toLength: number) {
 };
 
 export function truncateTransaction(transaction: string, toLength: number) {
-  if (!transaction) return null;
   if (transaction.length <= toLength) return transaction;
 
   const suffix = '...';

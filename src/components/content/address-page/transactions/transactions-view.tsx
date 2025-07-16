@@ -15,7 +15,7 @@ export default function TransactionsView(props: {
     render: (tx: any) => (
       <PopoverLink
         href={`/${props.network}/transaction?hash=${tx.hash}`}
-        content={truncateTransaction(tx.hash, 18)!}
+        content={truncateTransaction(tx.hash, 18)}
         popover={tx.hash}
         className='-left-full top-[-2.6rem] w-120 py-1.5 px-2.5'
       />
