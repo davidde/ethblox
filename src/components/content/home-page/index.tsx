@@ -22,11 +22,12 @@ export default async function HomePage(props: {network: string}) {
 
   return (
     <main className='relative'>
-      <NodeBanner className='relative -mt-(--header-bottom-margin) left-0' />
+      <NodeBanner className='-mt-(--content-y-margin) md:-mt-(--content-y-margin-md)' />
 
       <div className='absolute top-10 md:top-20 left-0 md:left-60' >
-        <h1 className='bg-linear-to-r from-(--gradient-from-color) via-(--gradient-via-color) to-(--gradient-to-color)
-                       bg-clip-text text-transparent text-4xl md:text-5xl font-bold md:mb-8 p-2 md:p-0 ml-2 text-pretty'>
+        <h1 className='bg-clip-text text-transparent bg-linear-to-r
+          from-(--gradient-from-color) via-(--gradient-via-color) to-(--gradient-to-color)
+          text-4xl md:text-5xl font-bold md:mb-8 p-2 md:p-0 ml-2 text-pretty'>
           {
             props.network === 'mainnet' ?
                       'The Ethereum Blockchain Explorer' :

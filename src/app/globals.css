@@ -52,7 +52,9 @@
 
     --header-height: 7.5rem;
     --header-height-md: 4rem;
-    --header-bottom-margin: 3rem;
+    /* Header bottom and footer top margins on mobile and desktop: */
+    --content-y-margin: 3rem;
+    --content-y-margin-md: 5rem;
   }
 
   /* Keep grid layout correct when main does not exist due to error: */
