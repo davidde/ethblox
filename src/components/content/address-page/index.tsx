@@ -26,7 +26,7 @@ export default function AddressPage(props: {network: string}) {
         <div className='mb-8'>
           <span className='text-[1.25rem] font-bold'>Address: &nbsp;</span>
           <BreakMobile />
-          <span className='font-medium'>{hash}</span>
+          <span className='font-medium break-all'>{hash}</span>
         </div>
         <div className='flex flex-col'>
           <Assets

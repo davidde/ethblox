@@ -23,7 +23,7 @@ return (
         leaveFrom='transform opacity-100 scale-100'
         leaveTo='transform opacity-0 scale-50'
       >
-        <MenuItems className='absolute left-0 origin-top z-10 overflow-auto
+        <MenuItems className='absolute left-0 origin-top z-10 overflow-auto w-fit
           mt-2 max-h-[23rem] min-w-[15rem] max-w-[25rem] rounded-md shadow-black/40 dark:shadow-white/5
           shadow-2xl ring-1 ring-(--border-color) bg-(--comp-bg-color) text-(--main-fg-color)
           flex flex-col divide-y divide-(--border-color)/60'>

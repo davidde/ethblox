@@ -59,8 +59,7 @@ export default function TransactionPage(props: {network: string}) {
 
     gasUsed = (+txReceipt.gasUsed).toLocaleString('en-US');
     if (tx && tx.gasPrice)
-      txFee = `Ξ${Utils.formatEther(tx.gasPrice.mul(
-              +txReceipt.gasUsed))} (= Gas Price * Gas Used)`;
+      txFee = `Ξ${Utils.formatEther(tx.gasPrice.mul(+txReceipt.gasUsed))}`;
   }
 
   let block, confirmations, value, from, to, gasPrice;
@@ -94,7 +93,7 @@ export default function TransactionPage(props: {network: string}) {
               {/* Because the Transaction Hash is fixed while data fetching,
                this span holds the width of the entire page fixed while reloading!
                Other pages dont have such a long field, and need explicit min-widths. */}
-              <span className='font-semibold'>{hash}</span>
+              <span className='font-semibold break-all'>{hash}</span>
             </div>
           </li>
           <div className='ml-4'>
@@ -103,7 +102,6 @@ export default function TransactionPage(props: {network: string}) {
               <ValueDisplay
                 value={status}
                 error={txReceiptError}
-                fallbackClass=''
               />
             </div>
           </div>
@@ -143,19 +141,23 @@ export default function TransactionPage(props: {network: string}) {
           <div className='ml-4'>
             <div className='flex min-h-[3rem] md:min-h-auto'>
               <span className='min-w-20 md:min-w-60 pl-4 md:pl-[5.8rem]'>From:</span>
-              <ValueDisplay
-                value={from}
-                error={txError}
-              />
+              <span className='break-all'>
+                <ValueDisplay
+                  value={from}
+                  error={txError}
+                />
+              </span>
             </div>
           </div>
           <div className='ml-4 pt-2 md:pt-0'>
             <div className='flex min-h-[3rem] md:min-h-auto'>
               <span className='min-w-20 md:min-w-60 pl-[2.125rem] md:pl-[7.05rem]'>To:</span>
-              <ValueDisplay
-                value={to}
-                error={txError}
-              />
+              <span className='break-all'>
+                <ValueDisplay
+                  value={to}
+                  error={txError}
+                />
+              </span>
             </div>
           </div>
           <li className='list-disc ml-4 mt-4 m-2'>
@@ -167,6 +169,8 @@ export default function TransactionPage(props: {network: string}) {
                   value={txFee}
                   error={txError || txReceiptError}
                 />
+                <br />
+                 <span>(= Gas Price * Gas Used)</span>
               </span>
             </div>
           </li>
