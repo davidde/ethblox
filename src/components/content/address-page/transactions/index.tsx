@@ -16,6 +16,22 @@ import ValueDisplay from '@/components/common/value-display';
 import TransactionsView from './transactions-view';
 
 
+function getTransactions(txsResult: AssetTransfersWithMetadataResult[], txsToShow: number) {
+  return txsResult.slice(0, txsToShow).map(
+        tx => ({
+            hash: tx.hash,
+            block: +tx.blockNum,
+            age: getBlockAgeFromSecs(getSecsFromDateTimeString(tx.metadata.blockTimestamp)),
+            from: tx.from,
+            to: tx.to,
+            amount: tx.asset === 'ETH' ? `Ξ${tx.value?.toFixed(8) || ''}`
+                  : `${tx.value?.toFixed(8) || ''} ${tx.asset || '/'}`,
+        })
+      );
+}
+
+export type Tx = ReturnType<typeof getTransactions>[number];
+
 export default function Transactions(props: {
   hash: string,
   network: string,
@@ -23,8 +39,9 @@ export default function Transactions(props: {
   const alchemy = getAlchemy(props.network);
   const maxNumTxsToShow = 10;
   const [txsResult, setTxsResult] = useState<AssetTransfersWithMetadataResult[]>();
+  const [txsResultError, setTxsResultError] = useState<string>();
+
   const [txsTotal, setTxsTotal] = useState<string>();
-  const [txsError, setTxsError] = useState<string>();
 
   useEffect(() => {
     (async () => {
@@ -42,7 +59,7 @@ export default function Transactions(props: {
       } catch(err) {
         const error = 'AddressPage Transactions getAssetTransfers()' + err;
         console.error(error);
-        setTxsError(error);
+        setTxsResultError(error);
       }
 
       try {
@@ -66,17 +83,7 @@ export default function Transactions(props: {
         :
         `Showing last external transaction of ${txsTotal} transactions total.`;
 
-      transactions = txsResult.slice(0, maxNumTxsToShow).map(
-        tx => ({
-            hash: tx.hash,
-            block: +tx.blockNum,
-            age: getBlockAgeFromSecs(getSecsFromDateTimeString(tx.metadata.blockTimestamp)),
-            from: tx.from,
-            to: tx.to,
-            amount: tx.asset === 'ETH' ? `Ξ${tx.value?.toFixed(8) || ''}`
-                  : `${tx.value?.toFixed(8) || ''} ${tx.asset || '/'}`,
-        })
-      );
+      transactions = getTransactions(txsResult, maxNumTxsToShow);
     }
   }
 
@@ -92,7 +99,7 @@ export default function Transactions(props: {
       <p className='pl-8 mt-4 text-sm tracking-wider py-3 border-y border-(--border-color)'>
         <ValueDisplay
           value={transactionsDigest}
-          error={txsError}
+          error={txsResultError}
           err='Error getting transactions. Please reload.'
         />
       </p>

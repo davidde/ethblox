@@ -1,6 +1,10 @@
+import type { Tx } from '../transactions';
+import type { Col } from './transactions-view';
+
+
 export default function TxRow(props: {
-  tx: any,
-  cols: any[],
+  tx: Tx,
+  cols: Col[],
   isMedium: boolean, // True for desktop, false for mobile
 }) {
   if (props.isMedium)

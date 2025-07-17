@@ -2,17 +2,23 @@ import PopoverLink from '@/components/common/popover-link';
 import { truncateAddress, truncateTransaction } from '@/lib/utilities';
 import Link from 'next/link';
 import TxRow from './tx-row';
+import type { Tx } from '../transactions';
 
+
+export type Col = {
+  name: string;
+  render: (tx: Tx) => React.ReactElement;
+};
 
 export default function TransactionsView(props: {
   network: string,
-  transactions?: any[],
+  transactions?: Tx[],
 }) {
   if (!props.transactions) return null;
 
-  const COLUMNS = [{
+  const COLUMNS: Col[] = [{
     name: 'Transaction Hash',
-    render: (tx: any) => (
+    render: (tx: Tx) => (
       <PopoverLink
         href={`/${props.network}/transaction?hash=${tx.hash}`}
         content={truncateTransaction(tx.hash, 18)}
@@ -21,7 +27,7 @@ export default function TransactionsView(props: {
       />
   )}, {
     name: 'Block',
-    render: (tx: any) => (
+    render: (tx: Tx) => (
       <Link
         href={`/${props.network}/block?number=${tx.block}`}
         className='text-(--link-color) hover:text-(--hover-fg-color)'
@@ -30,10 +36,10 @@ export default function TransactionsView(props: {
       </Link>
   )}, {
     name: 'Age',
-    render: (tx: any) => <span>{tx.age}</span>,
+    render: (tx: Tx) => <span>{tx.age}</span>,
   }, {
     name: 'From',
-    render: (tx: any) => (
+    render: (tx: Tx) => (
       <PopoverLink
         href={`/${props.network}/address?hash=${tx.from}`}
         content={truncateAddress(tx.from, 21)!}
@@ -42,7 +48,7 @@ export default function TransactionsView(props: {
       />
   )}, {
     name: 'To',
-    render: (tx: any) =>
+    render: (tx: Tx) =>
       tx.to ? <PopoverLink
                 href={`/${props.network}/address?hash=${tx.to}`}
                 content={truncateAddress(tx.to, 21)}
