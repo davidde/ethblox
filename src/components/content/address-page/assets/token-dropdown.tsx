@@ -1,10 +1,10 @@
 import { Fragment } from 'react';
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/16/solid';
-import type { Token } from './tokens';
+import { OwnedToken } from 'alchemy-sdk';
 
 
-export function TokenDropdown(props: { tokens: Token[]} ) {
+export function TokenDropdown(props: { tokens: OwnedToken[]} ) {
 return (
     <Menu as='div' className='relative inline-block text-left'>
       <MenuButton className='relative z-20 w-[15rem] inline-flex items-center justify-between rounded-md
@@ -28,22 +28,30 @@ return (
           shadow-2xl ring-1 ring-(--border-color) bg-(--comp-bg-color) text-(--main-fg-color)
           flex flex-col divide-y divide-(--border-color)/60'>
           {
-            props.tokens.map((token) => (
-              <MenuItem key={token.address}>
-                <div tabIndex={0}
-                    title={`Contract address: ${token.address}`}
-                    className='cursor-default px-3 py-2 rounded
-                    hover:bg-(--banner-bg-color) hover:text-blue-900'>
-                  <div className='flex flex-col'>
-                    <div className='inline-flex items-center justify-between gap-[2rem]'>
-                      <span className='font-semibold'>{token.symbol}</span>
-                      <span className='text-(--grey-fg-color) text-sm'>{token.balance}</span>
+            props.tokens.map((token) => {
+              // All token fileds are guaranteed to exist because of the filter in Tokens `useEffect()`:
+              const bal = parseFloat(token.balance!); // so non-null assertion allowed!
+              const isZero = bal === 0;
+              let balance = bal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 5 });
+              balance = !isZero && balance === '0.00' ? '~0.00' : balance;
+
+              return (
+                <MenuItem key={token.contractAddress}>
+                  <div tabIndex={0}
+                      title={`Contract address: ${token.contractAddress}`}
+                      className='cursor-default px-3 py-2 rounded
+                      hover:bg-(--banner-bg-color) hover:text-blue-900'>
+                    <div className='flex flex-col'>
+                      <div className='inline-flex items-center justify-between gap-[2rem]'>
+                        <span className='font-semibold'>{token.symbol}</span>
+                        <span className='text-(--grey-fg-color) text-sm'>{balance}</span>
+                      </div>
+                      <span>{token.name}</span>
                     </div>
-                    <span>{token.name}</span>
                   </div>
-                </div>
-              </MenuItem>
-            ))
+                </MenuItem>
+              );
+            })
           }
         </MenuItems>
       </Transition>
