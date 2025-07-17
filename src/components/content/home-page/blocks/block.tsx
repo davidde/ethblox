@@ -5,6 +5,7 @@ import { CubeIcon } from '@heroicons/react/24/outline';
 import { type Block } from 'alchemy-sdk';
 import {
   getSecsFromUnixSecs,
+  getBlockAgeFromSecs,
   truncateAddress,
   getEtherValueFromWei,
   getBlockRewardUrl,
@@ -70,7 +71,7 @@ export default function Block(props: {
             </span>
             <span className='md:pl-4 text-sm text-(--grey-fg-color)'>
               <ValueDisplay
-                value={block.value ? `(${getSecsFromUnixSecs(block.value.timestamp)} secs ago)` : null}
+                value={block.value ? `(${getBlockAgeFromSecs(getSecsFromUnixSecs(block.value.timestamp))} ago)` : null}
                 error={block.error?.message}
                 err='Error'
               />
