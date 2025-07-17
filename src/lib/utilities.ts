@@ -5,6 +5,23 @@ import { Alchemy, Network, Utils, BigNumber } from 'alchemy-sdk';
 export const NETWORKS = ['mainnet', 'sepolia'];
 let alchemyInstance: Alchemy | null = null;
 
+type ValueState<T> = {
+  value?: T;
+  error: undefined;
+};
+type ErrorState = {
+  value: undefined;
+  error?: Error;
+};
+
+export type DataState<T> = ValueState<T> | ErrorState;
+
+// Factory functions to return the `DataState` type:
+export const DataState = {
+  value: <T>(value?: T): DataState<T> => ({ value, error: undefined }),
+  error: <T>(error?: Error): DataState<T> => ({ value: undefined, error })
+};
+
 export function getAlchemy(network: string) {
   if (!alchemyInstance) {
     alchemyInstance = new Alchemy({

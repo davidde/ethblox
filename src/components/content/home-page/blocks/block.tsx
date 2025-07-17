@@ -8,7 +8,8 @@ import {
   truncateAddress,
   getEtherValueFromWei,
   getBlockRewardUrl,
-  getAlchemy
+  getAlchemy,
+  DataState
 } from '@/lib/utilities';
 import Link from 'next/link';
 import PopoverLink from '../../../common/popover-link';
@@ -21,7 +22,7 @@ export default function Block(props: {
   const alchemy = getAlchemy(props.network);
   const blockRewardUrl = getBlockRewardUrl(props.network, props.blockNumber);
 
-  const [block, setBlock] = useState<Block>();
+  const [block, setBlock] = useState<DataState<Block>>(DataState.value());
   const [blockReward, setBlockReward] = useState('');
   const [blockRewardError, setBlockRewardError] = useState('');
   const [blockError, setBlockError] = useState('');
@@ -30,7 +31,7 @@ export default function Block(props: {
     if (props.blockNumber) (async () => {
       try {
         const resp = await alchemy.core.getBlock(props.blockNumber);
-        setBlock(resp);
+        setBlock(DataState.value(resp));
       } catch(err) {
         const error = 'HomePage Block getBlock() ' + err;
         console.error(error);
@@ -51,9 +52,9 @@ export default function Block(props: {
   }, [alchemy, props.blockNumber, blockRewardUrl]);
 
   let secsSinceAdded, recipient, recipientShort;
-  if (block) {
-    secsSinceAdded = getSecsFromUnixSecs(block.timestamp);
-    recipient = block.miner;
+  if (block.value) {
+    secsSinceAdded = getSecsFromUnixSecs(block.value.timestamp);
+    recipient = block.value.miner;
     recipientShort = truncateAddress(recipient, 20);
   }
 
@@ -76,7 +77,7 @@ export default function Block(props: {
         </div>
 
         <div className='flex flex-col ml-12 md:ml-8 mb-2 md:mb-0'>
-          <span className='px-2 md:px-4 leading-5'>{block?.transactions.length} transactions</span>
+          <span className='px-2 md:px-4 leading-5'>{block.value?.transactions.length} transactions</span>
           <span className='pl-2 md:pl-4'>
             Block Reward: { blockReward !== undefined && blockReward !== null ? blockReward : 'TBD' }
           </span>
