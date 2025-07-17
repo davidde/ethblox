@@ -2,9 +2,10 @@ import ErrorIndicator from '@/components/common/error-indicator';
 import LoadingIndicator from '@/components/common/loading-indicator';
 
 
+// NEEDS FALSY VALUE TO DIPLAY LoadingIndicator! (unless Error)
 // If there's a value, display it;
 // if not, and if there's an error, display that;
-// if not, display the LoadingIndicator;
+// if neither, display the LoadingIndicator;
 // unless we don't want a visible fallback component,
 // then we display an empty span.
 export default function ValueDisplay({ value, error, err, fallback = true, fallbackClass }: {
