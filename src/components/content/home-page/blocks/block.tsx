@@ -10,13 +10,10 @@ import {
   getEtherValueFromWei,
   getBlockRewardUrl,
   getAlchemy,
-  DataState,
 } from '@/lib/utilities';
+import DataState from '@/lib/datastate';
 import Link from 'next/link';
 import PopoverLink from '../../../common/popover-link';
-import ValueDisplay from '@/components/common/value-display';
-import LoadingIndicator from '@/components/common/loading-indicator';
-import ErrorIndicator from '@/components/common/error-indicator';
 
 
 export default function Block(props: {
@@ -47,7 +44,7 @@ export default function Block(props: {
         const resp = await fetch(blockRewardUrl);
         if (!resp.ok) throw new Error(`Response NOT OK, status: ${resp.status}`);
         const data = await resp.json();
-        if (!data.result.blockReward) throw new Error('Block reward missing from response.');
+        if (!data.result || !data.result.blockReward) throw new Error('Block reward missing from response.');
         setBlockReward(DataState.value(`Ξ${getEtherValueFromWei(data.result.blockReward, 4)}`));
       } catch(err) {
         setBlockReward(DataState.error(err));
@@ -70,46 +67,44 @@ export default function Block(props: {
               </Link>
             </span>
             <span className='md:pl-4 text-sm text-(--grey-fg-color)'>
-              <ValueDisplay
-                value={block.value ? `(${getBlockAgeFromSecs(getSecsFromUnixSecs(block.value.timestamp))} ago)` : null}
-                error={block.error?.message}
-                err='Error'
-              />
+              {
+                block.render({
+                  value: () => `(${getBlockAgeFromSecs(getSecsFromUnixSecs(block.value!.timestamp))} ago)`,
+                  error: 'Error',
+                })
+              }
             </span>
           </div>
         </div>
 
         <div className='flex flex-col ml-12 md:ml-8 mb-2 md:mb-0'>
           <span className='px-2 md:px-4 leading-5'>
-            <ValueDisplay
-              value={block.value ? `${block.value.transactions.length} transactions` : null}
-              error={block.error?.message}
-              err='Error'
-            />
+            {
+              block.render({
+                value: () => `${block.value!.transactions.length} transactions`,
+                error: 'Error',
+              })
+            }
           </span>
           <span className='pl-2 md:pl-4'>
             Block Reward: &nbsp;
-            <ValueDisplay
-              value={blockReward.value}
-              error={blockReward.error?.message}
-              err='Error'
-            />
+            {
+              blockReward.render({ error: 'Error' })
+            }
           </span>
           <span className='pl-2 md:pl-4 leading-5'>
             Recipient:&nbsp;
             {
-              block.value ?
-                <PopoverLink
-                  href={`/${props.network}/address?hash=${block.value.miner}`}
-                  content={truncateAddress(block.value.miner, 20)}
-                  popover={block.value.miner}
-                  className='left-[-37%] top-[-2.6rem] w-78 py-1.5 px-2.5'
-                />
-                :
-                block.error ?
-                  <ErrorIndicator error='Error' />
-                  :
-                  <LoadingIndicator />
+              block.render({
+                value: () =>
+                  <PopoverLink
+                    href={`/${props.network}/address?hash=${block.value!.miner}`}
+                    content={truncateAddress(block.value!.miner, 20)}
+                    popover={block.value!.miner}
+                    className='left-[-37%] top-[-2.6rem] w-78 py-1.5 px-2.5'
+                  />,
+                error: 'Error'
+              })
             }
           </span>
         </div>

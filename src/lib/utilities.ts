@@ -4,36 +4,6 @@ import { Alchemy, Network, Utils, BigNumber } from 'alchemy-sdk';
 
 export const NETWORKS = ['mainnet', 'sepolia'];
 
-type ValueState<T> = {
-  value?: T;
-  error: undefined;
-};
-type ErrorState = {
-  value: undefined;
-  error?: Error;
-};
-
-export type DataState<T> = ValueState<T> | ErrorState;
-
-// Factory functions to return the `DataState` type:
-export const DataState = {
-  // Create ValueState<T> from value or nothing when initializing:
-  value: <T>(value?: T): DataState<T> => ({ value, error: undefined }),
-
-  // Create ErrorState from `unknown` error, to be used in `catch` block:
-  error: (err: unknown, errorPrefix?: string): ErrorState => {
-    if (err instanceof Error)
-      if (errorPrefix) err.message = `${errorPrefix} ${err.message}`;
-    // `String(err)` could technically still fail if someone throws bad objects:
-    else err = errorPrefix ?
-      new Error(`${errorPrefix} ${String(err)}`) : new Error(String(err));
-
-    const error = err as Error;
-    console.error(error);
-    return { value: undefined, error };
-  }
-};
-
 let alchemyInstance: Alchemy | null = null;
 
 export function getAlchemy(network: string) {
