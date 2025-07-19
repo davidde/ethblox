@@ -33,7 +33,7 @@ export default function Tokens(props: {
         setOwnedTokensError(error);
       }
     })();
-  }, [alchemy, props.hash]);
+  }, [alchemy, props.hash, props.network]);
 
   let fallback;
   if (!ownedTokens) {
