@@ -11,7 +11,6 @@ import {
   getBlockRewardUrl,
   getAlchemy,
   DataState,
-  getErrorState,
 } from '@/lib/utilities';
 import Link from 'next/link';
 import PopoverLink from '../../../common/popover-link';
@@ -27,11 +26,12 @@ export default function Block(props: {
   const alchemy = getAlchemy(props.network);
   const blockRewardUrl = getBlockRewardUrl(props.network, props.blockNumber);
 
-  // Calling `DataState.value()` inside is required to get a
-  // `DataState<undefined>` instead of an `undefined`!
-  // type DataState<T> = ValueState<T> | ErrorState
-  // ValueState<T>.value either has value<T> OR undefined -> LoadingState!
-  // ErrorState.error either has an Error object or undefined
+  // Calling `DataState.value()` inside `useState()` is required
+  // to get a `DataState<undefined>` instead of an `undefined`!
+  // `type DataState<T> = ValueState<T> | ErrorState`, so:
+  // `ValueState<T>.value` either has `value<T>` OR `undefined`,
+  // indicating it is still in a loading state, OR in ErrorState.
+  // `ErrorState.error` either has an Error object or undefined.
   const [block, setBlock] = useState(DataState.value<Block>());
   const [blockReward, setBlockReward] = useState(DataState.value<string>());
 
@@ -41,7 +41,7 @@ export default function Block(props: {
         const resp = await alchemy.core.getBlock(props.blockNumber);
         setBlock(DataState.value(resp));
       } catch(err) {
-        setBlock(getErrorState(err));
+        setBlock(DataState.error(err));
       }
       try {
         const resp = await fetch(blockRewardUrl);
@@ -50,7 +50,7 @@ export default function Block(props: {
         if (!data.result.blockReward) throw new Error('Block reward missing from response.');
         setBlockReward(DataState.value(`Ξ${getEtherValueFromWei(data.result.blockReward, 4)}`));
       } catch(err) {
-        setBlockReward(getErrorState(err));
+        setBlockReward(DataState.error(err));
       }
     })();
   }, [alchemy, props.blockNumber, blockRewardUrl]);
