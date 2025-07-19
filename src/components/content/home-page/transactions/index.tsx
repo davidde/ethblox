@@ -37,7 +37,7 @@ export default async function Transactions(props: Props) {
               );
           })
           :
-          <ErrorIndicator error='Error: Failed getting latest transactions' />
+          <ErrorIndicator error='Error getting latest transactions' />
       }
     </div>
   );
