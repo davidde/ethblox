@@ -17,22 +17,35 @@ interface RenderOptions {
 type ValueState<T> = {
   value?: T;
   error: undefined;
-  render: (options?: RenderOptions) => ReactNode;
+  Render: (options?: RenderOptions) => ReactNode;
 };
 type ErrorState = {
   value: undefined;
   error?: Error;
-  render: (options?: RenderOptions) => ReactNode;
+  Render: (options?: RenderOptions) => ReactNode;
 };
 
+// Calling `DataState.value()` inside `useState()` is required
+// to get a `DataState<undefined>` instead of an `undefined`!
+// `type DataState<T> = ValueState<T> | ErrorState`, so:
+// `ValueState<T>.value` either has `value<T>` OR `undefined`,
+// the latter indicating it is still in a loading state, OR in ErrorState.
+// `ErrorState.error` either has an Error object or undefined.
+// The DataState.Render() method can be called at all times;
+// in Value- as well as ErrorState!
+// It will render the apropriate component,
+// either a LoadingIndicator, an ErrorIndicator, or the value.
+// If the DataState's value exists, the render method will render
+// its value callback function if that is present,
+// or default to rendering the DataState's value directly if not.
 type DataState<T> = ValueState<T> | ErrorState;
 
 // Factory functions to return the `DataState` type,
-// as well as implement the associated render() function:
+// as well as implement the associated Render() function:
 const DataState = {
   // Create ValueState<T> from value or nothing when initializing:
   value: <T,>(dataValue?: T): DataState<T> => {
-    let render = ({
+    let Render = ({
       value,
       showFallback = true,
       loadingFallback,
@@ -48,7 +61,7 @@ const DataState = {
     return {
       value: dataValue,
       error: undefined,
-      render
+      Render
     };
   },
 
@@ -65,7 +78,7 @@ const DataState = {
         new Error(`${errorPrefix} ${String(unknownError)}`) : new Error(String(unknownError));
     }
 
-    let render = ({
+    let Render = ({
       error,
       showFallback = true,
     }: RenderOptions = {}) =>
@@ -82,7 +95,7 @@ const DataState = {
     return {
       value: undefined,
       error: errorInstance,
-      render,
+      Render,
     };
   }
 };

@@ -11,7 +11,7 @@ import {
   getBlockRewardUrl,
   getAlchemy,
 } from '@/lib/utilities';
-import DataState from '@/lib/datastate';
+import DataState from '@/lib/data-state';
 import Link from 'next/link';
 import PopoverLink from '../../../common/popover-link';
 
@@ -25,10 +25,6 @@ export default function Block(props: {
 
   // Calling `DataState.value()` inside `useState()` is required
   // to get a `DataState<undefined>` instead of an `undefined`!
-  // `type DataState<T> = ValueState<T> | ErrorState`, so:
-  // `ValueState<T>.value` either has `value<T>` OR `undefined`,
-  // indicating it is still in a loading state, OR in ErrorState.
-  // `ErrorState.error` either has an Error object or undefined.
   const [block, setBlock] = useState(DataState.value<Block>());
   const [blockReward, setBlockReward] = useState(DataState.value<string>());
 
@@ -67,45 +63,37 @@ export default function Block(props: {
               </Link>
             </span>
             <span className='md:pl-4 text-sm text-(--grey-fg-color)'>
-              {
-                block.render({
-                  value: () => `(${getBlockAgeFromSecs(getSecsFromUnixSecs(block.value!.timestamp))} ago)`,
-                  error: 'Error',
-                })
-              }
+              <block.Render
+                value={() => `(${getBlockAgeFromSecs(getSecsFromUnixSecs(block.value!.timestamp))} ago)`}
+                error={'Error'}
+              />
             </span>
           </div>
         </div>
 
         <div className='flex flex-col ml-12 md:ml-8 mb-2 md:mb-0'>
           <span className='px-2 md:px-4 leading-5'>
-            {
-              block.render({
-                value: () => `${block.value!.transactions.length} transactions`,
-                error: 'Error',
-              })
-            }
+            <block.Render
+              value={() => `${block.value!.transactions.length} transactions`}
+              error={'Error'}
+            />
           </span>
           <span className='pl-2 md:pl-4'>
             Block Reward: &nbsp;
-            {
-              blockReward.render({ error: 'Error' })
-            }
+            <blockReward.Render error={'Error'} />
           </span>
           <span className='pl-2 md:pl-4 leading-5'>
             Recipient:&nbsp;
-            {
-              block.render({
-                value: () =>
-                  <PopoverLink
-                    href={`/${props.network}/address?hash=${block.value!.miner}`}
-                    content={truncateAddress(block.value!.miner, 20)}
-                    popover={block.value!.miner}
-                    className='left-[-37%] top-[-2.6rem] w-78 py-1.5 px-2.5'
-                  />,
-                error: 'Error'
-              })
-            }
+            <block.Render
+              value={() =>
+                <PopoverLink
+                  href={`/${props.network}/address?hash=${block.value!.miner}`}
+                  content={truncateAddress(block.value!.miner, 20)}
+                  popover={block.value!.miner}
+                  className='left-[-37%] top-[-2.6rem] w-78 py-1.5 px-2.5'
+                />}
+              error={'Error'}
+            />
           </span>
         </div>
       </div>
