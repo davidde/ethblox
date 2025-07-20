@@ -22,7 +22,7 @@ export default async function Blocks(props: {
             />
           )
           :
-          <ErrorIndicator error='Error getting latest block' />
+          <ErrorIndicator error='Error getting latest blocks' className='block pl-4 py-2' />
       }
     </div>
   );

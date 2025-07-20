@@ -37,7 +37,7 @@ export default async function Transactions(props: Props) {
               );
           })
           :
-          <ErrorIndicator error='Error getting latest transactions' />
+          <ErrorIndicator error='Error getting latest transactions' className='block pl-4 py-2' />
       }
     </div>
   );

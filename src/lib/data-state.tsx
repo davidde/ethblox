@@ -4,12 +4,14 @@ import ErrorIndicator from '@/components/common/error-indicator';
 
 
 interface RenderOptions {
-  // Optional callback function for displaying a subfield when the value is present:
+  // Optional callback function for rendering a subfield of the value IFF that value is present:
   value?: () => ReactNode,
   // Optional short error to display instead of full error:
   error?: string,
   // Optionally don't display a fallback component like Loading- or ErrorIndicators:
   showFallback?: boolean,
+  // Optional className for the fallback component when it exists:
+  fallbackClass?: string,
   // Optionally display another component instead of the default LoadingIndicator:
   loadingFallback?: ReactNode,
 }
@@ -49,11 +51,12 @@ const DataState = {
       value,
       showFallback = true,
       loadingFallback,
+      fallbackClass,
     }: RenderOptions = {}) =>
     {
       if (dataValue) return value ? value() : String(dataValue);
       else return showFallback ?
-        loadingFallback ? loadingFallback : <LoadingIndicator />
+        loadingFallback ? loadingFallback : <LoadingIndicator className={fallbackClass} />
         :
         '';
     };
@@ -81,11 +84,13 @@ const DataState = {
     let Render = ({
       error,
       showFallback = true,
+      fallbackClass,
     }: RenderOptions = {}) =>
     {
       return showFallback ?
         <ErrorIndicator
           error={error ? error : errorInstance.message}
+          className={fallbackClass}
         />
         :
         '';
