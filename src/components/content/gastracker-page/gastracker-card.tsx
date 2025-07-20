@@ -7,25 +7,23 @@ export default function GastrackerCard({ title, prices }: {
   title: string,
   prices: DataState<Prices>,
 }) {
-  let gasPriceGwei, gasPriceUsd, smiley, smileyLabel, colorClass;
+  // Callback to get low/average/highGasPrice depending on component:
+  const gasPrice = () => Object.entries(prices.value!).find( // find returns a key-value pair (value = [1])
+    ([key]) => key.startsWith(title.toLowerCase()) )?.[1]; // OR undefined => `?.` optional chaining required
+
+  let smiley, smileyLabel, colorClass;
   switch (title) {
     case 'Low':
-      gasPriceGwei = () => getGasPriceGwei(prices.value!.lowGasPrice);
-      gasPriceUsd = () => getGasPriceUsd(prices.value!.lowGasPrice, prices.value!.ethPrice);
       smiley = '😎';
       smileyLabel = 'smiling face with sunglasses';
       colorClass = 'text-green-600';
       break;
     case 'Average':
-      gasPriceGwei = () => getGasPriceGwei(prices.value!.averageGasPrice);
-      gasPriceUsd = () => getGasPriceUsd(prices.value!.averageGasPrice, prices.value!.ethPrice);
       smiley = '😁';
       smileyLabel = 'beaming face with smiling eyes';
       colorClass = 'text-blue-600';
       break;
     case 'High':
-      gasPriceGwei = () => getGasPriceGwei(prices.value!.highGasPrice);
-      gasPriceUsd = () => getGasPriceUsd(prices.value!.highGasPrice, prices.value!.ethPrice);
       smiley = '😵';
       smileyLabel = 'face with crossed-out eyes';
       colorClass = 'text-red-600';
@@ -43,10 +41,12 @@ export default function GastrackerCard({ title, prices }: {
       </p>
       <div className={`text-lg tracking-wide ${colorClass}`}>
         <p>
-          <prices.Render value={gasPriceGwei} error='Error' />
+          <prices.Render error='Error'
+            value={ () => getGasPriceGwei(gasPrice()!) } />
         </p>
         <p className='text-sm'>
-          <prices.Render value={gasPriceUsd} showFallback={false} />
+          <prices.Render showFallback={false}
+            value={ () => getGasPriceUsd(gasPrice()!, prices.value!.ethPrice) } />
         </p>
       </div>
     </div>
