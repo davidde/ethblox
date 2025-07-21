@@ -9,117 +9,124 @@ import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import StatCard from './stat-card';
 import { getGasPriceGwei, getGasPriceUsd } from '@/lib/utilities';
+import DataState from '@/lib/data-state';
 
+
+type PricesTxs = {
+  ethPrice: number,
+  averageGasPrice: number,
+  transactionsToday: string,
+  totalTransactions: string,
+};
 
 export default function Stats() {
-  const [ethSupply, setEthSupply] = useState<number>();
-  const [ethSupplyError, setEthSupplyError] = useState<string>();
-
-  const [ethPrice, setEthPrice] = useState<number>();
-  const [averageGasPrice, setAverageGasPrice] = useState<number>();
-  const [transactionsToday, setTransactionsToday] = useState<string>();
-  const [totalTransactions, setTotalTransactions] = useState<string>();
-  const [ethPriceError, setEthPriceError] = useState<string>();
+  const [ethSupply, setEthSupply] = useState(DataState.value<number>());
+  const [pricesAndTxs, setPricesAndTxs] = useState(DataState.value<PricesTxs>());
 
   async function getEthSupply() {
     try {
       const res = await fetch('https://eth.blockscout.com/api/v2/stats/charts/market');
       if (!res.ok) throw new Error(`Response NOT OK, status: ${res.status}`);
       const json = await res.json();
-      setEthSupply(+json.available_supply);
+      setEthSupply(DataState.value(+json.available_supply));
     } catch (err) {
-      const error = 'HomePage Stats ETH supply:' + err;
-      console.error(error);
-      setEthSupplyError(error);
+      setEthSupply(DataState.error(err));
     }
   }
 
-  async function getPriceAndTransactions() {
+  async function getPricesAndTransactions() {
     try {
       const res = await fetch('https://eth.blockscout.com/api/v2/stats');
       if (!res.ok) throw new Error(`Response NOT OK, status: ${res.status}`);
       const json = await res.json();
-      setEthPrice(+json.coin_price);
-      setAverageGasPrice(+json.gas_prices.average);
-      setTransactionsToday((+json.transactions_today).toLocaleString('en-US'));
-      setTotalTransactions((+json.total_transactions).toLocaleString('en-US'));
+      setPricesAndTxs(DataState.value({
+        ethPrice: +json.coin_price,
+        averageGasPrice: +json.gas_prices.average,
+        transactionsToday: (+json.transactions_today).toLocaleString('en-US'),
+        totalTransactions: (+json.total_transactions).toLocaleString('en-US'),
+      }));
     } catch (err) {
-      const error = 'HomePage Stats ETH price/transaction:' + err;
-      console.error(error);
-      setEthPriceError(error);
+      setPricesAndTxs(DataState.error(err));
     }
   }
 
   useEffect(() => {
     getEthSupply();
-    getPriceAndTransactions();
+    getPricesAndTransactions();
   }, []);
 
-  const averageGasPriceLink = (averageGasPrice && ethPrice) ?
+  const averageGasPriceLink = () =>
     <Link href='/mainnet/gastracker'
       className='text-(--link-color) hover:text-(--hover-fg-color)'>
-      {getGasPriceGwei(averageGasPrice)} {getGasPriceUsd(averageGasPrice, ethPrice)}
-    </Link> : undefined;
-  const ethPriceFormatted = ethPrice?.toLocaleString('en-US', {
+      {getGasPriceGwei(pricesAndTxs.value!.averageGasPrice)} {getGasPriceUsd(pricesAndTxs.value!.averageGasPrice, pricesAndTxs.value!.ethPrice)}
+    </Link>;
+  const ethPriceFormatted = () => pricesAndTxs.value!.ethPrice.toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
   });
-  const ethSupplyFormatted = ethSupply ?
-    `Ξ${ethSupply.toLocaleString('en-US', {
+  const ethSupplyFormatted = () =>
+    `Ξ${ethSupply.value!.toLocaleString('en-US', {
       maximumFractionDigits: 2,
-    })}` : undefined;
-  const ethMarketCap = ethPrice && ethSupply ?
-    (ethPrice * ethSupply).toLocaleString('en-US', {
+    })}`;
+
+  // ethMarketCap is dependent on both DataStates, so we make a single new DataState
+  // for it exclusively for passing down to GastrackerCard:
+  let ethMarketCap = DataState.value<string>();
+  if (pricesAndTxs.value && ethSupply.value) {
+    ethMarketCap = DataState.value((pricesAndTxs.value.ethPrice * ethSupply.value).toLocaleString('en-US', {
       style: 'currency',
       currency: 'USD',
-    }) : undefined;
+    }));
+  } else if (pricesAndTxs.error || ethSupply.error) {
+    ethMarketCap = DataState.error(new Error('Error'));
+  }
 
   return (
     <div className='border border-(--border-color) bg-(--comp-bg-color) rounded-lg
                     w-full max-w-xl md:max-w-300 my-4 md:my-8 md:mr-12 py-2 md:py-0'>
       <div className='flex flex-col md:flex-row justify-between'>
         <StatCard
-          label="ETHER PRICE"
+          label='ETHER PRICE'
           icon={<CurrencyDollarIcon className='w-8 h-8' />}
+          data={pricesAndTxs}
           value={ethPriceFormatted}
-          error={ethPriceError}
           className='md:border-b'
         />
         <StatCard
-          label="ETHER SUPPLY"
+          label='ETHER SUPPLY'
           icon={<div className='w-8 h-8 bg-(image:--eth-logo-url) bg-contain bg-no-repeat bg-center' />}
+          data={ethSupply}
           value={ethSupplyFormatted}
-          error={ethSupplyError}
           className='md:border-b md:border-x'
         />
         <StatCard
-          label="ETHER MARKET CAP"
+          label='ETHER MARKET CAP'
           icon={<GlobeAltIcon className='w-8 h-8' />}
-          value={ethMarketCap}
-          error={ethPriceError || ethSupplyError}
+          data={ethMarketCap}
+          value={() => ethMarketCap.value}
           className='md:border-b'
         />
       </div>
 
       <div className='flex flex-col md:flex-row justify-between'>
         <StatCard
-          label="AVERAGE GAS PRICE"
+          label='AVERAGE GAS PRICE'
           icon={<FireIcon className='w-8 h-8' />}
+          data={pricesAndTxs}
           value={averageGasPriceLink}
-          error={ethPriceError}
         />
         <StatCard
-          label="TRANSACTIONS TODAY"
+          label='TRANSACTIONS TODAY'
           icon={<ClipboardDocumentListIcon className='w-8 h-8' />}
-          value={transactionsToday}
-          error={ethPriceError}
+          data={pricesAndTxs}
+          value={() => pricesAndTxs.value!.transactionsToday}
           className='md:border-x'
         />
         <StatCard
-          label="TOTAL TRANSACTIONS"
+          label='TOTAL TRANSACTIONS'
           icon={<Square3Stack3DIcon className='w-8 h-8' />}
-          value={totalTransactions}
-          error={ethPriceError}
+          data={pricesAndTxs}
+          value={() => pricesAndTxs.value!.totalTransactions}
         />
       </div>
     </div>

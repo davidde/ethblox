@@ -1,11 +1,12 @@
-import ValueDisplay from '@/components/common/value-display';
+import { ReactNode } from 'react';
+import DataState from '@/lib/data-state';
 
 
-export default function StatCard(props: {
+export default function StatCard<T>(props: {
   label: string,
-  icon: React.ReactNode,
-  value?: React.ReactNode,
-  error?: string,
+  icon: ReactNode,
+  data: DataState<T>,
+  value: () => ReactNode,
   className?: string
 }) {
   return (
@@ -19,11 +20,10 @@ export default function StatCard(props: {
           </p>
         </div>
         <div className='pl-12'>
-        <ValueDisplay
-          value={props.value}
-          error={props.error}
-          err='Error'
-        />
+          <props.data.Render
+            value={props.value}
+            error='Error'
+          />
         </div>
       </div>
     </div>
