@@ -1,22 +1,30 @@
-import { Alchemy } from 'alchemy-sdk';
+'use client';
+
+import { useEffect, useState } from 'react';
+import { getAlchemy } from '@/lib/utilities';
+import DataState from '@/lib/data-state';
 import Transaction from './transaction';
 import ErrorIndicator from '@/components/common/error-indicator';
+import { BlockWithTransactions } from 'alchemy-sdk';
 
 
-type Props = {
+export default function Transactions(props: {
   blockNumber: number | undefined,
   network: string,
-  alchemy: Alchemy
-}
+}) {
+  const alchemy = getAlchemy(props.network);
+  const [blockWithTransactions, setBlockWithTransactions] = useState(DataState.value<BlockWithTransactions>());
 
-export default async function Transactions(props: Props) {
-  let blockWithTransactions;
-
-  try {
-    blockWithTransactions = await props.alchemy.core.getBlockWithTransactions(props.blockNumber!);
-  } catch(error) {
-    console.error('getBlockNumber() Error: ', error);
-  }
+  useEffect(() => {
+    (async () => {
+      try {
+        const resp = await alchemy.core.getBlockWithTransactions(props.blockNumber!);
+        setBlockWithTransactions(DataState.value(resp));
+      } catch(err) {
+        setBlockWithTransactions(DataState.error(err));
+      }
+    })();
+  }, [alchemy, props.blockNumber]);
 
   return (
     <div className='border border-(--border-color) bg-(--comp-bg-color)
@@ -25,13 +33,13 @@ export default async function Transactions(props: Props) {
         Latest Transactions
       </h2>
       {
-        blockWithTransactions ?
-          blockWithTransactions.transactions.map((transaction, i) => {
+        blockWithTransactions.value ?
+          blockWithTransactions.value.transactions.map((transaction, i) => {
             if (i < 6)
               return (
                 <Transaction
                   key={i}
-                  transaction={transaction!}
+                  transaction={transaction}
                   network={props.network}
                 />
               );

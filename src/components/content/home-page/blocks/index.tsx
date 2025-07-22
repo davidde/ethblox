@@ -1,12 +1,12 @@
-import { Alchemy } from 'alchemy-sdk';
+'use client';
+
 import Block from './block';
 import ErrorIndicator from '@/components/common/error-indicator';
 
 
-export default async function Blocks(props: {
+export default function Blocks(props: {
   blockNumber: number | undefined,
   network: string,
-  alchemy: Alchemy
 }) {
   return (
     <div className='border border-(--border-color) bg-(--comp-bg-color)

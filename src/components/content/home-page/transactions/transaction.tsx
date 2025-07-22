@@ -1,3 +1,5 @@
+'use client';
+
 import { DocumentTextIcon } from '@heroicons/react/24/outline';
 import { TransactionResponse } from 'alchemy-sdk';
 import { truncateAddress, truncateTransaction, getEtherValueFromWei } from '@/lib/utilities';

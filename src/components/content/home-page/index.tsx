@@ -57,14 +57,12 @@ export default async function HomePage(props: {network: string}) {
             <Blocks
               blockNumber={blockNumber}
               network={props.network}
-              alchemy={alchemy}
             />
           </Suspense>
           <Suspense fallback={<TransactionsSkeleton />}>
             <Transactions
               blockNumber={blockNumber}
               network={props.network}
-              alchemy={alchemy}
             />
           </Suspense>
         </div>
