@@ -55,12 +55,13 @@ export default function Block(props: {
           <CubeIcon className='w-10 h-10 md:w-8 md:h-8' />
           <div className='flex md:flex-col ml-2 pt-1 md:pt-0 md:w-32'>
             <span className='px-2 md:px-4 leading-5'>
-              <Link
-                href={`/${props.network}/block?number=${props.blockNumber}`}
-                className='text-(--link-color) hover:text-(--hover-fg-color)'
-              >
-                {props.blockNumber}
-              </Link>
+              <block.Render
+                value={() => <Link href={`/${props.network}/block?number=${block.value!.number}`}
+                                   className='text-(--link-color) hover:text-(--hover-fg-color)'>
+                                {block.value!.number}
+                             </Link>}
+                error={'Error'}
+              />
             </span>
             <span className='md:pl-4 text-sm text-(--grey-fg-color)'>
               <block.Render

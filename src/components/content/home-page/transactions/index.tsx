@@ -9,7 +9,7 @@ import { BlockWithTransactions } from 'alchemy-sdk';
 
 
 export default function Transactions(props: {
-  blockNumber: number | undefined,
+  blockNumber: DataState<number>,
   network: string,
 }) {
   const alchemy = getAlchemy(props.network);
@@ -18,7 +18,7 @@ export default function Transactions(props: {
   useEffect(() => {
     (async () => {
       try {
-        const resp = await alchemy.core.getBlockWithTransactions(props.blockNumber!);
+        const resp = await alchemy.core.getBlockWithTransactions(props.blockNumber.value!);
         setBlockWithTransactions(DataState.value(resp));
       } catch(err) {
         setBlockWithTransactions(DataState.error(err));
