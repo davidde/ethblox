@@ -5,7 +5,7 @@ import DataState from '@/lib/data-state';
 export default function StatCard<T>(props: {
   label: string,
   icon: ReactNode,
-  data: DataState<T>,
+  dataState: DataState<T>,
   value: () => ReactNode,
   className?: string
 }) {
@@ -20,7 +20,7 @@ export default function StatCard<T>(props: {
           </p>
         </div>
         <div className='pl-12'>
-          <props.data.Render
+          <props.dataState.Render
             value={props.value}
             error='Error'
           />

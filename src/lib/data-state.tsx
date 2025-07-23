@@ -3,12 +3,14 @@ import LoadingIndicator from '@/components/common/loading-indicator';
 import ErrorIndicator from '@/components/common/error-indicator';
 
 
+// Options to configure the `DataState`'s Render method that displays
+// either the `ValueState`'s value, or the `ErrorState`'s error.
 interface RenderOptions {
-  // Optional callback function for rendering a subfield of the value IFF that value is present:
+  // Optional callback function for rendering a subfield of the `ValueState`'s value IFF that value is present:
   value?: () => ReactNode,
   // Optional short error to display instead of full error:
   error?: string,
-  // Optionally don't display a fallback component like Loading- or ErrorIndicators:
+  // Optionally don't display fallback components like Loading- or ErrorIndicators:
   showFallback?: boolean,
   // Optional className for the fallback component when it exists:
   fallbackClass?: string,
@@ -47,7 +49,7 @@ type DataState<T> = ValueState<T> | ErrorState;
 const DataState = {
   // Create ValueState<T> from value or nothing when initializing:
   value: <T,>(dataValue?: T): DataState<T> => {
-    let Render = ({
+    const Render = ({
       value,
       showFallback = true,
       loadingFallback,
@@ -81,7 +83,7 @@ const DataState = {
         new Error(`${errorPrefix} ${String(unknownError)}`) : new Error(String(unknownError));
     }
 
-    let Render = ({
+    const Render = ({
       error,
       showFallback = true,
       fallbackClass,

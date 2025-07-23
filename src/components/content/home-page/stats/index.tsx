@@ -90,21 +90,21 @@ export default function Stats() {
         <StatCard
           label='ETHER PRICE'
           icon={<CurrencyDollarIcon className='w-8 h-8' />}
-          data={pricesAndTxs}
+          dataState={pricesAndTxs}
           value={ethPriceFormatted}
           className='md:border-b'
         />
         <StatCard
           label='ETHER SUPPLY'
           icon={<div className='w-8 h-8 bg-(image:--eth-logo-url) bg-contain bg-no-repeat bg-center' />}
-          data={ethSupply}
+          dataState={ethSupply}
           value={ethSupplyFormatted}
           className='md:border-b md:border-x'
         />
         <StatCard
           label='ETHER MARKET CAP'
           icon={<GlobeAltIcon className='w-8 h-8' />}
-          data={ethMarketCap}
+          dataState={ethMarketCap}
           value={() => ethMarketCap.value}
           className='md:border-b'
         />
@@ -114,20 +114,20 @@ export default function Stats() {
         <StatCard
           label='AVERAGE GAS PRICE'
           icon={<FireIcon className='w-8 h-8' />}
-          data={pricesAndTxs}
+          dataState={pricesAndTxs}
           value={averageGasPriceLink}
         />
         <StatCard
           label='TRANSACTIONS TODAY'
           icon={<ClipboardDocumentListIcon className='w-8 h-8' />}
-          data={pricesAndTxs}
+          dataState={pricesAndTxs}
           value={() => pricesAndTxs.value!.transactionsToday}
           className='md:border-x'
         />
         <StatCard
           label='TOTAL TRANSACTIONS'
           icon={<Square3Stack3DIcon className='w-8 h-8' />}
-          data={pricesAndTxs}
+          dataState={pricesAndTxs}
           value={() => pricesAndTxs.value!.totalTransactions}
         />
       </div>
