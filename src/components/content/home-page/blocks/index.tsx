@@ -15,7 +15,7 @@ export default function Blocks(props: {
       <h2 className='text-[1.15rem] font-bold p-2 pl-4 md:p-3 md:pl-4 border-b border-(--border-color)'>Latest Blocks</h2>
       {
         props.latestBlockData.error ?
-          <ErrorIndicator error='Error getting latest blocks' className='block pl-4 py-2' />
+          <ErrorIndicator error='Error getting latest blocks' className='pl-4 py-2' />
           :
           [...Array(5)].map((_, i) =>
             <Block

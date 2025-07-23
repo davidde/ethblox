@@ -34,7 +34,7 @@ export default function Transactions(props: {
       </h2>
       {
         blockWithTransactions.error ?
-          <ErrorIndicator error='Error getting latest transactions' className='block pl-4 py-2' />
+          <ErrorIndicator error='Error getting latest transactions' className='pl-4 py-2' />
           :
           [...Array(6)].map((_, i) =>
                 <Transaction

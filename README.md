@@ -1,7 +1,7 @@
 <img src='src/app/favicon.ico' width=70 align='left'>
 
 # ΞthBlox
-## Ethereum Blockexplorer with Next.js, Typescript and TailwindCSS
+## Ethereum Blockexplorer Static Site
 This is the **Alchemy Ethereum Developer Bootcamp Week 3 project**, which I've been using to learn Next.js, and how its client/server components impact static site generation. Typescript and TailwindCSS were a first for me too, so overall it's been a very instructive experience.
 
 The starter code and assignment are available [here](https://github.com/alchemyplatform/blockexplorer).  
