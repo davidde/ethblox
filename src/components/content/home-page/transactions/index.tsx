@@ -9,22 +9,22 @@ import { BlockWithTransactions } from 'alchemy-sdk';
 
 
 export default function Transactions(props: {
-  blockNumber: DataState<number>,
+  latestBlockData: DataState<number>,
   network: string,
 }) {
   const alchemy = getAlchemy(props.network);
   const [blockWithTransactions, setBlockWithTransactions] = useState(DataState.value<BlockWithTransactions>());
 
   useEffect(() => {
-    (async () => {
+    if (props.latestBlockData.value) (async () => {
       try {
-        const resp = await alchemy.core.getBlockWithTransactions(props.blockNumber.value!);
+        const resp = await alchemy.core.getBlockWithTransactions(props.latestBlockData.value!);
         setBlockWithTransactions(DataState.value(resp));
       } catch(err) {
         setBlockWithTransactions(DataState.error(err));
       }
     })();
-  }, [alchemy, props.blockNumber]);
+  }, [alchemy, props.latestBlockData]);
 
   return (
     <div className='border border-(--border-color) bg-(--comp-bg-color)

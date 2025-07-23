@@ -17,11 +17,12 @@ import PopoverLink from '../../../common/popover-link';
 
 
 export default function Block(props: {
-  blockNumber: number,
+  id: number,
+  latestBlockData: DataState<number>,
   network: string,
 }) {
   const alchemy = getAlchemy(props.network);
-  const blockRewardUrl = getBlockRewardUrl(props.network, props.blockNumber);
+  const blockNumber = props.latestBlockData.value ? props.latestBlockData.value - props.id : undefined;
 
   // Calling `DataState.value()` inside `useState()` is required
   // to get a `DataState<undefined>` instead of an `undefined`!
@@ -29,15 +30,15 @@ export default function Block(props: {
   const [blockReward, setBlockReward] = useState(DataState.value<string>());
 
   useEffect(() => {
-    if (props.blockNumber) (async () => {
+    if (blockNumber) (async () => {
       try {
-        const resp = await alchemy.core.getBlock(props.blockNumber);
+        const resp = await alchemy.core.getBlock(blockNumber);
         setBlock(DataState.value(resp));
       } catch(err) {
         setBlock(DataState.error(err));
       }
       try {
-        const resp = await fetch(blockRewardUrl);
+        const resp = await fetch(getBlockRewardUrl(props.network, blockNumber));
         if (!resp.ok) throw new Error(`Response NOT OK, status: ${resp.status}`);
         const data = await resp.json();
         if (!data.result || !data.result.blockReward) throw new Error('Block reward missing from response.');
@@ -46,7 +47,7 @@ export default function Block(props: {
         setBlockReward(DataState.error(err));
       }
     })();
-  }, [alchemy, props.blockNumber, blockRewardUrl]);
+  }, [alchemy, blockNumber]);
 
   return (
     <div className='min-h-[8.5rem] md:min-h-[5.8rem] p-2 md:p-3 border-b border-(--border-color) last:border-0'>
@@ -56,9 +57,9 @@ export default function Block(props: {
           <div className='flex md:flex-col ml-2 pt-1 md:pt-0 md:w-32'>
             <span className='px-2 md:px-4 leading-5'>
               <block.Render
-                value={() => <Link href={`/${props.network}/block?number=${block.value!.number}`}
+                value={() => <Link href={`/${props.network}/block?number=${blockNumber}`}
                                    className='text-(--link-color) hover:text-(--hover-fg-color)'>
-                                {block.value!.number}
+                                {blockNumber}
                              </Link>}
                 error={'Error'}
               />

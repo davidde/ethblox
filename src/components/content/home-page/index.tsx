@@ -1,12 +1,10 @@
 'use client';
 
 // Alchemy SDK Docs: https://docs.alchemy.com/reference/alchemy-sdk-api-surface-overview#api-surface
-import { Suspense, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Searchbar from '@/components/common/searchbar';
 import Blocks from './blocks';
-import BlocksSkeleton from './blocks/blocks-skeleton';
 import Transactions from './transactions';
-import TransactionsSkeleton from './transactions/transactions-skeleton';
 import Stats from './stats';
 import NodeBanner from './node-banner';
 import { getAlchemy } from '@/lib/utilities';
@@ -15,15 +13,15 @@ import DataState from '@/lib/data-state';
 
 export default function HomePage(props: {network: string}) {
   const alchemy = getAlchemy(props.network);
-  const [blockNumber, setBlockNumber] = useState(DataState.value<number>());
+  const [latestBlock, setLatestBlock] = useState(DataState.value<number>());
 
   useEffect(() => {
     (async () => {
       try {
         const resp = await alchemy.core.getBlockNumber();
-        setBlockNumber(DataState.value(resp));
+        setLatestBlock(DataState.value(resp));
       } catch(err) {
-        setBlockNumber(DataState.error(err));
+        setLatestBlock(DataState.error(err));
       }
     })();
   }, [alchemy]);
@@ -58,12 +56,11 @@ export default function HomePage(props: {network: string}) {
               </> : ''
           }
             <Blocks
-              blockNumber={blockNumber}
+              latestBlockData={latestBlock}
               network={props.network}
             />
-
             <Transactions
-              blockNumber={blockNumber}
+              latestBlockData={latestBlock}
               network={props.network}
             />
         </div>
