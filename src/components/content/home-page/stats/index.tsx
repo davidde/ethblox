@@ -77,8 +77,10 @@ export default function Stats() {
       style: 'currency',
       currency: 'USD',
     }));
-  } else if (pricesAndTxs.error || ethSupply.error) {
-    ethMarketCap = DataState.error(new Error('Error'));
+  } else if (pricesAndTxs.error) {
+    ethMarketCap = DataState.error(pricesAndTxs.error);
+  } else if (ethSupply.error) {
+    ethMarketCap = DataState.error(ethSupply.error);
   }
 
   return (
