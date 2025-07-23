@@ -14,6 +14,7 @@ import {
 import DataState from '@/lib/data-state';
 import Link from 'next/link';
 import PopoverLink from '../../../common/popover-link';
+import LoadingPulse from '@/components/common/loading-pulse';
 
 
 export default function Block(props: {
@@ -65,13 +66,15 @@ export default function Block(props: {
                                    className='text-(--link-color) hover:text-(--hover-fg-color)'>
                                 {blockNumber}
                              </Link>}
-                error={'Error'}
+                loadingFallback={<LoadingPulse className='bg-(--link-color) w-[5rem]' />}
+                error='Error'
               />
             </span>
             <span className='md:pl-4 text-sm text-(--grey-fg-color)'>
               <block.Render
                 value={() => `(${getBlockAgeFromSecs(getSecsFromUnixSecs(block.value!.timestamp))} ago)`}
-                error={'Error'}
+                loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[6rem]' />}
+                error='Error'
               />
             </span>
           </div>
@@ -81,15 +84,21 @@ export default function Block(props: {
           <span className='px-2 md:px-4 leading-5'>
             <block.Render
               value={() => `${block.value!.transactions.length} transactions`}
-              error={'Error'}
+              loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[8rem]' />}
+              error='Error'
             />
           </span>
           <span className='pl-2 md:pl-4'>
-            Block Reward: &nbsp;
-            <blockReward.Render error={'Error'} />
+            { block.value ? <span>Block Reward:</span> : <LoadingPulse className='bg-(--grey-fg-color) w-[6.5rem]' /> }
+            &nbsp;&nbsp;
+            <blockReward.Render
+              loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[4rem]' />}
+              error='Error'
+            />
           </span>
           <span className='pl-2 md:pl-4 leading-5'>
-            Recipient:&nbsp;
+            { block.value ? <span>Recipient:</span> : <LoadingPulse className='bg-(--grey-fg-color) w-[4.5rem]' /> }
+            &nbsp;&nbsp;
             <block.Render
               value={() =>
                 <PopoverLink
@@ -98,7 +107,8 @@ export default function Block(props: {
                   popover={block.value!.miner}
                   className='left-[-37%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                 />}
-              error={'Error'}
+              loadingFallback={<LoadingPulse className='bg-(--link-color) w-[11rem]' />}
+              error='Error'
             />
           </span>
         </div>

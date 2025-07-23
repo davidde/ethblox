@@ -34,6 +34,15 @@
       text-shadow: none;
     }
   }
+
+  @keyframes pulse-strong {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
+  }
 }
 
 @layer utilities {
@@ -80,6 +89,10 @@
     font-size: 0.875rem;
     letter-spacing: 0.05em;
     color: var(--grey-fg-color);
+  }
+
+  .animate-pulse-strong {
+    animation: pulse-strong 1.2s ease-in-out infinite;
   }
 
   .light {
