@@ -41,8 +41,12 @@ export default function Block(props: {
         const resp = await fetch(getBlockRewardUrl(props.network, blockNumber));
         if (!resp.ok) throw new Error(`Response NOT OK, status: ${resp.status}`);
         const data = await resp.json();
-        if (!data.result || !data.result.blockReward) throw new Error('Block reward missing from response.');
-        setBlockReward(DataState.value(`Ξ${getEtherValueFromWei(data.result.blockReward, 4)}`));
+        if (!data.result || !data.result.blockReward) {
+          // Latest Block often doesn't have reward yet:
+          if (props.id === 0) setBlockReward(DataState.value('TBD'));
+          else throw new Error('Block reward missing from response.');
+        }
+        else setBlockReward(DataState.value(`Ξ${getEtherValueFromWei(data.result.blockReward, 4)}`));
       } catch(err) {
         setBlockReward(DataState.error(err));
       }
