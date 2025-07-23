@@ -33,19 +33,17 @@ export default function Transactions(props: {
         Latest Transactions
       </h2>
       {
-        blockWithTransactions.value ?
-          blockWithTransactions.value.transactions.map((transaction, i) => {
-            if (i < 6)
-              return (
+        blockWithTransactions.error ?
+          <ErrorIndicator error='Error getting latest transactions' className='block pl-4 py-2' />
+          :
+          [...Array(6)].map((_, i) =>
                 <Transaction
                   key={i}
-                  transaction={transaction}
+                  id={i}
+                  blockWithTransactions={blockWithTransactions}
                   network={props.network}
                 />
-              );
-          })
-          :
-          <ErrorIndicator error='Error getting latest transactions' className='block pl-4 py-2' />
+          )
       }
     </div>
   );
