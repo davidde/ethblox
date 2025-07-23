@@ -15,6 +15,7 @@ import DataState from '@/lib/data-state';
 import Link from 'next/link';
 import PopoverLink from '../../../common/popover-link';
 import LoadingPulse from '@/components/common/loading-pulse';
+import LoadingPulseStatic from '@/components/common/loading-pulse-static';
 
 
 export default function Block(props: {
@@ -89,7 +90,11 @@ export default function Block(props: {
             />
           </span>
           <span className='pl-2 md:pl-4'>
-            { block.value ? <span>Block Reward:</span> : <LoadingPulse className='bg-(--grey-fg-color) w-[6.5rem]' /> }
+            <LoadingPulseStatic
+              content='Block Reward:'
+              dataState={blockReward}
+              className='bg-(--grey-fg-color)'
+            />
             &nbsp;&nbsp;
             <blockReward.Render
               loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[4rem]' />}
@@ -97,7 +102,11 @@ export default function Block(props: {
             />
           </span>
           <span className='pl-2 md:pl-4 leading-5'>
-            { block.value ? <span>Recipient:</span> : <LoadingPulse className='bg-(--grey-fg-color) w-[4.5rem]' /> }
+            <LoadingPulseStatic
+              content='Recipient:'
+              dataState={block}
+              className='bg-(--grey-fg-color)'
+            />
             &nbsp;&nbsp;
             <block.Render
               value={() =>
