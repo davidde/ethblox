@@ -19,7 +19,7 @@ type PricesTxs = {
   totalTransactions: string,
 };
 
-export default function Stats() {
+export default function Stats(props : { className: string }) {
   const [ethSupply, setEthSupply] = useState(DataState.value<number>());
   const [pricesAndTxs, setPricesAndTxs] = useState(DataState.value<PricesTxs>());
 
@@ -84,8 +84,8 @@ export default function Stats() {
   }
 
   return (
-    <div className='border border-(--border-color) bg-(--comp-bg-color) rounded-lg
-                    w-full max-w-xl md:max-w-300 my-4 md:my-8 md:mr-12 py-2 md:py-0'>
+    <div className={`${props.className} border border-(--border-color) bg-(--comp-bg-color)
+                    rounded-lg w-full max-w-xl md:max-w-300 my-4 md:my-8 md:mr-12 py-2 md:py-0`}>
       <div className='flex flex-col md:flex-row justify-between'>
         <StatCard
           label='ETHER PRICE'
