@@ -51,7 +51,7 @@ export default function Block(props: {
         setBlockReward(DataState.error(err));
       }
     })();
-  }, [alchemy, blockNumber]);
+  }, [alchemy, blockNumber, props.id, props.network]);
 
   return (
     <div className='min-h-[8.5rem] md:min-h-[5.8rem] p-2 md:p-3 border-b border-(--border-color) last:border-0'>

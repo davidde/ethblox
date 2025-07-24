@@ -8,13 +8,13 @@ export default function ErrorWithRetry(props: {
   error?: string,
   className?: string
 }) {
+  const [isLoading, setIsLoading] = useState(false);
+  const spinning = isLoading ? 'animate-spin' : '';
+
   if (!props.retry) return <ErrorIndicator
                              className={props.className}
                              error={props.error}
                            />;
-
-  const [isLoading, setIsLoading] = useState(false);
-  const spinning = isLoading ? 'animate-spin' : '';
 
   const handleClick = async () => {
     setIsLoading(true);
