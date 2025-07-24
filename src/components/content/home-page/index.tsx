@@ -15,15 +15,17 @@ export default function HomePage(props: {network: string}) {
   const alchemy = getAlchemy(props.network);
   const [latestBlock, setLatestBlock] = useState(DataState.value<number>());
 
+  async function getLatestBlock() {
+    try {
+      const resp = await alchemy.core.getBlockNumber();
+      setLatestBlock(DataState.value(resp));
+    } catch(err) {
+      setLatestBlock(DataState.error(err));
+    }
+  }
+
   useEffect(() => {
-    (async () => {
-      try {
-        const resp = await alchemy.core.getBlockNumber();
-        setLatestBlock(DataState.value(resp));
-      } catch(err) {
-        setLatestBlock(DataState.error(err));
-      }
-    })();
+    getLatestBlock();
   }, [alchemy]);
 
   return (
@@ -53,13 +55,15 @@ export default function HomePage(props: {network: string}) {
           <div className='basis-full h-0' /> {/* Break the following flex item to a new row */}
 
           <Blocks
-            latestBlockData={latestBlock}
             network={props.network}
+            latestBlockData={latestBlock}
+            retry={getLatestBlock}
           />
 
           <Transactions
-            latestBlockData={latestBlock}
             network={props.network}
+            latestBlockData={latestBlock}
+            retry={getLatestBlock}
           />
         </div>
       </div>

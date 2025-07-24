@@ -9,7 +9,7 @@ export default function ErrorWithRetry(props: {
   className?: string
 }) {
   const [isLoading, setIsLoading] = useState(false);
-  const spinning = isLoading ? 'animate-spin' : '';
+  const spin = isLoading ? 'animate-spin cursor-default' : 'cursor-pointer';
 
   const handleClick = async () => {
     setIsLoading(true);
@@ -27,7 +27,7 @@ export default function ErrorWithRetry(props: {
         error={props.error}
       />
       <ArrowPathIcon
-        className={`w-[1em] h-[1em] inline-block ml-[0.75em] cursor-pointer ${spinning}`}
+        className={`w-[1em] h-[1em] inline-block ml-[0.75em] ${spin}`}
         onClick={handleClick}
       />
     </span>

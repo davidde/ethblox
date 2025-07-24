@@ -2,12 +2,13 @@
 
 import DataState from '@/lib/data-state';
 import Block from './block';
-import ErrorIndicator from '@/components/common/indicators/error-indicator';
+import ErrorWithRetry from '@/components/common/indicators/error-with-retry';
 
 
 export default function Blocks(props: {
-  latestBlockData: DataState<number>,
   network: string,
+  latestBlockData: DataState<number>,
+  retry: () => Promise<void>,
 }) {
   return (
     <div className='border border-(--border-color) bg-(--comp-bg-color)
@@ -15,7 +16,11 @@ export default function Blocks(props: {
       <h2 className='text-[1.15rem] font-bold p-2 pl-4 md:p-3 md:pl-4 border-b border-(--border-color)'>Latest Blocks</h2>
       {
         props.latestBlockData.error ?
-          <ErrorIndicator error='Error getting latest blocks' className='pl-4 py-2' />
+          <ErrorWithRetry
+            error='Error getting latest block'
+            className='pl-4 py-2'
+            retry={props.retry}
+          />
           :
           [...Array(5)].map((_, i) =>
             <Block

@@ -9,8 +9,9 @@ import ErrorWithRetry from '@/components/common/indicators/error-with-retry';
 
 
 export default function Transactions(props: {
-  latestBlockData: DataState<number>,
   network: string,
+  latestBlockData: DataState<number>,
+  retry: () => Promise<void>,
 }) {
   const alchemy = getAlchemy(props.network);
   const [blockWithTransactions, setBlockWithTransactions] = useState(DataState.value<BlockWithTransactions>());
@@ -28,6 +29,29 @@ export default function Transactions(props: {
     getBlockWithTransactions();
   }, [alchemy, props.latestBlockData]);
 
+  let transactionsDisplay;
+  if (props.latestBlockData.error) {
+    transactionsDisplay = <ErrorWithRetry
+                            error='Error getting latest block'
+                            className='pl-4 py-2'
+                            retry={props.retry}
+                          />;
+  } else if (blockWithTransactions.error) {
+    transactionsDisplay = <ErrorWithRetry
+                            error='Error getting latest transactions'
+                            className='pl-4 py-2'
+                            retry={getBlockWithTransactions}
+                          />;
+  } else {
+    transactionsDisplay = [...Array(6)].map((_, i) =>
+                            <Transaction
+                              key={i}
+                              id={i}
+                              network={props.network}
+                              blockWithTransactions={blockWithTransactions}
+                            />
+                          );
+  }
   return (
     <div className='border border-(--border-color) bg-(--comp-bg-color)
                     rounded-lg w-full md:w-[48%] max-w-xl md:min-w-132 mt-4 md:mt-8 md:mr-12'>
@@ -35,21 +59,7 @@ export default function Transactions(props: {
         Latest Transactions
       </h2>
       {
-        blockWithTransactions.error ?
-          <ErrorWithRetry
-            error='Error getting latest transactions'
-            className='pl-4 py-2'
-            retry={getBlockWithTransactions}
-          />
-          :
-          [...Array(6)].map((_, i) =>
-                <Transaction
-                  key={i}
-                  id={i}
-                  network={props.network}
-                  blockWithTransactions={blockWithTransactions}
-                />
-          )
+        transactionsDisplay
       }
     </div>
   );
