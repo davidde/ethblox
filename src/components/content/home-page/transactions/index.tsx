@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { getAlchemy } from '@/lib/utilities';
 import DataState from '@/lib/data-state';
 import Transaction from './transaction';
-import ErrorIndicator from '@/components/common/indicators/error-indicator';
 import { BlockWithTransactions } from 'alchemy-sdk';
+import ErrorWithRetry from '@/components/common/indicators/error-with-retry';
 
 
 export default function Transactions(props: {
@@ -15,15 +15,17 @@ export default function Transactions(props: {
   const alchemy = getAlchemy(props.network);
   const [blockWithTransactions, setBlockWithTransactions] = useState(DataState.value<BlockWithTransactions>());
 
+  async function getBlockWithTransactions() {
+    if (props.latestBlockData.value) try {
+      const resp = await alchemy.core.getBlockWithTransactions(props.latestBlockData.value!);
+      setBlockWithTransactions(DataState.value(resp));
+    } catch(err) {
+      setBlockWithTransactions(DataState.error(err));
+    }
+  }
+
   useEffect(() => {
-    if (props.latestBlockData.value) (async () => {
-      try {
-        const resp = await alchemy.core.getBlockWithTransactions(props.latestBlockData.value!);
-        setBlockWithTransactions(DataState.value(resp));
-      } catch(err) {
-        setBlockWithTransactions(DataState.error(err));
-      }
-    })();
+    getBlockWithTransactions();
   }, [alchemy, props.latestBlockData]);
 
   return (
@@ -34,14 +36,18 @@ export default function Transactions(props: {
       </h2>
       {
         blockWithTransactions.error ?
-          <ErrorIndicator error='Error getting latest transactions' className='pl-4 py-2' />
+          <ErrorWithRetry
+            error='Error getting latest transactions'
+            className='pl-4 py-2'
+            retry={getBlockWithTransactions}
+          />
           :
           [...Array(6)].map((_, i) =>
                 <Transaction
                   key={i}
                   id={i}
-                  blockWithTransactions={blockWithTransactions}
                   network={props.network}
+                  blockWithTransactions={blockWithTransactions}
                 />
           )
       }

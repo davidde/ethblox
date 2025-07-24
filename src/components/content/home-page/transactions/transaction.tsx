@@ -11,8 +11,8 @@ import LoadingPulseStatic from '@/components/common/indicators/loading-pulse-sta
 
 export default function Transaction(props: {
   id: number,
+  network: string,
   blockWithTransactions: DataState<BlockWithTransactions>,
-  network: string
 }) {
   // Use a callback because the transactions might still be loading:
   const transaction = () => props.blockWithTransactions.value!.transactions[props.id];
