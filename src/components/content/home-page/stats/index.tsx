@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { CurrencyDollarIcon } from '@heroicons/react/24/outline';
 import { GlobeAltIcon } from '@heroicons/react/24/outline';
 import { Square3Stack3DIcon } from '@heroicons/react/24/outline';
@@ -34,7 +34,7 @@ export default function Stats(props : { className: string }) {
     }
   }
 
-  async function getPricesAndTransactions() {
+  async function getPricesAndTxs() {
     try {
       const res = await fetch('https://eth.blockscout.com/api/v2/stats');
       if (!res.ok) throw new Error(`Response NOT OK, status: ${res.status}`);
@@ -52,7 +52,7 @@ export default function Stats(props : { className: string }) {
 
   useEffect(() => {
     getEthSupply();
-    getPricesAndTransactions();
+    getPricesAndTxs();
   }, []);
 
   const averageGasPriceLink = () =>
@@ -92,6 +92,7 @@ export default function Stats(props : { className: string }) {
           icon={<CurrencyDollarIcon className='w-8 h-8' />}
           dataState={pricesAndTxs}
           value={ethPriceFormatted}
+          retry={getPricesAndTxs}
           className='md:border-b'
         />
         <StatCard
@@ -99,6 +100,7 @@ export default function Stats(props : { className: string }) {
           icon={<div className='w-8 h-8 bg-(image:--eth-logo-url) bg-contain bg-no-repeat bg-center' />}
           dataState={ethSupply}
           value={ethSupplyFormatted}
+          retry={getEthSupply}
           className='md:border-b md:border-x'
         />
         <StatCard
@@ -106,6 +108,11 @@ export default function Stats(props : { className: string }) {
           icon={<GlobeAltIcon className='w-8 h-8' />}
           dataState={ethMarketCap}
           value={() => ethMarketCap.value}
+          // ethMarketCap depends on both data fetches, so potentially refetch both:
+          retry={async () => {
+            if (pricesAndTxs.error) getPricesAndTxs();
+            if (ethSupply.error) getEthSupply();
+          }}
           className='md:border-b'
         />
       </div>
@@ -116,12 +123,14 @@ export default function Stats(props : { className: string }) {
           icon={<FireIcon className='w-8 h-8' />}
           dataState={pricesAndTxs}
           value={averageGasPriceLink}
+          retry={getPricesAndTxs}
         />
         <StatCard
           label='TRANSACTIONS TODAY'
           icon={<ClipboardDocumentListIcon className='w-8 h-8' />}
           dataState={pricesAndTxs}
           value={() => pricesAndTxs.value!.transactionsToday}
+          retry={getPricesAndTxs}
           className='md:border-x'
         />
         <StatCard
@@ -129,6 +138,7 @@ export default function Stats(props : { className: string }) {
           icon={<Square3Stack3DIcon className='w-8 h-8' />}
           dataState={pricesAndTxs}
           value={() => pricesAndTxs.value!.totalTransactions}
+          retry={getPricesAndTxs}
         />
       </div>
     </div>

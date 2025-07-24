@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import DataState from '@/lib/data-state';
+import ErrorWithRetry from '@/components/common/indicators/error-with-retry';
 
 
 export default function StatCard<T>(props: {
@@ -7,6 +8,7 @@ export default function StatCard<T>(props: {
   icon: ReactNode,
   dataState: DataState<T>,
   value: () => ReactNode,
+  retry?: () => Promise<void>,
   className?: string
 }) {
   return (
@@ -20,7 +22,10 @@ export default function StatCard<T>(props: {
           </p>
         </div>
         <div className='pl-12'>
-          <props.dataState.Render value={props.value} />
+          <props.dataState.Render
+            value={props.value}
+            errorFallback={<ErrorWithRetry retry={props.retry} />}
+          />
         </div>
       </div>
     </div>

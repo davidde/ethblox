@@ -12,10 +12,12 @@ interface RenderOptions {
   error?: string,
   // Optionally don't display fallback components like Loading- or ErrorIndicators:
   showFallback?: boolean,
-  // Optional className for the fallback component when it exists:
-  fallbackClass?: string,
   // Optionally display another component instead of the default LoadingIndicator:
   loadingFallback?: ReactNode,
+  // Optionally display another component instead of the default ErrorIndicator:
+  errorFallback?: ReactNode,
+  // Optional className for the fallback component when it exists:
+  fallbackClass?: string,
 }
 
 type ValueState<T> = {
@@ -58,7 +60,7 @@ const DataState = {
     {
       if (dataValue) return value ? value() : String(dataValue);
       else return showFallback ?
-        loadingFallback ? loadingFallback : <LoadingIndicator className={fallbackClass} />
+        ( loadingFallback ? loadingFallback : <LoadingIndicator className={fallbackClass} /> )
         :
         '';
     };
@@ -86,14 +88,12 @@ const DataState = {
     const Render = ({
       error,
       showFallback = true,
+      errorFallback,
       fallbackClass,
     }: RenderOptions = {}) =>
     {
       return showFallback ?
-        <ErrorIndicator
-          error={error}
-          className={fallbackClass}
-        />
+        ( errorFallback ? errorFallback : <ErrorIndicator error={error} className={fallbackClass} /> )
         :
         '';
     };
