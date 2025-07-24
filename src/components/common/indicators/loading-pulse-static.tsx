@@ -1,5 +1,5 @@
-import DataState from "@/lib/data-state";
-import LoadingPulse from "./loading-pulse";
+import DataState from '@/lib/data-state';
+import LoadingPulse from './loading-pulse';
 
 
 export default function LoadingPulseStatic<T>(props: {

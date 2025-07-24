@@ -41,8 +41,7 @@ export default function GastrackerCard({ title, prices }: {
       </p>
       <div className={`text-lg tracking-wide ${colorClass}`}>
         <p>
-          <prices.Render error='Error'
-            value={ () => getGasPriceGwei(gasPrice()!) } />
+          <prices.Render value={ () => getGasPriceGwei(gasPrice()!) } />
         </p>
         <p className='text-sm'>
           <prices.Render showFallback={false}

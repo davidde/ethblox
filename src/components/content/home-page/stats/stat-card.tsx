@@ -20,10 +20,7 @@ export default function StatCard<T>(props: {
           </p>
         </div>
         <div className='pl-12'>
-          <props.dataState.Render
-            value={props.value}
-            error='Error'
-          />
+          <props.dataState.Render value={props.value} />
         </div>
       </div>
     </div>

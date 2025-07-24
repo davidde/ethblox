@@ -66,14 +66,12 @@ export default function Block(props: {
                                 {blockNumber}
                              </Link>}
                 loadingFallback={<LoadingPulse className='bg-(--link-color) w-[5rem]' />}
-                error='Error'
               />
             </span>
             <span className='md:pl-4 text-sm text-(--grey-fg-color)'>
               <block.Render
                 value={() => `(${getBlockAgeFromSecs(getSecsFromUnixSecs(block.value!.timestamp))} ago)`}
                 loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[6rem]' />}
-                error='Error'
               />
             </span>
           </div>
@@ -84,7 +82,6 @@ export default function Block(props: {
             <block.Render
               value={() => `${block.value!.transactions.length} transactions`}
               loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[8rem]' />}
-              error='Error'
             />
           </span>
           <span className='pl-2 md:pl-4'>
@@ -96,7 +93,6 @@ export default function Block(props: {
             &nbsp;&nbsp;
             <blockReward.Render
               loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[4rem]' />}
-              error='Error'
             />
           </span>
           <span className='pl-2 md:pl-4 leading-5'>
@@ -115,7 +111,6 @@ export default function Block(props: {
                   className='left-[-37%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                 />}
               loadingFallback={<LoadingPulse className='bg-(--link-color) w-[11rem]' />}
-              error='Error'
             />
           </span>
         </div>

@@ -33,7 +33,6 @@ export default function Transaction(props: {
                     className='-left-full top-[-2.6rem] w-120 py-1.5 px-2.5'
                   />}
                 loadingFallback={<LoadingPulse className='bg-(--link-color) w-[10rem]' />}
-                error='Error'
                 />
             </span>
             <span className='px-2 md:pl-4'>
@@ -46,7 +45,6 @@ export default function Transaction(props: {
               <props.blockWithTransactions.Render
                 value={() => `Ξ${getEtherValueFromWei(transaction().value, 6)}`}
                 loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[3rem]' />}
-                error='Error'
               />
             </span>
           </div>
@@ -69,7 +67,6 @@ export default function Transaction(props: {
                   className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                 />}
               loadingFallback={<LoadingPulse className='bg-(--link-color) w-[11.5rem]' />}
-              error='Error'
             />
           </span>
           <span className='pl-7 md:pl-9'>
@@ -89,7 +86,6 @@ export default function Transaction(props: {
                   />
                   : <span>/</span>}
               loadingFallback={<LoadingPulse className='bg-(--link-color) w-[11.5rem]' />}
-              error='Error'
             />
           </span>
         </div>

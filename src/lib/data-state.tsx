@@ -91,7 +91,7 @@ const DataState = {
     {
       return showFallback ?
         <ErrorIndicator
-          error={error ? error : errorInstance.message}
+          error={error}
           className={fallbackClass}
         />
         :
