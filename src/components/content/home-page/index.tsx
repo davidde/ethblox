@@ -51,7 +51,7 @@ export default function HomePage(props: {network: string}) {
       {/* Actual DATA fetching components: */}
       <div className='relative -mt-20 md:-mt-[8.2rem] p-2 md:pl-12 md:pr-0'>
         <div className='flex flex-col md:flex-row flex-wrap items-center md:items-start justify-center w-full'>
-          <Stats className={props.network !== 'mainnet' ? 'hidden' : ''} />
+          { props.network === 'mainnet' ? <Stats /> : '' }
           <div className='basis-full h-0' /> {/* Break the following flex item to a new row */}
 
           <Blocks
