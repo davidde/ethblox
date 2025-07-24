@@ -5,6 +5,8 @@ import { BlockWithTransactions } from 'alchemy-sdk';
 import { truncateAddress, truncateTransaction, getEtherValueFromWei } from '@/lib/utilities';
 import PopoverLink from '@/components/common/popover-link';
 import DataState from '@/lib/data-state';
+import LoadingPulse from '@/components/common/loading-pulse';
+import LoadingPulseStatic from '@/components/common/loading-pulse-static';
 
 
 export default function Transaction(props: {
@@ -30,13 +32,20 @@ export default function Transaction(props: {
                     popover={transaction().hash}
                     className='-left-full top-[-2.6rem] w-120 py-1.5 px-2.5'
                   />}
+                loadingFallback={<LoadingPulse className='bg-(--link-color) w-[10rem]' />}
                 error='Error'
                 />
             </span>
             <span className='px-2 md:pl-4'>
-              Amount: &nbsp;
+              <LoadingPulseStatic
+                content='Amount:'
+                dataState={props.blockWithTransactions}
+                className='bg-(--grey-fg-color)'
+              />
+              &nbsp;&nbsp;
               <props.blockWithTransactions.Render
                 value={() => `Ξ${getEtherValueFromWei(transaction().value, 6)}`}
+                loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[3rem]' />}
                 error='Error'
               />
             </span>
@@ -45,7 +54,12 @@ export default function Transaction(props: {
 
         <div className='flex flex-col ml-12 md:ml-4 my-2 md:my-0'>
           <span className='pl-2 md:pl-4'>
-            From: &nbsp;
+            <LoadingPulseStatic
+              content='From:'
+              dataState={props.blockWithTransactions}
+              className='bg-(--grey-fg-color)'
+            />
+            &nbsp;&nbsp;
             <props.blockWithTransactions.Render
               value={() =>
                 <PopoverLink
@@ -54,11 +68,17 @@ export default function Transaction(props: {
                   popover={transaction().from}
                   className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                 />}
+              loadingFallback={<LoadingPulse className='bg-(--link-color) w-[11.5rem]' />}
               error='Error'
             />
           </span>
           <span className='pl-7 md:pl-9'>
-            To: &nbsp;
+            <LoadingPulseStatic
+              content='To:'
+              dataState={props.blockWithTransactions}
+              className='bg-(--grey-fg-color)'
+            />
+            &nbsp;&nbsp;
             <props.blockWithTransactions.Render
               value={() => transaction().to ?
                   <PopoverLink
@@ -68,6 +88,7 @@ export default function Transaction(props: {
                     className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                   />
                   : <span>/</span>}
+              loadingFallback={<LoadingPulse className='bg-(--link-color) w-[11.5rem]' />}
               error='Error'
             />
           </span>

@@ -26,8 +26,6 @@ export default function Block(props: {
   const alchemy = getAlchemy(props.network);
   const blockNumber = props.latestBlockData.value ? props.latestBlockData.value - props.id : undefined;
 
-  // Calling `DataState.value()` inside `useState()` is required
-  // to get a `DataState<undefined>` instead of an `undefined`!
   const [block, setBlock] = useState(DataState.value<Block>());
   const [blockReward, setBlockReward] = useState(DataState.value<string>());
 
