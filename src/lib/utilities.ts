@@ -4,12 +4,11 @@ import { RefObject } from 'react';
 
 
 export const NETWORKS = ['mainnet', 'sepolia'];
-
-let alchemyInstance: Alchemy | null = null;
+const alchemyInstances: Record<string, Alchemy> = {};
 
 export function getAlchemy(network: string) {
-  if (!alchemyInstance) {
-    alchemyInstance = new Alchemy({
+  if (!alchemyInstances[network]) {
+    alchemyInstances[network] = new Alchemy({
       // You should never expose your API key like this in production level code!
       // See https://docs.alchemy.com/docs/best-practices-for-key-security-and-management,
       // and https://docs.alchemy.com/docs/how-to-use-jwts-for-api-requests.
@@ -20,7 +19,7 @@ export function getAlchemy(network: string) {
       }, // (see: https://github.com/alchemyplatform/alchemy-sdk-js/issues/400)
     });
   }
-  return alchemyInstance;
+  return alchemyInstances[network];
 }
 
 export function getEtherValueFromWei(wei: BigNumber, decimals: number) {
