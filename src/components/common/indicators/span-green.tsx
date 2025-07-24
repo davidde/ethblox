@@ -1,4 +1,4 @@
-export default function GreenSpan(props: { children: React.ReactNode, className?: string }) {
+export default function SpanGreen(props: { children: React.ReactNode, className?: string }) {
   return (
     <span className={`${props.className} border rounded-md p-1 px-4
       bg-green-200 text-green-700 border-green-400

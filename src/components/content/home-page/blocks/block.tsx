@@ -14,8 +14,8 @@ import {
 import DataState from '@/lib/data-state';
 import Link from 'next/link';
 import PopoverLink from '../../../common/popover-link';
-import LoadingPulse from '@/components/common/loading-pulse';
-import LoadingPulseStatic from '@/components/common/loading-pulse-static';
+import LoadingPulse from '@/components/common/indicators/loading-pulse';
+import LoadingPulseStatic from '@/components/common/indicators/loading-pulse-static';
 
 
 export default function Block(props: {

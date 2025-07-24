@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
-import LoadingIndicator from '@/components/common/loading-indicator';
-import ErrorIndicator from '@/components/common/error-indicator';
+import LoadingIndicator from '@/components/common/indicators/loading-indicator';
+import ErrorIndicator from '@/components/common/indicators/error-indicator';
 
 
 // Options to configure the `DataState`'s Render method that displays

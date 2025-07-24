@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react';
 import { getAlchemy } from '@/lib/utilities';
 import { OwnedToken } from 'alchemy-sdk';
-import LoadingIndicator from '@/components/common/loading-indicator';
+import LoadingIndicator from '@/components/common/indicators/loading-indicator';
 import { TokenDropdown } from './token-dropdown';
-import ErrorIndicator from '@/components/common/error-indicator';
+import ErrorIndicator from '@/components/common/indicators/error-indicator';
 
 
 export default function Tokens(props: {

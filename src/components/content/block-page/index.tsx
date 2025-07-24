@@ -12,8 +12,8 @@ import {
   getBlockRewardUrl
 } from '@/lib/utilities';
 import { useSearchParams } from 'next/navigation';
-import GreenSpan from '@/components/common/green-span';
-import RedSpan from '@/components/common/red-span';
+import SpanGreen from '@/components/common/indicators/span-green';
+import SpanRed from '@/components/common/indicators/span-red';
 import ValueDisplay from '@/components/common/value-display';
 import PageWrapper from '@/components/common/page-wrapper';
 
@@ -73,13 +73,13 @@ export default function BlockPage(props: { network: string }) {
   let finalized;
   if (finalizedBlock) {
     finalized = blockNum <= finalizedBlock.number ?
-      <GreenSpan className='w-[6.4rem]'>
+      <SpanGreen className='w-[6.4rem]'>
         Finalized
-      </GreenSpan>
+      </SpanGreen>
       :
-      <RedSpan className='w-[7.6rem]'>
+      <SpanRed className='w-[7.6rem]'>
         Unfinalized
-      </RedSpan>;
+      </SpanRed>;
   }
   let recipient = block?.miner ?
     <Link href={`/${props.network}/address?hash=${block.miner}`}

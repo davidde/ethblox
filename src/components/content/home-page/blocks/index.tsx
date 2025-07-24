@@ -2,7 +2,7 @@
 
 import DataState from '@/lib/data-state';
 import Block from './block';
-import ErrorIndicator from '@/components/common/error-indicator';
+import ErrorIndicator from '@/components/common/indicators/error-indicator';
 
 
 export default function Blocks(props: {

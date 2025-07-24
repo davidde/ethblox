@@ -5,8 +5,8 @@ import { BlockWithTransactions } from 'alchemy-sdk';
 import { truncateAddress, truncateTransaction, getEtherValueFromWei } from '@/lib/utilities';
 import PopoverLink from '@/components/common/popover-link';
 import DataState from '@/lib/data-state';
-import LoadingPulse from '@/components/common/loading-pulse';
-import LoadingPulseStatic from '@/components/common/loading-pulse-static';
+import LoadingPulse from '@/components/common/indicators/loading-pulse';
+import LoadingPulseStatic from '@/components/common/indicators/loading-pulse-static';
 
 
 export default function Transaction(props: {

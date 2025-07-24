@@ -5,8 +5,8 @@ import { getAlchemy } from '@/lib/utilities';
 import { Utils, TransactionResponse, TransactionReceipt } from 'alchemy-sdk';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import GreenSpan from '@/components/common/green-span';
-import RedSpan from '@/components/common/red-span';
+import SpanGreen from '@/components/common/indicators/span-green';
+import SpanRed from '@/components/common/indicators/span-red';
 import ValueDisplay from '@/components/common/value-display';
 import PageWrapper from '@/components/common/page-wrapper';
 
@@ -49,13 +49,13 @@ export default function TransactionPage(props: {network: string}) {
   let status, txFee, gasUsed;
   if (txReceipt) {
     status = txReceipt.status ?
-      <GreenSpan className='w-[6.4rem]'>
+      <SpanGreen className='w-[6.4rem]'>
         Success
-      </GreenSpan>
+      </SpanGreen>
       :
-      <RedSpan className='w-[5rem]'>
+      <SpanRed className='w-[5rem]'>
         Fail
-      </RedSpan>;
+      </SpanRed>;
 
     gasUsed = (+txReceipt.gasUsed).toLocaleString('en-US');
     if (tx && tx.gasPrice)

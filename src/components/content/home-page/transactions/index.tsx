@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { getAlchemy } from '@/lib/utilities';
 import DataState from '@/lib/data-state';
 import Transaction from './transaction';
-import ErrorIndicator from '@/components/common/error-indicator';
+import ErrorIndicator from '@/components/common/indicators/error-indicator';
 import { BlockWithTransactions } from 'alchemy-sdk';
 
 
