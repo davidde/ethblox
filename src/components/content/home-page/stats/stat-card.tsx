@@ -8,7 +8,7 @@ export default function StatCard<T>(props: {
   icon: ReactNode,
   dataState: DataState<T>,
   value: () => ReactNode,
-  retry?: () => Promise<void>,
+  retry: () => Promise<void>,
   className?: string
 }) {
   return (

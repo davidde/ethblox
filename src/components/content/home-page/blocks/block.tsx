@@ -16,6 +16,7 @@ import Link from 'next/link';
 import PopoverLink from '../../../common/popover-link';
 import LoadingPulse from '@/components/common/indicators/loading-pulse';
 import LoadingPulseStatic from '@/components/common/indicators/loading-pulse-static';
+import ErrorWithRetry from '@/components/common/indicators/error-with-retry';
 
 
 export default function Block(props: {
@@ -29,28 +30,34 @@ export default function Block(props: {
   const [block, setBlock] = useState(DataState.value<Block>());
   const [blockReward, setBlockReward] = useState(DataState.value<string>());
 
+  async function getBlock() {
+    if (blockNumber) try {
+      const resp = await alchemy.core.getBlock(blockNumber);
+      setBlock(DataState.value(resp));
+    } catch(err) {
+      setBlock(DataState.error(err));
+    }
+  }
+
+  async function getBlockReward() {
+    if (blockNumber) try {
+      const resp = await fetch(getBlockRewardUrl(props.network, blockNumber));
+      if (!resp.ok) throw new Error(`Response NOT OK, status: ${resp.status}`);
+      const data = await resp.json();
+      if (!data.result || !data.result.blockReward) {
+        // Latest Block often doesn't have reward yet:
+        if (props.id === 0) setBlockReward(DataState.value('TBD'));
+        else throw new Error('Block reward missing from response.');
+      }
+      else setBlockReward(DataState.value(`Ξ${getEtherValueFromWei(data.result.blockReward, 4)}`));
+    } catch(err) {
+      setBlockReward(DataState.error(err));
+    }
+  }
+
   useEffect(() => {
-    if (blockNumber) (async () => {
-      try {
-        const resp = await alchemy.core.getBlock(blockNumber);
-        setBlock(DataState.value(resp));
-      } catch(err) {
-        setBlock(DataState.error(err));
-      }
-      try {
-        const resp = await fetch(getBlockRewardUrl(props.network, blockNumber));
-        if (!resp.ok) throw new Error(`Response NOT OK, status: ${resp.status}`);
-        const data = await resp.json();
-        if (!data.result || !data.result.blockReward) {
-          // Latest Block often doesn't have reward yet:
-          if (props.id === 0) setBlockReward(DataState.value('TBD'));
-          else throw new Error('Block reward missing from response.');
-        }
-        else setBlockReward(DataState.value(`Ξ${getEtherValueFromWei(data.result.blockReward, 4)}`));
-      } catch(err) {
-        setBlockReward(DataState.error(err));
-      }
-    })();
+    getBlock();
+    getBlockReward();
   }, [alchemy, blockNumber, props.id, props.network]);
 
   return (
@@ -60,7 +67,7 @@ export default function Block(props: {
           <CubeIcon className='w-10 h-10 md:w-8 md:h-8' />
           <div className='flex md:flex-col ml-2 pt-1 md:pt-0 md:w-32'>
             <span className='px-2 md:px-4 leading-5'>
-              <block.Render
+              <props.latestBlockData.Render
                 value={() => <Link href={`/${props.network}/block?number=${blockNumber}`}
                                    className='text-(--link-color) hover:text-(--hover-fg-color)'>
                                 {blockNumber}
@@ -72,6 +79,7 @@ export default function Block(props: {
               <block.Render
                 value={() => `(${getBlockAgeFromSecs(getSecsFromUnixSecs(block.value!.timestamp))} ago)`}
                 loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[6rem]' />}
+                errorFallback={<ErrorWithRetry retry={getBlock} />}
               />
             </span>
           </div>
@@ -82,6 +90,7 @@ export default function Block(props: {
             <block.Render
               value={() => `${block.value!.transactions.length} transactions`}
               loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[8rem]' />}
+              errorFallback={<ErrorWithRetry retry={getBlock} />}
             />
           </span>
           <span className='pl-2 md:pl-4'>
@@ -93,6 +102,7 @@ export default function Block(props: {
             &nbsp;&nbsp;
             <blockReward.Render
               loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[4rem]' />}
+              errorFallback={<ErrorWithRetry retry={getBlockReward} />}
             />
           </span>
           <span className='pl-2 md:pl-4 leading-5'>
@@ -111,6 +121,7 @@ export default function Block(props: {
                   className='left-[-37%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                 />}
               loadingFallback={<LoadingPulse className='bg-(--link-color) w-[11rem]' />}
+              errorFallback={<ErrorWithRetry retry={getBlock} />}
             />
           </span>
         </div>

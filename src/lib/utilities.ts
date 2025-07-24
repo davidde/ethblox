@@ -1,5 +1,6 @@
 // Alchemy SDK Docs: https://docs.alchemy.com/reference/alchemy-sdk-api-surface-overview#api-surface
 import { Alchemy, Network, Utils, BigNumber } from 'alchemy-sdk';
+import { RefObject } from 'react';
 
 
 export const NETWORKS = ['mainnet', 'sepolia'];
@@ -105,3 +106,13 @@ export function getGasPriceUsd(gasPrice: number, ethPrice: number) {
   return `($${ gasPriceUsd.toLocaleString('en-US', { maximumFractionDigits: 2 }) })`;
 }
 
+// Simulate an error on first load to test `ErrorWithRetry` refreshing.
+// Requires passing a `useRef(true)`:
+// In setup: `const fail = useRef(true)`
+// In fetch: `fakeInitialError(fail)`
+export function fakeInitialError(fail: RefObject<boolean>, error?: string) {
+  if (fail.current) {
+    fail.current = false;
+    throw new Error(error ?? 'Faked one-time test error!');
+  }
+}
