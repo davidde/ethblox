@@ -3,17 +3,13 @@
 import { useState, useEffect } from 'react';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useNetwork } from '@/components/common/network-context';
 
 
-type Props = {
-  className?: string
-}
-
-export default function EthNetworkToggle(props: Props) {
+export default function EthNetworkToggle(props: { className?: string }) {
   const [ mounted, setMounted ] = useState(false);
-  const pathname = usePathname();
-  const sepolia = pathname.includes('sepolia');
+  const { network } = useNetwork();
+  const sepolia = network === 'sepolia';
 
   // useEffect only runs on the client, so now we can safely show the UI:
   useEffect(() => {
@@ -44,7 +40,10 @@ export default function EthNetworkToggle(props: Props) {
                     ${sepolia ? `` : `bg-(--hover-bg-color)`}`}
         >
           {({ close }) => (
-            <Link href='/' onClick={close}>
+            <Link
+              href='/'
+              onClick={close}
+            >
               Ethereum Mainnet
             </Link>
           )}
@@ -57,7 +56,10 @@ export default function EthNetworkToggle(props: Props) {
                     ${sepolia ? `bg-(--hover-bg-color)` : ``}`}
         >
           {({ close }) => (
-            <Link href='/sepolia' onClick={close}>
+            <Link
+              href='/sepolia'
+              onClick={close}
+            >
               Testnet Sepolia
             </Link>
           )}

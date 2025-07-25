@@ -1,15 +1,11 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { NETWORKS } from '@/lib/utilities';
+import { useNetwork } from '@/components/common/network-context';
 
 
 export default function EthBlox() {
-  const pathname = usePathname();
-  let network = pathname.split('/')[1];
-  // Prevent faulty network display for incorrect URLs:
-  if (!NETWORKS.includes(network)) network = 'mainnet';
+  const { network } = useNetwork();
 
   return (
     <div>

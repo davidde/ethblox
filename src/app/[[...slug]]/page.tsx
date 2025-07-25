@@ -5,7 +5,7 @@ import AddressPage from '@/components/content/address-page';
 import BlockPage from '@/components/content/block-page';
 import GastrackerPage from '@/components/content/gastracker-page';
 import TransactionPage from '@/components/content/transaction-page';
-import { NETWORKS } from '@/lib/utilities';
+import { NETWORKS, isNetwork } from '@/lib/utilities';
 
 
 // `generateStaticParams()` returns an array of "URL segment" arrays to populate the
@@ -47,7 +47,7 @@ export default async function Page({params} : { params: Promise<{ slug?: string[
   const subroute = slug[1] ?? '';
 
   // Validate network:
-  if (!NETWORKS.includes(network)) {
+  if (!isNetwork(network)) {
     return <NotFoundPage reason={`"${network}" is not a valid Ethereum network.`} />;
   }
 

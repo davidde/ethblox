@@ -3,7 +3,13 @@ import { Alchemy, Network, Utils, BigNumber } from 'alchemy-sdk';
 import { RefObject } from 'react';
 
 
-export const NETWORKS = ['mainnet', 'sepolia'];
+export const NETWORKS = ['mainnet', 'sepolia'] as const;
+export type NetworkType = typeof NETWORKS[number];
+
+export function isNetwork(value: string): value is NetworkType {
+  return (NETWORKS as readonly string[]).includes(value);
+}
+
 const alchemyInstances: Record<string, Alchemy> = {};
 
 export function getAlchemy(network: string) {

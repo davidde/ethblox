@@ -1,10 +1,10 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import './globals.css';
+import { Inter } from 'next/font/google';
+import type { Metadata } from 'next';
+import type { Viewport } from 'next';
+import Providers from './providers';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
-import { ThemeProvider } from 'next-themes';
-import type { Viewport } from 'next';
 
 
 const inter = Inter({ subsets: ['latin'] });
@@ -21,20 +21,16 @@ export const viewport: Viewport = {
   minimumScale: 1,
 }
 
-type Props = {
-  children: React.ReactNode
-}
-
-export default function RootLayout(props: Props) {
+export default function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang='en' suppressHydrationWarning>
       { /* body CSS see globals.css stylesheet! */ }
       <body className={`${inter.className}`} >
-        <ThemeProvider attribute="class">
+        <Providers>
           <Header />
           {props.children}
           <Footer />
-        </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );

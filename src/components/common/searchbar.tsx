@@ -3,14 +3,14 @@
 import { useState } from 'react';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { Input, Button } from '@headlessui/react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useNetwork } from '@/components/common/network-context';
 
 
 export default function Searchbar(props: { className?: string }) {
   const [searchTerm, setSearchTerm] = useState('');
   const router = useRouter();
-  const pathname = usePathname();
-  const network = pathname.split('/')[1] || 'mainnet';
+  const { network } = useNetwork();
 
   const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
