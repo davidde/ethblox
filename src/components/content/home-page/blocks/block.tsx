@@ -27,7 +27,7 @@ export default function Block(props: {
   const blockNumber = props.latestBlockData.value ? props.latestBlockData.value - props.id : undefined;
 
   const [block, getBlock] = useDataState({
-    fetcher: alchemy.core.getBlock.bind(alchemy.core),
+    fetcher: (num) => alchemy.core.getBlock(num),
     args: [blockNumber!],
     skipFetch: !blockNumber
   });

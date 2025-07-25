@@ -112,21 +112,22 @@ const DataState = {
 
 // FetchConfig is used to initialize the `useDataState()` hook.
 // This hook returns a DataState<T>, together with its fetching function for potentially refetching it.
-// The `fetcher` field of the FetchConfig takes either the STRING name of an Alchemy function
-// from alchemy.core, or the `fetch` function directly. `args` is optional and takes the
-// arguments for either fetch or the alchemy api call.
-type FetchConfig<T, A extends any[]> = {
+// * `fetcher`: takes either the `fetch` function directly, or any async function.
+// * `args`: optional and takes the arguments for the fetcher.
+// * `skipFetch`: also optional and should be set to true if any input for the fetcher
+//    is incorrectly undefined or null, and fetching should be aborted.
+type FetchConfig<T, A extends any[] = any[]> = {
   fetcher: (...args: A) => Promise<T>;
-  args: A;
+  args?: A;
   skipFetch?: boolean
 };
 
 // Hook that takes a `fetcher` function as input,
 // and returns a [dataState, getDataState] value & getter pair:
-export function useDataState<T, A extends any[]>(
+export function useDataState<T, A extends any[] = any[]>(
   {
     fetcher,
-    args,
+    args = [] as unknown as A,
     skipFetch = false
   }: FetchConfig<T, A>
 ): [DataState<T>, () => Promise<void>] {
@@ -152,6 +153,7 @@ export function useDataState<T, A extends any[]>(
 
   const prevArgs = useRef('');
   useEffect(() => {
+    // Prevent infinite loop by NOT refetching unless the arguments actually changed:
     const newArgs = JSON.stringify(args);
     if (newArgs !== prevArgs.current) {
       prevArgs.current = newArgs;
