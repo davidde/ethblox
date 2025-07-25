@@ -1,7 +1,7 @@
 'use client';
 
 // Alchemy SDK Docs: https://docs.alchemy.com/reference/alchemy-sdk-api-surface-overview#api-surface
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Searchbar from '@/components/common/searchbar';
 import Blocks from './blocks';
 import Transactions from './transactions';
@@ -15,14 +15,14 @@ export default function HomePage(props: {network: string}) {
   const alchemy = getAlchemy(props.network);
   const [latestBlock, setLatestBlock] = useState(DataState.value<number>());
 
-  async function getLatestBlock() {
+  const getLatestBlock = useCallback(async () => {
     try {
       const resp = await alchemy.core.getBlockNumber();
       setLatestBlock(DataState.value(resp));
     } catch(err) {
       setLatestBlock(DataState.error(err));
     }
-  }
+  }, [alchemy]);
 
   useEffect(() => {
     getLatestBlock();

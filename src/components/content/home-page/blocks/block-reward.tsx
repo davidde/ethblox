@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import DataState from '@/lib/data-state';
 import LoadingPulse from '@/components/common/indicators/loading-pulse';
 import LoadingPulseStatic from '@/components/common/indicators/loading-pulse-static';
@@ -13,7 +13,7 @@ export default function BlockReward(props: {
 }) {
   const [blockReward, setBlockReward] = useState(DataState.value<string>());
 
-  async function getBlockReward() {
+  const getBlockReward = useCallback(async () => {
     if (props.blockNumber) try {
       const resp = await fetch(getBlockRewardUrl(props.network, props.blockNumber));
       if (!resp.ok) throw new Error(`Response NOT OK, status: ${resp.status}`);
@@ -27,7 +27,7 @@ export default function BlockReward(props: {
     } catch(err) {
       setBlockReward(DataState.error(err));
     }
-  }
+  }, [props.network, props.blockNumber, props.id]);
 
   useEffect(() => {
     getBlockReward();

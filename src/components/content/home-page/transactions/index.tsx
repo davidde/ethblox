@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getAlchemy } from '@/lib/utilities';
 import DataState from '@/lib/data-state';
 import Transaction from './transaction';
@@ -16,14 +16,14 @@ export default function Transactions(props: {
   const alchemy = getAlchemy(props.network);
   const [blockWithTransactions, setBlockWithTransactions] = useState(DataState.value<BlockWithTransactions>());
 
-  async function getBlockWithTransactions() {
+  const getBlockWithTransactions = useCallback(async () => {
     if (props.latestBlockData.value) try {
-      const resp = await alchemy.core.getBlockWithTransactions(props.latestBlockData.value!);
+      const resp = await alchemy.core.getBlockWithTransactions(props.latestBlockData.value);
       setBlockWithTransactions(DataState.value(resp));
     } catch(err) {
       setBlockWithTransactions(DataState.error(err));
     }
-  }
+  }, [alchemy, props.latestBlockData.value]);
 
   useEffect(() => {
     getBlockWithTransactions();
