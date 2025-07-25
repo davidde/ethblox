@@ -26,7 +26,7 @@ export default function HomePage(props: {network: string}) {
 
   useEffect(() => {
     getLatestBlock();
-  }, [alchemy]);
+  }, [getLatestBlock]);
 
   return (
     <main className='relative'>

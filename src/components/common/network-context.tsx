@@ -3,7 +3,7 @@ import { NetworkType } from '@/lib/utilities';
 import { usePathname } from 'next/navigation';
 
 
-function getNetworkFromPath(): NetworkType {
+function useNetworkFromPath(): NetworkType {
   const pathname = usePathname();
   return pathname.startsWith('/sepolia') ? 'sepolia' : 'mainnet';
 }
@@ -15,7 +15,7 @@ type NetworkContextType = {
 const NetworkContext = createContext<NetworkContextType | undefined>(undefined);
 
 export function NetworkProvider(props: { children: ReactNode }) {
-  const network = getNetworkFromPath();
+  const network = useNetworkFromPath();
 
   return (
     <NetworkContext.Provider value={{ network }}>

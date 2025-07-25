@@ -149,7 +149,7 @@ export function useDataState<T, A extends any[] = any[]>(
     } catch (err) {
       setDataState(DataState.error(err));
     }
-  }, [fetcher, ...args]);
+  }, [fetcher, args, skipFetch]);
 
   const prevArgs = useRef('');
   useEffect(() => {

@@ -31,7 +31,7 @@ export default function BlockReward(props: {
 
   useEffect(() => {
     getBlockReward();
-  }, [props.blockNumber, props.id, props.network]);
+  }, [getBlockReward]);
 
   return (
     <span className='pl-2 md:pl-4'>

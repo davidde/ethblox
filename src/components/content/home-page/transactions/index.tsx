@@ -27,7 +27,7 @@ export default function Transactions(props: {
 
   useEffect(() => {
     getBlockWithTransactions();
-  }, [alchemy, props.latestBlockData]);
+  }, [getBlockWithTransactions]);
 
   let transactionsDisplay;
   if (props.latestBlockData.error) {
