@@ -115,26 +115,26 @@ const DataState = {
 // The `fetcher` field of the FetchConfig takes either the STRING name of an Alchemy function
 // from alchemy.core, or the `fetch` function directly. `args` is optional and takes the
 // arguments for either fetch or the alchemy api call.
-type FetchConfig<T> = {
-  fetcher: keyof Alchemy['core'] | ((...args: any[]) => Promise<T>);
-  args?: any[];
+type FetchConfig<T, A extends any[]> = {
+  fetcher: (...args: A) => Promise<T>;
+  args: A;
+  skipFetch?: boolean
 };
 
 // Hook that takes a `fetcher` function as input,
 // and returns a [dataState, getDataState] value & getter pair:
-export function useDataState<T>(
+export function useDataState<T, A extends any[]>(
   {
     fetcher,
-    args = []
-  }: FetchConfig<T>
+    args,
+    skipFetch = false
+  }: FetchConfig<T, A>
 ): [DataState<T>, () => Promise<void>] {
-  const { network } = useNetwork();
-  const alchemy = getAlchemy(network);
   const [dataState, setDataState] = useState(DataState.value<T>());
 
   const getDataState = useCallback(async () => {
+    if (skipFetch) return;
     try {
-      if (typeof fetcher === 'string') fetcher = alchemy.core[fetcher].bind(alchemy.core) as (...args: any[]) => Promise<T>;
       let response = await fetcher(...args);
       // If the function is fetch, call `.json()`:
       if (response instanceof Response) {
@@ -143,6 +143,7 @@ export function useDataState<T>(
         if (!json.result) throw new Error('Result missing from .json() response');
         response = json.result;
       }
+      if (!response) throw new Error('Empty response');
       setDataState(DataState.value(response));
     } catch (err) {
       setDataState(DataState.error(err));

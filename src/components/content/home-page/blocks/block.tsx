@@ -6,6 +6,7 @@ import {
   getSecsFromUnixSecs,
   getBlockAgeFromSecs,
   truncateAddress,
+  getAlchemy,
 } from '@/lib/utilities';
 import DataState from '@/lib/data-state';
 import { useDataState } from '@/lib/data-state';
@@ -22,11 +23,13 @@ export default function Block(props: {
   latestBlockData: DataState<number>,
   network: string,
 }) {
+  const alchemy = getAlchemy(props.network);
   const blockNumber = props.latestBlockData.value ? props.latestBlockData.value - props.id : undefined;
 
-  const [block, getBlock] = useDataState<Block>({
-    fetcher: 'getBlock', // method of alchemy.core: alchemy.core.getBlock()
-    args: [blockNumber]
+  const [block, getBlock] = useDataState({
+    fetcher: alchemy.core.getBlock.bind(alchemy.core),
+    args: [blockNumber!],
+    skipFetch: !blockNumber
   });
 
   return (
