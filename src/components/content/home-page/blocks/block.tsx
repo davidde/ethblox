@@ -1,15 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { CubeIcon } from '@heroicons/react/24/outline';
 import { type Block } from 'alchemy-sdk';
 import {
   getSecsFromUnixSecs,
   getBlockAgeFromSecs,
   truncateAddress,
-  getAlchemy,
 } from '@/lib/utilities';
 import DataState from '@/lib/data-state';
+import { useDataState } from '@/lib/data-state';
 import Link from 'next/link';
 import PopoverLink from '../../../common/popover-link';
 import LoadingPulse from '@/components/common/indicators/loading-pulse';
@@ -23,22 +22,12 @@ export default function Block(props: {
   latestBlockData: DataState<number>,
   network: string,
 }) {
-  const alchemy = getAlchemy(props.network);
   const blockNumber = props.latestBlockData.value ? props.latestBlockData.value - props.id : undefined;
-  const [block, setBlock] = useState(DataState.value<Block>());
 
-  async function getBlock() {
-    if (blockNumber) try {
-      const resp = await alchemy.core.getBlock(blockNumber);
-      setBlock(DataState.value(resp));
-    } catch(err) {
-      setBlock(DataState.error(err));
-    }
-  }
-
-  useEffect(() => {
-    getBlock();
-  }, [alchemy, blockNumber, props.id, props.network]);
+  const [block, getBlock] = useDataState<Block>({
+    fetcher: 'getBlock', // method of alchemy.core: alchemy.core.getBlock()
+    args: [blockNumber]
+  });
 
   return (
     <div className='min-h-[8.5rem] md:min-h-[5.8rem] p-2 md:p-3 border-b border-(--border-color) last:border-0'>

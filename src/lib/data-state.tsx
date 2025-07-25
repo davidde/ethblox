@@ -1,6 +1,9 @@
-import { ReactNode } from 'react';
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import LoadingIndicator from '@/components/common/indicators/loading-indicator';
 import ErrorIndicator from '@/components/common/indicators/error-indicator';
+import { getAlchemy } from './utilities';
+import { useNetwork } from '@/components/common/network-context';
+import { Alchemy } from 'alchemy-sdk';
 
 
 // Options to configure the `DataState`'s Render method that displays
@@ -106,5 +109,56 @@ const DataState = {
     };
   }
 };
+
+// FetchConfig is used to initialize the `useDataState()` hook.
+// This hook returns a DataState<T>, together with its fetching function for potentially refetching it.
+// The `fetcher` field of the FetchConfig takes either the STRING name of an Alchemy function
+// from alchemy.core, or the `fetch` function directly. `args` is optional and takes the
+// arguments for either fetch or the alchemy api call.
+type FetchConfig<T> = {
+  fetcher: keyof Alchemy['core'] | ((...args: any[]) => Promise<T>);
+  args?: any[];
+};
+
+// Hook that takes a `fetcher` function as input,
+// and returns a [dataState, getDataState] value & getter pair:
+export function useDataState<T>(
+  {
+    fetcher,
+    args = []
+  }: FetchConfig<T>
+): [DataState<T>, () => Promise<void>] {
+  const { network } = useNetwork();
+  const alchemy = getAlchemy(network);
+  const [dataState, setDataState] = useState(DataState.value<T>());
+
+  const getDataState = useCallback(async () => {
+    try {
+      if (typeof fetcher === 'string') fetcher = alchemy.core[fetcher].bind(alchemy.core) as (...args: any[]) => Promise<T>;
+      let response = await fetcher(...args);
+      // If the function is fetch, call `.json()`:
+      if (response instanceof Response) {
+        if (!response.ok) throw new Error(`Fetch response NOT OK, status: ${response.status}`);
+        const json = await response.json();
+        if (!json.result) throw new Error('Result missing from .json() response');
+        response = json.result;
+      }
+      setDataState(DataState.value(response));
+    } catch (err) {
+      setDataState(DataState.error(err));
+    }
+  }, [fetcher, ...args]);
+
+  const prevArgs = useRef('');
+  useEffect(() => {
+    const newArgs = JSON.stringify(args);
+    if (newArgs !== prevArgs.current) {
+      prevArgs.current = newArgs;
+      getDataState();
+    }
+  }, [getDataState, args]);
+
+  return [dataState, getDataState];
+}
 
 export default DataState;
