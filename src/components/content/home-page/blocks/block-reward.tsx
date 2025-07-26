@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import DataState from '@/lib/data-state';
+import { DataState } from '@/lib/data-state';
 import LoadingPulse from '@/components/common/indicators/loading-pulse';
 import LoadingPulseStatic from '@/components/common/indicators/loading-pulse-static';
 import ErrorWithRetry from '@/components/common/indicators/error-with-retry';

@@ -6,12 +6,10 @@ import ErrorIndicator from '@/components/common/indicators/error-indicator';
 type ValueStateBase<T> = {
   value?: T;
   error: undefined;
-
 };
 type ErrorStateBase = {
   value: undefined;
   error?: Error;
-
 };
 
 // Calling `DataStateBase.value()` inside `useState()` is required
@@ -53,7 +51,7 @@ interface RenderOptions {
 
 type ValueState<T> = ValueStateBase<T> & DataStateMethods;
 type ErrorState = ErrorStateBase & DataStateMethods;
-type DataState<T> = ValueState<T> | ErrorState;
+export type DataState<T> = ValueState<T> | ErrorState;
 
 // Factory functions to return the `DataStateBase` type:
 const DataStateBase = {
@@ -92,7 +90,7 @@ const DataStateBase = {
 
 // Factory functions to return the `DataState` type,
 // as well as implement the associated Render() function:
-const DataState = {
+export const DataState = {
   // Create ValueState<T> from value or nothing when initializing:
   value: <T,>(dataValue?: T): DataState<T> => {
     const Render = ({
@@ -238,5 +236,3 @@ export function useDataState<T, A extends any[] = any[]>(
 
   return { ...dataStateBase, Render, refetch };
 }
-
-export default DataState;

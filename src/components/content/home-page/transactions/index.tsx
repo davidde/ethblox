@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { getAlchemy } from '@/lib/utilities';
-import DataState from '@/lib/data-state';
+import { DataState } from '@/lib/data-state';
 import Transaction from './transaction';
 import { BlockWithTransactions } from 'alchemy-sdk';
 import ErrorWithRetry from '@/components/common/indicators/error-with-retry';

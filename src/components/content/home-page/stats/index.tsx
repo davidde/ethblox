@@ -9,7 +9,7 @@ import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import StatCard from './stat-card';
 import { getGasPriceGwei, getGasPriceUsd } from '@/lib/utilities';
-import DataState from '@/lib/data-state';
+import { DataState } from '@/lib/data-state';
 
 
 type PricesTxs = {

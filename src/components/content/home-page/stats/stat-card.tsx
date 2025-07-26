@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import DataState from '@/lib/data-state';
+import { DataState } from '@/lib/data-state';
 import ErrorWithRetry from '@/components/common/indicators/error-with-retry';
 
 

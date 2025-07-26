@@ -8,8 +8,7 @@ import {
   truncateAddress,
   getAlchemy,
 } from '@/lib/utilities';
-import DataState from '@/lib/data-state';
-import { useDataState } from '@/lib/data-state';
+import { useDataState, DataState } from '@/lib/data-state';
 import Link from 'next/link';
 import PopoverLink from '../../../common/popover-link';
 import LoadingPulse from '@/components/common/indicators/loading-pulse';

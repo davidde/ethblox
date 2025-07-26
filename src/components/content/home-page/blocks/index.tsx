@@ -1,6 +1,6 @@
 'use client';
 
-import DataState from '@/lib/data-state';
+import { DataState } from '@/lib/data-state';
 import Block from './block';
 import ErrorWithRetry from '@/components/common/indicators/error-with-retry';
 

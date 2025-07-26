@@ -8,7 +8,7 @@ import Transactions from './transactions';
 import Stats from './stats';
 import NodeBanner from './node-banner';
 import { getAlchemy } from '@/lib/utilities';
-import DataState from '@/lib/data-state';
+import { DataState } from '@/lib/data-state';
 
 
 export default function HomePage(props: {network: string}) {
