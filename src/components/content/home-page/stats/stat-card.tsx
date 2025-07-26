@@ -24,7 +24,7 @@ export default function StatCard<T>(props: {
         <div className='pl-12'>
           <props.dataState.Render
             value={props.value}
-            errorFallback={<ErrorWithRetry retry={props.retry} />}
+            errorFallback={<ErrorWithRetry refetch={props.retry} />}
           />
         </div>
       </div>

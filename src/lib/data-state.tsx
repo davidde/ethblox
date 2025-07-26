@@ -1,10 +1,38 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import LoadingIndicator from '@/components/common/indicators/loading-indicator';
 import ErrorIndicator from '@/components/common/indicators/error-indicator';
-import { getAlchemy } from './utilities';
-import { useNetwork } from '@/components/common/network-context';
-import { Alchemy } from 'alchemy-sdk';
 
+
+type ValueStateBase<T> = {
+  value?: T;
+  error: undefined;
+
+};
+type ErrorStateBase = {
+  value: undefined;
+  error?: Error;
+
+};
+
+// Calling `DataStateBase.value()` inside `useState()` is required
+// to get a `DataStateBase<undefined>` instead of an `undefined`!
+// `type DataStateBase<T> = ValueStateBase<T> | ErrorStateBase`, so:
+// `ValueStateBase<T>.value` either has `value<T>` OR `undefined`,
+// the latter indicating it is still in a loading state, OR in ErrorStateBase.
+// `ErrorStateBase.error` either has an Error object or undefined.
+type DataStateBase<T> = ValueStateBase<T> | ErrorStateBase;
+
+// The DataState.Render() method can be called at all times;
+// in Value- as well as ErrorState!
+// It will render the apropriate component,
+// either a LoadingIndicator, an ErrorIndicator, or the value.
+// If the DataState's value exists, the render method will render its value
+// callback function (e.g. to get a subfield of the value) if that is present,
+// or default to rendering the DataState's value directly if not.
+type DataStateMethods = {
+  Render: (options?: RenderOptions) => ReactNode;
+  refetch?: () => Promise<void>; // Revert to non optional later
+};
 
 // Options to configure the `DataState`'s Render method that displays
 // either the `ValueState`'s value, or the `ErrorState`'s error.
@@ -23,31 +51,44 @@ interface RenderOptions {
   fallbackClass?: string,
 }
 
-type ValueState<T> = {
-  value?: T;
-  error: undefined;
-  Render: (options?: RenderOptions) => ReactNode;
-};
-type ErrorState = {
-  value: undefined;
-  error?: Error;
-  Render: (options?: RenderOptions) => ReactNode;
+type ValueState<T> = ValueStateBase<T> & DataStateMethods;
+type ErrorState = ErrorStateBase & DataStateMethods;
+type DataState<T> = ValueState<T> | ErrorState;
+
+// Factory functions to return the `DataStateBase` type:
+const DataStateBase = {
+  // Create ValueState<T> from value or nothing when initializing:
+  value: <T,>(dataValue?: T): DataStateBase<T> => {
+    return {
+      value: dataValue,
+      error: undefined,
+    };
+  },
+
+  // Create ErrorState from `unknown` error, to be used in `catch` block:
+  error: (unknownError: unknown, errorPrefix?: string): ErrorStateBase => {
+    let errorInstance: Error;
+
+    if (unknownError instanceof Error) {
+      if (errorPrefix) unknownError.message = `${errorPrefix} ${unknownError.message}`;
+      errorInstance = unknownError as Error;
+    }
+    else { // `String(err)` could technically still fail if someone throws bad objects:
+      errorInstance = errorPrefix ?
+        new Error(`${errorPrefix} ${String(unknownError)}`) : new Error(String(unknownError));
+    }
+
+    console.error(errorInstance);
+    return {
+      value: undefined,
+      error: errorInstance,
+    };
+  }
 };
 
-// Calling `DataState.value()` inside `useState()` is required
-// to get a `DataState<undefined>` instead of an `undefined`!
-// `type DataState<T> = ValueState<T> | ErrorState`, so:
-// `ValueState<T>.value` either has `value<T>` OR `undefined`,
-// the latter indicating it is still in a loading state, OR in ErrorState.
-// `ErrorState.error` either has an Error object or undefined.
-// The DataState.Render() method can be called at all times;
-// in Value- as well as ErrorState!
-// It will render the apropriate component,
-// either a LoadingIndicator, an ErrorIndicator, or the value.
-// If the DataState's value exists, the render method will render
-// its value callback function if that is present,
-// or default to rendering the DataState's value directly if not.
-type DataState<T> = ValueState<T> | ErrorState;
+
+
+
 
 // Factory functions to return the `DataState` type,
 // as well as implement the associated Render() function:
@@ -130,10 +171,10 @@ export function useDataState<T, A extends any[] = any[]>(
     args = [] as unknown as A,
     skipFetch = false
   }: FetchConfig<T, A>
-): [DataState<T>, () => Promise<void>] {
-  const [dataState, setDataState] = useState(DataState.value<T>());
+): DataState<T> {
+  const [dataStateBase, setDataStateBase] = useState(DataStateBase.value<T>());
 
-  const getDataState = useCallback(async () => {
+  const refetch = useCallback(async () => {
     if (skipFetch) return;
     try {
       let response = await fetcher(...args);
@@ -145,9 +186,9 @@ export function useDataState<T, A extends any[] = any[]>(
         response = json.result;
       }
       if (!response) throw new Error('Empty response');
-      setDataState(DataState.value(response));
+      setDataStateBase(DataStateBase.value(response));
     } catch (err) {
-      setDataState(DataState.error(err));
+      setDataStateBase(DataStateBase.error(err));
     }
   }, [fetcher, args, skipFetch]);
 
@@ -157,11 +198,45 @@ export function useDataState<T, A extends any[] = any[]>(
     const newArgs = JSON.stringify(args);
     if (newArgs !== prevArgs.current) {
       prevArgs.current = newArgs;
-      getDataState();
+      refetch();
     }
-  }, [getDataState, args]);
+  }, [refetch, args]);
 
-  return [dataState, getDataState];
+  let Render = dataStateBase.error ?
+    ( // Render method for ErrorState:
+      (
+        {
+          error,
+          showFallback = true,
+          errorFallback,
+          fallbackClass,
+        }: RenderOptions = {}
+      ) => {
+        return showFallback ?
+          ( errorFallback ? errorFallback : <ErrorIndicator error={error} className={fallbackClass} /> )
+          :
+          '';
+      }
+    )
+    :
+    ( // Render method for ValueState:
+      (
+        {
+          value,
+          showFallback = true,
+          loadingFallback,
+          fallbackClass,
+        }: RenderOptions = {}
+      ) => {
+        if (dataStateBase.value) return value ? value() : String(dataStateBase.value);
+        else return showFallback ?
+          ( loadingFallback ? loadingFallback : <LoadingIndicator className={fallbackClass} /> )
+          :
+          '';
+      }
+    );
+
+  return { ...dataStateBase, Render, refetch };
 }
 
 export default DataState;

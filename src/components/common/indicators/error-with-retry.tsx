@@ -4,7 +4,7 @@ import { ArrowPathIcon } from '@heroicons/react/24/outline';
 
 
 export default function ErrorWithRetry(props: {
-  retry: () => Promise<void>,
+  refetch?: () => Promise<void>, // Revert to non optional later
   error?: string,
   className?: string
 }) {
@@ -14,7 +14,7 @@ export default function ErrorWithRetry(props: {
   const handleClick = async () => {
     setIsLoading(true);
     try {
-      await props.retry(); // Handles its own errors
+      await props.refetch!(); // Handles its own errors
     } finally {
       setIsLoading(false); // Always runs!
     }

@@ -26,7 +26,7 @@ export default function Block(props: {
   const alchemy = getAlchemy(props.network);
   const blockNumber = props.latestBlockData.value ? props.latestBlockData.value - props.id : undefined;
 
-  const [block, getBlock] = useDataState({
+  const block = useDataState({
     fetcher: (num) => alchemy.core.getBlock(num),
     args: [blockNumber!],
     skipFetch: !blockNumber
@@ -51,7 +51,7 @@ export default function Block(props: {
               <block.Render
                 value={() => `(${getBlockAgeFromSecs(getSecsFromUnixSecs(block.value!.timestamp))} ago)`}
                 loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[6rem]' />}
-                errorFallback={<ErrorWithRetry retry={getBlock} />}
+                errorFallback={<ErrorWithRetry refetch={block.refetch} />}
               />
             </span>
           </div>
@@ -62,7 +62,7 @@ export default function Block(props: {
             <block.Render
               value={() => `${block.value!.transactions.length} transactions`}
               loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[8rem]' />}
-              errorFallback={<ErrorWithRetry retry={getBlock} />}
+              errorFallback={<ErrorWithRetry refetch={block.refetch} />}
             />
           </span>
           <BlockReward
@@ -86,7 +86,7 @@ export default function Block(props: {
                   className='left-[-37%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                 />}
               loadingFallback={<LoadingPulse className='bg-(--link-color) w-[11rem]' />}
-              errorFallback={<ErrorWithRetry retry={getBlock} />}
+              errorFallback={<ErrorWithRetry refetch={block.refetch} />}
             />
           </span>
         </div>

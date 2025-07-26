@@ -43,7 +43,7 @@ export default function BlockReward(props: {
       &nbsp;&nbsp;
       <blockReward.Render
         loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[4rem]' />}
-        errorFallback={<ErrorWithRetry retry={getBlockReward} />}
+        errorFallback={<ErrorWithRetry refetch={getBlockReward} />}
       />
     </span>
   );
