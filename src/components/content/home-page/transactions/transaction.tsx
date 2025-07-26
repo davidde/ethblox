@@ -4,7 +4,7 @@ import { DocumentTextIcon } from '@heroicons/react/24/outline';
 import { BlockWithTransactions } from 'alchemy-sdk';
 import { truncateAddress, truncateTransaction, getEtherValueFromWei } from '@/lib/utilities';
 import PopoverLink from '@/components/common/popover-link';
-import DataState from '@/lib/data-state';
+import { DataState } from '@/lib/data-state';
 import LoadingPulse from '@/components/common/indicators/loading-pulse';
 import LoadingPulseStatic from '@/components/common/indicators/loading-pulse-static';
 

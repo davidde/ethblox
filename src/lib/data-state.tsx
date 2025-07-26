@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import LoadingIndicator from '@/components/common/indicators/loading-indicator';
 import ErrorIndicator from '@/components/common/indicators/error-indicator';
 
@@ -29,7 +29,7 @@ type DataStateBase<T> = ValueStateBase<T> | ErrorStateBase;
 // or default to rendering the DataState's value directly if not.
 type DataStateMethods = {
   Render: (options?: RenderConfig) => ReactNode;
-  refetch: () => Promise<void>; // Revert to non optional later
+  refetch: () => Promise<void>;
 };
 
 type ValueState<T> = ValueStateBase<T> & DataStateMethods;
@@ -107,11 +107,14 @@ export function useDataState<T, A extends any[] = any[]>(
   }: FetchConfig<T, A>
 ): DataState<T> {
   const [dataStateBase, setDataStateBase] = useState(DataStateBase.value<T>());
+  // Prevent infinite loop by NOT refetching unless the arguments or fetcher actually changed:
+  const memoArgs = useMemo(() => args, [JSON.stringify(args)]);
+  const memoFetcher = useCallback(fetcher, []);
 
   const refetch = useCallback(async () => {
     if (skipFetch) return;
     try {
-      let response = await fetcher(...args);
+      let response = await memoFetcher(...memoArgs);
       // If the function is fetch, call `.json()`:
       if (response instanceof Response) {
         if (!response.ok) throw new Error(`Fetch response NOT OK, status: ${response.status}`);
@@ -124,17 +127,11 @@ export function useDataState<T, A extends any[] = any[]>(
     } catch (err) {
       setDataStateBase(DataStateBase.error(err));
     }
-  }, [fetcher, args, skipFetch]);
+  }, [memoFetcher, memoArgs, skipFetch]);
 
-  const prevArgs = useRef('');
   useEffect(() => {
-    // Prevent infinite loop by NOT refetching unless the arguments actually changed:
-    const newArgs = JSON.stringify(args);
-    if (newArgs !== prevArgs.current) {
-      prevArgs.current = newArgs;
-      refetch();
-    }
-  }, [refetch, args]);
+    refetch();
+  }, [refetch]);
 
   let Render = dataStateBase.error ?
     ( // Render method for ErrorState:

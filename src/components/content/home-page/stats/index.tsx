@@ -56,18 +56,26 @@ export default function Stats() {
   // and still rely on the DataState Render method for conditionally rendering
   // an error or loading indicator.
   let ethMarketCapData;
-  if (pricesAndTxsData.error || pricesAndTxsData.error) {
-    if (pricesAndTxsData.error) ethMarketCapData = pricesAndTxsData;
-    else ethMarketCapData = ethSupplyData;
+  if (pricesAndTxsData.error || ethSupplyData.error) {
+    if (pricesAndTxsData.error && ethSupplyData.error) {
+      ethMarketCapData = pricesAndTxsData;
+      ethMarketCapData.error = new Error('Price and supply fetches both failed');
+      // How to make this work: ???
+      // ethMarketCapData.refetch = async () => { await Promise.all([pricesAndTxsData.refetch(), ethSupplyData.refetch()]) };
+      ethMarketCapData.refetch = pricesAndTxsData.refetch;
+    }
+    else if (pricesAndTxsData.error) {
+      ethMarketCapData = pricesAndTxsData;
+      ethMarketCapData.refetch = pricesAndTxsData.refetch;
+    } else {
+      ethMarketCapData = ethSupplyData;
+      ethMarketCapData.refetch = ethSupplyData.refetch;
+    }
   }
   else if (!pricesAndTxsData.value || !ethSupplyData.value) {
     if (!pricesAndTxsData.value) ethMarketCapData = pricesAndTxsData;
     else ethMarketCapData = ethSupplyData;
   } else ethMarketCapData = ethSupplyData;
-  ethMarketCapData.refetch = async () => {
-    if (pricesAndTxsData.error) pricesAndTxsData.refetch();
-    if (ethSupplyData.error) ethSupplyData.refetch();
-  }
   // If it is in defined ValueState, either DataState is ok since we pass the value callback below:
   const ethMarketCap = () => (ethPrice! * ethSupply!).toLocaleString('en-US', {
     style: 'currency',

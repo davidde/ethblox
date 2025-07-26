@@ -1,4 +1,4 @@
-import DataState from '@/lib/data-state';
+import { DataState } from '@/lib/data-state';
 import LoadingPulse from './loading-pulse';
 
 
