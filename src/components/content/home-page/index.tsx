@@ -45,13 +45,11 @@ export default function HomePage(props: {network: string}) {
           <Blocks
             network={props.network}
             latestBlockData={latestBlock}
-            refetch={latestBlock.refetch}
           />
 
           <Transactions
             network={props.network}
             latestBlockData={latestBlock}
-            refetch={latestBlock.refetch}
           />
         </div>
       </div>

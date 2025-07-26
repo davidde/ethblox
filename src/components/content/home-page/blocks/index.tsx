@@ -8,7 +8,6 @@ import ErrorWithRetry from '@/components/common/indicators/error-with-retry';
 export default function Blocks(props: {
   network: string,
   latestBlockData: DataState<number>,
-  refetch: () => Promise<void>,
 }) {
   return (
     <div className='border border-(--border-color) bg-(--comp-bg-color)
@@ -19,7 +18,7 @@ export default function Blocks(props: {
           <ErrorWithRetry
             error='Error getting latest block'
             className='pl-4 py-2'
-            refetch={props.refetch}
+            refetch={props.latestBlockData.refetch}
           />
           :
           [...Array(5)].map((_, i) =>

@@ -9,7 +9,6 @@ import ErrorWithRetry from '@/components/common/indicators/error-with-retry';
 export default function Transactions(props: {
   network: string,
   latestBlockData: DataState<number>,
-  refetch: () => Promise<void>,
 }) {
   const alchemy = getAlchemy(props.network);
 
@@ -24,7 +23,7 @@ export default function Transactions(props: {
     transactionsDisplay = <ErrorWithRetry
                             error='Error getting latest block'
                             className='pl-4 py-2'
-                            refetch={props.refetch}
+                            refetch={props.latestBlockData.refetch}
                           />;
   } else if (blockWithTransactions.error) {
     transactionsDisplay = <ErrorWithRetry

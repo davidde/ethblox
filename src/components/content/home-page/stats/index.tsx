@@ -64,6 +64,10 @@ export default function Stats() {
     if (!pricesAndTxsData.value) ethMarketCapData = pricesAndTxsData;
     else ethMarketCapData = ethSupplyData;
   } else ethMarketCapData = ethSupplyData;
+  ethMarketCapData.refetch = async () => {
+    if (pricesAndTxsData.error) pricesAndTxsData.refetch();
+    if (ethSupplyData.error) ethSupplyData.refetch();
+  }
   // If it is in defined ValueState, either DataState is ok since we pass the value callback below:
   const ethMarketCap = () => (ethPrice! * ethSupply!).toLocaleString('en-US', {
     style: 'currency',
@@ -79,7 +83,6 @@ export default function Stats() {
           icon={<CurrencyDollarIcon className='w-8 h-8' />}
           dataState={pricesAndTxsData}
           value={ethPriceFormatted}
-          refetch={pricesAndTxsData.refetch}
           className='md:border-b'
         />
         <StatCard
@@ -87,7 +90,6 @@ export default function Stats() {
           icon={<div className='w-8 h-8 bg-(image:--eth-logo-url) bg-contain bg-no-repeat bg-center' />}
           dataState={ethSupplyData}
           value={ethSupplyFormatted}
-          refetch={ethSupplyData.refetch}
           className='md:border-b md:border-x'
         />
         <StatCard
@@ -95,11 +97,6 @@ export default function Stats() {
           icon={<GlobeAltIcon className='w-8 h-8' />}
           dataState={ethMarketCapData}
           value={ethMarketCap}
-          // ethMarketCap depends on both data fetches, so potentially refetch both:
-          refetch={async () => {
-            if (pricesAndTxsData.error) pricesAndTxsData.refetch();
-            if (ethSupplyData.error) ethSupplyData.refetch();
-          }}
           className='md:border-b'
         />
       </div>
@@ -110,14 +107,12 @@ export default function Stats() {
           icon={<FireIcon className='w-8 h-8' />}
           dataState={pricesAndTxsData}
           value={averageGasPriceLink}
-          refetch={pricesAndTxsData.refetch}
         />
         <StatCard
           label='TRANSACTIONS TODAY'
           icon={<ClipboardDocumentListIcon className='w-8 h-8' />}
           dataState={pricesAndTxsData}
           value={() => transactionsToday!}
-          refetch={pricesAndTxsData.refetch}
           className='md:border-x'
         />
         <StatCard
@@ -125,7 +120,6 @@ export default function Stats() {
           icon={<Square3Stack3DIcon className='w-8 h-8' />}
           dataState={pricesAndTxsData}
           value={() => totalTransactions!}
-          refetch={pricesAndTxsData.refetch}
         />
       </div>
     </div>
