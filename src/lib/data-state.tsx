@@ -29,7 +29,7 @@ type DataStateBase<T> = ValueStateBase<T> | ErrorStateBase;
 // or default to rendering the DataState's value directly if not.
 type DataStateMethods = {
   Render: (options?: RenderConfig) => ReactNode;
-  refetch: () => Promise<void>;
+  refetch: () => Promise<any>;
 };
 
 type ValueState<T> = ValueStateBase<T> & DataStateMethods;
@@ -37,7 +37,7 @@ type ErrorState = ErrorStateBase & DataStateMethods;
 export type DataState<T> = ValueState<T> | ErrorState;
 
 // Factory functions to return the `DataStateBase` type:
-const DataStateBase = {
+export const DataStateBase = {
   // Create ValueState<T> from value or nothing when initializing:
   value: <T,>(dataValue?: T): DataStateBase<T> => {
     return {
@@ -113,8 +113,11 @@ export function useDataState<T, A extends any[] = any[]>(
 
   const refetch = useCallback(async () => {
     if (skipFetch) return;
+
+    let response;
+
     try {
-      let response = await memoFetcher(...memoArgs);
+      response = await memoFetcher(...memoArgs);
       // If the function is fetch, call `.json()`:
       if (response instanceof Response) {
         if (!response.ok) throw new Error(`Fetch response NOT OK, status: ${response.status}`);
@@ -127,6 +130,8 @@ export function useDataState<T, A extends any[] = any[]>(
     } catch (err) {
       setDataStateBase(DataStateBase.error(err));
     }
+
+    return response;
   }, [memoFetcher, memoArgs, skipFetch]);
 
   useEffect(() => {

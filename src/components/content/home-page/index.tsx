@@ -42,7 +42,7 @@ export default function HomePage(props: {network: string}) {
           { props.network === 'mainnet' ? <Stats /> : '' }
           <div className='basis-full h-0' /> {/* Break the following flex item to a new row */}
 
-          <Blocks
+          {/* <Blocks
             network={props.network}
             latestBlockData={latestBlock}
           />
@@ -50,7 +50,7 @@ export default function HomePage(props: {network: string}) {
           <Transactions
             network={props.network}
             latestBlockData={latestBlock}
-          />
+          /> */}
         </div>
       </div>
     </main>

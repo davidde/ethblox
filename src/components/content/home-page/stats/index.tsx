@@ -8,7 +8,8 @@ import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import StatCard from './stat-card';
 import { getGasPriceGwei, getGasPriceUsd } from '@/lib/utilities';
-import { useDataState } from '@/lib/data-state';
+import { useDataState, DataState, DataStateBase } from '@/lib/data-state';
+import { useCallback } from 'react';
 
 
 export default function Stats() {
@@ -47,40 +48,56 @@ export default function Stats() {
     })}`;
 
   // Since we need a DataState for correctly rendering Errors or Loading states,
-  // and ethMarketCap is dependent on both DataStates, we conditionally pick one
-  // of the DataStates as the default DataState for ethMarketCapData.
-  // We prioritize the DataState that is in ErrorState, if there is none, the one
-  // in loading state (value = undefined), and otherwise it doesn't matter
-  // which one we pick since we're passing a value callback anyway.
-  // This way, the ethMarketCapData can be safely passed down to StatCard,
-  // and still rely on the DataState Render method for conditionally rendering
-  // an error or loading indicator.
-  let ethMarketCapData;
-  if (pricesAndTxsData.error || ethSupplyData.error) {
-    if (pricesAndTxsData.error && ethSupplyData.error) {
-      ethMarketCapData = pricesAndTxsData;
-      ethMarketCapData.error = new Error('Price and supply fetches both failed');
-      // How to make this work: ???
-      // ethMarketCapData.refetch = async () => { await Promise.all([pricesAndTxsData.refetch(), ethSupplyData.refetch()]) };
-      ethMarketCapData.refetch = pricesAndTxsData.refetch;
-    }
-    else if (pricesAndTxsData.error) {
-      ethMarketCapData = pricesAndTxsData;
-      ethMarketCapData.refetch = pricesAndTxsData.refetch;
-    } else {
-      ethMarketCapData = ethSupplyData;
-      ethMarketCapData.refetch = ethSupplyData.refetch;
-    }
-  }
-  else if (!pricesAndTxsData.value || !ethSupplyData.value) {
-    if (!pricesAndTxsData.value) ethMarketCapData = pricesAndTxsData;
-    else ethMarketCapData = ethSupplyData;
-  } else ethMarketCapData = ethSupplyData;
-  // If it is in defined ValueState, either DataState is ok since we pass the value callback below:
+  // and ethMarketCap is dependent on both DataStates, we create a new DataState for it:
+  let ethMarketCapData = useDataState({
+    fetcher: async () => await Promise.all([pricesAndTxsData.refetch(), ethSupplyData.refetch()])
+  });
+  // ethMarketCapData.value = ethPrice && ethSupply ?
+  //   (ethPrice * ethSupply).toLocaleString('en-US', {
+  //     style: 'currency',
+  //     currency: 'USD',
+  //   })
+  //   :
+  //   undefined;
+  // ethMarketCapData.error = pricesAndTxsData.error || ethSupplyData.error ?
+  //   new Error('Price and supply fetches both failed')
+  //   :
+  //   undefined;
+
   const ethMarketCap = () => (ethPrice! * ethSupply!).toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
   });
+
+  console.log('ethMarketCapData = ', ethMarketCapData);
+  console.log('ethMarketCap = ', ethMarketCap());
+  console.log('ethMarketCapData.value = ', ethMarketCapData.value);
+
+  // if (pricesAndTxsData.error || ethSupplyData.error) {
+  //   if (pricesAndTxsData.error && ethSupplyData.error) {
+  //     ethMarketCapData = pricesAndTxsData;
+  //     ethMarketCapData.error = new Error('Price and supply fetches both failed');
+  //     // How to make this work: ???
+  //     // ethMarketCapData.refetch = async () => { await Promise.all([pricesAndTxsData.refetch(), ethSupplyData.refetch()]) };
+  //     ethMarketCapData.refetch = pricesAndTxsData.refetch;
+  //   }
+  //   else if (pricesAndTxsData.error) {
+  //     ethMarketCapData = pricesAndTxsData;
+  //     ethMarketCapData.refetch = pricesAndTxsData.refetch;
+  //   } else {
+  //     ethMarketCapData = ethSupplyData;
+  //     ethMarketCapData.refetch = ethSupplyData.refetch;
+  //   }
+  // }
+  // else if (!pricesAndTxsData.value || !ethSupplyData.value) {
+  //   if (!pricesAndTxsData.value) ethMarketCapData = pricesAndTxsData;
+  //   else ethMarketCapData = ethSupplyData;
+  // } else ethMarketCapData = ethSupplyData;
+  // // If it is in defined ValueState, either DataState is ok since we pass the value callback below:
+  // const ethMarketCap = () => (ethPrice! * ethSupply!).toLocaleString('en-US', {
+  //   style: 'currency',
+  //   currency: 'USD',
+  // });
 
   return (
     <div className='border border-(--border-color) bg-(--comp-bg-color)
