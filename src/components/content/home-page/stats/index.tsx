@@ -46,11 +46,24 @@ export default function Stats() {
       maximumFractionDigits: 2,
     })}`;
 
-  // ethMarketCap is dependent on both DataStates, so we pick the one in error or loading state
-  // for passing down to StatCard:
+  // Since we need a DataState for correctly rendering Errors or Loading states,
+  // and ethMarketCap is dependent on both DataStates, we conditionally pick one
+  // of the DataStates as the default DataState for ethMarketCapData.
+  // We prioritize the DataState that is in ErrorState, if there is none, the one
+  // in loading state (value = undefined), and otherwise it doesn't matter
+  // which one we pick since we're passing a value callback anyway.
+  // This way, the ethMarketCapData can be safely passed down to StatCard,
+  // and still rely on the DataState Render method for conditionally rendering
+  // an error or loading indicator.
   let ethMarketCapData;
-  if (pricesAndTxsData.error || !pricesAndTxsData.value) ethMarketCapData = pricesAndTxsData;
-  else ethMarketCapData = ethSupplyData;
+  if (pricesAndTxsData.error || pricesAndTxsData.error) {
+    if (pricesAndTxsData.error) ethMarketCapData = pricesAndTxsData;
+    else ethMarketCapData = ethSupplyData;
+  }
+  else if (!pricesAndTxsData.value || !ethSupplyData.value) {
+    if (!pricesAndTxsData.value) ethMarketCapData = pricesAndTxsData;
+    else ethMarketCapData = ethSupplyData;
+  } else ethMarketCapData = ethSupplyData;
   // If it is in defined ValueState, either DataState is ok since we pass the value callback below:
   const ethMarketCap = () => (ethPrice! * ethSupply!).toLocaleString('en-US', {
     style: 'currency',
