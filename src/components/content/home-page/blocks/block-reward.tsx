@@ -1,5 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
-import { DataState } from '@/lib/data-state';
+import { useDataState } from '@/lib/data-state';
 import LoadingPulse from '@/components/common/indicators/loading-pulse';
 import LoadingPulseStatic from '@/components/common/indicators/loading-pulse-static';
 import ErrorWithRetry from '@/components/common/indicators/error-with-retry';
@@ -11,39 +10,31 @@ export default function BlockReward(props: {
   network: string,
   blockNumber?: number,
 }) {
-  const [blockReward, setBlockReward] = useState(DataState.value<string>());
+  const blockRewardData = useDataState<any>({
+    fetcher: (url) => fetch(url),
+    args: [getBlockRewardUrl(props.network, props.blockNumber!)],
+    skipFetch: !props.blockNumber
+  });
 
-  const getBlockReward = useCallback(async () => {
-    if (props.blockNumber) try {
-      const resp = await fetch(getBlockRewardUrl(props.network, props.blockNumber));
-      if (!resp.ok) throw new Error(`Response NOT OK, status: ${resp.status}`);
-      const data = await resp.json();
-      if (!data.result || !data.result.blockReward) {
-        // Latest Block often doesn't have reward yet:
-        if (props.id === 0) setBlockReward(DataState.value('TBD'));
-        else throw new Error('Block reward missing from response.');
-      }
-      else setBlockReward(DataState.value(`Ξ${getEtherValueFromWei(data.result.blockReward, 4)}`));
-    } catch(err) {
-      setBlockReward(DataState.error(err));
-    }
-  }, [props.network, props.blockNumber, props.id]);
-
-  useEffect(() => {
-    getBlockReward();
-  }, [getBlockReward]);
+  let blockReward = '';
+  if (blockRewardData.value) blockReward = `Ξ${getEtherValueFromWei(blockRewardData.value.blockReward, 4)}`;
+  // Latest Block often doesn't have reward yet:
+  if (props.id === 0 && blockRewardData.error && blockRewardData.error.message === 'Result missing from .json() response') {
+    blockReward = 'TBD';
+  }
 
   return (
     <span className='pl-2 md:pl-4'>
       <LoadingPulseStatic
         content='Block Reward:'
-        dataState={blockReward}
+        dataState={blockRewardData}
         className='bg-(--grey-fg-color)'
       />
       &nbsp;&nbsp;
-      <blockReward.Render
+      <blockRewardData.Render
+        value={ () => blockReward }
         loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[4rem]' />}
-        errorFallback={<ErrorWithRetry refetch={getBlockReward} />}
+        errorFallback={<ErrorWithRetry refetch={blockRewardData.refetch} />}
       />
     </span>
   );

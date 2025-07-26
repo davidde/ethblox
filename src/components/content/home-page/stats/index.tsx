@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
 import { CurrencyDollarIcon } from '@heroicons/react/24/outline';
 import { GlobeAltIcon } from '@heroicons/react/24/outline';
 import { Square3Stack3DIcon } from '@heroicons/react/24/outline';
@@ -9,79 +8,54 @@ import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import StatCard from './stat-card';
 import { getGasPriceGwei, getGasPriceUsd } from '@/lib/utilities';
-import { DataState } from '@/lib/data-state';
+import { useDataState } from '@/lib/data-state';
 
-
-type PricesTxs = {
-  ethPrice: number,
-  averageGasPrice: number,
-  transactionsToday: string,
-  totalTransactions: string,
-};
 
 export default function Stats() {
-  const [ethSupply, setEthSupply] = useState(DataState.value<number>());
-  const [pricesAndTxs, setPricesAndTxs] = useState(DataState.value<PricesTxs>());
+  const ethSupplyData = useDataState<any>({
+    fetcher: (url) => fetch(url),
+    args: ['https://eth.blockscout.com/api/v2/stats/charts/market'],
+  });
 
-  async function getEthSupply() {
-    try {
-      const res = await fetch('https://eth.blockscout.com/api/v2/stats/charts/market');
-      if (!res.ok) throw new Error(`Response NOT OK, status: ${res.status}`);
-      const json = await res.json();
-      setEthSupply(DataState.value(+json.available_supply));
-    } catch (err) {
-      setEthSupply(DataState.error(err));
-    }
+  const pricesAndTxsData = useDataState<any>({
+    fetcher: (url) => fetch(url),
+    args: ['https://eth.blockscout.com/api/v2/stats'],
+  });
+
+  const ethSupply = ethSupplyData.value ? +ethSupplyData.value.available_supply : undefined;
+
+  let ethPrice, averageGasPrice, transactionsToday, totalTransactions;
+  if (pricesAndTxsData.value) {
+    ethPrice = +pricesAndTxsData.value.coin_price;
+    averageGasPrice = +pricesAndTxsData.value.gas_prices.average;
+    transactionsToday = (+pricesAndTxsData.value.transactions_today).toLocaleString('en-US');
+    totalTransactions = (+pricesAndTxsData.value.total_transactions).toLocaleString('en-US');
   }
-
-  async function getPricesAndTxs() {
-    try {
-      const res = await fetch('https://eth.blockscout.com/api/v2/stats');
-      if (!res.ok) throw new Error(`Response NOT OK, status: ${res.status}`);
-      const json = await res.json();
-      setPricesAndTxs(DataState.value({
-        ethPrice: +json.coin_price,
-        averageGasPrice: +json.gas_prices.average,
-        transactionsToday: (+json.transactions_today).toLocaleString('en-US'),
-        totalTransactions: (+json.total_transactions).toLocaleString('en-US'),
-      }));
-    } catch (err) {
-      setPricesAndTxs(DataState.error(err));
-    }
-  }
-
-  useEffect(() => {
-    getEthSupply();
-    getPricesAndTxs();
-  }, []);
 
   const averageGasPriceLink = () =>
     <Link href='/mainnet/gastracker'
       className='text-(--link-color) hover:text-(--hover-fg-color)'>
-      {getGasPriceGwei(pricesAndTxs.value!.averageGasPrice)} {getGasPriceUsd(pricesAndTxs.value!.averageGasPrice, pricesAndTxs.value!.ethPrice)}
+      {getGasPriceGwei(averageGasPrice!)} {getGasPriceUsd(averageGasPrice!, ethPrice!)}
     </Link>;
-  const ethPriceFormatted = () => pricesAndTxs.value!.ethPrice.toLocaleString('en-US', {
+  const ethPriceFormatted = () => ethPrice!.toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
   });
   const ethSupplyFormatted = () =>
-    `Ξ${ethSupply.value!.toLocaleString('en-US', {
+    `Ξ${ethSupply!.toLocaleString('en-US', {
       maximumFractionDigits: 2,
     })}`;
 
-  // ethMarketCap is dependent on both DataStates, so we make a single new DataState
-  // for it exclusively for passing down to GastrackerCard:
-  let ethMarketCap = DataState.value<string>();
-  if (pricesAndTxs.value && ethSupply.value) {
-    ethMarketCap = DataState.value((pricesAndTxs.value.ethPrice * ethSupply.value).toLocaleString('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }));
-  } else if (pricesAndTxs.error) {
-    ethMarketCap = DataState.error(pricesAndTxs.error);
-  } else if (ethSupply.error) {
-    ethMarketCap = DataState.error(ethSupply.error);
-  }
+  // ethMarketCap is dependent on both DataStates, so we pick the one in error or loading state
+  // for passing down to StatCard:
+  let ethMarketCapData;
+  if (pricesAndTxsData.error || !pricesAndTxsData.value) ethMarketCapData = pricesAndTxsData;
+  else ethMarketCapData = ethSupplyData;
+  // If it is in defined ValueState, either DataState is ok since we pass the value callback below:
+  const ethMarketCap = () => (ethPrice! * ethSupply!).toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  });
 
   return (
     <div className='border border-(--border-color) bg-(--comp-bg-color)
@@ -90,28 +64,28 @@ export default function Stats() {
         <StatCard
           label='ETHER PRICE'
           icon={<CurrencyDollarIcon className='w-8 h-8' />}
-          dataState={pricesAndTxs}
+          dataState={pricesAndTxsData}
           value={ethPriceFormatted}
-          retry={getPricesAndTxs}
+          refetch={pricesAndTxsData.refetch}
           className='md:border-b'
         />
         <StatCard
           label='ETHER SUPPLY'
           icon={<div className='w-8 h-8 bg-(image:--eth-logo-url) bg-contain bg-no-repeat bg-center' />}
-          dataState={ethSupply}
+          dataState={ethSupplyData}
           value={ethSupplyFormatted}
-          retry={getEthSupply}
+          refetch={ethSupplyData.refetch}
           className='md:border-b md:border-x'
         />
         <StatCard
           label='ETHER MARKET CAP'
           icon={<GlobeAltIcon className='w-8 h-8' />}
-          dataState={ethMarketCap}
-          value={() => ethMarketCap.value}
+          dataState={ethMarketCapData}
+          value={ethMarketCap}
           // ethMarketCap depends on both data fetches, so potentially refetch both:
-          retry={async () => {
-            if (pricesAndTxs.error) getPricesAndTxs();
-            if (ethSupply.error) getEthSupply();
+          refetch={async () => {
+            if (pricesAndTxsData.error) pricesAndTxsData.refetch();
+            if (ethSupplyData.error) ethSupplyData.refetch();
           }}
           className='md:border-b'
         />
@@ -121,24 +95,24 @@ export default function Stats() {
         <StatCard
           label='AVERAGE GAS PRICE'
           icon={<FireIcon className='w-8 h-8' />}
-          dataState={pricesAndTxs}
+          dataState={pricesAndTxsData}
           value={averageGasPriceLink}
-          retry={getPricesAndTxs}
+          refetch={pricesAndTxsData.refetch}
         />
         <StatCard
           label='TRANSACTIONS TODAY'
           icon={<ClipboardDocumentListIcon className='w-8 h-8' />}
-          dataState={pricesAndTxs}
-          value={() => pricesAndTxs.value!.transactionsToday}
-          retry={getPricesAndTxs}
+          dataState={pricesAndTxsData}
+          value={() => transactionsToday!}
+          refetch={pricesAndTxsData.refetch}
           className='md:border-x'
         />
         <StatCard
           label='TOTAL TRANSACTIONS'
           icon={<Square3Stack3DIcon className='w-8 h-8' />}
-          dataState={pricesAndTxs}
-          value={() => pricesAndTxs.value!.totalTransactions}
-          retry={getPricesAndTxs}
+          dataState={pricesAndTxsData}
+          value={() => totalTransactions!}
+          refetch={pricesAndTxsData.refetch}
         />
       </div>
     </div>

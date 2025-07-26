@@ -1,40 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { ChartBarIcon } from '@heroicons/react/24/outline';
 import GastrackerCard from './gastracker-card';
 import BreakMobile from '@/components/common/break-mobile';
 import PageWrapper from '@/components/common/page-wrapper';
-import DataState from '@/lib/data-state';
+import { useDataState } from '@/lib/data-state';
 
-
-export type Prices = {
-  ethPrice: number,
-  lowGasPrice: number,
-  averageGasPrice: number,
-  highGasPrice: number,
-};
 
 export default function GastrackerPage() {
-  const [prices, setPrices] = useState(DataState.value<Prices>());
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const res = await fetch('https://eth.blockscout.com/api/v2/stats');
-        if (!res.ok) throw new Error(`Response NOT OK, status: ${res.status}`);
-        const data = await res.json();
-        setPrices(DataState.value({
-          ethPrice: +data.coin_price,
-          lowGasPrice: +data.gas_prices.slow,
-          averageGasPrice: +data.gas_prices.average,
-          highGasPrice: +data.gas_prices.fast,
-        }));
-      } catch(err) {
-        setPrices(DataState.error(err));
-      }
-    })();
-  }, []);
+  const pricesData = useDataState<any>({
+    fetcher: (url) => fetch(url),
+    args: ['https://eth.blockscout.com/api/v2/stats'],
+  });
 
   return (
     <main>
@@ -54,9 +31,9 @@ export default function GastrackerPage() {
 
           <div className='flex flex-col md:flex-row items-start
             justify-between ml-auto mr-auto w-full max-w-200 my-10'>
-            <GastrackerCard title='Low' prices={prices} />
-            <GastrackerCard title='Average' prices={prices} />
-            <GastrackerCard title='High' prices={prices} />
+            <GastrackerCard title='Low' pricesData={pricesData} />
+            <GastrackerCard title='Average' pricesData={pricesData} />
+            <GastrackerCard title='High' pricesData={pricesData} />
           </div>
         </div>
       </PageWrapper >

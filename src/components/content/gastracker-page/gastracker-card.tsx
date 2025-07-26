@@ -1,15 +1,29 @@
-import DataState from '@/lib/data-state';
-import { type Prices } from '../gastracker-page';
+import { DataState } from '@/lib/data-state';
 import { getGasPriceGwei, getGasPriceUsd } from '@/lib/utilities';
 
 
-export default function GastrackerCard({ title, prices }: {
+type Prices = {
+  ethPrice: number,
+  lowGasPrice: number,
+  averageGasPrice: number,
+  highGasPrice: number,
+};
+
+export default function GastrackerCard({ title, pricesData }: {
   title: string,
-  prices: DataState<Prices>,
+  pricesData: DataState<any>,
 }) {
-  // Callback to get low/average/highGasPrice depending on component:
-  const gasPrice = () => Object.entries(prices.value!).find( // find returns a key-value pair (value = [1])
-    ([key]) => key.startsWith(title.toLowerCase()) )?.[1]; // OR undefined => `?.` optional chaining required
+  let prices: Prices, gasPrice;
+  if (pricesData.value) {
+    prices = {
+      ethPrice: +pricesData.value.coin_price,
+      lowGasPrice: +pricesData.value.gas_prices.slow,
+      averageGasPrice: +pricesData.value.gas_prices.average,
+      highGasPrice: +pricesData.value.gas_prices.fast,
+    }
+    gasPrice = Object.entries(prices).find( // find returns a key-value pair (value = [1])
+      ([key]) => key.startsWith(title.toLowerCase()) )?.[1]; // OR undefined => `?.` optional chaining required
+  }
 
   let smiley, smileyLabel, colorClass;
   switch (title) {
@@ -41,11 +55,11 @@ export default function GastrackerCard({ title, prices }: {
       </p>
       <div className={`text-lg tracking-wide ${colorClass}`}>
         <p>
-          <prices.Render value={ () => getGasPriceGwei(gasPrice()!) } />
+          <pricesData.Render value={ () => getGasPriceGwei(gasPrice!) } />
         </p>
         <p className='text-sm'>
-          <prices.Render showFallback={false}
-            value={ () => getGasPriceUsd(gasPrice()!, prices.value!.ethPrice) } />
+          <pricesData.Render showFallback={false}
+            value={ () => getGasPriceUsd(gasPrice!, prices.ethPrice) } />
         </p>
       </div>
     </div>

@@ -8,7 +8,7 @@ export default function StatCard<T>(props: {
   icon: ReactNode,
   dataState: DataState<T>,
   value: () => ReactNode,
-  retry: () => Promise<void>,
+  refetch: () => Promise<void>,
   className?: string
 }) {
   return (
@@ -24,7 +24,7 @@ export default function StatCard<T>(props: {
         <div className='pl-12'>
           <props.dataState.Render
             value={props.value}
-            errorFallback={<ErrorWithRetry refetch={props.retry} />}
+            errorFallback={<ErrorWithRetry refetch={props.refetch} />}
           />
         </div>
       </div>

@@ -1,32 +1,20 @@
 'use client';
 
 // Alchemy SDK Docs: https://docs.alchemy.com/reference/alchemy-sdk-api-surface-overview#api-surface
-import { useCallback, useEffect, useState } from 'react';
 import Searchbar from '@/components/common/searchbar';
 import Blocks from './blocks';
 import Transactions from './transactions';
 import Stats from './stats';
 import NodeBanner from './node-banner';
 import { getAlchemy } from '@/lib/utilities';
-import { DataState } from '@/lib/data-state';
+import { useDataState } from '@/lib/data-state';
 
 
 export default function HomePage(props: {network: string}) {
   const alchemy = getAlchemy(props.network);
-  const [latestBlock, setLatestBlock] = useState(DataState.value<number>());
-
-  const getLatestBlock = useCallback(async () => {
-    try {
-      const resp = await alchemy.core.getBlockNumber();
-      setLatestBlock(DataState.value(resp));
-    } catch(err) {
-      setLatestBlock(DataState.error(err));
-    }
-  }, [alchemy]);
-
-  useEffect(() => {
-    getLatestBlock();
-  }, [getLatestBlock]);
+  const latestBlock = useDataState({
+    fetcher: () => alchemy.core.getBlockNumber(),
+  });
 
   return (
     <main className='relative'>
@@ -57,13 +45,13 @@ export default function HomePage(props: {network: string}) {
           <Blocks
             network={props.network}
             latestBlockData={latestBlock}
-            refetch={getLatestBlock}
+            refetch={latestBlock.refetch}
           />
 
           <Transactions
             network={props.network}
             latestBlockData={latestBlock}
-            refetch={getLatestBlock}
+            refetch={latestBlock.refetch}
           />
         </div>
       </div>

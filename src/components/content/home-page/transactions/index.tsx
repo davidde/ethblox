@@ -1,10 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
 import { getAlchemy } from '@/lib/utilities';
-import { DataState } from '@/lib/data-state';
+import { useDataState, DataState } from '@/lib/data-state';
 import Transaction from './transaction';
-import { BlockWithTransactions } from 'alchemy-sdk';
 import ErrorWithRetry from '@/components/common/indicators/error-with-retry';
 
 
@@ -14,20 +12,12 @@ export default function Transactions(props: {
   refetch: () => Promise<void>,
 }) {
   const alchemy = getAlchemy(props.network);
-  const [blockWithTransactions, setBlockWithTransactions] = useState(DataState.value<BlockWithTransactions>());
 
-  const getBlockWithTransactions = useCallback(async () => {
-    if (props.latestBlockData.value) try {
-      const resp = await alchemy.core.getBlockWithTransactions(props.latestBlockData.value);
-      setBlockWithTransactions(DataState.value(resp));
-    } catch(err) {
-      setBlockWithTransactions(DataState.error(err));
-    }
-  }, [alchemy, props.latestBlockData.value]);
-
-  useEffect(() => {
-    getBlockWithTransactions();
-  }, [getBlockWithTransactions]);
+  const blockWithTransactions = useDataState({
+      fetcher: (num) => alchemy.core.getBlockWithTransactions(num),
+      args: [props.latestBlockData.value!],
+      skipFetch: !props.latestBlockData.value
+    });
 
   let transactionsDisplay;
   if (props.latestBlockData.error) {
@@ -40,7 +30,7 @@ export default function Transactions(props: {
     transactionsDisplay = <ErrorWithRetry
                             error='Error getting latest transactions'
                             className='pl-4 py-2'
-                            refetch={getBlockWithTransactions}
+                            refetch={blockWithTransactions.refetch}
                           />;
   } else {
     transactionsDisplay = [...Array(6)].map((_, i) =>
