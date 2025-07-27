@@ -23,6 +23,8 @@ export default function BlockReward(props: {
     blockReward = 'TBD';
   }
 
+  // console.log(blockRewardData.value); // LoadingPulse when `Error: Empty response` on first block reward!
+
   return (
     <span className='pl-2 md:pl-4'>
       <LoadingPulseStatic

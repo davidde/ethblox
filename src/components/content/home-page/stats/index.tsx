@@ -38,18 +38,21 @@ export default function Stats() {
   // Since ethMarketCap is dependent on both fetches / DataStates,
   // we need a new DataState for it to correctly render when it is
   // in Error or Loading states. Contrary to `useDataState`,
-  // `DataState.value` just creates the (undefined) DataState from the fetcher,
+  // `DataState.Value` just creates the (undefined) DataState from the fetcher,
   // but doesn't initialize it (by actually running the fetcher):
-  let ethMarketCapData = DataState.value({
+  let ethMarketCapData = DataState.Value({
     fetcher: async () => await Promise.all([pricesAndTxsData.refetch(), ethSupplyData.refetch()])
   });
 
-  // Give it a correct value if the fetches have already succeeded:
+  // Give it a correct value if both fetches have already succeeded:
   // (This requires `useEffect` because of `setDataStateBase`)
   useEffect(() => {
     if (ethPrice && ethSupply) {
-      ethMarketCapData.setDataStateBase(DataStateBase.value([ethPrice, ethSupply]));
+      ethMarketCapData.setDataStateBase(DataStateBase.Value([ethPrice, ethSupply]));
     }
+  // Dont include `ethMarketCapData` as a dependency as `react-hooks` says,
+  // or it'll cause an infinite loop!
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ethPrice, ethSupply]);
 
   // Indicate if one of the fetches has failed:

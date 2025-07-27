@@ -42,7 +42,7 @@ export type DataState<T> = ValueState<T> | ErrorState<T>;
 // Factory functions to return the `DataStateBase` type:
 export const DataStateBase = {
   // Create ValueStateBase<T> from value or nothing when initializing:
-  value: <T,>(dataValue?: T): DataStateBase<T> => {
+  Value: <T,>(dataValue?: T): DataStateBase<T> => {
     return {
       value: dataValue,
       error: undefined,
@@ -50,7 +50,7 @@ export const DataStateBase = {
   },
 
   // Create ErrorStateBase from `unknown` error, to be used in `catch` block:
-  error: <T,>(unknownError: unknown, errorPrefix?: string): DataStateBase<T> => {
+  Error: <T,>(unknownError: unknown, errorPrefix?: string): DataStateBase<T> => {
     let errorInstance: Error;
 
     if (unknownError instanceof Error) {
@@ -102,14 +102,14 @@ type FetchConfig<T, A extends any[] = any[]> = {
 // Factory functions to create the `DataState` type:
 export const DataState = {
   // Create ValueState<T> from value or nothing when initializing:
-  value: <T, A extends any[] = any[]>({
+  Value: <T, A extends any[] = any[]>({
       fetcher,
       args = [] as unknown as A,
       skipFetch = false
     }: FetchConfig<T, A>
   ): DataState<T> => {
-    const [dataStateBase, setDataStateBase] = useState(DataStateBase.value<T>());
-    const refetch = getFetcher({ fetcher, args, skipFetch }, setDataStateBase);
+    const [dataStateBase, setDataStateBase] = useState(DataStateBase.Value<T>());
+    const refetch = useFetcher({ fetcher, args, skipFetch }, setDataStateBase);
 
     const Render = ({
         value,
@@ -130,15 +130,15 @@ export const DataState = {
   },
 
   // Create ErrorState from `unknown` error, to be used in `catch` block:
-  error: <T, A extends any[] = any[]>({
+  Error: <T, A extends any[] = any[]>({
       fetcher,
       args = [] as unknown as A,
       skipFetch = false
     }: FetchConfig<T, A>,
     error: string,
   ): DataState<T> => {
-    const [dataStateBase, setDataStateBase] = useState(DataStateBase.error<T>(error));
-    const refetch = getFetcher({ fetcher, args, skipFetch }, setDataStateBase);
+    const [dataStateBase, setDataStateBase] = useState(DataStateBase.Error<T>(error));
+    const refetch = useFetcher({ fetcher, args, skipFetch }, setDataStateBase);
 
     const Render = ({
         error,
@@ -167,11 +167,13 @@ export function useDataState<T, A extends any[] = any[]>(
     skipFetch = false
   }: FetchConfig<T, A>
 ): DataState<T> {
-  const dataState = DataState.value({fetcher, args, skipFetch});
+  const dataState = DataState.Value({fetcher, args, skipFetch});
 
   // Get an actual value by doing initial fetch:
   useEffect(() => {
     dataState.refetch();
+    // Only rerun when refetch() changes:
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataState.refetch]);
 
   return dataState;
@@ -180,7 +182,7 @@ export function useDataState<T, A extends any[] = any[]>(
 // This helper function takes the fetcher provided to the DataState,
 // and attaches it to the DataState's internal data value that is
 // tracked and updated with useState:
-function getFetcher<T, A extends any[] = any[]>({
+function useFetcher<T, A extends any[] = any[]>({
     fetcher,
     args = [] as unknown as A,
     skipFetch = false
@@ -188,7 +190,10 @@ function getFetcher<T, A extends any[] = any[]>({
   setDataStateBase: Dispatch<SetStateAction<DataStateBase<T>>>
 ): () => Promise<any> {
   // Prevent infinite loop by NOT refetching unless the arguments or fetcher actually changed:
+  // (Ideally do a deep comparison check for certainty)
   const memoArgs = useMemo(() => args, [JSON.stringify(args)]);
+  // Only create fetcher once and don't update it:
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const memoFetcher = useCallback(fetcher, []);
 
   return useCallback(async () => {
@@ -208,12 +213,12 @@ function getFetcher<T, A extends any[] = any[]>({
         else response = json;
       }
       if (!response) throw new Error('Empty response');
-      setDataStateBase(DataStateBase.value(response));
+      setDataStateBase(DataStateBase.Value(response));
     } catch (err) {
-      setDataStateBase(DataStateBase.error(err));
+      setDataStateBase(DataStateBase.Error(err));
     }
 
     // console.log('response = ', response);
     return response;
-  }, [memoFetcher, memoArgs, skipFetch]);
+  }, [memoFetcher, memoArgs, skipFetch, setDataStateBase]);
 }
