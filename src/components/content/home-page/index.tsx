@@ -13,7 +13,12 @@ import { useDataState } from '@/lib/data-state';
 export default function HomePage(props: {network: string}) {
   const alchemy = getAlchemy(props.network);
   const latestBlock = useDataState({
-    fetcher: () => alchemy.core.getBlockNumber(),
+    // fetcher gets frozen to its initialization state by `useRef(fetcher).current`
+    // inside useDataState(), so it requires the alchemy object passed as argument,
+    // instead of closing over it! If not passed as argument, things will work fine initially,
+    // but never update to Sepolia on network change!
+    fetcher: (alchemy) => alchemy.core.getBlockNumber(),
+    args: [alchemy],
   });
 
   return (

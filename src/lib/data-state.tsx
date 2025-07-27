@@ -193,8 +193,11 @@ function useFetcher<T, A extends any[] = any[]>({
   // (Ideally do a deep comparison check for certainty)
   const memoArgs = useMemo(() => args, [JSON.stringify(args)]);
   // Only create fetcher once and don't update it:
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const memoFetcher = useCallback(fetcher, []);
+  // Even if the parent re-creates the fetcher each render,
+  // this hook will always use the first one.
+  // This means it also can't close over any variables that might change.
+  // Those variables have to be provided as ARGUMENTS!
+  const stableFetcher = useRef(fetcher).current;
 
   return useCallback(async () => {
     if (skipFetch) return;
@@ -202,7 +205,7 @@ function useFetcher<T, A extends any[] = any[]>({
     let response;
 
     try {
-      response = await memoFetcher(...memoArgs);
+      response = await stableFetcher(...memoArgs);
       // console.log('response = ', response);
 
       // If the function is fetch, call `.json()`:
@@ -220,5 +223,5 @@ function useFetcher<T, A extends any[] = any[]>({
 
     // console.log('response = ', response);
     return response;
-  }, [memoFetcher, memoArgs, skipFetch, setDataStateBase]);
+  }, [stableFetcher, memoArgs, skipFetch, setDataStateBase]);
 }
