@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Dispatch, ReactNode, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import LoadingIndicator from '@/components/common/indicators/loading-indicator';
 import ErrorIndicator from '@/components/common/indicators/error-indicator';
 
@@ -47,7 +47,7 @@ export const DataStateBase = {
   },
 
   // Create ErrorState from `unknown` error, to be used in `catch` block:
-  error: (unknownError: unknown, errorPrefix?: string): ErrorStateBase => {
+  error: <T,>(unknownError: unknown, errorPrefix?: string): DataStateBase<T> => {
     let errorInstance: Error;
 
     if (unknownError instanceof Error) {
@@ -107,32 +107,7 @@ export function useDataState<T, A extends any[] = any[]>(
   }: FetchConfig<T, A>
 ): DataState<T> {
   const [dataStateBase, setDataStateBase] = useState(DataStateBase.value<T>());
-  // Prevent infinite loop by NOT refetching unless the arguments or fetcher actually changed:
-  const memoArgs = useMemo(() => args, [JSON.stringify(args)]);
-  const memoFetcher = useCallback(fetcher, []);
-
-  const refetch = useCallback(async () => {
-    if (skipFetch) return;
-
-    let response;
-
-    try {
-      response = await memoFetcher(...memoArgs);
-      // If the function is fetch, call `.json()`:
-      if (response instanceof Response) {
-        if (!response.ok) throw new Error(`Fetch response NOT OK, status: ${response.status}`);
-        const json = await response.json();
-        if ('result' in json) response = json.result;
-        else response = json;
-      }
-      if (!response) throw new Error('Empty response');
-      setDataStateBase(DataStateBase.value(response));
-    } catch (err) {
-      setDataStateBase(DataStateBase.error(err));
-    }
-
-    return response;
-  }, [memoFetcher, memoArgs, skipFetch]);
+  const refetch = getFetcher({ fetcher, args, skipFetch }, setDataStateBase);
 
   useEffect(() => {
     refetch();
@@ -173,4 +148,45 @@ export function useDataState<T, A extends any[] = any[]>(
     );
 
   return { ...dataStateBase, Render, refetch };
+}
+
+// This helper function takes the fetcher provided to the DataState,
+// and attaches it to the DataState's internal data value that is
+// tracked and updated with useState:
+function getFetcher<T, A extends any[] = any[]>({
+    fetcher,
+    args = [] as unknown as A,
+    skipFetch = false
+  }: FetchConfig<T, A>,
+  setDataStateBase: Dispatch<SetStateAction<DataStateBase<T>>>
+): () => Promise<any> {
+  // Prevent infinite loop by NOT refetching unless the arguments or fetcher actually changed:
+  const memoArgs = useMemo(() => args, [JSON.stringify(args)]);
+  const memoFetcher = useCallback(fetcher, []);
+
+  return useCallback(async () => {
+    if (skipFetch) return;
+
+    let response;
+
+    try {
+      response = await memoFetcher(...memoArgs);
+      // console.log('response = ', response);
+
+      // If the function is fetch, call `.json()`:
+      if (response instanceof Response) {
+        if (!response.ok) throw new Error(`Fetch response NOT OK, status: ${response.status}`);
+        const json = await response.json();
+        if ('result' in json) response = json.result;
+        else response = json;
+      }
+      if (!response) throw new Error('Empty response');
+      setDataStateBase(DataStateBase.value(response));
+    } catch (err) {
+      setDataStateBase(DataStateBase.error(err));
+    }
+
+    // console.log('response = ', response);
+    return response;
+  }, [memoFetcher, memoArgs, skipFetch]);
 }

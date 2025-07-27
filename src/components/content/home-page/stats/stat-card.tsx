@@ -21,12 +21,10 @@ export default function StatCard<T>(props: {
           </p>
         </div>
         <div className='pl-12'>
-          { props.label.startsWith('ETHER MARKET') ?
-            <props.dataState.Render
-              value={props.value}
-              errorFallback={<ErrorWithRetry refetch={props.dataState.refetch} />}
-            /> : ''
-          }
+          <props.dataState.Render
+            value={props.value}
+            errorFallback={<ErrorWithRetry refetch={props.dataState.refetch} />}
+          />
         </div>
       </div>
     </div>
