@@ -27,14 +27,17 @@ export type DataStateBase<T> = ValueStateBase<T> | ErrorStateBase;
 // If the DataState's value exists, the render method will render its value
 // callback function (e.g. to get a subfield of the value) if that is present,
 // or default to rendering the DataState's value directly if not.
-type DataStateMethods = {
+type DataStateMethods<T> = {
+  // CAREFUL: `setDataStateBase` requires using `useEffect`, `useCallback` or event handlers!
+  // Do NOT use it directly in a component's body or this will cause an infinite rerender loop!
+  setDataStateBase: Dispatch<SetStateAction<DataStateBase<T>>>,
   Render: (options?: RenderConfig) => ReactNode;
   refetch: () => Promise<any>;
 };
 
-type ValueState<T> = ValueStateBase<T> & DataStateMethods;
-type ErrorState = ErrorStateBase & DataStateMethods;
-export type DataState<T> = ValueState<T> | ErrorState;
+type ValueState<T> = ValueStateBase<T> & DataStateMethods<T>;
+type ErrorState<T> = ErrorStateBase & DataStateMethods<T>;
+export type DataState<T> = ValueState<T> | ErrorState<T>;
 
 // Factory functions to return the `DataStateBase` type:
 export const DataStateBase = {
@@ -115,6 +118,7 @@ export const DataState = {
         fallbackClass,
       }: RenderConfig = {}
     ): ReactNode => {
+      // console.log('dataStateBase.value = ', dataStateBase.value);
       if (dataStateBase.value) return value ? value() : String(dataStateBase.value);
       else return showFallback ?
         ( loadingFallback ? loadingFallback : <LoadingIndicator className={fallbackClass} /> )
@@ -122,7 +126,7 @@ export const DataState = {
         '';
     }
 
-    return { ...dataStateBase, Render, refetch };
+    return { ...dataStateBase, setDataStateBase, Render, refetch };
   },
 
   // Create ErrorState from `unknown` error, to be used in `catch` block:
@@ -149,7 +153,7 @@ export const DataState = {
         '';
     };
 
-    return { ...dataStateBase, Render, refetch };
+    return { ...dataStateBase, setDataStateBase, Render, refetch };
   }
 };
 

@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { CurrencyDollarIcon } from '@heroicons/react/24/outline';
 import { GlobeAltIcon } from '@heroicons/react/24/outline';
 import { Square3Stack3DIcon } from '@heroicons/react/24/outline';
@@ -9,7 +10,6 @@ import Link from 'next/link';
 import StatCard from './stat-card';
 import { getGasPriceGwei, getGasPriceUsd } from '@/lib/utilities';
 import { useDataState, DataState, DataStateBase } from '@/lib/data-state';
-import { useCallback } from 'react';
 
 
 export default function Stats() {
@@ -18,14 +18,16 @@ export default function Stats() {
     args: ['https://eth.blockscout.com/api/v2/stats/charts/market'],
   });
 
+  const ethSupply = ethSupplyData.value ? +ethSupplyData.value.available_supply : undefined;
+
   const pricesAndTxsData = useDataState<any>({
     fetcher: (url) => fetch(url),
     args: ['https://eth.blockscout.com/api/v2/stats'],
   });
 
-  const ethSupply = ethSupplyData.value ? +ethSupplyData.value.available_supply : undefined;
+  let ethPrice: number | undefined = undefined;
+  let averageGasPrice, transactionsToday, totalTransactions;
 
-  let ethPrice, averageGasPrice, transactionsToday, totalTransactions;
   if (pricesAndTxsData.value) {
     ethPrice = +pricesAndTxsData.value.coin_price;
     averageGasPrice = +pricesAndTxsData.value.gas_prices.average;
@@ -33,71 +35,26 @@ export default function Stats() {
     totalTransactions = (+pricesAndTxsData.value.total_transactions).toLocaleString('en-US');
   }
 
-  const averageGasPriceLink = () =>
-    <Link href='/mainnet/gastracker'
-      className='text-(--link-color) hover:text-(--hover-fg-color)'>
-      {getGasPriceGwei(averageGasPrice!)} {getGasPriceUsd(averageGasPrice!, ethPrice!)}
-    </Link>;
-  const ethPriceFormatted = () => ethPrice!.toLocaleString('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  });
-  const ethSupplyFormatted = () =>
-    `Ξ${ethSupply!.toLocaleString('en-US', {
-      maximumFractionDigits: 2,
-    })}`;
-
-  // Since we need a DataState for correctly rendering Errors or Loading states,
-  // and ethMarketCap is dependent on both DataStates, we create a new DataState for it:
-  let ethMarketCapData = useDataState({
+  // Since ethMarketCap is dependent on both fetches / DataStates,
+  // we need a new DataState for it to correctly render when it is
+  // in Error or Loading states. Contrary to `useDataState`,
+  // `DataState.value` just creates the (undefined) DataState from the fetcher,
+  // but doesn't initialize it (by actually running the fetcher):
+  let ethMarketCapData = DataState.value({
     fetcher: async () => await Promise.all([pricesAndTxsData.refetch(), ethSupplyData.refetch()])
   });
-  // ethMarketCapData.value = ethPrice && ethSupply ?
-  //   (ethPrice * ethSupply).toLocaleString('en-US', {
-  //     style: 'currency',
-  //     currency: 'USD',
-  //   })
-  //   :
-  //   undefined;
-  // ethMarketCapData.error = pricesAndTxsData.error || ethSupplyData.error ?
-  //   new Error('Price and supply fetches both failed')
-  //   :
-  //   undefined;
 
-  const ethMarketCap = () => (ethPrice! * ethSupply!).toLocaleString('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  });
+  // Give it a correct value if the fetches have already succeeded:
+  // (This requires `useEffect` because of `setDataStateBase`)
+  useEffect(() => {
+    if (ethPrice && ethSupply) {
+      ethMarketCapData.setDataStateBase(DataStateBase.value([ethPrice, ethSupply]));
+    }
+  }, [ethPrice, ethSupply]);
 
-  console.log('ethMarketCapData = ', ethMarketCapData);
-  console.log('ethMarketCap = ', ethMarketCap());
-  console.log('ethMarketCapData.value = ', ethMarketCapData.value);
-
-  // if (pricesAndTxsData.error || ethSupplyData.error) {
-  //   if (pricesAndTxsData.error && ethSupplyData.error) {
-  //     ethMarketCapData = pricesAndTxsData;
-  //     ethMarketCapData.error = new Error('Price and supply fetches both failed');
-  //     // How to make this work: ???
-  //     // ethMarketCapData.refetch = async () => { await Promise.all([pricesAndTxsData.refetch(), ethSupplyData.refetch()]) };
-  //     ethMarketCapData.refetch = pricesAndTxsData.refetch;
-  //   }
-  //   else if (pricesAndTxsData.error) {
-  //     ethMarketCapData = pricesAndTxsData;
-  //     ethMarketCapData.refetch = pricesAndTxsData.refetch;
-  //   } else {
-  //     ethMarketCapData = ethSupplyData;
-  //     ethMarketCapData.refetch = ethSupplyData.refetch;
-  //   }
-  // }
-  // else if (!pricesAndTxsData.value || !ethSupplyData.value) {
-  //   if (!pricesAndTxsData.value) ethMarketCapData = pricesAndTxsData;
-  //   else ethMarketCapData = ethSupplyData;
-  // } else ethMarketCapData = ethSupplyData;
-  // // If it is in defined ValueState, either DataState is ok since we pass the value callback below:
-  // const ethMarketCap = () => (ethPrice! * ethSupply!).toLocaleString('en-US', {
-  //   style: 'currency',
-  //   currency: 'USD',
-  // });
+  // Indicate if one of the fetches has failed:
+  ethMarketCapData.error = pricesAndTxsData.error || ethSupplyData.error ?
+    new Error('Price or supply fetch failed') : undefined;
 
   return (
     <div className='border border-(--border-color) bg-(--comp-bg-color)
@@ -107,21 +64,35 @@ export default function Stats() {
           label='ETHER PRICE'
           icon={<CurrencyDollarIcon className='w-8 h-8' />}
           dataState={pricesAndTxsData}
-          value={ethPriceFormatted}
+          value={() =>
+            ethPrice!.toLocaleString('en-US', {
+              style: 'currency',
+              currency: 'USD',
+            })
+          }
           className='md:border-b'
         />
         <StatCard
           label='ETHER SUPPLY'
           icon={<div className='w-8 h-8 bg-(image:--eth-logo-url) bg-contain bg-no-repeat bg-center' />}
           dataState={ethSupplyData}
-          value={ethSupplyFormatted}
+          value={() =>
+            `Ξ${ethSupply!.toLocaleString('en-US', {
+              maximumFractionDigits: 2,
+            })}`
+          }
           className='md:border-b md:border-x'
         />
         <StatCard
           label='ETHER MARKET CAP'
           icon={<GlobeAltIcon className='w-8 h-8' />}
           dataState={ethMarketCapData}
-          value={ethMarketCap}
+          value={() =>
+            (ethPrice! * ethSupply!).toLocaleString('en-US', {
+              style: 'currency',
+              currency: 'USD',
+            })
+          }
           className='md:border-b'
         />
       </div>
@@ -131,7 +102,12 @@ export default function Stats() {
           label='AVERAGE GAS PRICE'
           icon={<FireIcon className='w-8 h-8' />}
           dataState={pricesAndTxsData}
-          value={averageGasPriceLink}
+          value={() =>
+            <Link href='/mainnet/gastracker'
+              className='text-(--link-color) hover:text-(--hover-fg-color)'>
+              {getGasPriceGwei(averageGasPrice!)} {getGasPriceUsd(averageGasPrice!, ethPrice!)}
+            </Link>
+          }
         />
         <StatCard
           label='TRANSACTIONS TODAY'
