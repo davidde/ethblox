@@ -137,16 +137,23 @@ export const DataState = {
 
     const Render = ({
         value,
+        error,
         showFallback = true,
         loadingFallback,
+        errorFallback,
         fallbackClass,
       }: RenderConfig = {}
     ): ReactNode => {
-      if (!dataStateBase.value) {
-        console.log('Value; dataStateBase.value = ', dataStateBase.value);
-        console.log('Value; dataStateBase.error = ', dataStateBase.error);
-      }
       if (dataStateBase.value) return value ? value() : String(dataStateBase.value);
+      if (dataStateBase.error) {
+        // console.log('Value; dataStateBase.value = ', dataStateBase.value);
+        // console.log('Value; dataStateBase.error = ', dataStateBase.error);
+
+        return showFallback ?
+        ( errorFallback ? errorFallback : <ErrorIndicator error={error} className={fallbackClass} /> )
+        :
+        '';
+      }
       else return showFallback ?
         ( loadingFallback ? loadingFallback : <LoadingIndicator className={fallbackClass} /> )
         :
@@ -168,21 +175,29 @@ export const DataState = {
     const refetch = useFetcher({ fetcher, args, skipFetch }, setDataStateBase);
 
     const Render = ({
+        value,
         error,
         showFallback = true,
+        loadingFallback,
         errorFallback,
         fallbackClass,
       }: RenderConfig = {}
     ): ReactNode => {
+      if (dataStateBase.value) return value ? value() : String(dataStateBase.value);
       if (dataStateBase.error) {
-        console.log('Error; dataStateBase.value = ', dataStateBase.value);
-        console.log('Error; dataStateBase.error = ', dataStateBase.error);
-      }
-      return showFallback ?
+        // console.log('Error; dataStateBase.value = ', dataStateBase.value);
+        // console.log('Error; dataStateBase.error = ', dataStateBase.error);
+
+        return showFallback ?
         ( errorFallback ? errorFallback : <ErrorIndicator error={error} className={fallbackClass} /> )
         :
         '';
-    };
+      }
+      else return showFallback ?
+        ( loadingFallback ? loadingFallback : <LoadingIndicator className={fallbackClass} /> )
+        :
+        '';
+    }
 
     return { ...dataStateBase, setDataStateBase, Render, refetch };
   }

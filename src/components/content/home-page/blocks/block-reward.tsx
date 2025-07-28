@@ -23,7 +23,7 @@ export default function BlockReward(props: {
   let blockReward = '';
   if (blockRewardData.value) blockReward = `Ξ${getEtherValueFromWei(blockRewardData.value.blockReward, 4)}`;
   // Latest Block often doesn't have reward yet:
-  if (props.id === 0 && blockRewardData.error && blockRewardData.error.message === 'Result missing from .json() response') {
+  if (props.id === 0 && blockRewardData.error && blockRewardData.error.message === 'Empty response') {
     blockReward = 'TBD';
   }
 
