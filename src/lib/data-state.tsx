@@ -6,14 +6,17 @@ import ErrorIndicator from '@/components/common/indicators/error-indicator';
 type ValueStateBase<T> = {
   value: T;
   error: undefined;
+  loading: false;
 };
 type ErrorStateBase = {
   value: undefined;
-  error?: Error;
+  error: Error;
+  loading: false;
 };
 type LoadingStateBase = {
   value: undefined;
   error: undefined;
+  loading: true;
 };
 
 // Calling `DataStateBase.value()` inside `useState()` is required
@@ -31,15 +34,21 @@ export const DataStateBase = {
   // so we can later assign an ErrorState too if required!
   Value: <T,>(dataValue?: T): DataStateBase<T> => {
     if (!dataValue) {
-      return {
+      const loadingState: LoadingStateBase = {
         value: undefined,
         error: undefined,
+        loading: true,
       };
+      return loadingState;
     }
-    else return {
-      value: dataValue,
-      error: undefined,
-    };
+    else {
+      const valueState: ValueStateBase<T> = {
+        value: dataValue,
+        error: undefined,
+        loading: false,
+      };
+      return valueState;
+    }
   },
 
   // Create ErrorStateBase from `unknown` error, to be used in `catch` block:
@@ -56,10 +65,12 @@ export const DataStateBase = {
     }
 
     console.error(errorInstance);
-    return {
+    const error: ErrorStateBase = {
       value: undefined,
       error: errorInstance,
+      loading: false,
     };
+    return error;
   }
 };
 
@@ -80,7 +91,8 @@ interface DataStateMethods<T> {
 
 type ValueState<T> = ValueStateBase<T> & DataStateMethods<T>;
 type ErrorState<T> = ErrorStateBase & DataStateMethods<T>;
-export type DataState<T> = ValueState<T> | ErrorState<T>;
+type LoadingState<T> = LoadingStateBase & DataStateMethods<T>;
+export type DataState<T> = ValueState<T> | ErrorState<T> | LoadingState<T>;
 
 // Options to configure the `DataState`'s Render method that displays
 // either the `ValueState`'s value, or the `ErrorState`'s error.
