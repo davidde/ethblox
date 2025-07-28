@@ -1,8 +1,9 @@
 import { useDataState } from '@/lib/data-state';
+import { getBlockRewardUrl, getEtherValueFromWei } from '@/lib/utilities';
 import LoadingPulse from '@/components/common/indicators/loading-pulse';
 import LoadingPulseStatic from '@/components/common/indicators/loading-pulse-static';
 import ErrorWithRefetch from '@/components/common/indicators/error-with-refetch';
-import { getBlockRewardUrl, getEtherValueFromWei } from '@/lib/utilities';
+import ValueWithRefetch from '@/components/common/indicators/value-with-refetch';
 
 
 export default function BlockReward(props: {
@@ -23,14 +24,10 @@ export default function BlockReward(props: {
   let blockReward = '';
   if (blockRewardData.value) blockReward = `Ξ${getEtherValueFromWei(blockRewardData.value.blockReward, 4)}`;
 
-  if (props.id === 0) {
-    console.log('blockRewardData.error = ', blockRewardData.error);
-    if (blockRewardData.error) console.log('blockRewardData.error.message = ', `"${blockRewardData.error.message}"`);
-  }
-  // Latest Block often doesn't have reward yet:
-  // This doesnt work because the DataState remains in ErrorState, so the blockReward value will never be rendered!
-  if (props.id === 0 && blockRewardData.error && blockRewardData.error.message === 'Error: Empty response') {
-    blockReward = 'TBD';
+  let errorFallback = <ErrorWithRefetch refetch={blockRewardData.refetch} />;
+  // Latest Block often doesn't have a reward yet:
+  if (props.id === 0 && blockRewardData.error && blockRewardData.error.message === 'Empty response') {
+    errorFallback = <ValueWithRefetch refetch={blockRewardData.refetch} value='TBD'/>;
   }
 
   return (
@@ -44,7 +41,7 @@ export default function BlockReward(props: {
       <blockRewardData.Render
         value={ () => blockReward }
         loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[4rem]' />}
-        errorFallback={<ErrorWithRefetch refetch={blockRewardData.refetch} />}
+        errorFallback={errorFallback}
       />
     </span>
   );
