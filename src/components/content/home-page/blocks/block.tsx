@@ -13,7 +13,7 @@ import Link from 'next/link';
 import PopoverLink from '../../../common/popover-link';
 import LoadingPulse from '@/components/common/indicators/loading-pulse';
 import LoadingPulseStatic from '@/components/common/indicators/loading-pulse-static';
-import ErrorWithRetry from '@/components/common/indicators/error-with-retry';
+import ErrorWithRefetch from '@/components/common/indicators/error-with-refetch';
 import BlockReward from './block-reward';
 
 
@@ -50,7 +50,7 @@ export default function Block(props: {
               <block.Render
                 value={() => `(${getBlockAgeFromSecs(getSecsFromUnixSecs(block.value!.timestamp))} ago)`}
                 loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[6rem]' />}
-                errorFallback={<ErrorWithRetry refetch={block.refetch} />}
+                errorFallback={<ErrorWithRefetch refetch={block.refetch} />}
               />
             </span>
           </div>
@@ -61,7 +61,7 @@ export default function Block(props: {
             <block.Render
               value={() => `${block.value!.transactions.length} transactions`}
               loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[8rem]' />}
-              errorFallback={<ErrorWithRetry refetch={block.refetch} />}
+              errorFallback={<ErrorWithRefetch refetch={block.refetch} />}
             />
           </span>
           <BlockReward
@@ -85,7 +85,7 @@ export default function Block(props: {
                   className='left-[-37%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                 />}
               loadingFallback={<LoadingPulse className='bg-(--link-color) w-[11rem]' />}
-              errorFallback={<ErrorWithRetry refetch={block.refetch} />}
+              errorFallback={<ErrorWithRefetch refetch={block.refetch} />}
             />
           </span>
         </div>

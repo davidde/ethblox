@@ -3,7 +3,7 @@
 import { getAlchemy } from '@/lib/utilities';
 import { useDataState, DataState } from '@/lib/data-state';
 import Transaction from './transaction';
-import ErrorWithRetry from '@/components/common/indicators/error-with-retry';
+import ErrorWithRefetch from '@/components/common/indicators/error-with-refetch';
 
 
 export default function Transactions(props: {
@@ -20,13 +20,13 @@ export default function Transactions(props: {
 
   let transactionsDisplay;
   if (props.latestBlockData.error) {
-    transactionsDisplay = <ErrorWithRetry
+    transactionsDisplay = <ErrorWithRefetch
                             error='Error getting latest block'
                             className='pl-4 py-2'
                             refetch={props.latestBlockData.refetch}
                           />;
   } else if (blockWithTransactions.error) {
-    transactionsDisplay = <ErrorWithRetry
+    transactionsDisplay = <ErrorWithRefetch
                             error='Error getting latest transactions'
                             className='pl-4 py-2'
                             refetch={blockWithTransactions.refetch}

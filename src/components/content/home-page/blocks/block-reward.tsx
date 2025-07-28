@@ -1,7 +1,7 @@
 import { useDataState } from '@/lib/data-state';
 import LoadingPulse from '@/components/common/indicators/loading-pulse';
 import LoadingPulseStatic from '@/components/common/indicators/loading-pulse-static';
-import ErrorWithRetry from '@/components/common/indicators/error-with-retry';
+import ErrorWithRefetch from '@/components/common/indicators/error-with-refetch';
 import { getBlockRewardUrl, getEtherValueFromWei } from '@/lib/utilities';
 
 
@@ -22,14 +22,16 @@ export default function BlockReward(props: {
 
   let blockReward = '';
   if (blockRewardData.value) blockReward = `Ξ${getEtherValueFromWei(blockRewardData.value.blockReward, 4)}`;
+
+  if (props.id === 0) {
+    console.log('blockRewardData.error = ', blockRewardData.error);
+    if (blockRewardData.error) console.log('blockRewardData.error.message = ', `"${blockRewardData.error.message}"`);
+  }
   // Latest Block often doesn't have reward yet:
-  if (props.id === 0 && blockRewardData.error && blockRewardData.error.message === 'Empty response') {
+  // This doesnt work because the DataState remains in ErrorState, so the blockReward value will never be rendered!
+  if (props.id === 0 && blockRewardData.error && blockRewardData.error.message === 'Error: Empty response') {
     blockReward = 'TBD';
   }
-
-  // ErrorState is broken due to the change that now returns a DataState instead of an ErrorState!
-  // We get a ValueState with an Error, so it just displays LoadingIndicators for all Errors!!!
-  console.log(blockRewardData.value); // LoadingPulse when `Error: Empty response` for block rewards!
 
   return (
     <span className='pl-2 md:pl-4'>
@@ -42,7 +44,7 @@ export default function BlockReward(props: {
       <blockRewardData.Render
         value={ () => blockReward }
         loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[4rem]' />}
-        errorFallback={<ErrorWithRetry refetch={blockRewardData.refetch} />}
+        errorFallback={<ErrorWithRefetch refetch={blockRewardData.refetch} />}
       />
     </span>
   );

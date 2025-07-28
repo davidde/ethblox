@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { DataState } from '@/lib/data-state';
-import ErrorWithRetry from '@/components/common/indicators/error-with-retry';
+import ErrorWithRefetch from '@/components/common/indicators/error-with-refetch';
 
 
 export default function StatCard<T>(props: {
@@ -23,7 +23,7 @@ export default function StatCard<T>(props: {
         <div className='pl-12'>
           <props.dataState.Render
             value={props.value}
-            errorFallback={<ErrorWithRetry refetch={props.dataState.refetch} />}
+            errorFallback={<ErrorWithRefetch refetch={props.dataState.refetch} />}
           />
         </div>
       </div>
