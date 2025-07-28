@@ -44,20 +44,19 @@ export default function Stats() {
     fetcher: async () => await Promise.all([pricesAndTxsData.refetch(), ethSupplyData.refetch()])
   });
 
-  // Give it a correct value if both fetches have already succeeded:
+  // Give it a correct value if both fetches have already succeeded or an error if not:
   // (This requires `useEffect` because of `setDataStateBase`)
   useEffect(() => {
     if (ethPrice && ethSupply) {
       ethMarketCapData.setDataStateBase(DataStateBase.Value([ethPrice, ethSupply]));
     }
+    if (pricesAndTxsData.error || ethSupplyData.error) {
+      ethMarketCapData.setDataStateBase(DataStateBase.Error(new Error('Price or supply fetch failed')));
+    }
   // Dont include `ethMarketCapData` as a dependency as `react-hooks` says,
   // or it'll cause an infinite loop!
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ethPrice, ethSupply]);
-
-  // Indicate if one of the fetches has failed:
-  ethMarketCapData.error = pricesAndTxsData.error || ethSupplyData.error ?
-    new Error('Price or supply fetch failed') : undefined;
 
   return (
     <div className='border border-(--border-color) bg-(--comp-bg-color)
