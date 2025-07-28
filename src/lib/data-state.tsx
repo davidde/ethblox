@@ -4,12 +4,16 @@ import ErrorIndicator from '@/components/common/indicators/error-indicator';
 
 
 type ValueStateBase<T> = {
-  value?: T;
+  value: T;
   error: undefined;
 };
 type ErrorStateBase = {
   value: undefined;
   error?: Error;
+};
+type LoadingStateBase = {
+  value: undefined;
+  error: undefined;
 };
 
 // Calling `DataStateBase.value()` inside `useState()` is required
@@ -18,32 +22,21 @@ type ErrorStateBase = {
 // `ValueStateBase<T>.value` either has `value<T>` OR `undefined`,
 // the latter indicating it is still in a loading state, OR in ErrorStateBase.
 // `ErrorStateBase.error` either has an Error object or undefined.
-export type DataStateBase<T> = ValueStateBase<T> | ErrorStateBase;
-
-// The DataState.Render() method can be called at all times;
-// in Value- as well as ErrorState!
-// It will render the apropriate component,
-// either a LoadingIndicator, an ErrorIndicator, or the value.
-// If the DataState's value exists, the render method will render its value
-// callback function (e.g. to get a subfield of the value) if that is present,
-// or default to rendering the DataState's value directly if not.
-type DataStateMethods<T> = {
-  // CAREFUL: `setDataStateBase` requires using `useEffect`, `useCallback` or event handlers!
-  // Do NOT use it directly in a component's body or this will cause an infinite rerender loop!
-  setDataStateBase: Dispatch<SetStateAction<DataStateBase<T>>>,
-  Render: (options?: RenderConfig) => ReactNode;
-  refetch: () => Promise<any>;
-};
-
-type ValueState<T> = ValueStateBase<T> & DataStateMethods<T>;
-type ErrorState<T> = ErrorStateBase & DataStateMethods<T>;
-export type DataState<T> = ValueState<T> | ErrorState<T>;
+export type DataStateBase<T> = ValueStateBase<T> | ErrorStateBase | LoadingStateBase;
 
 // Factory functions to return the `DataStateBase` type:
 export const DataStateBase = {
   // Create ValueStateBase<T> from value or nothing when initializing:
+  // This needs to return a DataStateBase, and NOT a ValueStateBase,
+  // so we can later assign an ErrorState too if required!
   Value: <T,>(dataValue?: T): DataStateBase<T> => {
-    return {
+    if (!dataValue) {
+      return {
+        value: undefined,
+        error: undefined,
+      };
+    }
+    else return {
       value: dataValue,
       error: undefined,
     };
@@ -70,6 +63,25 @@ export const DataStateBase = {
   }
 };
 
+// The DataState.Render() method can be called at all times;
+// in Value- as well as ErrorState!
+// It will render the apropriate component,
+// either a LoadingIndicator, an ErrorIndicator, or the value.
+// If the DataState's value exists, the render method will render its value
+// callback function (e.g. to get a subfield of the value) if that is present,
+// or default to rendering the DataState's value directly if not.
+interface DataStateMethods<T> {
+  // CAREFUL: `setDataStateBase` requires using `useEffect`, `useCallback` or event handlers!
+  // Do NOT use it directly in a component's body or this will cause an infinite rerender loop!
+  setDataStateBase: Dispatch<SetStateAction<DataStateBase<T>>>,
+  Render: (options?: RenderConfig) => ReactNode;
+  refetch: () => Promise<any>;
+};
+
+type ValueState<T> = ValueStateBase<T> & DataStateMethods<T>;
+type ErrorState<T> = ErrorStateBase & DataStateMethods<T>;
+export type DataState<T> = ValueState<T> | ErrorState<T>;
+
 // Options to configure the `DataState`'s Render method that displays
 // either the `ValueState`'s value, or the `ErrorState`'s error.
 interface RenderConfig {
@@ -93,7 +105,7 @@ interface RenderConfig {
 // * `args`: optional and takes the arguments for the fetcher.
 // * `skipFetch`: also optional and should be set to true if any input for the fetcher
 //    is incorrectly undefined or null, and fetching should be aborted.
-type FetchConfig<T, A extends any[] = any[]> = {
+interface FetchConfig<T, A extends any[] = any[]> {
   fetcher: (...args: A) => Promise<T>;
   args?: A;
   skipFetch?: boolean
@@ -118,7 +130,10 @@ export const DataState = {
         fallbackClass,
       }: RenderConfig = {}
     ): ReactNode => {
-      // console.log('dataStateBase.value = ', dataStateBase.value);
+      if (!dataStateBase.value) {
+        console.log('Value; dataStateBase.value = ', dataStateBase.value);
+        console.log('Value; dataStateBase.error = ', dataStateBase.error);
+      }
       if (dataStateBase.value) return value ? value() : String(dataStateBase.value);
       else return showFallback ?
         ( loadingFallback ? loadingFallback : <LoadingIndicator className={fallbackClass} /> )
@@ -147,6 +162,10 @@ export const DataState = {
         fallbackClass,
       }: RenderConfig = {}
     ): ReactNode => {
+      if (dataStateBase.error) {
+        console.log('Error; dataStateBase.value = ', dataStateBase.value);
+        console.log('Error; dataStateBase.error = ', dataStateBase.error);
+      }
       return showFallback ?
         ( errorFallback ? errorFallback : <ErrorIndicator error={error} className={fallbackClass} /> )
         :
@@ -181,7 +200,7 @@ export function useDataState<T, A extends any[] = any[]>(
 
 // This helper function takes the fetcher provided to the DataState,
 // and attaches it to the DataState's internal data value that is
-// tracked and updated with useState:
+// tracked and updated with `useState`:
 function useFetcher<T, A extends any[] = any[]>({
     fetcher,
     args = [] as unknown as A,
@@ -195,7 +214,8 @@ function useFetcher<T, A extends any[] = any[]>({
   // Only create fetcher once and don't update it:
   // Even if the parent re-creates the fetcher each render,
   // this hook will always use the first one.
-  // This means it also can't close over any variables that might change.
+  // This means that when it closes over variables that might change,
+  // it always KEEPS the FIRST VERSION that it received!
   // Those variables have to be provided as ARGUMENTS!
   const stableFetcher = useRef(fetcher).current;
 

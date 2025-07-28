@@ -10,9 +10,13 @@ export default function BlockReward(props: {
   network: string,
   blockNumber?: number,
 }) {
+  // Define args array before `useDataState` call so it's not defined inline.
+  // This prevents a new array from being created on every render:
+  const BLOCK_REWARD_URL = [getBlockRewardUrl(props.network, props.blockNumber!)];
+
   const blockRewardData = useDataState<any>({
     fetcher: (url) => fetch(url),
-    args: [getBlockRewardUrl(props.network, props.blockNumber!)],
+    args: BLOCK_REWARD_URL,
     skipFetch: !props.blockNumber
   });
 
@@ -23,7 +27,9 @@ export default function BlockReward(props: {
     blockReward = 'TBD';
   }
 
-  // console.log(blockRewardData.value); // LoadingPulse when `Error: Empty response` on first block reward!
+  // ErrorState is broken due to the change that now returns a DataState instead of an ErrorState!
+  // We get a ValueState with an Error, so it just displays LoadingIndicators for all Errors!!!
+  console.log(blockRewardData.value); // LoadingPulse when `Error: Empty response` for block rewards!
 
   return (
     <span className='pl-2 md:pl-4'>
