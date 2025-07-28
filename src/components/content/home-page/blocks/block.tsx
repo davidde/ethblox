@@ -8,7 +8,7 @@ import {
   truncateAddress,
   useAlchemy,
 } from '@/lib/utilities';
-import { useDataState, DataState } from '@/lib/data-state';
+import { useDataState, useArgs, DataState } from '@/lib/data-state';
 import Link from 'next/link';
 import PopoverLink from '../../../common/popover-link';
 import LoadingPulse from '@/components/common/indicators/loading-pulse';
@@ -25,9 +25,9 @@ export default function Block(props: {
   const alchemy = useAlchemy(props.network);
   const blockNumber = props.latestBlockData.value ? props.latestBlockData.value - props.id : undefined;
 
-  const block = useDataState({
-    fetcher: (num) => alchemy.core.getBlock(num),
-    args: [blockNumber!],
+  const blockData = useDataState({
+    fetcher: (alchemy, num) => alchemy.core.getBlock(num),
+    args: useArgs(alchemy, blockNumber!),
     skipFetch: !blockNumber
   });
 
@@ -47,10 +47,10 @@ export default function Block(props: {
               />
             </span>
             <span className='md:pl-4 text-sm text-(--grey-fg-color)'>
-              <block.Render
-                value={() => `(${getBlockAgeFromSecs(getSecsFromUnixSecs(block.value!.timestamp))} ago)`}
+              <blockData.Render
+                value={() => `(${getBlockAgeFromSecs(getSecsFromUnixSecs(blockData.value!.timestamp))} ago)`}
                 loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[6rem]' />}
-                errorFallback={<ErrorWithRefetch refetch={block.refetch} />}
+                errorFallback={<ErrorWithRefetch refetch={blockData.refetch} />}
               />
             </span>
           </div>
@@ -58,10 +58,10 @@ export default function Block(props: {
 
         <div className='flex flex-col ml-12 md:ml-8 mb-2 md:mb-0'>
           <span className='px-2 md:px-4 leading-5'>
-            <block.Render
-              value={() => `${block.value!.transactions.length} transactions`}
+            <blockData.Render
+              value={() => `${blockData.value!.transactions.length} transactions`}
               loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[8rem]' />}
-              errorFallback={<ErrorWithRefetch refetch={block.refetch} />}
+              errorFallback={<ErrorWithRefetch refetch={blockData.refetch} />}
             />
           </span>
           <BlockReward
@@ -72,20 +72,20 @@ export default function Block(props: {
           <span className='pl-2 md:pl-4 leading-5'>
             <LoadingPulseStatic
               content='Recipient:'
-              dataState={block}
+              dataState={blockData}
               className='bg-(--grey-fg-color)'
             />
             &nbsp;&nbsp;
-            <block.Render
+            <blockData.Render
               value={() =>
                 <PopoverLink
-                  href={`/${props.network}/address?hash=${block.value!.miner}`}
-                  content={truncateAddress(block.value!.miner, 20)}
-                  popover={block.value!.miner}
+                  href={`/${props.network}/address?hash=${blockData.value!.miner}`}
+                  content={truncateAddress(blockData.value!.miner, 20)}
+                  popover={blockData.value!.miner}
                   className='left-[-37%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                 />}
               loadingFallback={<LoadingPulse className='bg-(--link-color) w-[11rem]' />}
-              errorFallback={<ErrorWithRefetch refetch={block.refetch} />}
+              errorFallback={<ErrorWithRefetch refetch={blockData.refetch} />}
             />
           </span>
         </div>

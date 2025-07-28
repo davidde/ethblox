@@ -198,9 +198,6 @@ function useFetcher<T, A extends any[] = any[]>({
   }: FetchConfig<T, A>,
   setDataStateBase: Dispatch<SetStateAction<DataStateBase<T>>>
 ): () => Promise<any> {
-  // Prevent infinite loop by NOT refetching unless the arguments or fetcher actually changed:
-  // (Ideally do a deep comparison check for certainty)
-  const memoArgs = useMemo(() => args, [JSON.stringify(args)]);
   // Only create fetcher once and don't update it:
   // Even if the parent re-creates the fetcher each render,
   // this hook will always use the first one.
@@ -215,7 +212,7 @@ function useFetcher<T, A extends any[] = any[]>({
     let response;
 
     try {
-      response = await stableFetcher(...memoArgs);
+      response = await stableFetcher(...args);
       // console.log('response = ', response);
 
       // If the function is fetch, call `.json()`:
@@ -233,5 +230,14 @@ function useFetcher<T, A extends any[] = any[]>({
 
     // console.log('response = ', response);
     return response;
-  }, [stableFetcher, memoArgs, skipFetch, setDataStateBase]);
+  }, [stableFetcher, args, skipFetch, setDataStateBase]);
+}
+
+// Hook that memoizes the argument array to prevent a new array
+// from being created on every render:
+// (For inline use in `useDataState()` or `DataState.Init()` calls)
+export function useArgs<T extends any[]>(...args: T): T {
+  // Prevent infinite loop by NOT refetching unless the arguments actually changed:
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return useMemo(() => args, args);
 }

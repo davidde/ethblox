@@ -7,18 +7,14 @@ import Transactions from './transactions';
 import Stats from './stats';
 import NodeBanner from './node-banner';
 import { useAlchemy } from '@/lib/utilities';
-import { useDataState } from '@/lib/data-state';
+import { useDataState, useArgs } from '@/lib/data-state';
 
 
 export default function HomePage(props: {network: string}) {
   const alchemy = useAlchemy(props.network);
-  const latestBlock = useDataState({
-    // fetcher gets frozen to its initialization state by `useRef(fetcher).current`
-    // inside useDataState(), so it requires the alchemy object passed as argument,
-    // instead of closing over it! If not passed as argument, things will work fine initially,
-    // but never update to Sepolia on network change!
+  const latestBlockData = useDataState({
     fetcher: (alchemy) => alchemy.core.getBlockNumber(),
-    args: [alchemy],
+    args: useArgs(alchemy),
   });
 
   return (
@@ -49,12 +45,12 @@ export default function HomePage(props: {network: string}) {
 
           <Blocks
             network={props.network}
-            latestBlockData={latestBlock}
+            latestBlockData={latestBlockData}
           />
 
           <Transactions
             network={props.network}
-            latestBlockData={latestBlock}
+            latestBlockData={latestBlockData}
           />
         </div>
       </div>

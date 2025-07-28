@@ -1,4 +1,4 @@
-import { useDataState } from '@/lib/data-state';
+import { useDataState, useArgs } from '@/lib/data-state';
 import { getBlockRewardUrl, getEtherValueFromWei } from '@/lib/utilities';
 import LoadingPulse from '@/components/common/indicators/loading-pulse';
 import LoadingPulseStatic from '@/components/common/indicators/loading-pulse-static';
@@ -11,14 +11,10 @@ export default function BlockReward(props: {
   network: string,
   blockNumber?: number,
 }) {
-  // Define args array before `useDataState` call so it's not defined inline.
-  // This prevents a new array from being created on every render:
-  const BLOCK_REWARD_URL = [getBlockRewardUrl(props.network, props.blockNumber!)];
-
   const blockRewardData = useDataState<any>({
     fetcher: (url) => fetch(url),
-    args: BLOCK_REWARD_URL,
-    skipFetch: !props.blockNumber
+    args: useArgs(getBlockRewardUrl(props.network, props.blockNumber!)),
+    skipFetch: !props.blockNumber,
   });
 
   let blockReward = '';

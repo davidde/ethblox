@@ -1,7 +1,7 @@
 'use client';
 
 import { useAlchemy } from '@/lib/utilities';
-import { useDataState, DataState } from '@/lib/data-state';
+import { useDataState, useArgs, DataState } from '@/lib/data-state';
 import Transaction from './transaction';
 import ErrorWithRefetch from '@/components/common/indicators/error-with-refetch';
 
@@ -12,11 +12,11 @@ export default function Transactions(props: {
 }) {
   const alchemy = useAlchemy(props.network);
 
-  const blockWithTransactions = useDataState({
-      fetcher: (num) => alchemy.core.getBlockWithTransactions(num),
-      args: [props.latestBlockData.value!],
-      skipFetch: !props.latestBlockData.value
-    });
+  const blockWithTransactionsData = useDataState({
+    fetcher: (alchemy, num) => alchemy.core.getBlockWithTransactions(num),
+    args: useArgs(alchemy, props.latestBlockData.value!),
+    skipFetch: !props.latestBlockData.value
+  });
 
   let transactionsDisplay;
   if (props.latestBlockData.error) {
@@ -25,11 +25,11 @@ export default function Transactions(props: {
                             className='pl-4 py-2'
                             refetch={props.latestBlockData.refetch}
                           />;
-  } else if (blockWithTransactions.error) {
+  } else if (blockWithTransactionsData.error) {
     transactionsDisplay = <ErrorWithRefetch
                             error='Error getting latest transactions'
                             className='pl-4 py-2'
-                            refetch={blockWithTransactions.refetch}
+                            refetch={blockWithTransactionsData.refetch}
                           />;
   } else {
     transactionsDisplay = [...Array(6)].map((_, i) =>
@@ -37,7 +37,7 @@ export default function Transactions(props: {
                               key={i}
                               id={i}
                               network={props.network}
-                              blockWithTransactions={blockWithTransactions}
+                              blockWithTransactions={blockWithTransactionsData}
                             />
                           );
   }
