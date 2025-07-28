@@ -13,16 +13,18 @@ import { useDataState, DataState, DataStateBase } from '@/lib/data-state';
 
 
 export default function Stats() {
+  const ETH_SUPPLY_URL = ['https://eth.blockscout.com/api/v2/stats/charts/market'];
+  const PRICES_AND_TXS_URL = ['https://eth.blockscout.com/api/v2/stats'];
+
   const ethSupplyData = useDataState<any>({
     fetcher: (url) => fetch(url),
-    args: ['https://eth.blockscout.com/api/v2/stats/charts/market'],
+    args: ETH_SUPPLY_URL,
   });
-
   const ethSupply = ethSupplyData.value ? +ethSupplyData.value.available_supply : undefined;
 
   const pricesAndTxsData = useDataState<any>({
     fetcher: (url) => fetch(url),
-    args: ['https://eth.blockscout.com/api/v2/stats'],
+    args: PRICES_AND_TXS_URL,
   });
 
   let ethPrice: number | undefined = undefined;
@@ -35,12 +37,11 @@ export default function Stats() {
     totalTransactions = (+pricesAndTxsData.value.total_transactions).toLocaleString('en-US');
   }
 
-  // Since ethMarketCap is dependent on both fetches / DataStates,
-  // we need a new DataState for it to correctly render when it is
-  // in Error or Loading states. Contrary to `useDataState`,
-  // `DataState.Value` just creates the (undefined) DataState from the fetcher,
-  // but doesn't initialize it (by actually running the fetcher):
-  let ethMarketCapData = DataState.Value({
+  // Since ethMarketCap is dependent on both fetches / DataStates, we need a new
+  // DataState for it to correctly render when it is in Error or Loading states.
+  // Contrary to `useDataState`, `DataState.Init` just creates the (undefined) DataState
+  // from the fetcher, without actually running the fetcher:
+  let ethMarketCapData = DataState.Init({
     fetcher: async () => await Promise.all([pricesAndTxsData.refetch(), ethSupplyData.refetch()])
   });
 

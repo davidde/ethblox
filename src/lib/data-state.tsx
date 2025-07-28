@@ -74,18 +74,21 @@ export const DataStateBase = {
   }
 };
 
-// The DataState.Render() method can be called at all times;
-// in Value- as well as ErrorState!
-// It will render the apropriate component,
-// either a LoadingIndicator, an ErrorIndicator, or the value.
-// If the DataState's value exists, the render method will render its value
-// callback function (e.g. to get a subfield of the value) if that is present,
-// or default to rendering the DataState's value directly if not.
+// Methods that extend the DataStateBase<T> into a full DataState<T> type:
 interface DataStateMethods<T> {
+  // This sets the DataStateBase value using React's useState.
   // CAREFUL: `setDataStateBase` requires using `useEffect`, `useCallback` or event handlers!
   // Do NOT use it directly in a component's body or this will cause an infinite rerender loop!
   setDataStateBase: Dispatch<SetStateAction<DataStateBase<T>>>,
+  // The DataState.Render() method can be called at all times; in Value-, Error-,
+  // as well as LoadingState! It will render the apropriate component,
+  // either the value, an ErrorIndicator, or a LoadingIndicator.
+  // If the DataState's value exists, the Render method will first check if the user
+  // provided a value callback function (e.g. to render a subfield of the DataState),
+  // and render that, or otherwise default to rendering the DataState's value directly.
   Render: (options?: RenderConfig) => ReactNode;
+  // This is the fetch function that is used to initialize the DataState,
+  // which can be called to refetch when an error occurred.
   refetch: () => Promise<any>;
 };
 
@@ -111,8 +114,8 @@ interface RenderConfig {
   fallbackClass?: string,
 }
 
-// FetchConfig is used to initialize the `useDataState()` hook.
-// This hook returns a DataState<T>, together with its fetching function for potentially refetching it.
+// FetchConfig is used to initialize a DataState<T>, which is a DataStateBase<T>,
+// together with its fetching function for potentially refetching it:
 // * `fetcher`: takes either the `fetch` function directly, or any async function.
 // * `args`: optional and takes the arguments for the fetcher.
 // * `skipFetch`: also optional and should be set to true if any input for the fetcher
@@ -123,10 +126,10 @@ interface FetchConfig<T, A extends any[] = any[]> {
   skipFetch?: boolean
 };
 
-// Factory functions to create the `DataState` type:
 export const DataState = {
-  // Create ValueState<T> from value or nothing when initializing:
-  Value: <T, A extends any[] = any[]>({
+  // Factory function to create a `DataState<T>` type,
+  // initializing it as a LoadingState:
+  Init: <T, A extends any[] = any[]>({
       fetcher,
       args = [] as unknown as A,
       skipFetch = false
@@ -146,48 +149,8 @@ export const DataState = {
     ): ReactNode => {
       if (dataStateBase.value) return value ? value() : String(dataStateBase.value);
       if (dataStateBase.error) {
-        // console.log('Value; dataStateBase.value = ', dataStateBase.value);
-        // console.log('Value; dataStateBase.error = ', dataStateBase.error);
-
-        return showFallback ?
-        ( errorFallback ? errorFallback : <ErrorIndicator error={error} className={fallbackClass} /> )
-        :
-        '';
-      }
-      else return showFallback ?
-        ( loadingFallback ? loadingFallback : <LoadingIndicator className={fallbackClass} /> )
-        :
-        '';
-    }
-
-    return { ...dataStateBase, setDataStateBase, Render, refetch };
-  },
-
-  // Create ErrorState from `unknown` error, to be used in `catch` block:
-  Error: <T, A extends any[] = any[]>({
-      fetcher,
-      args = [] as unknown as A,
-      skipFetch = false
-    }: FetchConfig<T, A>,
-    error: string,
-  ): DataState<T> => {
-    const [dataStateBase, setDataStateBase] = useState(DataStateBase.Error<T>(error));
-    const refetch = useFetcher({ fetcher, args, skipFetch }, setDataStateBase);
-
-    const Render = ({
-        value,
-        error,
-        showFallback = true,
-        loadingFallback,
-        errorFallback,
-        fallbackClass,
-      }: RenderConfig = {}
-    ): ReactNode => {
-      if (dataStateBase.value) return value ? value() : String(dataStateBase.value);
-      if (dataStateBase.error) {
-        // console.log('Error; dataStateBase.value = ', dataStateBase.value);
-        // console.log('Error; dataStateBase.error = ', dataStateBase.error);
-
+        // console.log('dataStateBase.value = ', dataStateBase.value);
+        // console.log('dataStateBase.error = ', dataStateBase.error);
         return showFallback ?
         ( errorFallback ? errorFallback : <ErrorIndicator error={error} className={fallbackClass} /> )
         :
@@ -205,7 +168,7 @@ export const DataState = {
 
 // End-user hook that takes a `fetcher` function as input,
 // and returns a DataState object that extends DataStateBase
-// with a Render() and refetch() function:
+// with a setState(), Render() and refetch() function:
 export function useDataState<T, A extends any[] = any[]>(
   {
     fetcher,
@@ -213,7 +176,7 @@ export function useDataState<T, A extends any[] = any[]>(
     skipFetch = false
   }: FetchConfig<T, A>
 ): DataState<T> {
-  const dataState = DataState.Value({fetcher, args, skipFetch});
+  const dataState = DataState.Init({fetcher, args, skipFetch});
 
   // Get an actual value by doing initial fetch:
   useEffect(() => {
