@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import ValueDisplay from '@/components/common/value-display';
 import { Utils } from 'alchemy-sdk';
-import { getAlchemy } from '@/lib/utilities';
+import { useAlchemy } from '@/lib/utilities';
 import Tokens from './tokens';
 
 
@@ -11,7 +11,7 @@ export default function Assets(props: {
   hash: string,
   network: string
 }) {
-  const alchemy = getAlchemy(props.network);
+  const alchemy = useAlchemy(props.network);
 
   const [ethBalance, setEthBalance] = useState<string>('');
   const [ethBalanceError, setEthBalanceError] = useState<string>();

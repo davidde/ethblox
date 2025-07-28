@@ -9,7 +9,7 @@ import {
 import {
   getSecsFromDateTimeString,
   getBlockAgeFromSecs,
-  getAlchemy
+  useAlchemy
 }
 from '@/lib/utilities';
 import ValueDisplay from '@/components/common/value-display';
@@ -36,7 +36,7 @@ export default function Transactions(props: {
   hash: string,
   network: string,
 }) {
-  const alchemy = getAlchemy(props.network);
+  const alchemy = useAlchemy(props.network);
   const maxNumTxsToShow = 10;
   const [txsResult, setTxsResult] = useState<AssetTransfersWithMetadataResult[]>();
   const [txsResultError, setTxsResultError] = useState<string>();

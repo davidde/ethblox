@@ -8,7 +8,7 @@ import {
   getSecsFromUnixSecs,
   getBlockAgeFromSecs,
   getEtherValueFromWei,
-  getAlchemy,
+  useAlchemy,
   getBlockRewardUrl
 } from '@/lib/utilities';
 import { useSearchParams } from 'next/navigation';
@@ -19,7 +19,7 @@ import PageWrapper from '@/components/common/page-wrapper';
 
 
 export default function BlockPage(props: { network: string }) {
-  const alchemy = getAlchemy(props.network);
+  const alchemy = useAlchemy(props.network);
   const searchParams = useSearchParams();
   const blockNum = +(searchParams.get('number') ?? 0);
   const blockRewardUrl = getBlockRewardUrl(props.network, blockNum);

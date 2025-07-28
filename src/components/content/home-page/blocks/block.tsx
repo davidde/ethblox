@@ -6,7 +6,7 @@ import {
   getSecsFromUnixSecs,
   getBlockAgeFromSecs,
   truncateAddress,
-  getAlchemy,
+  useAlchemy,
 } from '@/lib/utilities';
 import { useDataState, DataState } from '@/lib/data-state';
 import Link from 'next/link';
@@ -22,7 +22,7 @@ export default function Block(props: {
   latestBlockData: DataState<number>,
   network: string,
 }) {
-  const alchemy = getAlchemy(props.network);
+  const alchemy = useAlchemy(props.network);
   const blockNumber = props.latestBlockData.value ? props.latestBlockData.value - props.id : undefined;
 
   const block = useDataState({

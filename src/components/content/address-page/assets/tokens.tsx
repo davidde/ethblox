@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getAlchemy } from '@/lib/utilities';
+import { useAlchemy } from '@/lib/utilities';
 import { OwnedToken } from 'alchemy-sdk';
 import LoadingIndicator from '@/components/common/indicators/loading-indicator';
 import { TokenDropdown } from './token-dropdown';
@@ -12,7 +12,7 @@ export default function Tokens(props: {
   hash: string,
   network: string
 }) {
-  const alchemy = getAlchemy(props.network);
+  const alchemy = useAlchemy(props.network);
   const [ownedTokens, setOwnedTokens] = useState<OwnedToken[]>();
   const [ownedTokensError, setOwnedTokensError] = useState<string>();
 

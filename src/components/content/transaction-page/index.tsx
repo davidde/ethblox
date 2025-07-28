@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getAlchemy } from '@/lib/utilities';
+import { useAlchemy } from '@/lib/utilities';
 import { Utils, TransactionResponse, TransactionReceipt } from 'alchemy-sdk';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -12,7 +12,7 @@ import PageWrapper from '@/components/common/page-wrapper';
 
 
 export default function TransactionPage(props: {network: string}) {
-  const alchemy = getAlchemy(props.network);
+  const alchemy = useAlchemy(props.network);
   const searchParams = useSearchParams();
   const hash = searchParams.get('hash')!;
 

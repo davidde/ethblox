@@ -1,6 +1,6 @@
 'use client';
 
-import { getAlchemy } from '@/lib/utilities';
+import { useAlchemy } from '@/lib/utilities';
 import { useDataState, DataState } from '@/lib/data-state';
 import Transaction from './transaction';
 import ErrorWithRefetch from '@/components/common/indicators/error-with-refetch';
@@ -10,7 +10,7 @@ export default function Transactions(props: {
   network: string,
   latestBlockData: DataState<number>,
 }) {
-  const alchemy = getAlchemy(props.network);
+  const alchemy = useAlchemy(props.network);
 
   const blockWithTransactions = useDataState({
       fetcher: (num) => alchemy.core.getBlockWithTransactions(num),

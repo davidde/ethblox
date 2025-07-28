@@ -6,12 +6,12 @@ import Blocks from './blocks';
 import Transactions from './transactions';
 import Stats from './stats';
 import NodeBanner from './node-banner';
-import { getAlchemy } from '@/lib/utilities';
+import { useAlchemy } from '@/lib/utilities';
 import { useDataState } from '@/lib/data-state';
 
 
 export default function HomePage(props: {network: string}) {
-  const alchemy = getAlchemy(props.network);
+  const alchemy = useAlchemy(props.network);
   const latestBlock = useDataState({
     // fetcher gets frozen to its initialization state by `useRef(fetcher).current`
     // inside useDataState(), so it requires the alchemy object passed as argument,
