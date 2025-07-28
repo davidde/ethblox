@@ -15,13 +15,13 @@ import { useDataState, useArgs, DataState, DataStateBase } from '@/lib/data-stat
 export default function Stats() {
   const ethSupplyData = useDataState<any>({
     fetcher: (url) => fetch(url),
-    args: useArgs('https://eth.blockscout.com/api/v2/stats/charts/market'),
+    args: ['https://eth.blockscout.com/api/v2/stats/charts/market'],
   });
   const ethSupply = ethSupplyData.value ? +ethSupplyData.value.available_supply : undefined;
 
   const pricesAndTxsData = useDataState<any>({
     fetcher: (url) => fetch(url),
-    args: useArgs('https://eth.blockscout.com/api/v2/stats'),
+    args: ['https://eth.blockscout.com/api/v2/stats'],
   });
 
   let ethPrice: number | undefined = undefined;

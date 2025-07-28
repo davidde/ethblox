@@ -14,7 +14,7 @@ export default function HomePage(props: {network: string}) {
   const alchemy = useAlchemy(props.network);
   const latestBlockData = useDataState({
     fetcher: (alchemy) => alchemy.core.getBlockNumber(),
-    args: useArgs(alchemy),
+    args: [alchemy],
   });
 
   return (

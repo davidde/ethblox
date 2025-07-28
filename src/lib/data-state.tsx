@@ -198,6 +198,7 @@ function useFetcher<T, A extends any[] = any[]>({
   }: FetchConfig<T, A>,
   setDataStateBase: Dispatch<SetStateAction<DataStateBase<T>>>
 ): () => Promise<any> {
+  args = useArgs(...args);
   // Only create fetcher once and don't update it:
   // Even if the parent re-creates the fetcher each render,
   // this hook will always use the first one.
