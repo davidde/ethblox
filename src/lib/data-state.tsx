@@ -29,7 +29,7 @@ interface DataStateMethods<T> {
   // Do NOT use it directly in a component's body or this will cause an infinite rerender loop!
   // The input needs to be a DataRoot<T>, so usage is:
   // dataState.setRoot(DataRoot.value(myValue));
-  setRoot: Dispatch<SetStateAction<DataRoot<T>>>,
+  setRoot: Dispatch<SetStateAction<DataRoot<T>>>;
   // The DataState.Render() method can be called at all times; in Value-, Error-,
   // as well as LoadingState! It will render the apropriate component,
   // either the value, an ErrorIndicator, or a LoadingIndicator.
@@ -46,29 +46,30 @@ interface DataStateMethods<T> {
 // either the `ValueState`'s value, or the `ErrorState`'s error.
 interface RenderConfig {
   // Optional callback function for rendering a subfield of the `ValueState`'s value IFF that value is present:
-  value?: () => ReactNode,
+  value?: () => ReactNode;
   // Optional short error to display instead of full error:
-  error?: string,
+  error?: string;
   // Optionally don't display fallback components like Loading- or ErrorIndicators:
-  showFallback?: boolean,
+  showFallback?: boolean;
   // Optionally display another component instead of the default LoadingIndicator:
-  loadingFallback?: ReactNode,
+  loadingFallback?: ReactNode;
   // Optionally display another component instead of the default ErrorIndicator:
-  errorFallback?: ReactNode,
+  errorFallback?: ReactNode;
   // Optional className for the fallback component when it exists:
-  fallbackClass?: string,
+  fallbackClass?: string;
 }
 
 // FetchConfig is used to initialize a DataState<T>, which is a DataRoot<T>,
 // together with its fetching function for potentially refetching it:
-// * `fetcher`: takes either the `fetch` function directly, or any async function.
-// * `args`: optional and takes the arguments for the fetcher.
-// * `skipFetch`: also optional and should be set to true if any input for the fetcher
-//    is incorrectly undefined or null, and fetching should be aborted.
 interface FetchConfig<T, A extends any[] = any[]> {
+  // `fetcher` takes either the `fetch` function directly, or any async function:
   fetcher: (...args: A) => Promise<T>;
+  // Optionally provide arguments for the fetcher:
   args?: A;
-  skipFetch?: boolean
+  // Optionally skip fetching while true. This should be set to true while
+  // input for the fetcher is undefined or null, and fetching should
+  // be aborted. E.g. when an arg is possibly undefined, `skipFetch = !arg`!
+  skipFetch?: boolean;
 };
 
 // Factory functions for DataState type.
@@ -115,17 +116,12 @@ export const DataState = {
 
   // Factory function to create a `DataState<T>` type,
   // initializing it as a LoadingState:
-  Init: <T, A extends any[] = any[]>({
-      fetcher,
-      args = [] as unknown as A,
-      skipFetch = false
-    }: FetchConfig<T, A>
-  ): DataState<T> => {
+  Init: <T, A extends any[] = any[]>(config: FetchConfig<T, A>): DataState<T> => {
     // Calling `DataState.loading()` inside `useState()` is required to
     // get a LoadingRoot (DataRoot<undefined>) instead of an `undefined`.
     // This is incorrect usage: `useState<DataState<T>>()`!
     const [dataRoot, setRoot] = useState(DataState.loading<T>());
-    const refetch = useFetcher({ fetcher, args, skipFetch }, setRoot);
+    const refetch = useFetcher(config, setRoot);
 
     const Render = ({
         value,
@@ -159,13 +155,9 @@ export const DataState = {
 // and returns a DataState object that extends DataRoot
 // with a setState(), Render() and refetch() function:
 export function useDataState<T, A extends any[] = any[]>(
-  {
-    fetcher,
-    args = [] as unknown as A,
-    skipFetch = false
-  }: FetchConfig<T, A>
+  config: FetchConfig<T, A>
 ): DataState<T> {
-  const dataState = DataState.Init({fetcher, args, skipFetch});
+  const dataState = DataState.Init(config);
 
   // Get an actual value by doing initial fetch:
   useEffect(() => {
@@ -180,24 +172,21 @@ export function useDataState<T, A extends any[] = any[]>(
 // This helper function takes the fetcher provided to the DataState,
 // and attaches it to the DataState's internal data value that is
 // tracked and updated with `useState`:
-function useFetcher<T, A extends any[] = any[]>({
-    fetcher,
-    args = [] as unknown as A,
-    skipFetch = false
-  }: FetchConfig<T, A>,
+function useFetcher<T, A extends any[] = any[]>(
+  config: FetchConfig<T, A>,
   setRoot: Dispatch<SetStateAction<DataRoot<T>>>
 ): () => Promise<any> {
-  args = useArgs(...args);
+  const args = useArgs(...(config.args || [] as unknown as A));
   // Only create fetcher once and don't update it:
   // Even if the parent re-creates the fetcher each render,
   // this hook will always use the first one.
   // This means that when it closes over variables that might change,
   // it always KEEPS the FIRST VERSION that it received!
   // Those variables have to be provided as ARGUMENTS!
-  const stableFetcher = useRef(fetcher).current;
+  const stableFetcher = useRef(config.fetcher).current;
 
   return useCallback(async () => {
-    if (skipFetch) return;
+    if (config.skipFetch) return;
 
     let response;
 
@@ -220,7 +209,7 @@ function useFetcher<T, A extends any[] = any[]>({
 
     // console.log('response = ', response);
     return response;
-  }, [stableFetcher, args, skipFetch, setRoot]);
+  }, [stableFetcher, args, config.skipFetch, setRoot]);
 }
 
 // Hook that memoizes the argument array to prevent a new array
