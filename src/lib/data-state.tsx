@@ -39,7 +39,7 @@ interface DataStateMethods<T> {
   Render: (options?: RenderConfig) => ReactNode;
   // This is the fetch function that is used to initialize the DataState,
   // which can be called to refetch when an error occurred.
-  refetch: () => Promise<any>;
+  fetch: () => Promise<any>;
 };
 
 // Options to configure the `DataState`'s Render method that displays
@@ -114,14 +114,14 @@ export const DataState = {
     };
   },
 
-  // Factory function to create a `DataState<T>` type,
-  // initializing it as a LoadingState:
+  // Factory function to create a `DataState<T>` type from a data fetcher,
+  // initializing it as a LoadingRoot:
   Init: <T, A extends any[] = any[]>(config: FetchConfig<T, A>): DataState<T> => {
     // Calling `DataState.loading()` inside `useState()` is required to
     // get a LoadingRoot (DataRoot<undefined>) instead of an `undefined`.
     // This is incorrect usage: `useState<DataState<T>>()`!
     const [dataRoot, setRoot] = useState(DataState.loading<T>());
-    const refetch = useFetcher(config, setRoot);
+    const fetch = useFetcher(config, setRoot);
 
     const Render = ({
         value,
@@ -147,13 +147,13 @@ export const DataState = {
         '';
     }
 
-    return { ...dataRoot, setRoot, Render, refetch };
+    return { ...dataRoot, setRoot, Render, fetch };
   }
 };
 
 // End-user hook that takes a `fetcher` function as input,
 // and returns a DataState object that extends DataRoot
-// with a setState(), Render() and refetch() function:
+// with a setState(), Render() and fetch() function:
 export function useDataState<T, A extends any[] = any[]>(
   config: FetchConfig<T, A>
 ): DataState<T> {
@@ -161,16 +161,16 @@ export function useDataState<T, A extends any[] = any[]>(
 
   // Get an actual value by doing initial fetch:
   useEffect(() => {
-    dataState.refetch();
-    // Only rerun when refetch() changes:
+    dataState.fetch();
+    // Only rerun when fetch() changes:
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataState.refetch]);
+  }, [dataState.fetch]);
 
   return dataState;
 }
 
 // This helper function takes the fetcher provided to the DataState,
-// and attaches it to the DataState's internal data value that is
+// and attaches it to the DataState's internal DataRoot value that is
 // tracked and updated with `useState`:
 function useFetcher<T, A extends any[] = any[]>(
   config: FetchConfig<T, A>,

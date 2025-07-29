@@ -50,7 +50,7 @@ export default function Block(props: {
               <blockData.Render
                 value={() => `(${getBlockAgeFromSecs(getSecsFromUnixSecs(blockData.value!.timestamp))} ago)`}
                 loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[6rem]' />}
-                errorFallback={<ErrorWithRefetch refetch={blockData.refetch} />}
+                errorFallback={<ErrorWithRefetch refetch={blockData.fetch} />}
               />
             </span>
           </div>
@@ -61,7 +61,7 @@ export default function Block(props: {
             <blockData.Render
               value={() => `${blockData.value!.transactions.length} transactions`}
               loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[8rem]' />}
-              errorFallback={<ErrorWithRefetch refetch={blockData.refetch} />}
+              errorFallback={<ErrorWithRefetch refetch={blockData.fetch} />}
             />
           </span>
           <BlockReward
@@ -85,7 +85,7 @@ export default function Block(props: {
                   className='left-[-37%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                 />}
               loadingFallback={<LoadingPulse className='bg-(--link-color) w-[11rem]' />}
-              errorFallback={<ErrorWithRefetch refetch={blockData.refetch} />}
+              errorFallback={<ErrorWithRefetch refetch={blockData.fetch} />}
             />
           </span>
         </div>

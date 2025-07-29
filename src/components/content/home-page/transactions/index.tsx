@@ -23,13 +23,13 @@ export default function Transactions(props: {
     transactionsDisplay = <ErrorWithRefetch
                             error='Error getting latest block'
                             className='pl-4 py-2'
-                            refetch={props.latestBlockData.refetch}
+                            refetch={props.latestBlockData.fetch}
                           />;
   } else if (blockWithTransactionsData.error) {
     transactionsDisplay = <ErrorWithRefetch
                             error='Error getting latest transactions'
                             className='pl-4 py-2'
-                            refetch={blockWithTransactionsData.refetch}
+                            refetch={blockWithTransactionsData.fetch}
                           />;
   } else {
     transactionsDisplay = [...Array(6)].map((_, i) =>

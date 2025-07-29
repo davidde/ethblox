@@ -39,7 +39,7 @@ export default function Stats() {
   // Contrary to `useDataState`, `DataState.Init` just creates the (undefined) DataState
   // from the fetcher, without actually running the fetcher:
   let ethMarketCapData = DataState.Init({
-    fetcher: async () => await Promise.all([pricesAndTxsData.refetch(), ethSupplyData.refetch()])
+    fetcher: async () => await Promise.all([pricesAndTxsData.fetch(), ethSupplyData.fetch()])
   });
 
   // Give it a correct value if both fetches have already succeeded or an error if not:

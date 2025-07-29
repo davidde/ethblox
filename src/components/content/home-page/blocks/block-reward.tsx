@@ -20,10 +20,10 @@ export default function BlockReward(props: {
   let blockReward = '';
   if (blockRewardData.value) blockReward = `Ξ${getEtherValueFromWei(blockRewardData.value.blockReward, 4)}`;
 
-  let errorFallback = <ErrorWithRefetch refetch={blockRewardData.refetch} />;
+  let errorFallback = <ErrorWithRefetch refetch={blockRewardData.fetch} />;
   // Latest Block often doesn't have a reward yet:
   if (props.id === 0 && blockRewardData.error && blockRewardData.error.message === 'Empty response') {
-    errorFallback = <ValueWithRefetch refetch={blockRewardData.refetch} value='TBD'/>;
+    errorFallback = <ValueWithRefetch refetch={blockRewardData.fetch} value='TBD'/>;
   }
 
   return (
