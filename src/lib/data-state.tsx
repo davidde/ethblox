@@ -121,7 +121,10 @@ export const DataState = {
     // get a LoadingRoot (DataRoot<undefined>) instead of an `undefined`.
     // This is incorrect usage: `useState<DataState<T>>()`!
     const [dataRoot, setRoot] = useState(DataState.loading<T>());
-    const fetch = useFetcher(config, setRoot);
+    // Stabilize args:
+    const args = useArgs(...(config.args || [] as unknown as A));
+    // Attach setRoot to fetcher so fetching can update the DataState:
+    const fetch = useFetcher(config.fetcher, args, config.skipFetch, setRoot);
 
     const Render = ({
         value,
@@ -173,20 +176,21 @@ export function useDataState<T, A extends any[] = any[]>(
 // and attaches it to the DataState's internal DataRoot value that is
 // tracked and updated with `useState`:
 function useFetcher<T, A extends any[] = any[]>(
-  config: FetchConfig<T, A>,
-  setRoot: Dispatch<SetStateAction<DataRoot<T>>>
+  fetcher: (...args: A) => Promise<T>,
+  args: A,
+  skipFetch: boolean | undefined,
+  setRoot: Dispatch<SetStateAction<DataRoot<T>>>,
 ): () => Promise<any> {
-  const args = useArgs(...(config.args || [] as unknown as A));
   // Only create fetcher once and don't update it:
   // Even if the parent re-creates the fetcher each render,
   // this hook will always use the first one.
   // This means that when it closes over variables that might change,
   // it always KEEPS the FIRST VERSION that it received!
   // Those variables have to be provided as ARGUMENTS!
-  const stableFetcher = useRef(config.fetcher).current;
+  const stableFetcher = useRef(fetcher).current;
 
   return useCallback(async () => {
-    if (config.skipFetch) return;
+    if (skipFetch) return;
 
     let response;
 
@@ -209,7 +213,7 @@ function useFetcher<T, A extends any[] = any[]>(
 
     // console.log('response = ', response);
     return response;
-  }, [stableFetcher, args, config.skipFetch, setRoot]);
+  }, [stableFetcher, args, skipFetch, setRoot]);
 }
 
 // Hook that memoizes the argument array to prevent a new array
