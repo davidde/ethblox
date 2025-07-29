@@ -46,10 +46,10 @@ export default function Stats() {
   // (This requires `useEffect` because of `setRoot`)
   useEffect(() => {
     if (ethPrice && ethSupply) {
-      ethMarketCapData.setRoot(DataRoot.Value([ethPrice, ethSupply]));
+      ethMarketCapData.setRoot(DataRoot.value([ethPrice, ethSupply]));
     }
     if (pricesAndTxsData.error || ethSupplyData.error) {
-      ethMarketCapData.setRoot(DataRoot.Error(new Error('Price or supply fetch failed')));
+      ethMarketCapData.setRoot(DataRoot.error(new Error('Price or supply fetch failed')));
     }
   // Dont include `ethMarketCapData` as a dependency as `react-hooks` says,
   // or it'll cause an infinite loop!

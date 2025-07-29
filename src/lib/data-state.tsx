@@ -27,32 +27,26 @@ type LoadingRoot = {
 // `ErrorRoot.error` either has an Error object or undefined.
 export type DataRoot<T> = ValueRoot<T> | ErrorRoot | LoadingRoot;
 
-// Factory functions to return the `DataRoot` type:
+// Factory functions to return `DataRoot` types:
 export const DataRoot = {
-  // Create ValueRoot<T> from value or nothing when initializing:
-  // This needs to return a DataRoot, and NOT a ValueRoot,
-  // so we can later assign an ErrorState too if required!
-  Value: <T,>(dataValue?: T): DataRoot<T> => {
-    if (!dataValue) {
-      const loadingState: LoadingRoot = {
-        value: undefined,
-        error: undefined,
-        loading: true,
-      };
-      return loadingState;
-    }
-    else {
-      const valueState: ValueRoot<T> = {
-        value: dataValue,
-        error: undefined,
-        loading: false,
-      };
-      return valueState;
-    }
-  },
+  // Create LoadingRoot from nothing for initializing empty DataState:
+  // This needs to return a DataRoot, and NOT a LoadingRoot,
+  // so we can later assign Value- and ErrorRoots too if required!
+  loading: <T,>(): DataRoot<T> => ({
+      value: undefined,
+      error: undefined,
+      loading: true,
+    }),
+
+  // Create ValueRoot<T> from dataValue:
+  value: <T,>(dataValue: T): DataRoot<T> => ({
+      value: dataValue,
+      error: undefined,
+      loading: false,
+    }),
 
   // Create ErrorRoot from `unknown` error, to be used in `catch` block:
-  Error: <T,>(unknownError: unknown, errorPrefix?: string): DataRoot<T> => {
+  error: <T,>(unknownError: unknown, errorPrefix?: string): DataRoot<T> => {
     let errorInstance: Error;
 
     if (unknownError instanceof Error) {
@@ -65,12 +59,12 @@ export const DataRoot = {
     }
 
     console.error(errorInstance);
-    const error: ErrorRoot = {
+
+    return {
       value: undefined,
       error: errorInstance,
       loading: false,
     };
-    return error;
   }
 };
 
@@ -79,6 +73,8 @@ interface DataStateMethods<T> {
   // This sets the DataRoot value using React's useState.
   // CAREFUL: `setRoot` requires using `useEffect`, `useCallback` or event handlers!
   // Do NOT use it directly in a component's body or this will cause an infinite rerender loop!
+  // The input needs to be a DataRoot<T>, so usage is:
+  // dataState.setRoot(DataRoot.value(myValue));
   setRoot: Dispatch<SetStateAction<DataRoot<T>>>,
   // The DataState.Render() method can be called at all times; in Value-, Error-,
   // as well as LoadingState! It will render the apropriate component,
@@ -92,10 +88,10 @@ interface DataStateMethods<T> {
   refetch: () => Promise<any>;
 };
 
-type ValueState<T> = ValueRoot<T> & DataStateMethods<T>;
-type ErrorState<T> = ErrorRoot & DataStateMethods<T>;
-type LoadingState<T> = LoadingRoot & DataStateMethods<T>;
-export type DataState<T> = ValueState<T> | ErrorState<T> | LoadingState<T>;
+// type ValueState<T> = ValueRoot<T> & DataStateMethods<T>;
+// type ErrorState<T> = ErrorRoot & DataStateMethods<T>;
+// type LoadingState<T> = LoadingRoot & DataStateMethods<T>;
+export type DataState<T> = DataRoot<T> & DataStateMethods<T>;
 
 // Options to configure the `DataState`'s Render method that displays
 // either the `ValueState`'s value, or the `ErrorState`'s error.
@@ -135,7 +131,7 @@ export const DataState = {
       skipFetch = false
     }: FetchConfig<T, A>
   ): DataState<T> => {
-    const [dataRoot, setRoot] = useState(DataRoot.Value<T>());
+    const [dataRoot, setRoot] = useState(DataRoot.loading<T>());
     const refetch = useFetcher({ fetcher, args, skipFetch }, setRoot);
 
     const Render = ({
@@ -224,9 +220,9 @@ function useFetcher<T, A extends any[] = any[]>({
         else response = json;
       }
       if (!response) throw new Error('Empty response');
-      setRoot(DataRoot.Value(response));
+      setRoot(DataRoot.value(response));
     } catch (err) {
-      setRoot(DataRoot.Error(err));
+      setRoot(DataRoot.error(err));
     }
 
     // console.log('response = ', response);
