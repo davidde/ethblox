@@ -113,11 +113,7 @@ export const DataState = {
   // Factory function to create a `DataState<T>` type from a data fetcher,
   // initializing it as a LoadingRoot:
   Init: <T, A extends any[] = any[]>(config: FetchConfig<T, A>): DataState<T> => {
-    // Calling `DataState.loading()` inside `useState()` is required to
-    // get a LoadingRoot (DataRoot<undefined>) instead of an `undefined`.
-    // This is incorrect usage: `useState<DataState<T>>()`!
-    const [dataRoot, setRoot] = useState(DataState.loading<T>());
-    // Stabilize args:
+    // Stabilize args, and default to empty array if no args provided:
     const args = useArgs(...(config.args || [] as unknown as A));
     // Stabilize fetcher: only create it once and don't update it.
     // Even if the parent re-creates the fetcher each render,
@@ -126,6 +122,11 @@ export const DataState = {
     // it always KEEPS the FIRST VERSION that it received!
     // Those variables have to be provided as ARGUMENTS!
     const fetcher = useRef(config.fetcher).current;
+    // Initialize a LoadingRoot as root variant for the DataState:
+    // Calling `DataState.loading()` inside `useState()` is required to
+    // get a LoadingRoot (DataRoot<undefined>) instead of an `undefined`.
+    // This is incorrect usage: `useState<DataState<T>>()`!
+    const [dataRoot, setRoot] = useState(DataState.loading<T>());
     // Attach setRoot to fetcher so fetching can update the DataState:
     const fetch = useFetcher(fetcher, args, setRoot);
 
