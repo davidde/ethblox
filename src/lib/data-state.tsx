@@ -172,37 +172,38 @@ export function useDataState<T, A extends any[] = any[]>(
 // and attaches it to the DataState's internal DataRoot value that is
 // tracked and updated with `useState`:
 function useFetcher<T, A extends any[] = any[]>(
-  fetcher: (...args: A) => Promise<T>,
+  fetcher: (...args: A) => Promise<T> | Response,
   args: A,
   setRoot: Dispatch<SetStateAction<DataRoot<T>>>,
-): () => Promise<any> {
+): () => Promise<T | undefined> {
   return useCallback(async () => {
     // console.log('Fetch triggered with args: ', args);
     // Skip fetching if one of the arguments is still undefined:
     if (args?.some(arg => arg === undefined)) return;
 
-    let response;
-
     try {
-      response = await fetcher(...args);
-      // console.log('response = ', response);
-
-      // If the function is fetch, call `.json()`:
-      if (response instanceof Response) {
-        if (!response.ok) throw new Error(`Fetch response NOT OK, status: ${response.status}`);
-        const json = await response.json();
-        if ('result' in json) response = json.result;
-        else response = json;
-      }
+      let response = await fetcher(...args);
       if (!response) throw new Error('Empty response');
-      setRoot(DataState.value(response));
+
+      const typedResponse = response as T;
+      setRoot(DataState.value(typedResponse));
+      return typedResponse;
     } catch (err) {
       setRoot(DataState.error(err));
     }
-
-    // console.log('response = ', response);
-    return response;
   }, [fetcher, args, setRoot]);
+}
+
+// To be used as a wrapper for fetch() inside useDataState inline fetcher definition:
+// (This allows the types to match with the DataState's, instead of returning a fetch Response type)
+export async function fetchJson<T>(url: string): Promise<T> {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`Fetch failed, status: ${response.status}`);
+  const json = await response.json();
+  const result = 'result' in json ? json.result : json;
+  if (!result) throw new Error('Empty json response');
+
+  return result as T;
 }
 
 // Hook that memoizes the argument array to prevent a new array

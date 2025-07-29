@@ -51,7 +51,7 @@ export default function BlockPage(props: { network: string }) {
         setFinalizedError(error);
       }
       try {
-        const res = await fetch(blockRewardUrl);
+        const res = await fetch(blockRewardUrl!);
         if (!res.ok) throw new Error(`Response NOT OK, status: ${res.status}`);
         const data = await res.json();
         if (!data.result.blockReward) throw new Error('Block reward missing from response.');

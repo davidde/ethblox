@@ -23,7 +23,7 @@ export default function StatCard<T>(props: {
         <div className='pl-12'>
           <props.dataState.Render
             value={props.value}
-            errorFallback={<ErrorWithRefetch refetch={props.dataState.refetch} />}
+            errorFallback={<ErrorWithRefetch refetch={props.dataState.fetch} />}
           />
         </div>
       </div>

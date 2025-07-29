@@ -4,12 +4,12 @@ import { ChartBarIcon } from '@heroicons/react/24/outline';
 import GastrackerCard from './gastracker-card';
 import BreakMobile from '@/components/common/break-mobile';
 import PageWrapper from '@/components/common/page-wrapper';
-import { useDataState } from '@/lib/data-state';
+import { fetchJson, useDataState } from '@/lib/data-state';
 
 
 export default function GastrackerPage() {
   const pricesData = useDataState<any>({
-    fetcher: (url) => fetch(url),
+    fetcher: (url) => fetchJson(url),
     args: ['https://eth.blockscout.com/api/v2/stats'],
   });
 

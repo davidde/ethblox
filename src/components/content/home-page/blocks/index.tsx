@@ -18,7 +18,7 @@ export default function Blocks(props: {
           <ErrorWithRefetch
             error='Error getting latest block'
             className='pl-4 py-2'
-            refetch={props.latestBlockData.refetch}
+            refetch={props.latestBlockData.fetch}
           />
           :
           [...Array(5)].map((_, i) =>

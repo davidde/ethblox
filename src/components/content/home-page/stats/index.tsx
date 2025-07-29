@@ -9,18 +9,31 @@ import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import StatCard from './stat-card';
 import { getGasPriceGwei, getGasPriceUsd } from '@/lib/utilities';
-import { useDataState, useArgs, DataState } from '@/lib/data-state';
+import { useDataState, DataState, fetchJson } from '@/lib/data-state';
 
+
+type EthSupplyData = {
+  available_supply: string;
+}
+
+type PricesAndTxsData = {
+  coin_price: string;
+  gas_prices: {
+    average: number;
+  };
+  transactions_today: string;
+  total_transactions: string;
+}
 
 export default function Stats() {
-  const ethSupplyData = useDataState<any>({
-    fetcher: (url) => fetch(url),
+  const ethSupplyData = useDataState<EthSupplyData, [string]>({
+    fetcher: (url) => fetchJson(url),
     args: ['https://eth.blockscout.com/api/v2/stats/charts/market'],
   });
   const ethSupply = ethSupplyData.value ? +ethSupplyData.value.available_supply : undefined;
 
-  const pricesAndTxsData = useDataState<any>({
-    fetcher: (url) => fetch(url),
+  const pricesAndTxsData = useDataState<PricesAndTxsData, [string]>({
+    fetcher: (url) => fetchJson(url),
     args: ['https://eth.blockscout.com/api/v2/stats'],
   });
 
