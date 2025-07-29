@@ -13,9 +13,8 @@ export default function Transactions(props: {
   const alchemy = useAlchemy(props.network);
 
   const blockWithTransactionsData = useDataState({
-    fetcher: (alchemy, num) => alchemy.core.getBlockWithTransactions(num),
-    args: useArgs(alchemy, props.latestBlockData.value!),
-    skipFetch: !props.latestBlockData.value
+    fetcher: (alchemy, num) => alchemy.core.getBlockWithTransactions(num!),
+    args: useArgs(alchemy, props.latestBlockData.value),
   });
 
   let transactionsDisplay;

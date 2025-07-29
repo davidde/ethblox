@@ -66,10 +66,6 @@ interface FetchConfig<T, A extends any[] = any[]> {
   fetcher: (...args: A) => Promise<T>;
   // Optionally provide arguments for the fetcher:
   args?: A;
-  // Optionally skip fetching while true. This should be set to true while
-  // input for the fetcher is undefined or null, and fetching should
-  // be aborted. E.g. when an arg is possibly undefined, `skipFetch = !arg`!
-  skipFetch?: boolean;
 };
 
 // Factory functions for DataState type.
@@ -131,7 +127,7 @@ export const DataState = {
     // Those variables have to be provided as ARGUMENTS!
     const fetcher = useRef(config.fetcher).current;
     // Attach setRoot to fetcher so fetching can update the DataState:
-    const fetch = useFetcher(fetcher, args, config.skipFetch, setRoot);
+    const fetch = useFetcher(fetcher, args, setRoot);
 
     const Render = (conf: RenderConfig = {}): ReactNode => {
       const { value, error, showFallback = true, loadingFallback, errorFallback, fallbackClass } = conf;
@@ -177,11 +173,12 @@ export function useDataState<T, A extends any[] = any[]>(
 function useFetcher<T, A extends any[] = any[]>(
   fetcher: (...args: A) => Promise<T>,
   args: A,
-  skipFetch: boolean | undefined,
   setRoot: Dispatch<SetStateAction<DataRoot<T>>>,
 ): () => Promise<any> {
   return useCallback(async () => {
-    if (skipFetch) return;
+    // console.log('Fetch triggered with args: ', args);
+    // Skip fetching if one of the arguments is still undefined:
+    if (args?.some(arg => arg === undefined)) return;
 
     let response;
 
@@ -204,13 +201,13 @@ function useFetcher<T, A extends any[] = any[]>(
 
     // console.log('response = ', response);
     return response;
-  }, [fetcher, args, skipFetch, setRoot]);
+  }, [fetcher, args, setRoot]);
 }
 
 // Hook that memoizes the argument array to prevent a new array
 // from being created on every render:
 // (For inline use in `useDataState()` or `DataState.Init()` calls)
-export function useArgs<T extends any[]>(...args: T): T {
+export function useArgs<A extends any[]>(...args: A): A {
   // Prevent infinite loop by NOT refetching unless the arguments actually changed:
   // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => args, args);

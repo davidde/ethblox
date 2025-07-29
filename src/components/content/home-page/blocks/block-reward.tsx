@@ -13,8 +13,7 @@ export default function BlockReward(props: {
 }) {
   const blockRewardData = useDataState<any>({
     fetcher: (url) => fetch(url),
-    args: [getBlockRewardUrl(props.network, props.blockNumber!)],
-    skipFetch: !props.blockNumber,
+    args: [getBlockRewardUrl(props.network, props.blockNumber)],
   });
 
   let blockReward = '';
