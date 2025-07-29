@@ -123,8 +123,15 @@ export const DataState = {
     const [dataRoot, setRoot] = useState(DataState.loading<T>());
     // Stabilize args:
     const args = useArgs(...(config.args || [] as unknown as A));
+    // Stabilize fetcher: only create it once and don't update it.
+    // Even if the parent re-creates the fetcher each render,
+    // this fetcher remains the same as on its first initialization.
+    // This means that when it closes over variables that might change,
+    // it always KEEPS the FIRST VERSION that it received!
+    // Those variables have to be provided as ARGUMENTS!
+    const fetcher = useRef(config.fetcher).current;
     // Attach setRoot to fetcher so fetching can update the DataState:
-    const fetch = useFetcher(config.fetcher, args, config.skipFetch, setRoot);
+    const fetch = useFetcher(fetcher, args, config.skipFetch, setRoot);
 
     const Render = (conf: RenderConfig = {}): ReactNode => {
       const { value, error, showFallback = true, loadingFallback, errorFallback, fallbackClass } = conf;
@@ -173,21 +180,13 @@ function useFetcher<T, A extends any[] = any[]>(
   skipFetch: boolean | undefined,
   setRoot: Dispatch<SetStateAction<DataRoot<T>>>,
 ): () => Promise<any> {
-  // Only create fetcher once and don't update it:
-  // Even if the parent re-creates the fetcher each render,
-  // this hook will always use the first one.
-  // This means that when it closes over variables that might change,
-  // it always KEEPS the FIRST VERSION that it received!
-  // Those variables have to be provided as ARGUMENTS!
-  const stableFetcher = useRef(fetcher).current;
-
   return useCallback(async () => {
     if (skipFetch) return;
 
     let response;
 
     try {
-      response = await stableFetcher(...args);
+      response = await fetcher(...args);
       // console.log('response = ', response);
 
       // If the function is fetch, call `.json()`:
@@ -205,7 +204,7 @@ function useFetcher<T, A extends any[] = any[]>(
 
     // console.log('response = ', response);
     return response;
-  }, [stableFetcher, args, skipFetch, setRoot]);
+  }, [fetcher, args, skipFetch, setRoot]);
 }
 
 // Hook that memoizes the argument array to prevent a new array
