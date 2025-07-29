@@ -126,28 +126,20 @@ export const DataState = {
     // Attach setRoot to fetcher so fetching can update the DataState:
     const fetch = useFetcher(config.fetcher, args, config.skipFetch, setRoot);
 
-    const Render = ({
-        value,
-        error,
-        showFallback = true,
-        loadingFallback,
-        errorFallback,
-        fallbackClass,
-      }: RenderConfig = {}
-    ): ReactNode => {
+    const Render = (conf: RenderConfig = {}): ReactNode => {
+      const { value, error, showFallback = true, loadingFallback, errorFallback, fallbackClass } = conf;
+
       if (dataRoot.value) return value ? value() : String(dataRoot.value);
-      if (dataRoot.error) {
-        // console.log('dataRoot.value = ', dataRoot.value);
-        // console.log('dataRoot.error = ', dataRoot.error);
-        return showFallback ?
-        ( errorFallback ? errorFallback : <ErrorIndicator error={error} className={fallbackClass} /> )
-        :
-        '';
+      else if (dataRoot.error) {
+        if (showFallback) {
+          return errorFallback ?
+            errorFallback : <ErrorIndicator error={error} className={fallbackClass} />;
+        }
       }
-      else return showFallback ?
-        ( loadingFallback ? loadingFallback : <LoadingIndicator className={fallbackClass} /> )
-        :
-        '';
+      else if (showFallback) {
+        return loadingFallback ?
+          loadingFallback : <LoadingIndicator className={fallbackClass} />;
+      }
     }
 
     return { ...dataRoot, setRoot, Render, fetch };
