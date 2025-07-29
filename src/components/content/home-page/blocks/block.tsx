@@ -57,6 +57,11 @@ export default function Block(props: {
         </div>
 
         <div className='flex flex-col ml-12 md:ml-8 mb-2 md:mb-0'>
+          <BlockReward
+            id={props.id}
+            network={props.network}
+            blockNumber={blockNumber}
+          />
           <span className='px-2 md:px-4 leading-5'>
             <blockData.Render
               value={() => `${blockData.value!.transactions.length} transactions`}
@@ -64,11 +69,6 @@ export default function Block(props: {
               errorFallback={<ErrorWithRefetch refetch={blockData.fetch} />}
             />
           </span>
-          <BlockReward
-            id={props.id}
-            network={props.network}
-            blockNumber={blockNumber}
-          />
           <span className='pl-2 md:pl-4 leading-5'>
             <LoadingPulseStatic
               content='Recipient:'
