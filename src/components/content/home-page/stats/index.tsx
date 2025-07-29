@@ -9,7 +9,7 @@ import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import StatCard from './stat-card';
 import { getGasPriceGwei, getGasPriceUsd } from '@/lib/utilities';
-import { useDataState, useArgs, DataState, DataRoot } from '@/lib/data-state';
+import { useDataState, useArgs, DataState } from '@/lib/data-state';
 
 
 export default function Stats() {
@@ -46,10 +46,10 @@ export default function Stats() {
   // (This requires `useEffect` because of `setRoot`)
   useEffect(() => {
     if (ethPrice && ethSupply) {
-      ethMarketCapData.setRoot(DataRoot.value([ethPrice, ethSupply]));
+      ethMarketCapData.setRoot(DataState.value([ethPrice, ethSupply]));
     }
     if (pricesAndTxsData.error || ethSupplyData.error) {
-      ethMarketCapData.setRoot(DataRoot.error(new Error('Price or supply fetch failed')));
+      ethMarketCapData.setRoot(DataState.error(new Error('Price or supply fetch failed')));
     }
   // Dont include `ethMarketCapData` as a dependency as `react-hooks` says,
   // or it'll cause an infinite loop!

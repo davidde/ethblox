@@ -19,16 +19,62 @@ type LoadingRoot = {
   loading: true;
 };
 
-// Calling `DataRoot.value()` inside `useState()` is required
-// to get a `DataRoot<undefined>` instead of an `undefined`!
-// `type DataRoot<T> = ValueRoot<T> | ErrorRoot`, so:
-// `ValueRoot<T>.value` either has `value<T>` OR `undefined`,
-// the latter indicating it is still in a loading state, OR in ErrorRoot.
-// `ErrorRoot.error` either has an Error object or undefined.
 export type DataRoot<T> = ValueRoot<T> | ErrorRoot | LoadingRoot;
+export type DataState<T> = DataRoot<T> & DataStateMethods<T>;
 
-// Factory functions to return `DataRoot` types:
-export const DataRoot = {
+// Methods that extend the DataRoot<T> into a full DataState<T> type:
+interface DataStateMethods<T> {
+  // This sets the DataRoot value using React's useState.
+  // CAREFUL: `setRoot` requires using `useEffect`, `useCallback` or event handlers!
+  // Do NOT use it directly in a component's body or this will cause an infinite rerender loop!
+  // The input needs to be a DataRoot<T>, so usage is:
+  // dataState.setRoot(DataRoot.value(myValue));
+  setRoot: Dispatch<SetStateAction<DataRoot<T>>>,
+  // The DataState.Render() method can be called at all times; in Value-, Error-,
+  // as well as LoadingState! It will render the apropriate component,
+  // either the value, an ErrorIndicator, or a LoadingIndicator.
+  // If the DataState's value exists, the Render method will first check if the user
+  // provided a value callback function (e.g. to render a subfield of the DataState),
+  // and render that, or otherwise default to rendering the DataState's value directly.
+  Render: (options?: RenderConfig) => ReactNode;
+  // This is the fetch function that is used to initialize the DataState,
+  // which can be called to refetch when an error occurred.
+  refetch: () => Promise<any>;
+};
+
+// Options to configure the `DataState`'s Render method that displays
+// either the `ValueState`'s value, or the `ErrorState`'s error.
+interface RenderConfig {
+  // Optional callback function for rendering a subfield of the `ValueState`'s value IFF that value is present:
+  value?: () => ReactNode,
+  // Optional short error to display instead of full error:
+  error?: string,
+  // Optionally don't display fallback components like Loading- or ErrorIndicators:
+  showFallback?: boolean,
+  // Optionally display another component instead of the default LoadingIndicator:
+  loadingFallback?: ReactNode,
+  // Optionally display another component instead of the default ErrorIndicator:
+  errorFallback?: ReactNode,
+  // Optional className for the fallback component when it exists:
+  fallbackClass?: string,
+}
+
+// FetchConfig is used to initialize a DataState<T>, which is a DataRoot<T>,
+// together with its fetching function for potentially refetching it:
+// * `fetcher`: takes either the `fetch` function directly, or any async function.
+// * `args`: optional and takes the arguments for the fetcher.
+// * `skipFetch`: also optional and should be set to true if any input for the fetcher
+//    is incorrectly undefined or null, and fetching should be aborted.
+interface FetchConfig<T, A extends any[] = any[]> {
+  fetcher: (...args: A) => Promise<T>;
+  args?: A;
+  skipFetch?: boolean
+};
+
+// Factory functions for DataState type.
+// DataState.loading(), .value() and .error() return *DataRoots*,
+// to be used for initializing or setting a full DataState:
+export const DataState = {
   // Create LoadingRoot from nothing for initializing empty DataState:
   // This needs to return a DataRoot, and NOT a LoadingRoot,
   // so we can later assign Value- and ErrorRoots too if required!
@@ -65,64 +111,8 @@ export const DataRoot = {
       error: errorInstance,
       loading: false,
     };
-  }
-};
+  },
 
-// Methods that extend the DataRoot<T> into a full DataState<T> type:
-interface DataStateMethods<T> {
-  // This sets the DataRoot value using React's useState.
-  // CAREFUL: `setRoot` requires using `useEffect`, `useCallback` or event handlers!
-  // Do NOT use it directly in a component's body or this will cause an infinite rerender loop!
-  // The input needs to be a DataRoot<T>, so usage is:
-  // dataState.setRoot(DataRoot.value(myValue));
-  setRoot: Dispatch<SetStateAction<DataRoot<T>>>,
-  // The DataState.Render() method can be called at all times; in Value-, Error-,
-  // as well as LoadingState! It will render the apropriate component,
-  // either the value, an ErrorIndicator, or a LoadingIndicator.
-  // If the DataState's value exists, the Render method will first check if the user
-  // provided a value callback function (e.g. to render a subfield of the DataState),
-  // and render that, or otherwise default to rendering the DataState's value directly.
-  Render: (options?: RenderConfig) => ReactNode;
-  // This is the fetch function that is used to initialize the DataState,
-  // which can be called to refetch when an error occurred.
-  refetch: () => Promise<any>;
-};
-
-// type ValueState<T> = ValueRoot<T> & DataStateMethods<T>;
-// type ErrorState<T> = ErrorRoot & DataStateMethods<T>;
-// type LoadingState<T> = LoadingRoot & DataStateMethods<T>;
-export type DataState<T> = DataRoot<T> & DataStateMethods<T>;
-
-// Options to configure the `DataState`'s Render method that displays
-// either the `ValueState`'s value, or the `ErrorState`'s error.
-interface RenderConfig {
-  // Optional callback function for rendering a subfield of the `ValueState`'s value IFF that value is present:
-  value?: () => ReactNode,
-  // Optional short error to display instead of full error:
-  error?: string,
-  // Optionally don't display fallback components like Loading- or ErrorIndicators:
-  showFallback?: boolean,
-  // Optionally display another component instead of the default LoadingIndicator:
-  loadingFallback?: ReactNode,
-  // Optionally display another component instead of the default ErrorIndicator:
-  errorFallback?: ReactNode,
-  // Optional className for the fallback component when it exists:
-  fallbackClass?: string,
-}
-
-// FetchConfig is used to initialize a DataState<T>, which is a DataRoot<T>,
-// together with its fetching function for potentially refetching it:
-// * `fetcher`: takes either the `fetch` function directly, or any async function.
-// * `args`: optional and takes the arguments for the fetcher.
-// * `skipFetch`: also optional and should be set to true if any input for the fetcher
-//    is incorrectly undefined or null, and fetching should be aborted.
-interface FetchConfig<T, A extends any[] = any[]> {
-  fetcher: (...args: A) => Promise<T>;
-  args?: A;
-  skipFetch?: boolean
-};
-
-export const DataState = {
   // Factory function to create a `DataState<T>` type,
   // initializing it as a LoadingState:
   Init: <T, A extends any[] = any[]>({
@@ -131,7 +121,10 @@ export const DataState = {
       skipFetch = false
     }: FetchConfig<T, A>
   ): DataState<T> => {
-    const [dataRoot, setRoot] = useState(DataRoot.loading<T>());
+    // Calling `DataState.loading()` inside `useState()` is required to
+    // get a LoadingRoot (DataRoot<undefined>) instead of an `undefined`.
+    // This is incorrect usage: `useState<DataState<T>>()`!
+    const [dataRoot, setRoot] = useState(DataState.loading<T>());
     const refetch = useFetcher({ fetcher, args, skipFetch }, setRoot);
 
     const Render = ({
@@ -220,9 +213,9 @@ function useFetcher<T, A extends any[] = any[]>({
         else response = json;
       }
       if (!response) throw new Error('Empty response');
-      setRoot(DataRoot.value(response));
+      setRoot(DataState.value(response));
     } catch (err) {
-      setRoot(DataRoot.error(err));
+      setRoot(DataState.error(err));
     }
 
     // console.log('response = ', response);
