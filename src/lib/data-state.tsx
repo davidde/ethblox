@@ -3,38 +3,38 @@ import LoadingIndicator from '@/components/common/indicators/loading-indicator';
 import ErrorIndicator from '@/components/common/indicators/error-indicator';
 
 
-type ValueStateBase<T> = {
+type ValueRoot<T> = {
   value: T;
   error: undefined;
   loading: false;
 };
-type ErrorStateBase = {
+type ErrorRoot = {
   value: undefined;
   error: Error;
   loading: false;
 };
-type LoadingStateBase = {
+type LoadingRoot = {
   value: undefined;
   error: undefined;
   loading: true;
 };
 
-// Calling `DataStateBase.value()` inside `useState()` is required
-// to get a `DataStateBase<undefined>` instead of an `undefined`!
-// `type DataStateBase<T> = ValueStateBase<T> | ErrorStateBase`, so:
-// `ValueStateBase<T>.value` either has `value<T>` OR `undefined`,
-// the latter indicating it is still in a loading state, OR in ErrorStateBase.
-// `ErrorStateBase.error` either has an Error object or undefined.
-export type DataStateBase<T> = ValueStateBase<T> | ErrorStateBase | LoadingStateBase;
+// Calling `DataRoot.value()` inside `useState()` is required
+// to get a `DataRoot<undefined>` instead of an `undefined`!
+// `type DataRoot<T> = ValueRoot<T> | ErrorRoot`, so:
+// `ValueRoot<T>.value` either has `value<T>` OR `undefined`,
+// the latter indicating it is still in a loading state, OR in ErrorRoot.
+// `ErrorRoot.error` either has an Error object or undefined.
+export type DataRoot<T> = ValueRoot<T> | ErrorRoot | LoadingRoot;
 
-// Factory functions to return the `DataStateBase` type:
-export const DataStateBase = {
-  // Create ValueStateBase<T> from value or nothing when initializing:
-  // This needs to return a DataStateBase, and NOT a ValueStateBase,
+// Factory functions to return the `DataRoot` type:
+export const DataRoot = {
+  // Create ValueRoot<T> from value or nothing when initializing:
+  // This needs to return a DataRoot, and NOT a ValueRoot,
   // so we can later assign an ErrorState too if required!
-  Value: <T,>(dataValue?: T): DataStateBase<T> => {
+  Value: <T,>(dataValue?: T): DataRoot<T> => {
     if (!dataValue) {
-      const loadingState: LoadingStateBase = {
+      const loadingState: LoadingRoot = {
         value: undefined,
         error: undefined,
         loading: true,
@@ -42,7 +42,7 @@ export const DataStateBase = {
       return loadingState;
     }
     else {
-      const valueState: ValueStateBase<T> = {
+      const valueState: ValueRoot<T> = {
         value: dataValue,
         error: undefined,
         loading: false,
@@ -51,8 +51,8 @@ export const DataStateBase = {
     }
   },
 
-  // Create ErrorStateBase from `unknown` error, to be used in `catch` block:
-  Error: <T,>(unknownError: unknown, errorPrefix?: string): DataStateBase<T> => {
+  // Create ErrorRoot from `unknown` error, to be used in `catch` block:
+  Error: <T,>(unknownError: unknown, errorPrefix?: string): DataRoot<T> => {
     let errorInstance: Error;
 
     if (unknownError instanceof Error) {
@@ -65,7 +65,7 @@ export const DataStateBase = {
     }
 
     console.error(errorInstance);
-    const error: ErrorStateBase = {
+    const error: ErrorRoot = {
       value: undefined,
       error: errorInstance,
       loading: false,
@@ -74,12 +74,12 @@ export const DataStateBase = {
   }
 };
 
-// Methods that extend the DataStateBase<T> into a full DataState<T> type:
+// Methods that extend the DataRoot<T> into a full DataState<T> type:
 interface DataStateMethods<T> {
-  // This sets the DataStateBase value using React's useState.
-  // CAREFUL: `setDataStateBase` requires using `useEffect`, `useCallback` or event handlers!
+  // This sets the DataRoot value using React's useState.
+  // CAREFUL: `setRoot` requires using `useEffect`, `useCallback` or event handlers!
   // Do NOT use it directly in a component's body or this will cause an infinite rerender loop!
-  setDataStateBase: Dispatch<SetStateAction<DataStateBase<T>>>,
+  setRoot: Dispatch<SetStateAction<DataRoot<T>>>,
   // The DataState.Render() method can be called at all times; in Value-, Error-,
   // as well as LoadingState! It will render the apropriate component,
   // either the value, an ErrorIndicator, or a LoadingIndicator.
@@ -92,9 +92,9 @@ interface DataStateMethods<T> {
   refetch: () => Promise<any>;
 };
 
-type ValueState<T> = ValueStateBase<T> & DataStateMethods<T>;
-type ErrorState<T> = ErrorStateBase & DataStateMethods<T>;
-type LoadingState<T> = LoadingStateBase & DataStateMethods<T>;
+type ValueState<T> = ValueRoot<T> & DataStateMethods<T>;
+type ErrorState<T> = ErrorRoot & DataStateMethods<T>;
+type LoadingState<T> = LoadingRoot & DataStateMethods<T>;
 export type DataState<T> = ValueState<T> | ErrorState<T> | LoadingState<T>;
 
 // Options to configure the `DataState`'s Render method that displays
@@ -114,7 +114,7 @@ interface RenderConfig {
   fallbackClass?: string,
 }
 
-// FetchConfig is used to initialize a DataState<T>, which is a DataStateBase<T>,
+// FetchConfig is used to initialize a DataState<T>, which is a DataRoot<T>,
 // together with its fetching function for potentially refetching it:
 // * `fetcher`: takes either the `fetch` function directly, or any async function.
 // * `args`: optional and takes the arguments for the fetcher.
@@ -135,8 +135,8 @@ export const DataState = {
       skipFetch = false
     }: FetchConfig<T, A>
   ): DataState<T> => {
-    const [dataStateBase, setDataStateBase] = useState(DataStateBase.Value<T>());
-    const refetch = useFetcher({ fetcher, args, skipFetch }, setDataStateBase);
+    const [dataRoot, setRoot] = useState(DataRoot.Value<T>());
+    const refetch = useFetcher({ fetcher, args, skipFetch }, setRoot);
 
     const Render = ({
         value,
@@ -147,10 +147,10 @@ export const DataState = {
         fallbackClass,
       }: RenderConfig = {}
     ): ReactNode => {
-      if (dataStateBase.value) return value ? value() : String(dataStateBase.value);
-      if (dataStateBase.error) {
-        // console.log('dataStateBase.value = ', dataStateBase.value);
-        // console.log('dataStateBase.error = ', dataStateBase.error);
+      if (dataRoot.value) return value ? value() : String(dataRoot.value);
+      if (dataRoot.error) {
+        // console.log('dataRoot.value = ', dataRoot.value);
+        // console.log('dataRoot.error = ', dataRoot.error);
         return showFallback ?
         ( errorFallback ? errorFallback : <ErrorIndicator error={error} className={fallbackClass} /> )
         :
@@ -162,12 +162,12 @@ export const DataState = {
         '';
     }
 
-    return { ...dataStateBase, setDataStateBase, Render, refetch };
+    return { ...dataRoot, setRoot, Render, refetch };
   }
 };
 
 // End-user hook that takes a `fetcher` function as input,
-// and returns a DataState object that extends DataStateBase
+// and returns a DataState object that extends DataRoot
 // with a setState(), Render() and refetch() function:
 export function useDataState<T, A extends any[] = any[]>(
   {
@@ -196,7 +196,7 @@ function useFetcher<T, A extends any[] = any[]>({
     args = [] as unknown as A,
     skipFetch = false
   }: FetchConfig<T, A>,
-  setDataStateBase: Dispatch<SetStateAction<DataStateBase<T>>>
+  setRoot: Dispatch<SetStateAction<DataRoot<T>>>
 ): () => Promise<any> {
   args = useArgs(...args);
   // Only create fetcher once and don't update it:
@@ -224,14 +224,14 @@ function useFetcher<T, A extends any[] = any[]>({
         else response = json;
       }
       if (!response) throw new Error('Empty response');
-      setDataStateBase(DataStateBase.Value(response));
+      setRoot(DataRoot.Value(response));
     } catch (err) {
-      setDataStateBase(DataStateBase.Error(err));
+      setRoot(DataRoot.Error(err));
     }
 
     // console.log('response = ', response);
     return response;
-  }, [stableFetcher, args, skipFetch, setDataStateBase]);
+  }, [stableFetcher, args, skipFetch, setRoot]);
 }
 
 // Hook that memoizes the argument array to prevent a new array
