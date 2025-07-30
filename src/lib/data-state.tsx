@@ -1,6 +1,6 @@
 import { Dispatch, ReactNode, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import LoadingIndicator from '@/components/common/indicators/loading-indicator';
 import ErrorIndicator from '@/components/common/indicators/error-indicator';
+import LoadingPulse from '@/components/common/indicators/loading-pulse';
 
 
 type ValueRoot<T> = {
@@ -54,7 +54,7 @@ interface DataStateMethods<T> {
 // either the `ValueState`'s value, or the `ErrorState`'s error.
 interface RenderConfig {
   // Optional callback function for rendering a subfield of the `ValueState`'s value IFF that value is present:
-  value?: () => ReactNode;
+  value?: (className?: string) => ReactNode;
   // Optional short error to display instead of full error:
   error?: string;
   // Optionally don't display fallback components like Loading- or ErrorIndicators:
@@ -63,8 +63,8 @@ interface RenderConfig {
   loadingFallback?: ReactNode;
   // Optionally display another component instead of the default ErrorIndicator:
   errorFallback?: ReactNode;
-  // Optional className for the fallback component when it exists:
-  fallbackClass?: string;
+  // Optional className for the displayed component:
+  className?: string;
 }
 
 // FetchConfig is used to initialize a DataState<T>, which is a DataRoot<T>,
@@ -162,18 +162,23 @@ export const DataState = {
     const useInit = () => useEffect(() => { fetch() }, [fetch]);
 
     const Render = (conf: RenderConfig = {}): ReactNode => {
-      const { value, error, showFallback = true, loadingFallback, errorFallback, fallbackClass } = conf;
+      const { value, error, showFallback = true, loadingFallback, errorFallback, className } = conf;
 
-      if (dataRoot.value) return value ? value() : String(dataRoot.value);
+      if (dataRoot.value) {
+        return value ?
+          value(className)
+          :
+          <span className={className}>{String(dataRoot.value)}</span>;
+      }
       else if (dataRoot.error) {
         if (showFallback) {
           return errorFallback ?
-            errorFallback : <ErrorIndicator error={error} className={fallbackClass} />;
+            errorFallback : <ErrorIndicator error={error} className={className} />;
         }
       }
       else if (showFallback) {
         return loadingFallback ?
-          loadingFallback : <LoadingIndicator className={fallbackClass} />;
+          loadingFallback : <LoadingPulse className={className} />;
       }
     }
 

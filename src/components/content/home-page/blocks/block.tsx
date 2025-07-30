@@ -11,7 +11,6 @@ import {
 import { useDataState, DataState } from '@/lib/data-state';
 import Link from 'next/link';
 import PopoverLink from '../../../common/popover-link';
-import LoadingPulse from '@/components/common/indicators/loading-pulse';
 import LoadingPulseStatic from '@/components/common/indicators/loading-pulse-static';
 import ErrorWithRefetch from '@/components/common/indicators/error-with-refetch';
 import BlockReward from './block-reward';
@@ -35,21 +34,21 @@ export default function Block(props: {
       <div className='flex flex-col md:flex-row'>
         <div className='flex'>
           <CubeIcon className='w-10 h-10 md:w-8 md:h-8' />
-          <div className='flex md:flex-col ml-2 pt-1 md:pt-0 md:w-32'>
-            <span className='px-2 md:px-4 leading-5'>
+          <div className='flex md:flex-col ml-2 pt-1 md:pt-0 md:w-[8rem] px-2 md:px-4'>
+            <span className='leading-5'>
               <props.latestBlockData.Render
-                value={() => <Link href={`/${props.network}/block?number=${blockNumber}`}
-                                   className='text-(--link-color) hover:text-(--hover-fg-color)'>
+                value={(className) => <Link href={`/${props.network}/block?number=${blockNumber}`}
+                                   className={`${className} hover:text-(--hover-fg-color)`}>
                                 {blockNumber}
                              </Link>}
-                loadingFallback={<LoadingPulse className='bg-(--link-color) w-[5rem]' />}
+                className='text-(--link-color) w-[5em]'
               />
             </span>
-            <span className='md:pl-4 text-sm text-(--grey-fg-color)'>
+            <span className='text-sm text-(--grey-fg-color)'>
               <blockData.Render
                 value={() => `(${getBlockAgeFromSecs(getSecsFromUnixSecs(blockData.value!.timestamp))} ago)`}
-                loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[6rem]' />}
                 errorFallback={<ErrorWithRefetch refetch={blockData.fetch} />}
+                className='w-[6em]'
               />
             </span>
           </div>
@@ -64,15 +63,15 @@ export default function Block(props: {
           <span className='px-2 md:px-4 leading-5'>
             <blockData.Render
               value={() => `${blockData.value!.transactions.length} transactions`}
-              loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[8rem]' />}
               errorFallback={<ErrorWithRefetch refetch={blockData.fetch} />}
+              className='text-(--grey-fg-color) w-[8rem]'
             />
           </span>
           <span className='pl-2 md:pl-4 leading-5'>
             <LoadingPulseStatic
               content='Recipient:'
               dataState={blockData}
-              className='bg-(--grey-fg-color)'
+              className='text-(--grey-fg-color)'
             />
             &nbsp;&nbsp;
             <blockData.Render
@@ -83,8 +82,8 @@ export default function Block(props: {
                   popover={blockData.value!.miner}
                   className='left-[-37%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                 />}
-              loadingFallback={<LoadingPulse className='bg-(--link-color) w-[11rem]' />}
               errorFallback={<ErrorWithRefetch refetch={blockData.fetch} />}
+              className='text-(--link-color) w-[11rem]'
             />
           </span>
         </div>

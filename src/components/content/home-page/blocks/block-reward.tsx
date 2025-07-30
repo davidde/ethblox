@@ -1,6 +1,5 @@
 import { useDataState, FetchError } from '@/lib/data-state';
 import { getBlockRewardUrl, getEtherValueFromWei } from '@/lib/utilities';
-import LoadingPulse from '@/components/common/indicators/loading-pulse';
 import LoadingPulseStatic from '@/components/common/indicators/loading-pulse-static';
 import ErrorWithRefetch from '@/components/common/indicators/error-with-refetch';
 import ValueWithRefetch from '@/components/common/indicators/value-with-refetch';
@@ -34,13 +33,13 @@ export default function BlockReward(props: {
       <LoadingPulseStatic
         content='Block Reward:'
         dataState={blockRewardData}
-        className='bg-(--grey-fg-color)'
+        className='text-(--grey-fg-color)'
       />
       &nbsp;&nbsp;
       <blockRewardData.Render
         value={ () => blockReward }
-        loadingFallback={<LoadingPulse className='bg-(--grey-fg-color) w-[4rem]' />}
         errorFallback={errorFallback}
+        className='w-[4rem] text-(--grey-fg-color)'
       />
     </span>
   );

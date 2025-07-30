@@ -1,8 +1,9 @@
-export default function LoadingPulse(props: { className: string, content?: string }) {
-  return ( // Requires className to set background color as well as width (unless content is used)!
-    <span className={`${props.className} animate-pulse-strong inline-block align-middle rounded-full h-[1em]`}>
+export default function LoadingPulse(props: { className?: string, content?: string }) {
+  return ( // Set background with text-color, takes background from currentcolor!
+    <span className={`${props.className} inline-block h-[1em]
+                     bg-[currentcolor] animate-pulse-strong align-middle rounded-full`}>
       <span className='invisible'>
-        {props.content ?? ' '}
+        {props.content ?? '\xa0'}
       </span>
     </span>
   );
