@@ -8,9 +8,8 @@ export default function ErrorWithRefetch(props: {
   className?: string
 }) {
   return (
-    <span>
+    <span className={props.className}>
       <ErrorIndicator
-        className={props.className}
         error={props.error}
       />
       <RefetchIndicator refetch={props.refetch} />

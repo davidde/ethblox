@@ -47,7 +47,6 @@ export default function Block(props: {
             <span className='text-sm text-(--grey-fg-color)'>
               <blockData.Render
                 value={() => `(${getBlockAgeFromSecs(getSecsFromUnixSecs(blockData.value!.timestamp))} ago)`}
-                errorFallback={<ErrorWithRefetch refetch={blockData.fetch} />}
                 className='w-[6em]'
               />
             </span>
@@ -63,7 +62,6 @@ export default function Block(props: {
           <span className='px-2 md:px-4 leading-5'>
             <blockData.Render
               value={() => `${blockData.value!.transactions.length} transactions`}
-              errorFallback={<ErrorWithRefetch refetch={blockData.fetch} />}
               className='text-(--grey-fg-color) w-[8rem]'
             />
           </span>
@@ -82,7 +80,6 @@ export default function Block(props: {
                   popover={blockData.value!.miner}
                   className='left-[-37%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                 />}
-              errorFallback={<ErrorWithRefetch refetch={blockData.fetch} />}
               className='text-(--link-color) w-[11rem]'
             />
           </span>

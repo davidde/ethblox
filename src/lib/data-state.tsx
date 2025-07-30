@@ -2,6 +2,7 @@ import { Dispatch, ReactNode, SetStateAction, useCallback, useEffect, useMemo, u
 import ErrorIndicator from '@/components/common/indicators/error-indicator';
 import LoadingPulse from '@/components/common/indicators/loading-pulse';
 import LoadingIndicator from '@/components/common/indicators/loading-indicator';
+import ErrorWithRefetch from '@/components/common/indicators/error-with-refetch';
 
 
 type ValueRoot<T> = {
@@ -176,7 +177,7 @@ export const DataState = {
       }
       else if (dataRoot.error) {
         if (showFallback) {
-          return errorFallback ?? <ErrorIndicator error={error} className={className} />;
+          return errorFallback ?? <ErrorWithRefetch refetch={fetch} error={error} className={className} />;
         }
       }
       else if (showFallback) {
