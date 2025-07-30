@@ -56,13 +56,13 @@ export default function Stats() {
   });
 
   // Give it a correct value if both fetches have already succeeded or an error if not:
-  // (This requires `useEffect` because of `setRoot`)
+  // (This requires `useEffect` because of setValue/setError)
   useEffect(() => {
     if (ethPrice && ethSupply) {
-      ethMarketCapData.setRoot(DataState.value([ethPrice, ethSupply]));
+      ethMarketCapData.setValue([ethPrice, ethSupply]);
     }
     if (pricesAndTxsData.error || ethSupplyData.error) {
-      ethMarketCapData.setRoot(DataState.error(new Error('Price or supply fetch failed')));
+      ethMarketCapData.setError('Price or supply fetch failed');
     }
   // Dont include `ethMarketCapData` as a dependency as `react-hooks` says,
   // or it'll cause an infinite loop!

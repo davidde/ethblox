@@ -28,8 +28,14 @@ interface DataStateMethods<T> {
   // CAREFUL: `setRoot` requires using `useEffect`, `useCallback` or event handlers!
   // Do NOT use it directly in a component's body or this will cause an infinite rerender loop!
   // The input needs to be a DataRoot<T>, so usage is:
-  // dataState.setRoot(DataRoot.value(myValue));
+  // dataState.setRoot(DataState.value(myValue));
   setRoot: Dispatch<SetStateAction<DataRoot<T>>>;
+  // The setLoading(), setValue() and setError() methods are convenience wrappers
+  // for the above setRoot(), and allow directly passing a value or error instead
+  // of `setRoot(DataState.value(value))` or `setRoot(DataState.error(error))`:
+  setLoading: () => void;
+  setValue: (value: T) => void;
+  setError: (error: unknown, prefix?: string) => void;
   // The DataState.Render() method can be called at all times; in Value-, Error-,
   // as well as LoadingState! It will render the apropriate component,
   // either the value, an ErrorIndicator, or a LoadingIndicator.
@@ -38,7 +44,7 @@ interface DataStateMethods<T> {
   // and render that, or otherwise default to rendering the DataState's value directly.
   Render: (options?: RenderConfig) => ReactNode;
   // This is the fetch function that is used to initialize the DataState,
-  // which can be called to refetch when an error occurred.
+  // and can be called to refetch when an error occurred.
   fetch: () => Promise<any>;
 };
 
@@ -96,7 +102,7 @@ export const DataState = {
       if (errorPrefix) unknownError.message = `${errorPrefix} ${unknownError.message}`;
       errorInstance = unknownError as Error;
     }
-    else { // `String(err)` could technically still fail if someone throws bad objects:
+    else { // `String(unknownError)` could technically still fail if someone throws bad objects:
       errorInstance = errorPrefix ?
         new Error(`${errorPrefix} ${String(unknownError)}`) : new Error(String(unknownError));
     }
@@ -145,8 +151,11 @@ export const DataState = {
           loadingFallback : <LoadingIndicator className={fallbackClass} />;
       }
     }
+    const setLoading = () => setRoot(DataState.loading());
+    const setValue = (dataValue: T) => setRoot(DataState.value(dataValue));
+    const setError = (error: unknown, prefix?: string) => setRoot(DataState.error(error, prefix));
 
-    return { ...dataRoot, setRoot, Render, fetch };
+    return { ...dataRoot, setRoot, setLoading, setValue, setError, Render, fetch };
   }
 };
 
