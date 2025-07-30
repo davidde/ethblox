@@ -1,14 +1,14 @@
 'use client';
 
 import { CubeIcon } from '@heroicons/react/24/outline';
-import { type Block } from 'alchemy-sdk';
+import type { Alchemy, Block } from 'alchemy-sdk';
 import {
   getSecsFromUnixSecs,
   getBlockAgeFromSecs,
   truncateAddress,
   useAlchemy,
 } from '@/lib/utilities';
-import { useDataState, useArgs, DataState } from '@/lib/data-state';
+import { useDataState, DataState } from '@/lib/data-state';
 import Link from 'next/link';
 import PopoverLink from '../../../common/popover-link';
 import LoadingPulse from '@/components/common/indicators/loading-pulse';
@@ -23,11 +23,11 @@ export default function Block(props: {
   network: string,
 }) {
   const alchemy = useAlchemy(props.network);
-  const blockNumber = props.latestBlockData.value ? props.latestBlockData.value - props.id : undefined;
+  const blockNumber = props.latestBlockData.value && props.latestBlockData.value - props.id;
 
-  const blockData = useDataState({
+  const blockData = useDataState<Block, [Alchemy, number?]>({
     fetcher: (alchemy, num) => alchemy.core.getBlock(num!),
-    args: useArgs(alchemy, blockNumber),
+    args: [alchemy, blockNumber],
   });
 
   return (

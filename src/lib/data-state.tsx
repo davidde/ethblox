@@ -181,15 +181,6 @@ export const DataState = {
   }
 };
 
-// Hook that memoizes the argument array to prevent a new array
-// from being created on every render:
-// (For inline use in `useDataState()` or `DataState.Init()` calls)
-export function useArgs<A extends any[]>(...args: A): A {
-  // Prevent infinite loop by NOT refetching unless the arguments actually changed:
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  return useMemo(() => args, args);
-}
-
 // To be used as a wrapper for fetch() inside useDataState inline fetcher definition:
 // (This allows the types to match with the DataState's, instead of returning a fetch Response type)
 export async function fetchJson<T>(...args: any[]): Promise<T> {
@@ -198,7 +189,9 @@ export async function fetchJson<T>(...args: any[]): Promise<T> {
 
   const json = await response.json();
   const result = 'result' in json ? json.result : json;
-  if (!result) throw new FetchError(`Empty json response or result, json: ${JSON.stringify(json)}`);
+  if (!result) throw new FetchError(`Empty json response or result.
+            json: ${JSON.stringify(json)}
+            URL: ${args[0]}`);
 
   return result as T;
 }
@@ -206,7 +199,7 @@ export async function fetchJson<T>(...args: any[]): Promise<T> {
 export class FetchError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'FetchWithoutJsonError';
+    this.name = 'FetchError';
   }
 }
 

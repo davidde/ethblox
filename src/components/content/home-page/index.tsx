@@ -7,7 +7,7 @@ import Transactions from './transactions';
 import Stats from './stats';
 import NodeBanner from './node-banner';
 import { useAlchemy } from '@/lib/utilities';
-import { useDataState, useArgs } from '@/lib/data-state';
+import { useDataState } from '@/lib/data-state';
 
 
 export default function HomePage(props: {network: string}) {
