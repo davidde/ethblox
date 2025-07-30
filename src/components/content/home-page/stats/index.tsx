@@ -51,7 +51,7 @@ export default function Stats() {
   // DataState for it to correctly render when it is in Error or Loading states.
   // Contrary to `useDataState`, `DataState.Init` just creates the (undefined) DataState
   // from the fetcher, without actually running the fetcher:
-  let ethMarketCapData = DataState.Init({
+  let ethMarketCapData = DataState.useConfig({
     fetcher: async () => await Promise.all([pricesAndTxsData.fetch(), ethSupplyData.fetch()])
   });
 

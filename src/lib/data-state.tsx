@@ -36,6 +36,11 @@ interface DataStateMethods<T> {
   setLoading: () => void;
   setValue: (value: T) => void;
   setError: (error: unknown, prefix?: string) => void;
+  // This is the fetch function that is used to initialize the DataState,
+  // and can be called to refetch when an error occurred.
+  fetch: () => Promise<any>;
+  // Populate the DataRoot with data from an initial fetch in useEffect():
+  useInit: () => void;
   // The DataState.Render() method can be called at all times; in Value-, Error-,
   // as well as LoadingState! It will render the apropriate component,
   // either the value, an ErrorIndicator, or a LoadingIndicator.
@@ -43,9 +48,6 @@ interface DataStateMethods<T> {
   // provided a value callback function (e.g. to render a subfield of the DataState),
   // and render that, or otherwise default to rendering the DataState's value directly.
   Render: (options?: RenderConfig) => ReactNode;
-  // This is the fetch function that is used to initialize the DataState,
-  // and can be called to refetch when an error occurred.
-  fetch: () => Promise<any>;
 };
 
 // Options to configure the `DataState`'s Render method that displays
@@ -79,7 +81,7 @@ interface FetchConfig<T, A extends any[] = any[]> {
 // to be used for initializing or setting a full DataState:
 export const DataState = {
   // Create LoadingRoot from nothing for initializing empty DataState:
-  // This needs to return a DataRoot, and NOT a LoadingRoot,
+  // This needs to return as DataRoot<T>, and NOT as LoadingRoot,
   // so we can later assign Value- and ErrorRoots too if required!
   loading: <T,>(): DataRoot<T> => ({
       value: undefined,
@@ -87,7 +89,7 @@ export const DataState = {
       loading: true,
     }),
 
-  // Create ValueRoot<T> from dataValue:
+  // Create ValueRoot<T> from dataValue and return as DataRoot<T>:
   value: <T,>(dataValue: T): DataRoot<T> => ({
       value: dataValue,
       error: undefined,
@@ -95,6 +97,7 @@ export const DataState = {
     }),
 
   // Create ErrorRoot from `unknown` error, to be used in `catch` block:
+  // (And return as DataRoot<T>)
   error: <T,>(unknownError: unknown, errorPrefix?: string): DataRoot<T> => {
     let errorInstance: Error;
 
@@ -118,7 +121,7 @@ export const DataState = {
 
   // Factory function to create a `DataState<T>` type from a data fetcher,
   // initializing it as a LoadingRoot:
-  Init: <T, A extends any[] = any[]>(config: FetchConfig<T, A>): DataState<T> => {
+  useConfig: <T, A extends any[] = any[]>(config: FetchConfig<T, A>): DataState<T> => {
     // Stabilize args, and default to empty array if no args provided:
     const args = useArgs(...(config.args || [] as unknown as A));
     // Stabilize fetcher: only create it once and don't update it.
@@ -133,8 +136,16 @@ export const DataState = {
     // get a LoadingRoot (DataRoot<undefined>) instead of an `undefined`.
     // This is incorrect usage: `useState<DataState<T>>()`!
     const [dataRoot, setRoot] = useState(DataState.loading<T>());
+    const setLoading = () => setRoot(DataState.loading());
+    const setValue = (dataValue: T) => setRoot(DataState.value(dataValue));
+    const setError = (error: unknown, prefix?: string) => setRoot(DataState.error(error, prefix));
+
     // Attach setRoot to fetcher so fetching can update the DataState:
     const fetch = useFetcher(fetcher, args, setRoot);
+
+    // Get an actual value by doing initial fetch in useEffect():
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const useInit = () => useEffect(() => { fetch() }, [fetch]);
 
     const Render = (conf: RenderConfig = {}): ReactNode => {
       const { value, error, showFallback = true, loadingFallback, errorFallback, fallbackClass } = conf;
@@ -151,30 +162,18 @@ export const DataState = {
           loadingFallback : <LoadingIndicator className={fallbackClass} />;
       }
     }
-    const setLoading = () => setRoot(DataState.loading());
-    const setValue = (dataValue: T) => setRoot(DataState.value(dataValue));
-    const setError = (error: unknown, prefix?: string) => setRoot(DataState.error(error, prefix));
 
-    return { ...dataRoot, setRoot, setLoading, setValue, setError, Render, fetch };
+    return { ...dataRoot, setRoot, setLoading, setValue, setError, fetch, useInit, Render };
   }
 };
 
-// End-user hook that takes a `fetcher` function as input,
-// and returns a DataState object that extends DataRoot
-// with a setState(), Render() and fetch() function:
-export function useDataState<T, A extends any[] = any[]>(
-  config: FetchConfig<T, A>
-): DataState<T> {
-  const dataState = DataState.Init(config);
-
-  // Get an actual value by doing initial fetch:
-  useEffect(() => {
-    dataState.fetch();
-    // Only rerun when fetch() changes:
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataState.fetch]);
-
-  return dataState;
+// Hook that memoizes the argument array to prevent a new array
+// from being created on every render:
+// (For inline use in `useDataState()` or `DataState.Init()` calls)
+export function useArgs<A extends any[]>(...args: A): A {
+  // Prevent infinite loop by NOT refetching unless the arguments actually changed:
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return useMemo(() => args, args);
 }
 
 // This helper function takes the fetcher provided to the DataState,
@@ -215,11 +214,14 @@ export async function fetchJson<T>(url: string): Promise<T> {
   return result as T;
 }
 
-// Hook that memoizes the argument array to prevent a new array
-// from being created on every render:
-// (For inline use in `useDataState()` or `DataState.Init()` calls)
-export function useArgs<A extends any[]>(...args: A): A {
-  // Prevent infinite loop by NOT refetching unless the arguments actually changed:
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  return useMemo(() => args, args);
+// End-user hook that takes a FetchConfig as input,
+// and returns a DataState<T> object that extends DataRoot<T>
+// with the DataStateMethods<T> methods:
+export function useDataState<T, A extends any[] = any[]>(
+  config: FetchConfig<T, A>
+): DataState<T> {
+  const dataState = DataState.useConfig(config);
+  dataState.useInit();
+
+  return dataState;
 }
