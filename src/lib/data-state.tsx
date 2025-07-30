@@ -131,11 +131,14 @@ export const DataState = {
     const setValue = (dataValue: T) => setRoot(DataState.value(dataValue));
     const setError = (error: unknown, prefix?: string) => setRoot(DataState.error(error, prefix));
 
-    // Stabilize args, and default to empty array if no args provided:
-    const args = useArgs(...(config.args || [] as unknown as A));
+    // Default to empty array if no args provided:
+    let args = config.args || [] as unknown as A;
+    // Stabilize args:
+    args = useMemo(() => args, args);
+
     // Stabilize fetcher: only create it once and don't update it.
-    // Even if the parent re-creates the fetcher each render,
-    // this fetcher remains the same as on its first initialization.
+    // Even if the parent re-creates the fetcher each render (e.g. when defined
+    // inline), this fetcher remains the same as on its first initialization.
     // This means that when it closes over variables that might change,
     // it always KEEPS the FIRST VERSION that it received!
     // Those variables have to be provided as ARGUMENTS!
