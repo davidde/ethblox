@@ -1,4 +1,4 @@
-import { useDataState, fetchJson } from '@/lib/data-state';
+import { useDataState, FetchError } from '@/lib/data-state';
 import { getBlockRewardUrl, getEtherValueFromWei } from '@/lib/utilities';
 import LoadingPulse from '@/components/common/indicators/loading-pulse';
 import LoadingPulseStatic from '@/components/common/indicators/loading-pulse-static';
@@ -16,8 +16,7 @@ export default function BlockReward(props: {
   network: string,
   blockNumber?: number,
 }) {
-  const blockRewardData = useDataState<BlockRewardData, [string?]>({
-    fetcher: (url) => fetchJson(url!),
+  const blockRewardData = useDataState<BlockRewardData>({
     args: [getBlockRewardUrl(props.network, props.blockNumber)],
   });
 
@@ -26,7 +25,7 @@ export default function BlockReward(props: {
 
   let errorFallback = <ErrorWithRefetch refetch={blockRewardData.fetch} />;
   // Latest Block often doesn't have a reward yet:
-  if (props.id === 0 && blockRewardData.error && blockRewardData.error.message === 'Empty json response') {
+  if (props.id === 0 && blockRewardData.error && blockRewardData.error instanceof FetchError) {
     errorFallback = <ValueWithRefetch refetch={blockRewardData.fetch} value='TBD'/>;
   }
 

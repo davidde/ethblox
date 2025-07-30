@@ -9,7 +9,7 @@ import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import StatCard from './stat-card';
 import { getGasPriceGwei, getGasPriceUsd } from '@/lib/utilities';
-import { useDataState, DataState, fetchJson } from '@/lib/data-state';
+import { useDataState, DataState } from '@/lib/data-state';
 
 
 type EthSupplyData = {
@@ -27,13 +27,11 @@ type PricesAndTxsData = {
 
 export default function Stats() {
   const ethSupplyData = useDataState<EthSupplyData, [string]>({
-    fetcher: (url) => fetchJson(url),
     args: ['https://eth.blockscout.com/api/v2/stats/charts/market'],
   });
   const ethSupply = ethSupplyData.value ? +ethSupplyData.value.available_supply : undefined;
 
   const pricesAndTxsData = useDataState<PricesAndTxsData, [string]>({
-    fetcher: (url) => fetchJson(url),
     args: ['https://eth.blockscout.com/api/v2/stats'],
   });
 
@@ -51,7 +49,7 @@ export default function Stats() {
   // DataState for it to correctly render when it is in Error or Loading states.
   // Contrary to `useDataState`, `DataState.Init` just creates the (undefined) DataState
   // from the fetcher, without actually running the fetcher:
-  let ethMarketCapData = DataState.useConfig({
+  let ethMarketCapData = DataState.useConfig<any>({
     fetcher: async () => await Promise.all([pricesAndTxsData.fetch(), ethSupplyData.fetch()])
   });
 

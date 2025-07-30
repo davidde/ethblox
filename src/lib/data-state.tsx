@@ -38,7 +38,7 @@ interface DataStateMethods<T> {
   setError: (error: unknown, prefix?: string) => void;
   // This is the fetch function that is used to initialize the DataState,
   // and can be called to refetch when an error occurred.
-  fetch: () => Promise<any>;
+  fetch: () => Promise<void>;
   // Populate the DataRoot with data from an initial fetch in useEffect():
   useInit: () => void;
   // The DataState.Render() method can be called at all times; in Value-, Error-,
@@ -69,9 +69,10 @@ interface RenderConfig {
 
 // FetchConfig is used to initialize a DataState<T>, which is a DataRoot<T>,
 // together with its fetching function for potentially refetching it:
-interface FetchConfig<T, A extends any[] = any[]> {
-  // `fetcher` takes either the `fetch` function directly, or any async function:
-  fetcher: (...args: A) => Promise<T>;
+interface FetchConfig<T, A extends readonly unknown[] = readonly []> {
+  // `fetcher` takes any async function, and can be omitted
+  // if the fetcher is the standard Fetch API:
+  fetcher?: (...args: A) => Promise<T>;
   // Optionally provide arguments for the fetcher:
   args?: A;
 };
@@ -121,7 +122,7 @@ export const DataState = {
 
   // Factory function to create a `DataState<T>` type from a data fetcher,
   // initializing it as a LoadingRoot:
-  useConfig: <T, A extends any[] = any[]>(config: FetchConfig<T, A>): DataState<T> => {
+  useConfig: <T, A extends readonly unknown[] = readonly []>(config: FetchConfig<T, A>): DataState<T> => {
     // Initialize a LoadingRoot as root variant for the DataState:
     // Calling `DataState.loading()` inside `useState()` is required to
     // get a LoadingRoot (DataRoot<undefined>) instead of an `undefined`.
@@ -142,21 +143,15 @@ export const DataState = {
     // This means that when it closes over variables that might change,
     // it always KEEPS the FIRST VERSION that it received!
     // Those variables have to be provided as ARGUMENTS!
-    const fetcher = useRef(config.fetcher).current;
+    const fetcher = useRef(config.fetcher || fetchJson).current;
 
     // Attach setRoot to fetcher so fetching can update the DataState:
     const fetch = useCallback(async () => {
-      // console.log('Fetch triggered with args: ', args);
-      // Skip fetching if one of the arguments is still undefined:
-      if (args?.some(arg => arg === undefined)) return;
-
       try {
-        let response = await fetcher(...args);
-        if (!response) throw new Error('Empty response');
-
-        const typedResponse = response as T;
-        setValue(typedResponse);
-        return typedResponse;
+        // Skip fetching if one of the arguments is still undefined:
+        if (args?.some(arg => arg === undefined)) return;
+        const response = await fetcher(...args);
+        setValue(response as T);
       } catch (err) {
         setError(err);
       }
@@ -197,19 +192,26 @@ export function useArgs<A extends any[]>(...args: A): A {
 
 // To be used as a wrapper for fetch() inside useDataState inline fetcher definition:
 // (This allows the types to match with the DataState's, instead of returning a fetch Response type)
-export async function fetchJson<T>(url: string): Promise<T> {
-  const response = await fetch(url);
+export async function fetchJson<T>(...args: any[]): Promise<T> {
+  const response = await fetch(args[0]);
   if (!response.ok) throw new Error(`Fetch failed, status: ${response.status}`);
+
   const json = await response.json();
   const result = 'result' in json ? json.result : json;
-  if (!result) throw new Error('Empty json response');
+  if (!result) throw new FetchError(`Empty json response or result, json: ${JSON.stringify(json)}`);
 
   return result as T;
 }
 
-// End-user hook that takes a FetchConfig as input,
-// and returns a DataState<T> object that extends DataRoot<T>
-// with the DataStateMethods<T> methods:
+export class FetchError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'FetchWithoutJsonError';
+  }
+}
+
+// End-user hook that takes a FetchConfig as input and returns a
+// DataState<T> object that extends DataRoot<T> with DataStateMethods<T>:
 export function useDataState<T, A extends any[] = any[]>(
   config: FetchConfig<T, A>
 ): DataState<T> {
