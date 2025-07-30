@@ -122,15 +122,6 @@ export const DataState = {
   // Factory function to create a `DataState<T>` type from a data fetcher,
   // initializing it as a LoadingRoot:
   useConfig: <T, A extends any[] = any[]>(config: FetchConfig<T, A>): DataState<T> => {
-    // Stabilize args, and default to empty array if no args provided:
-    const args = useArgs(...(config.args || [] as unknown as A));
-    // Stabilize fetcher: only create it once and don't update it.
-    // Even if the parent re-creates the fetcher each render,
-    // this fetcher remains the same as on its first initialization.
-    // This means that when it closes over variables that might change,
-    // it always KEEPS the FIRST VERSION that it received!
-    // Those variables have to be provided as ARGUMENTS!
-    const fetcher = useRef(config.fetcher).current;
     // Initialize a LoadingRoot as root variant for the DataState:
     // Calling `DataState.loading()` inside `useState()` is required to
     // get a LoadingRoot (DataRoot<undefined>) instead of an `undefined`.
@@ -140,8 +131,33 @@ export const DataState = {
     const setValue = (dataValue: T) => setRoot(DataState.value(dataValue));
     const setError = (error: unknown, prefix?: string) => setRoot(DataState.error(error, prefix));
 
+    // Stabilize args, and default to empty array if no args provided:
+    const args = useArgs(...(config.args || [] as unknown as A));
+    // Stabilize fetcher: only create it once and don't update it.
+    // Even if the parent re-creates the fetcher each render,
+    // this fetcher remains the same as on its first initialization.
+    // This means that when it closes over variables that might change,
+    // it always KEEPS the FIRST VERSION that it received!
+    // Those variables have to be provided as ARGUMENTS!
+    const fetcher = useRef(config.fetcher).current;
+
     // Attach setRoot to fetcher so fetching can update the DataState:
-    const fetch = useFetcher(fetcher, args, setRoot);
+    const fetch = useCallback(async () => {
+      // console.log('Fetch triggered with args: ', args);
+      // Skip fetching if one of the arguments is still undefined:
+      if (args?.some(arg => arg === undefined)) return;
+
+      try {
+        let response = await fetcher(...args);
+        if (!response) throw new Error('Empty response');
+
+        const typedResponse = response as T;
+        setValue(typedResponse);
+        return typedResponse;
+      } catch (err) {
+        setError(err);
+      }
+    }, [fetcher, args]);
 
     // Get an actual value by doing initial fetch in useEffect():
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -174,32 +190,6 @@ export function useArgs<A extends any[]>(...args: A): A {
   // Prevent infinite loop by NOT refetching unless the arguments actually changed:
   // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => args, args);
-}
-
-// This helper function takes the fetcher provided to the DataState,
-// and attaches it to the DataState's internal DataRoot value that is
-// tracked and updated with `useState`:
-function useFetcher<T, A extends any[] = any[]>(
-  fetcher: (...args: A) => Promise<T> | Response,
-  args: A,
-  setRoot: Dispatch<SetStateAction<DataRoot<T>>>,
-): () => Promise<T | undefined> {
-  return useCallback(async () => {
-    // console.log('Fetch triggered with args: ', args);
-    // Skip fetching if one of the arguments is still undefined:
-    if (args?.some(arg => arg === undefined)) return;
-
-    try {
-      let response = await fetcher(...args);
-      if (!response) throw new Error('Empty response');
-
-      const typedResponse = response as T;
-      setRoot(DataState.value(typedResponse));
-      return typedResponse;
-    } catch (err) {
-      setRoot(DataState.error(err));
-    }
-  }, [fetcher, args, setRoot]);
 }
 
 // To be used as a wrapper for fetch() inside useDataState inline fetcher definition:
