@@ -1,16 +1,16 @@
-export default function LoadingIndicator(props: { className?: string }) {
-  const letters = ['L', 'o', 'a', 'd', 'i', 'n', 'g', '\u00A0', '.', '.', '.'];
+export default function LoadingIndicator(props: { message?: string, className?: string }) {
+  const chars = Array.from(props.message ?? 'Loading ...');
 
   return (
     <span className={`${props.className} inline-flex`}>
       {
-        letters.map((char, index) =>
+        chars.map((char, i) =>
           <span
-            key={index}
+            key={i}
             className='italic animate-(--animate-glow)'
-            style={{animationDelay: `${index * 0.1}s`}}
+            style={{animationDelay: `${i * 0.1}s`}}
           >
-            {char}
+            {char === ' ' ? '\u00A0' : char}
           </span>
         )
       }

@@ -25,7 +25,7 @@ export default function StatCard<T>(props: {
           <props.dataState.Render
             value={props.value}
             errorFallback={<ErrorWithRefetch refetch={props.dataState.fetch} />}
-            loadingFallback={<LoadingIndicator />}
+            loading='Loading ...'
           />
         </div>
       </div>
