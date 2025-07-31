@@ -35,7 +35,7 @@ export default function Block(props: {
         <div className='flex'>
           <CubeIcon className='w-10 h-10 md:w-8 md:h-8' />
           <div className='flex md:flex-col ml-2 pt-1 md:pt-0 md:w-[8rem] px-2 md:px-4'>
-            <span className='leading-5'>
+            <span className='leading-5 mr-2 md:mr-0'>
               <props.latestBlockData.Render
                 value={(className) => <Link href={`/${props.network}/block?number=${blockNumber}`}
                                    className={`${className} hover:text-(--hover-fg-color)`}>
