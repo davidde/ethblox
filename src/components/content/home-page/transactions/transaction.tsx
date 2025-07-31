@@ -1,7 +1,7 @@
 'use client';
 
 import { DocumentTextIcon } from '@heroicons/react/24/outline';
-import { BlockWithTransactions } from 'alchemy-sdk';
+import { BigNumber, BlockWithTransactions } from 'alchemy-sdk';
 import { truncateAddress, truncateTransaction, getEtherValueFromWei } from '@/lib/utilities';
 import PopoverLink from '@/components/common/popover-link';
 import { DataState } from '@/lib/data-state';
@@ -13,13 +13,8 @@ export default function Transaction(props: {
   network: string,
   blockWithTransactions: DataState<BlockWithTransactions>,
 }) {
-  // Use a callback because the transactions might still be loading:
   const transaction = props.blockWithTransactions.value?.transactions[props.id];
-
-  const hash = transaction?.hash;
-  const ethValue = transaction?.value;
-  const from = transaction?.from;
-  const to = transaction?.to;
+  const ethValue = transaction ? `Ξ${getEtherValueFromWei(transaction.value, 6)}` : undefined;
 
   return (
     <div className='md:min-h-[4.825rem] p-2 md:p-3 border-b border-(--border-color) last:border-0'>
@@ -30,10 +25,10 @@ export default function Transaction(props: {
             <span className='px-2 md:px-4'>
               <props.blockWithTransactions.Render
                 value={() =>
-                  <PopoverLink // runtime error: transaction() undefined!?
-                    href={`/${props.network}/transaction?hash=${hash}`}
-                    content={truncateTransaction(hash!, 18)}
-                    popover={hash!}
+                  <PopoverLink
+                    href={`/${props.network}/transaction?hash=${transaction?.hash}`}
+                    content={truncateTransaction(transaction!.hash, 18)}
+                    popover={transaction!.hash}
                     className='-left-full top-[-2.6rem] w-120 py-1.5 px-2.5'
                   />}
                 className='text-(--link-color) w-[10rem]'
@@ -47,7 +42,7 @@ export default function Transaction(props: {
               />
               &nbsp;&nbsp;
               <props.blockWithTransactions.Render
-                value={() => `Ξ${getEtherValueFromWei(ethValue!, 6)}`}
+                value={() => ethValue}
                 className='text-(--grey-fg-color) w-[3rem]'
               />
             </span>
@@ -66,8 +61,8 @@ export default function Transaction(props: {
               value={() =>
                 <PopoverLink
                   href={`/${props.network}/address?hash=${transaction?.from}`}
-                  content={truncateAddress(transaction?.from!, 21)}
-                  popover={transaction?.from!}
+                  content={truncateAddress(transaction!.from, 21)}
+                  popover={transaction!.from}
                   className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                 />}
               className='text-(--link-color) w-[11.25rem]'
@@ -83,9 +78,9 @@ export default function Transaction(props: {
             <props.blockWithTransactions.Render
               value={() => transaction?.to ?
                   <PopoverLink
-                    href={`/${props.network}/address?hash=${transaction?.to}`}
-                    content={truncateAddress(transaction?.to!, 21)}
-                    popover={transaction?.to!}
+                    href={`/${props.network}/address?hash=${transaction.to}`}
+                    content={truncateAddress(transaction.to, 21)}
+                    popover={transaction.to}
                     className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                   />
                   : <span>/</span>}

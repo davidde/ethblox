@@ -13,7 +13,9 @@ export default function GastrackerCard({ title, pricesData }: {
   title: string,
   pricesData: DataState<any>,
 }) {
-  let prices: Prices, gasPrice;
+  let prices: Prices;
+  let gasPrice: number | undefined;
+  let gasPriceGwei: string, gasPriceUsd: string;
   if (pricesData.value) {
     prices = {
       ethPrice: +pricesData.value.coin_price,
@@ -23,6 +25,10 @@ export default function GastrackerCard({ title, pricesData }: {
     }
     gasPrice = Object.entries(prices).find( // find returns a key-value pair (value = [1])
       ([key]) => key.startsWith(title.toLowerCase()) )?.[1]; // OR undefined => `?.` optional chaining required
+    if (gasPrice) {
+      gasPriceGwei = getGasPriceGwei(gasPrice);
+      gasPriceUsd = getGasPriceUsd(gasPrice, prices.ethPrice);
+    }
   }
 
   let smiley, smileyLabel, colorClass;
@@ -55,11 +61,11 @@ export default function GastrackerCard({ title, pricesData }: {
       </p>
       <div className={`text-lg tracking-wide ${colorClass}`}>
         <p>
-          <pricesData.Render value={ () => getGasPriceGwei(gasPrice!) } />
+          <pricesData.Render value={ () => gasPriceGwei } />
         </p>
         <p className='text-sm'>
           <pricesData.Render showFallback={false}
-            value={ () => getGasPriceUsd(gasPrice!, prices.ethPrice) } />
+            value={ () => gasPriceUsd } />
         </p>
       </div>
     </div>

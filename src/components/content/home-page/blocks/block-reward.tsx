@@ -19,8 +19,7 @@ export default function BlockReward(props: {
     args: [getBlockRewardUrl(props.network, props.blockNumber)],
   });
 
-  let blockReward = '';
-  if (blockRewardData.value) blockReward = `Ξ${getEtherValueFromWei(blockRewardData.value.blockReward, 4)}`;
+  const blockReward = blockRewardData.value ? `Ξ${getEtherValueFromWei(blockRewardData.value.blockReward, 4)}` : '';
 
   let errorFallback = <ErrorWithRefetch refetch={blockRewardData.fetch} />;
   // Latest Block often doesn't have a reward yet:

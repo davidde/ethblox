@@ -1,7 +1,5 @@
 import { ReactNode } from 'react';
 import { DataState } from '@/lib/data-state';
-import ErrorWithRefetch from '@/components/common/indicators/error-with-refetch';
-import LoadingIndicator from '@/components/common/indicators/loading-indicator';
 
 
 export default function StatCard<T>(props: {

@@ -12,7 +12,6 @@ import { useDataState, DataState } from '@/lib/data-state';
 import Link from 'next/link';
 import PopoverLink from '../../../common/popover-link';
 import LoadingPulseStatic from '@/components/common/indicators/loading-pulse-static';
-import ErrorWithRefetch from '@/components/common/indicators/error-with-refetch';
 import BlockReward from './block-reward';
 
 
@@ -28,6 +27,9 @@ export default function Block(props: {
     fetcher: (alchemy, num) => alchemy.core.getBlock(num!),
     args: [alchemy, blockNumber],
   });
+
+  const timestamp = blockData.value ? `(${getBlockAgeFromSecs(getSecsFromUnixSecs(blockData.value.timestamp))} ago)` : undefined;
+  const transactions = blockData.value ? `${blockData.value.transactions.length} transactions` : undefined;
 
   return (
     <div className='min-h-[8.5rem] md:min-h-[5.8rem] p-2 md:p-3 border-b border-(--border-color) last:border-0'>
@@ -46,7 +48,7 @@ export default function Block(props: {
             </span>
             <span className='text-sm text-(--grey-fg-color)'>
               <blockData.Render
-                value={() => `(${getBlockAgeFromSecs(getSecsFromUnixSecs(blockData.value!.timestamp))} ago)`}
+                value={() => timestamp}
                 className='w-[6em]'
               />
             </span>
@@ -61,7 +63,7 @@ export default function Block(props: {
           />
           <span className='px-2 md:px-4 leading-5'>
             <blockData.Render
-              value={() => `${blockData.value!.transactions.length} transactions`}
+              value={() => transactions}
               className='text-(--grey-fg-color) w-[8rem]'
             />
           </span>
@@ -75,7 +77,7 @@ export default function Block(props: {
             <blockData.Render
               value={() =>
                 <PopoverLink
-                  href={`/${props.network}/address?hash=${blockData.value!.miner}`}
+                  href={`/${props.network}/address?hash=${blockData.value?.miner}`}
                   content={truncateAddress(blockData.value!.miner, 20)}
                   popover={blockData.value!.miner}
                   className='left-[-37%] top-[-2.6rem] w-78 py-1.5 px-2.5'
