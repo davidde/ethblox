@@ -49,6 +49,8 @@ interface DataStateMethods<T> {
   // provided a value callback function (e.g. to render a subfield of the DataState),
   // and render that, or otherwise default to rendering the DataState's value directly.
   Render: (options?: RenderConfig) => ReactNode;
+  // subset: <X>() => DataState<X>;
+  // compose: <X, Y>(dataState: DataState<X>) => DataState<Y>;
 };
 
 // Options to configure the `DataState`'s Render method that displays
@@ -73,29 +75,40 @@ interface RenderConfig {
 
 // FetchConfig is used to initialize a DataState<T>, which is a DataRoot<T>,
 // together with its fetching function for potentially refetching it:
-interface FetchConfig<T, A extends readonly unknown[] = readonly []> {
+interface FetchConfig<T, A extends any[] = any[], R = T> {
   // `fetcher` takes any async function, and can be omitted
   // if the fetcher is the standard Fetch API:
-  fetcher?: (...args: A) => Promise<T>;
+  fetcher?: (...args: A) => Promise<R>;
   // Optionally provide arguments for the fetcher:
   args?: A;
+  // Postprocessing function:
+  postProcess?: (response: R) => T;
 };
+
+type DataStateConstructor = <T, A extends any[] = any[], R = T>(
+  config: FetchConfig<T, A, R>
+) => DataState<T>;
 
 // Factory functions for DataState type.
 // DataState.loading(), .value() and .error() return *DataRoots*,
 // to be used for initializing or setting a full DataState:
-export const DataState = {
+export const DataState: {
+  loading: <T,>() => DataRoot<T>;
+  value: <T,>(dataValue: T) => DataRoot<T>;
+  error: <T,>(unknownError: unknown, errorPrefix?: string) => DataRoot<T>;
+  useConfig: DataStateConstructor;
+} = {
   // Create LoadingRoot from nothing for initializing empty DataState:
   // This needs to return as DataRoot<T>, and NOT as LoadingRoot,
   // so we can later assign Value- and ErrorRoots too if required!
-  loading: <T,>(): DataRoot<T> => ({
+  loading: () => ({
       value: undefined,
       error: undefined,
       loading: true,
     }),
 
   // Create ValueRoot<T> from dataValue and return as DataRoot<T>:
-  value: <T,>(dataValue: T): DataRoot<T> => ({
+  value: (dataValue) => ({
       value: dataValue,
       error: undefined,
       loading: false,
@@ -103,7 +116,7 @@ export const DataState = {
 
   // Create ErrorRoot from `unknown` error, to be used in `catch` block:
   // (And return as DataRoot<T>)
-  error: <T,>(unknownError: unknown, errorPrefix?: string): DataRoot<T> => {
+  error: (unknownError, errorPrefix?) => {
     let errorInstance: Error;
 
     if (unknownError instanceof Error) {
@@ -126,7 +139,7 @@ export const DataState = {
 
   // Factory function to create a `DataState<T>` type from a data fetcher,
   // initializing it as a LoadingRoot:
-  useConfig: <T, A extends readonly unknown[] = readonly []>(config: FetchConfig<T, A>): DataState<T> => {
+  useConfig: <T, A extends any[], R>(config: FetchConfig<T, A, R>) => {
     // Initialize a LoadingRoot as root variant for the DataState:
     // Calling `DataState.loading()` inside `useState()` is required to
     // get a LoadingRoot (DataRoot<undefined>) instead of an `undefined`.
@@ -147,14 +160,19 @@ export const DataState = {
     // This means that when it closes over variables that might change,
     // it always KEEPS the FIRST VERSION that it received!
     // Those variables have to be provided as ARGUMENTS!
-    const fetcher = useRef(config.fetcher || fetchJson).current;
+    const fetcher = useRef(config.fetcher).current;
 
     // Attach setRoot to fetcher so fetching can update the DataState:
     const fetch = useCallback(async () => {
       try {
         // Skip fetching if one of the arguments is still undefined:
         if (args?.some(arg => arg === undefined)) return;
-        const response = await fetcher(...args);
+
+        let response;
+
+        if (fetcher) response = await fetcher(...args);
+        else response = await fetchJson(args[0] as string);
+
         setValue(response as T);
       } catch (err) {
         setError(err);
@@ -192,15 +210,15 @@ export const DataState = {
 
 // To be used as a wrapper for fetch() inside useDataState inline fetcher definition:
 // (This allows the types to match with the DataState's, instead of returning a fetch Response type)
-export async function fetchJson<T>(...args: any[]): Promise<T> {
-  const response = await fetch(args[0]);
+export async function fetchJson<T>(url: string): Promise<T> {
+  const response = await fetch(url);
   if (!response.ok) throw new Error(`Fetch failed, status: ${response.status}`);
 
   const json = await response.json();
   const result = 'result' in json ? json.result : json;
   if (!result) throw new FetchError(`Empty json response or result.
             json: ${JSON.stringify(json)}
-            URL: ${args[0]}`);
+            URL: ${url}`);
 
   return result as T;
 }
@@ -214,9 +232,7 @@ export class FetchError extends Error {
 
 // End-user hook that takes a FetchConfig as input and returns a
 // DataState<T> object that extends DataRoot<T> with DataStateMethods<T>:
-export function useDataState<T, A extends any[] = any[]>(
-  config: FetchConfig<T, A>
-): DataState<T> {
+export const useDataState: DataStateConstructor = (config) => {
   const dataState = DataState.useConfig(config);
   dataState.useInit();
 

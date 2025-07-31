@@ -12,7 +12,7 @@ import { useDataState } from '@/lib/data-state';
 
 export default function HomePage(props: {network: string}) {
   const alchemy = useAlchemy(props.network);
-  const latestBlockData = useDataState({
+  const latestBlockData = useDataState<number>({
     fetcher: (alchemy) => alchemy.core.getBlockNumber(),
     args: [alchemy],
   });
