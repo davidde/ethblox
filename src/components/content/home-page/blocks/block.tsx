@@ -42,17 +42,17 @@ export default function Block(props: {
           <div className='flex md:flex-col ml-2 pt-1 md:pt-0 md:w-[8rem] px-2 md:px-4'>
             <span className='leading-5 mr-2 md:mr-0'>
               <props.latestBlockData.Render
-                valueCallback={(className) => <Link href={`/${props.network}/block?number=${blockNumber}`}
-                                                    className={`${className} hover:text-(--hover-fg-color)`}>
+                valueCallback={(jointClass) => <Link href={`/${props.network}/block?number=${blockNumber}`}
+                                                    className={`${jointClass} hover:text-(--hover-fg-color)`}>
                                                 {blockNumber}
                                               </Link>}
-                className='text-(--link-color) w-[5em]'
+                jointClass='text-(--link-color) w-[5em]'
               />
             </span>
             <span className='text-sm text-(--grey-fg-color)'>
               <blockData.Render
                 field='timestamp'
-                className='w-[6em]'
+                jointClass='w-[6em]'
               />
             </span>
           </div>
@@ -67,14 +67,15 @@ export default function Block(props: {
           <span className='px-2 md:px-4 leading-5'>
             <blockData.Render
               field='transactions'
-              className='text-(--grey-fg-color) w-[8rem]'
+              jointClass='w-[8rem]'
+              loadingPulseColor='bg-(--grey-fg-color)'
             />
           </span>
           <span className='pl-2 md:pl-4 leading-5'>
             <LoadingPulseStatic
               content='Recipient:'
               dataState={blockData}
-              className='text-(--grey-fg-color)'
+              loadingPulseColor='bg-(--grey-fg-color)'
             />
             &nbsp;&nbsp;
             <blockData.Render
@@ -85,7 +86,8 @@ export default function Block(props: {
                   popover={blockData.value!.recipientHashFull}
                   className='left-[-37%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                 />}
-              className='text-(--link-color) w-[11rem]'
+              jointClass='w-[11rem]'
+              loadingPulseColor='bg-(--link-color)'
             />
           </span>
         </div>

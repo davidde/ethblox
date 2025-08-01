@@ -5,13 +5,15 @@ import LoadingPulse from './loading-pulse';
 export default function LoadingPulseStatic<T>(props: {
   content: string,
   dataState: DataState<T>,
-  className?: string, // Set background with text-color, takes background from currentcolor!
+  loadingPulseColor?: string, // Takes background from currentcolor by default!
+  className?: string,
 }) {
-  return props.dataState.error || props.dataState.value ?
-    props.content
-    :
+  return props.dataState.loading ?
     <LoadingPulse
+      loadingPulseColor={props.loadingPulseColor}
       className={props.className}
       content={props.content}
-    />;
+    />
+    :
+    props.content;
 }

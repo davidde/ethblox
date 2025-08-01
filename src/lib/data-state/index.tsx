@@ -64,20 +64,26 @@ interface RenderConfig<T, K extends keyof T> {
   // Optionally render a specific key/field of the DataState's value (IFF it is present):
   field?: K;
   // Optional callback function for transforming the DataState's value before rendering it:
-  // (Can optionally use the className provided to the render function, see below)
-  valueCallback?: (className?: string) => ReactNode;
+  // (Can optionally use the jointClass provided to the render function, see below)
+  valueCallback?: (jointClass?: string) => ReactNode;
   // Optional error message to display instead of 'Error':
   error?: string;
   // Optional message to display while loading:
-  loading?: string;
+  loadingMessage?: string;
+  // Optionally className for just the LoadingPulse component, e.g. for setting its color:
+  // (The LoadingPulse component will only display when the above
+  // loadingMessage is NOT set, otherwise only the message will appear)
+  loadingPulseColor?: string;
   // Optionally don't display fallback components like Loading- or ErrorIndicators:
   showFallback?: boolean;
   // Optionally display another component instead of the default LoadingIndicator:
   loadingFallback?: ReactNode;
   // Optionally display another component instead of the default ErrorIndicator:
   errorFallback?: ReactNode;
-  // Optional className for the displayed component:
-  className?: string;
+  // Optional shared className for displayed components:
+  // Useful for layout/positioning that has to be the same for whatever
+  // component that will be displayed, like Loading- or ErrorIndicators:
+  jointClass?: string;
 }
 
 // FetchConfig is used to initialize a DataState<T>, which is a DataRoot<T>,
@@ -200,24 +206,24 @@ export const DataState: {
     }
 
     const Render = <K extends keyof T>(conf: RenderConfig<T, K> = {}): ReactNode => {
-      const { field, valueCallback, error, loading, showFallback = true, loadingFallback, errorFallback, className } = conf;
+      const { field, valueCallback, error, loadingMessage, loadingPulseColor, showFallback = true, loadingFallback, errorFallback, jointClass } = conf;
 
       switch (dataRoot.status) {
         case 'loading':
           if (showFallback) {
             if (loadingFallback) return loadingFallback;
-            else if (loading) return <LoadingIndicator message={loading} className={className} />;
-            else return <LoadingPulse className={className} />;
+            else if (loadingMessage) return <LoadingIndicator message={loadingMessage} className={jointClass} />;
+            else return <LoadingPulse loadingPulseColor={loadingPulseColor} className={jointClass} />;
           } return;
         case 'value':
-          if (valueCallback) return valueCallback(className);
+          if (valueCallback) return valueCallback(jointClass);
           else return field ?
-            <span className={className}>{ String(dataRoot.value[field]) }</span>
+            <span className={jointClass}>{ String(dataRoot.value[field]) }</span>
             :
-            <span className={className}>{ String(dataRoot.value) }</span>;
+            <span className={jointClass}>{ String(dataRoot.value) }</span>;
         case 'error':
           if (showFallback) {
-            return errorFallback ?? <ErrorWithRefetch refetch={fetch} error={error} className={className} />;
+            return errorFallback ?? <ErrorWithRefetch refetch={fetch} error={error} className={jointClass} />;
           } return;
       }
     }

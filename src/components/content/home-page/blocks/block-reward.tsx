@@ -38,7 +38,7 @@ export default function BlockReward(props: {
       <blockRewardData.Render
         valueCallback={ () => blockReward }
         errorFallback={errorFallback}
-        className='w-[4rem] text-(--grey-fg-color)'
+        jointClass='w-[4rem] text-(--grey-fg-color)'
       />
     </span>
   );

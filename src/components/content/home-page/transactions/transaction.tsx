@@ -1,7 +1,7 @@
 'use client';
 
 import { DocumentTextIcon } from '@heroicons/react/24/outline';
-import { BigNumber, BlockWithTransactions } from 'alchemy-sdk';
+import {  BlockWithTransactions } from 'alchemy-sdk';
 import { truncateAddress, truncateTransaction, getEtherValueFromWei } from '@/lib/utilities';
 import PopoverLink from '@/components/common/popover-link';
 import { DataState } from '@/lib/data-state';
@@ -31,7 +31,7 @@ export default function Transaction(props: {
                     popover={transaction!.hash}
                     className='-left-full top-[-2.6rem] w-120 py-1.5 px-2.5'
                   />}
-                className='text-(--link-color) w-[10rem]'
+                jointClass='text-(--link-color) w-[10rem]'
                 />
             </span>
             <span className='px-2 md:pl-4'>
@@ -43,7 +43,7 @@ export default function Transaction(props: {
               &nbsp;&nbsp;
               <props.blockWithTransactions.Render
                 valueCallback={() => ethValue}
-                className='text-(--grey-fg-color) w-[3rem]'
+                jointClass='text-(--grey-fg-color) w-[3rem]'
               />
             </span>
           </div>
@@ -65,7 +65,7 @@ export default function Transaction(props: {
                   popover={transaction!.from}
                   className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                 />}
-              className='text-(--link-color) w-[11.25rem]'
+              jointClass='text-(--link-color) w-[11.25rem]'
             />
           </span>
           <span className='pl-7 md:pl-9'>
@@ -84,7 +84,7 @@ export default function Transaction(props: {
                     className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                   />
                   : <span>/</span>}
-              className='text-(--link-color) w-[11.25rem]'
+              jointClass='text-(--link-color) w-[11.25rem]'
             />
           </span>
         </div>
