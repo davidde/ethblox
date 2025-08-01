@@ -84,7 +84,8 @@ interface FetchConfig<T, A extends any[] = any[], R = T> {
   fetcher?: (...args: A) => Promise<R>;
   // Optionally provide arguments for the fetcher:
   args?: A;
-  // Postprocessing function:
+  // Optional postprocessing function to transform fetched data
+  // before returning to DataState<T>:
   postProcess?: (response: R) => T;
 };
 
@@ -174,12 +175,13 @@ export const DataState: {
         // Skip fetching if one of the arguments is still undefined:
         if (args?.some(arg => arg === undefined)) return;
 
-        let response;
-
+        let response: R;
         if (fetcher) response = await fetcher(...args);
         else response = await fetchJson(args[0] as string);
 
-        setValue(response as T);
+        const result = config.postProcess ? config.postProcess(response) : response;
+
+        setValue(result as T);
       } catch (err) {
         setError(err);
       }

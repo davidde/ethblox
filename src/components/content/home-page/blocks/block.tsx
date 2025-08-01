@@ -1,7 +1,7 @@
 'use client';
 
 import { CubeIcon } from '@heroicons/react/24/outline';
-import type { Alchemy, Block } from 'alchemy-sdk';
+import type { Alchemy, Block, BlockP } from '@/types';
 import {
   getSecsFromUnixSecs,
   getBlockAgeFromSecs,
@@ -23,13 +23,16 @@ export default function Block(props: {
   const alchemy = useAlchemy(props.network);
   const blockNumber = props.latestBlockData.value && props.latestBlockData.value - props.id;
 
-  const blockData = useDataState<Block, [Alchemy, number?]>({
+  const blockData = useDataState<BlockP, [Alchemy, number?], Block>({
     fetcher: (alchemy, num) => alchemy.core.getBlock(num!),
     args: [alchemy, blockNumber],
+    postProcess: (response) => ({
+      timestamp: `(${getBlockAgeFromSecs(getSecsFromUnixSecs(response.timestamp))} ago)`,
+      transactions: `${response.transactions.length} transactions`,
+      recipientHashFull: response.miner,
+      recipientHashShort: truncateAddress(response.miner, 20),
+    }),
   });
-
-  const timestamp = blockData.value ? `(${getBlockAgeFromSecs(getSecsFromUnixSecs(blockData.value.timestamp))} ago)` : undefined;
-  const transactions = blockData.value ? `${blockData.value.transactions.length} transactions` : undefined;
 
   return (
     <div className='min-h-[8.5rem] md:min-h-[5.8rem] p-2 md:p-3 border-b border-(--border-color) last:border-0'>
@@ -40,15 +43,15 @@ export default function Block(props: {
             <span className='leading-5 mr-2 md:mr-0'>
               <props.latestBlockData.Render
                 value={(className) => <Link href={`/${props.network}/block?number=${blockNumber}`}
-                                   className={`${className} hover:text-(--hover-fg-color)`}>
-                                {blockNumber}
-                             </Link>}
+                                            className={`${className} hover:text-(--hover-fg-color)`}>
+                                        {blockNumber}
+                                      </Link>}
                 className='text-(--link-color) w-[5em]'
               />
             </span>
             <span className='text-sm text-(--grey-fg-color)'>
               <blockData.Render
-                value={() => timestamp}
+                value={() => blockData.value?.timestamp}
                 className='w-[6em]'
               />
             </span>
@@ -63,7 +66,7 @@ export default function Block(props: {
           />
           <span className='px-2 md:px-4 leading-5'>
             <blockData.Render
-              value={() => transactions}
+              value={() => blockData.value?.transactions}
               className='text-(--grey-fg-color) w-[8rem]'
             />
           </span>
@@ -77,9 +80,9 @@ export default function Block(props: {
             <blockData.Render
               value={() =>
                 <PopoverLink
-                  href={`/${props.network}/address?hash=${blockData.value?.miner}`}
-                  content={truncateAddress(blockData.value!.miner, 20)}
-                  popover={blockData.value!.miner}
+                  href={`/${props.network}/address?hash=${blockData.value?.recipientHashFull}`}
+                  content={blockData.value!.recipientHashShort}
+                  popover={blockData.value!.recipientHashFull}
                   className='left-[-37%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                 />}
               className='text-(--link-color) w-[11rem]'
