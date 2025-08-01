@@ -4,23 +4,26 @@ import LoadingIndicator from '@/components/common/indicators/loading-indicator';
 import ErrorWithRefetch from '@/components/common/indicators/error-with-refetch';
 
 
+type LoadingRoot = {
+  status: 'loading';
+  value: undefined;
+  error: undefined;
+  loading: true;
+};
 type ValueRoot<T> = {
+  status: 'value';
   value: T;
   error: undefined;
   loading: false;
 };
 type ErrorRoot = {
+  status: 'error';
   value: undefined;
   error: Error;
   loading: false;
 };
-type LoadingRoot = {
-  value: undefined;
-  error: undefined;
-  loading: true;
-};
 
-export type DataRoot<T> = ValueRoot<T> | ErrorRoot | LoadingRoot;
+export type DataRoot<T> = LoadingRoot | ValueRoot<T> | ErrorRoot;
 export type DataState<T> = DataRoot<T> & DataStateMethods<T>;
 
 // Methods that extend the DataRoot<T> into a full DataState<T> type:
@@ -102,6 +105,7 @@ export const DataState: {
   // This needs to return as DataRoot<T>, and NOT as LoadingRoot,
   // so we can later assign Value- and ErrorRoots too if required!
   loading: () => ({
+      status: 'loading',
       value: undefined,
       error: undefined,
       loading: true,
@@ -109,6 +113,7 @@ export const DataState: {
 
   // Create ValueRoot<T> from dataValue and return as DataRoot<T>:
   value: (dataValue) => ({
+      status: 'value',
       value: dataValue,
       error: undefined,
       loading: false,
@@ -131,6 +136,7 @@ export const DataState: {
     console.error(errorInstance);
 
     return {
+      status: 'error',
       value: undefined,
       error: errorInstance,
       loading: false,
@@ -186,21 +192,19 @@ export const DataState: {
     const Render = (conf: RenderConfig = {}): ReactNode => {
       const { value, error, loading, showFallback = true, loadingFallback, errorFallback, className } = conf;
 
-      if (dataRoot.value) {
-        return value ?
-          value(className)
-          :
-          <span className={className}>{String(dataRoot.value)}</span>;
-      }
-      else if (dataRoot.error) {
-        if (showFallback) {
-          return errorFallback ?? <ErrorWithRefetch refetch={fetch} error={error} className={className} />;
-        }
-      }
-      else if (showFallback) {
-        if (loadingFallback) return loadingFallback;
-        if (loading) return <LoadingIndicator message={loading} className={className} />;
-        return <LoadingPulse className={className} />;
+      switch (dataRoot.status) {
+        case 'loading':
+          if (showFallback) {
+            if (loadingFallback) return loadingFallback;
+            else if (loading) return <LoadingIndicator message={loading} className={className} />;
+            else return <LoadingPulse className={className} />;
+          }
+        case 'value':
+          return value ? value(className) : <span className={className}>{String(dataRoot.value)}</span>;
+        case 'error':
+          if (showFallback) {
+            return errorFallback ?? <ErrorWithRefetch refetch={fetch} error={error} className={className} />;
+          }
       }
     }
 
