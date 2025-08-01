@@ -51,17 +51,21 @@ interface DataStateMethods<T> {
   // If the DataState's value exists, the Render method will first check if the user
   // provided a value callback function (e.g. to render a subfield of the DataState),
   // and render that, or otherwise default to rendering the DataState's value directly.
-  Render: (options?: RenderConfig) => ReactNode;
+  Render: <K extends keyof T>(options?: RenderConfig<T, K>) => ReactNode;
+  // Get a subfield of the value of the DataState (if it is present):
+  getField: <K extends keyof T>(key: K) => T[K] | undefined;
   // subset: <X>() => DataState<X>;
   // compose: <X, Y>(dataState: DataState<X>) => DataState<Y>;
 };
 
 // Options to configure the `DataState`'s Render method that displays
 // either the `ValueState`'s value, or the `ErrorState`'s error.
-interface RenderConfig {
-  // Optional callback function for rendering a subfield of the `ValueState`'s value IFF that value is present:
+interface RenderConfig<T, K extends keyof T> {
+  // Optionally render a specific key/field of the DataState's value (IFF it is present):
+  field?: K;
+  // Optional callback function for transforming the DataState's value before rendering it:
   // (Can optionally use the className provided to the render function, see below)
-  value?: (className?: string) => ReactNode;
+  valueCallback?: (className?: string) => ReactNode;
   // Optional error message to display instead of 'Error':
   error?: string;
   // Optional message to display while loading:
@@ -191,8 +195,12 @@ export const DataState: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const useInit = () => useEffect(() => { fetch() }, [fetch]);
 
-    const Render = (conf: RenderConfig = {}): ReactNode => {
-      const { value, error, loading, showFallback = true, loadingFallback, errorFallback, className } = conf;
+    const getField = <K extends keyof T>(key: K) => {
+      return dataRoot.value?.[key];
+    }
+
+    const Render = <K extends keyof T>(conf: RenderConfig<T, K> = {}): ReactNode => {
+      const { field, valueCallback, error, loading, showFallback = true, loadingFallback, errorFallback, className } = conf;
 
       switch (dataRoot.status) {
         case 'loading':
@@ -200,17 +208,21 @@ export const DataState: {
             if (loadingFallback) return loadingFallback;
             else if (loading) return <LoadingIndicator message={loading} className={className} />;
             else return <LoadingPulse className={className} />;
-          }
+          } return;
         case 'value':
-          return value ? value(className) : <span className={className}>{String(dataRoot.value)}</span>;
+          if (valueCallback) return valueCallback(className);
+          else return field ?
+            <span className={className}>{ String(dataRoot.value[field]) }</span>
+            :
+            <span className={className}>{ String(dataRoot.value) }</span>;
         case 'error':
           if (showFallback) {
             return errorFallback ?? <ErrorWithRefetch refetch={fetch} error={error} className={className} />;
-          }
+          } return;
       }
     }
 
-    return { ...dataRoot, setRoot, setLoading, setValue, setError, fetch, useInit, Render };
+    return { ...dataRoot, setRoot, setLoading, setValue, setError, fetch, useInit, getField, Render };
   }
 };
 

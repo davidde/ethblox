@@ -24,7 +24,7 @@ export default function Transaction(props: {
           <div className='flex flex-col ml-2 pt-1 md:pt-0 md:w-48'>
             <span className='px-2 md:px-4'>
               <props.blockWithTransactions.Render
-                value={() =>
+                valueCallback={() =>
                   <PopoverLink
                     href={`/${props.network}/transaction?hash=${transaction?.hash}`}
                     content={truncateTransaction(transaction!.hash, 18)}
@@ -42,7 +42,7 @@ export default function Transaction(props: {
               />
               &nbsp;&nbsp;
               <props.blockWithTransactions.Render
-                value={() => ethValue}
+                valueCallback={() => ethValue}
                 className='text-(--grey-fg-color) w-[3rem]'
               />
             </span>
@@ -58,7 +58,7 @@ export default function Transaction(props: {
             />
             &nbsp;&nbsp;
             <props.blockWithTransactions.Render
-              value={() =>
+              valueCallback={() =>
                 <PopoverLink
                   href={`/${props.network}/address?hash=${transaction?.from}`}
                   content={truncateAddress(transaction!.from, 21)}
@@ -76,7 +76,7 @@ export default function Transaction(props: {
             />
             &nbsp;&nbsp;
             <props.blockWithTransactions.Render
-              value={() => transaction?.to ?
+              valueCallback={() => transaction?.to ?
                   <PopoverLink
                     href={`/${props.network}/address?hash=${transaction.to}`}
                     content={truncateAddress(transaction.to, 21)}

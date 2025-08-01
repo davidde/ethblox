@@ -36,7 +36,7 @@ export default function BlockReward(props: {
       />
       &nbsp;&nbsp;
       <blockRewardData.Render
-        value={ () => blockReward }
+        valueCallback={ () => blockReward }
         errorFallback={errorFallback}
         className='w-[4rem] text-(--grey-fg-color)'
       />

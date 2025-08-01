@@ -6,7 +6,7 @@ export default function StatCard<T>(props: {
   label: string,
   icon: ReactNode,
   dataState: DataState<T>,
-  value: () => ReactNode,
+  valueCallback: () => ReactNode,
   className?: string
 }) {
   return (
@@ -21,7 +21,7 @@ export default function StatCard<T>(props: {
         </div>
         <div className='pl-12'>
           <props.dataState.Render
-            value={props.value}
+            valueCallback={props.valueCallback}
             loading='Loading ...'
           />
         </div>

@@ -42,16 +42,16 @@ export default function Block(props: {
           <div className='flex md:flex-col ml-2 pt-1 md:pt-0 md:w-[8rem] px-2 md:px-4'>
             <span className='leading-5 mr-2 md:mr-0'>
               <props.latestBlockData.Render
-                value={(className) => <Link href={`/${props.network}/block?number=${blockNumber}`}
-                                            className={`${className} hover:text-(--hover-fg-color)`}>
-                                        {blockNumber}
-                                      </Link>}
+                valueCallback={(className) => <Link href={`/${props.network}/block?number=${blockNumber}`}
+                                                    className={`${className} hover:text-(--hover-fg-color)`}>
+                                                {blockNumber}
+                                              </Link>}
                 className='text-(--link-color) w-[5em]'
               />
             </span>
             <span className='text-sm text-(--grey-fg-color)'>
               <blockData.Render
-                value={() => blockData.value?.timestamp}
+                field='timestamp'
                 className='w-[6em]'
               />
             </span>
@@ -66,7 +66,7 @@ export default function Block(props: {
           />
           <span className='px-2 md:px-4 leading-5'>
             <blockData.Render
-              value={() => blockData.value?.transactions}
+              field='transactions'
               className='text-(--grey-fg-color) w-[8rem]'
             />
           </span>
@@ -78,7 +78,7 @@ export default function Block(props: {
             />
             &nbsp;&nbsp;
             <blockData.Render
-              value={() =>
+              valueCallback={() =>
                 <PopoverLink
                   href={`/${props.network}/address?hash=${blockData.value?.recipientHashFull}`}
                   content={blockData.value!.recipientHashShort}

@@ -92,21 +92,21 @@ export default function Stats() {
           label='ETHER PRICE'
           icon={<CurrencyDollarIcon className='w-8 h-8' />}
           dataState={pricesAndTxsData}
-          value={() => ethPriceFormatted}
+          valueCallback={() => ethPriceFormatted}
           className='md:border-b'
         />
         <StatCard
           label='ETHER SUPPLY'
           icon={<div className='w-8 h-8 bg-(image:--eth-logo-url) bg-contain bg-no-repeat bg-center' />}
           dataState={ethSupplyData}
-          value={() => ethSupplyFormatted }
+          valueCallback={() => ethSupplyFormatted }
           className='md:border-b md:border-x'
         />
         <StatCard
           label='ETHER MARKET CAP'
           icon={<GlobeAltIcon className='w-8 h-8' />}
           dataState={ethMarketCapData}
-          value={() => ethMarketCapFormatted }
+          valueCallback={() => ethMarketCapFormatted }
           className='md:border-b'
         />
       </div>
@@ -116,7 +116,7 @@ export default function Stats() {
           label='AVERAGE GAS PRICE'
           icon={<FireIcon className='w-8 h-8' />}
           dataState={pricesAndTxsData}
-          value={() =>
+          valueCallback={() =>
             <Link href='/mainnet/gastracker'
               className='text-(--link-color) hover:text-(--hover-fg-color)'>
               {averageGasPriceFormatted}
@@ -127,14 +127,14 @@ export default function Stats() {
           label='TRANSACTIONS TODAY'
           icon={<ClipboardDocumentListIcon className='w-8 h-8' />}
           dataState={pricesAndTxsData}
-          value={() => transactionsToday}
+          valueCallback={() => transactionsToday}
           className='md:border-x'
         />
         <StatCard
           label='TOTAL TRANSACTIONS'
           icon={<Square3Stack3DIcon className='w-8 h-8' />}
           dataState={pricesAndTxsData}
-          value={() => totalTransactions}
+          valueCallback={() => totalTransactions}
         />
       </div>
     </div>
