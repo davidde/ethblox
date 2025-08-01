@@ -1,0 +1,106 @@
+import { Dispatch, ReactNode, SetStateAction } from 'react';
+
+
+export type LoadingRoot = {
+  status: 'loading';
+  value: undefined;
+  error: undefined;
+  loading: true;
+};
+export type ValueRoot<T> = {
+  status: 'value';
+  value: T;
+  error: undefined;
+  loading: false;
+};
+export type ErrorRoot = {
+  status: 'error';
+  value: undefined;
+  error: Error;
+  loading: false;
+};
+
+export type DataRoot<T> = LoadingRoot | ValueRoot<T> | ErrorRoot;
+
+export type LoadingRootConstructor = <T,>() => DataRoot<T>;
+export type ValueRootConstructor = <T,>(dataValue: T) => DataRoot<T>;
+export type ErrorRootConstructor = <T,>(unknownError: unknown, errorPrefix?: string) => DataRoot<T>;
+
+// Methods that extend the DataRoot<T> into a full DataState<T> type:
+export type DataStateMethods<T> = {
+  // This sets the DataRoot value using React's useState.
+  // CAREFUL: `setRoot` requires using `useEffect`, `useCallback` or event handlers!
+  // Do NOT use it directly in a component's body or this will cause an infinite rerender loop!
+  // The input needs to be a DataRoot<T>, so usage is:
+  // dataState.setRoot(DataState.value(myValue));
+  setRoot: Dispatch<SetStateAction<DataRoot<T>>>;
+  // The setLoading(), setValue() and setError() methods are convenience wrappers
+  // for the above setRoot(), and allow directly passing a value or error instead
+  // of `setRoot(DataState.value(value))` or `setRoot(DataState.error(error))`:
+  setLoading: () => void;
+  setValue: (value: T) => void;
+  setError: (error: unknown, prefix?: string) => void;
+  // This is the fetch function that is used to initialize the DataState,
+  // and can be called to refetch when an error occurred.
+  fetch: () => Promise<void>;
+  // Populate the DataRoot with data from an initial fetch in useEffect():
+  useInit: () => void;
+  // The DataState.Render() method can be called at all times; in Value-, Error-,
+  // as well as LoadingState! It will render the apropriate component,
+  // either the value, an ErrorIndicator, or a LoadingIndicator.
+  // If the DataState's value exists, the Render method will first check if the user
+  // provided a value callback function (e.g. to render a subfield of the DataState),
+  // and render that, or otherwise default to rendering the DataState's value directly.
+  Render: <K extends keyof T>(options?: RenderConfig<T, K>) => ReactNode;
+  // Get a subfield of the value of the DataState (if it is present):
+  getField: <K extends keyof T>(key: K) => T[K] | undefined;
+  // subset: <X>() => DataState<X>;
+  // compose: <X, Y>(dataState: DataState<X>) => DataState<Y>;
+};
+
+// Options to configure the `DataState`'s Render method that displays
+// either the `ValueState`'s value, the `ErrorState`'s error, or a LoadingIndicator.
+export type RenderConfig<T, K extends keyof T> = {
+  // Optionally render a specific key/field of the DataState's value (IFF it is present):
+  field?: K;
+  // Optional callback function for transforming the DataState's value before rendering it:
+  // (Can optionally use the jointClass provided to the render function, see below)
+  valueCallback?: (jointClass?: string) => ReactNode;
+  // Optional error message to display instead of 'Error':
+  error?: string;
+  // Optional message to display while loading:
+  loadingMessage?: string;
+  // Optionally className for just the LoadingPulse component, e.g. for setting its color:
+  // (The LoadingPulse component will only display when the above
+  // loadingMessage is NOT set, otherwise only the message will appear)
+  loadingPulseColor?: string;
+  // Optionally don't display fallback components like Loading- or ErrorIndicators:
+  showFallback?: boolean;
+  // Optionally display another component instead of the default LoadingIndicator:
+  loadingFallback?: ReactNode;
+  // Optionally display another component instead of the default ErrorIndicator:
+  errorFallback?: ReactNode;
+  // Optional shared className for displayed components:
+  // Useful for layout/positioning that has to be the same for whatever
+  // component that will be displayed, like Loading- or ErrorIndicators:
+  jointClass?: string;
+}
+
+type DataState<T> = DataRoot<T> & DataStateMethods<T>;
+
+// FetchConfig is used to initialize a DataState<T>, which is a DataRoot<T>,
+// together with its fetching function for potentially refetching it:
+export type FetchConfig<T, A extends any[] = any[], R = T> = {
+  // `fetcher` takes any async function, and can be omitted
+  // if the fetcher is the standard Fetch API:
+  fetcher?: (...args: A) => Promise<R>;
+  // Optionally provide arguments for the fetcher:
+  args?: A;
+  // Optional postprocessing function to transform fetched data
+  // before returning to DataState<T>:
+  postProcess?: (response: R) => T;
+};
+
+export type DataStateConstructor = <T, A extends any[] = any[], R = T>(
+  config: FetchConfig<T, A, R>
+) => DataState<T>;
