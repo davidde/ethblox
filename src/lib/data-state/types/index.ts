@@ -64,7 +64,7 @@ export type RenderConfig<T, K extends keyof T> = {
   // Optionally provide a callback function as the only child of the Render component,
   // to transform the DataState's value before rendering it. If you specify the data
   // parameter, you can access all fields contained in the DataState's value.
-  // You can also specify className as the second parameter, to use the className
+  // You can also specify className as the second parameter, to use the `className`
   // prop passed to the Render component inside this function. (See last prop below;
   // the benefit of doing this is that this class is ALSO set on fallback components.)
   // `Pick<T, K>` constructs a NEW type by selecting a set of properties K from a type T.
@@ -92,18 +92,23 @@ export type RenderConfig<T, K extends keyof T> = {
   // (The LoadingPulse component will only display when the above
   // loadingMessage is NOT set, otherwise only the message will appear)
   loadingPulseColor?: string;
-  // Optionally display a loadingCallback (true by default):
+  // Optionally display a fallback component while loading:
+  // (True by default, so you only need to provide the `loadingCallback()`
+  // function below to actually display it.)
   showLoadingCallback?: boolean;
   // Optionally display another component instead of the default LoadingIndicator:
-  // (Can optionally use className, just like `children()`.)
+  // (Can optionally use the `className` below, just like `children()`.)
   loadingCallback?: (className?: string) => ReactNode;
 
   // Optional error message to display instead of 'Error':
   error?: string;
-  // Optionally display an errorFallback (true by default):
-  showErrorFallback?: boolean;
+  // Optionally display a fallback component when an error occurred:
+  // (True by default, so you only need to provide the `errorCallback()`
+  // function below to actually display it.)
+  showErrorCallback?: boolean;
   // Optionally display another component instead of the default ErrorIndicator:
-  errorFallback?: ReactNode;
+  // (Can optionally use the `className` below, just like `children()`.)
+  errorCallback?: (className?: string) => ReactNode;
   // Optionally display a substitute message on error (i.e. NOT red):
   showErrorSubstitute?: boolean;
   // The message to display instead of the error:

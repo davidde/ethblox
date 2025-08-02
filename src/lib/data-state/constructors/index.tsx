@@ -79,7 +79,7 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
   const Render = <K extends keyof T>(conf: RenderConfig<T, K> = {}): ReactNode => {
     const { children, field, staticContent, showFallback = true,
       loadingMessage, loadingPulseColor, showLoadingCallback = true, loadingCallback,
-      error, showErrorFallback = true, errorFallback, showErrorSubstitute, errorSubstitute,
+      error, showErrorCallback = true, errorCallback, showErrorSubstitute, errorSubstitute,
       className } = conf;
 
     switch (dataRoot.status) {
@@ -87,7 +87,7 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
         if (showFallback) {
           if (showLoadingCallback && loadingCallback) return loadingCallback(className);
           else if (loadingMessage) return <LoadingIndicator message={loadingMessage} className={className} />;
-          else return <LoadingPulse loadingPulseColor={loadingPulseColor} className={className} content={staticContent} />;
+          else return <LoadingPulse loadingPulseColor={loadingPulseColor} content={staticContent} className={className} />;
         } return;
       case 'value':
         if (typeof children === 'function') {
@@ -120,7 +120,7 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
           return <span className={className}>{ staticContent }</span>;
         }
         else if (showFallback) {
-          if (showErrorFallback && errorFallback) return errorFallback;
+          if (showErrorCallback && errorCallback) return errorCallback(className);
           if (showErrorSubstitute) return <RefetchIndicator message={errorSubstitute} refetch={fetch} className={className} />;
           else return <ErrorIndicator error={error} refetch={fetch} className={className} />;
         } return;
