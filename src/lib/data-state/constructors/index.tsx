@@ -72,10 +72,6 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const useInit = () => useEffect(() => { fetch() }, [fetch]);
 
-  const getField = <K extends keyof T>(key: K) => {
-    return dataRoot.value?.[key];
-  }
-
   const Render = <K extends keyof T>(conf: RenderConfig<T, K> = {}): ReactNode => {
     const { children, field, staticContent, showFallback = true,
       loadingMessage, loadingPulseColor, showLoadingCallback = true, loadingCallback,
@@ -127,7 +123,7 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
     }
   }
 
-  return { ...dataRoot, setRoot, setLoading, setValue, setError, fetch, useInit, getField, Render };
+  return { ...dataRoot, setRoot, setLoading, setValue, setError, fetch, useInit, Render };
 };
 
 // End-user hook that creates a DataState<T> object from a FetchConfig

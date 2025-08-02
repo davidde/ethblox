@@ -52,8 +52,6 @@ export type DataStateMethods<T> = {
   // provided a value callback function (e.g. to render a subfield of the DataState),
   // and render that, or otherwise default to rendering the DataState's value directly.
   Render: <K extends keyof T>(options?: RenderConfig<T, K>) => ReactNode;
-  // Get a subfield of the value of the DataState (if it is present):
-  getField: <K extends keyof T>(key: K) => T[K] | undefined;
   // subset: <X>() => DataState<X>;
   // compose: <X, Y>(dataState: DataState<X>) => DataState<Y>;
 };
