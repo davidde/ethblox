@@ -86,9 +86,14 @@ export type RenderConfig<T, K extends keyof T> = {
   // loadingMessage is NOT set, otherwise only the message will appear)
   loadingPulseColor?: string;
   // Optionally don't display fallback components like Loading- or ErrorIndicators:
+  // showFallback takes precedence over both showLoading and showError!
   showFallback?: boolean;
+  // Optionally display a loadingFallback (true by default):
+  showLoadingFallback?: boolean;
   // Optionally display another component instead of the default LoadingIndicator:
   loadingFallback?: ReactNode;
+  // Optionally display an errorFallback (true by default):
+  showErrorFallback?: boolean;
   // Optionally display another component instead of the default ErrorIndicator:
   errorFallback?: ReactNode;
   // Optional shared className for displayed components:
