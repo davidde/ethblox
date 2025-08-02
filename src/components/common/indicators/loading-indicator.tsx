@@ -1,4 +1,7 @@
-export default function LoadingIndicator(props: { message?: string, className?: string }) {
+export default function LoadingIndicator(props: {
+  message?: string,
+  className?: string
+}) {
   const chars = Array.from(props.message ?? 'Loading ...');
 
   return (

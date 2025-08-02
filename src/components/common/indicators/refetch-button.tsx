@@ -2,7 +2,10 @@ import { useState } from 'react';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 
 
-export default function RefetchButton(props: { refetch: () => Promise<any> }) {
+export default function RefetchButton(props: {
+  refetch: () => Promise<any>,
+  className?: string,
+}) {
   const [isLoading, setIsLoading] = useState(false);
   const spin = isLoading ? 'animate-spin cursor-default' : 'cursor-pointer';
 
@@ -17,7 +20,7 @@ export default function RefetchButton(props: { refetch: () => Promise<any> }) {
 
   return (
     <button onClick={handleClick}>
-      <ArrowPathIcon className={`w-[1em] h-[1em] inline-block mb-[0.25em] ml-[0.75em] ${spin}`} />
+      <ArrowPathIcon className={`w-[1em] h-[1em] ${spin} ${props.className}`} />
     </button>
   );
 }

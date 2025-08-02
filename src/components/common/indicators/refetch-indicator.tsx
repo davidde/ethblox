@@ -7,11 +7,11 @@ export default function RefetchIndicator(props: {
   className?: string
 }) {
   return (
-    <span className={`${props.className} inline-block`}>
+    <span className={`${props.className} inline-flex`}>
       <span>
         {props.message ?? 'TBD'}
       </span>
-      <RefetchButton refetch={props.refetch} />
+      <RefetchButton refetch={props.refetch} className='ml-[0.75em]' />
     </span>
   );
 }
