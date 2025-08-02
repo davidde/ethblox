@@ -96,6 +96,10 @@ export type RenderConfig<T, K extends keyof T> = {
   showErrorFallback?: boolean;
   // Optionally display another component instead of the default ErrorIndicator:
   errorFallback?: ReactNode;
+  // Optionally display a substitute message on error (i.e. NOT red):
+  showErrorSubstitute?: boolean;
+  // The message to display instead of the error:
+  errorSubstitute?: string;
   // Optional shared className for displayed components:
   // Useful for layout/positioning that has to be the same for whatever
   // component that will be displayed, like Loading- or ErrorIndicators:

@@ -2,6 +2,7 @@ import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 're
 import LoadingPulse from '@/components/common/indicators/loading-pulse';
 import LoadingIndicator from '@/components/common/indicators/loading-indicator';
 import ErrorIndicator from '@/components/common/indicators/error-indicator';
+import ValueWithRefetch from '@/components/common/indicators/value-with-refetch';
 import type {
   DataStateConstructor,
   FetchConfig,
@@ -78,7 +79,7 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
   const Render = <K extends keyof T>(conf: RenderConfig<T, K> = {}): ReactNode => {
     const { valueCallback, field, staticContent, error, loadingMessage, loadingPulseColor,
       showFallback = true, showLoadingFallback = true, showErrorFallback = true,
-      loadingFallback, errorFallback, jointClass } = conf;
+      loadingFallback, errorFallback, showErrorSubstitute, errorSubstitute, jointClass } = conf;
 
     switch (dataRoot.status) {
       case 'loading':
@@ -118,6 +119,7 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
         }
         else if (showFallback) {
           if (showErrorFallback && errorFallback) return errorFallback;
+          if (showErrorSubstitute) return <ValueWithRefetch value={errorSubstitute ?? 'TBD'} refetch={fetch} />;
           else return <ErrorIndicator refetch={fetch} error={error} className={jointClass} />;
         } return;
     }
