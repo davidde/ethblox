@@ -64,16 +64,16 @@ export type RenderConfig<T, K extends keyof T> = {
   // Optionally provide a callback function as the only child of the Render component,
   // to transform the DataState's value before rendering it. If you specify the data
   // parameter, you can access all fields contained in the DataState's value.
-  // You can also specify jointClass as the second parameter, to use the jointClass
-  // prop passed to the component inside this function. (See last prop below;
+  // You can also specify className as the second parameter, to use the className
+  // prop passed to the Render component inside this function. (See last prop below;
   // the benefit of doing this is that this class is ALSO set on fallback components.)
   // `Pick<T, K>` constructs a NEW type by selecting a set of properties K from a type T.
   // This guarantees that the data object we pass in will only contain keys specified in K.
-  children?: (data: Pick<T, K>, jointClass?: string) => ReactNode;
+  children?: (data: Pick<T, K>, className?: string) => ReactNode;
   // Optionally render a specific key/field of the DataState's value (IFF it is present):
-  // If children() is provided, it will take precedence over field!
+  // (If children() is provided, it will take precedence over field!)
   field?: K;
-  // Optionally provide static content to render:
+  // Optionally provide static content to render.
   // This is useful for content that should only display when other data
   // is already available to display, or show a LoadingIndicator when not ready available.
   // If children() or field are provided, they will take precedence over staticContent!
@@ -90,7 +90,7 @@ export type RenderConfig<T, K extends keyof T> = {
   // loadingMessage is NOT set, otherwise only the message will appear)
   loadingPulseColor?: string;
   // Optionally don't display fallback components like Loading- or ErrorIndicators:
-  // showFallback takes precedence over both showLoading and showError!
+  // (`showFallback` takes precedence over both showLoading and showError!)
   showFallback?: boolean;
   // Optionally display a loadingFallback (true by default):
   showLoadingFallback?: boolean;
@@ -104,10 +104,10 @@ export type RenderConfig<T, K extends keyof T> = {
   showErrorSubstitute?: boolean;
   // The message to display instead of the error:
   errorSubstitute?: string;
-  // Optional shared className for displayed components:
-  // Useful for layout/positioning that has to be the same for whatever
-  // component that will be displayed, like Loading- or ErrorIndicators:
-  jointClass?: string;
+  // Optional shared className for all displayed components.
+  // This is useful for layout/positioning that has to be the same for whatever
+  // component that is eventually displayed, like Loading- or ErrorIndicators:
+  className?: string;
 }
 
 type DataState<T> = DataRoot<T> & DataStateMethods<T>;

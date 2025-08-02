@@ -79,20 +79,20 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
   const Render = <K extends keyof T>(conf: RenderConfig<T, K> = {}): ReactNode => {
     const { children, field, staticContent, error, loadingMessage, loadingPulseColor,
       showFallback = true, showLoadingFallback = true, showErrorFallback = true,
-      loadingFallback, errorFallback, showErrorSubstitute, errorSubstitute, jointClass } = conf;
+      loadingFallback, errorFallback, showErrorSubstitute, errorSubstitute, className } = conf;
 
     switch (dataRoot.status) {
       case 'loading':
         if (showFallback) {
           if (showLoadingFallback && loadingFallback) return loadingFallback;
-          else if (loadingMessage) return <LoadingIndicator message={loadingMessage} className={jointClass} />;
-          else return <LoadingPulse loadingPulseColor={loadingPulseColor} className={jointClass} content={staticContent} />;
+          else if (loadingMessage) return <LoadingIndicator message={loadingMessage} className={className} />;
+          else return <LoadingPulse loadingPulseColor={loadingPulseColor} className={className} content={staticContent} />;
         } return;
       case 'value':
         if (typeof children === 'function') {
           let value;
           try {
-            value = children(dataRoot.value, jointClass);
+            value = children(dataRoot.value, className);
           } catch (err) {
             // Most likely some data that should have been present in the response was absent,
             // but we cannot be sure, so we'll just display an ErrorIndicator with refetch button,
@@ -103,25 +103,25 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
               { cause: err }
             );
             console.error(error);
-            value = <ErrorIndicator error='RenderError' refetch={fetch} className={jointClass} />
+            value = <ErrorIndicator error='RenderError' refetch={fetch} className={className} />
           }
           return value;
         } else if (field) {
-          return <span className={jointClass}>{ String(dataRoot.value[field]) }</span>;
+          return <span className={className}>{ String(dataRoot.value[field]) }</span>;
         } else if (staticContent) {
-          return <span className={jointClass}>{ staticContent }</span>;
-        } else return <span className={jointClass}>{ String(dataRoot.value) }</span>;
+          return <span className={className}>{ staticContent }</span>;
+        } else return <span className={className}>{ String(dataRoot.value) }</span>;
       case 'error':
         // When only the staticContent prop was provided for the Render function,
         // the staticContent should be displayed regardless of possible errors,
         // since the errors have nothing to do with the static content to be displayed:
         if (!children && !field && staticContent) {
-          return <span className={jointClass}>{ staticContent }</span>;
+          return <span className={className}>{ staticContent }</span>;
         }
         else if (showFallback) {
           if (showErrorFallback && errorFallback) return errorFallback;
-          if (showErrorSubstitute) return <RefetchIndicator message={errorSubstitute} refetch={fetch} className={jointClass} />;
-          else return <ErrorIndicator error={error} refetch={fetch} className={jointClass} />;
+          if (showErrorSubstitute) return <RefetchIndicator message={errorSubstitute} refetch={fetch} className={className} />;
+          else return <ErrorIndicator error={error} refetch={fetch} className={className} />;
         } return;
     }
   }

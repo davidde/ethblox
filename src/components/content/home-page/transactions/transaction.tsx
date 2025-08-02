@@ -22,7 +22,7 @@ export default function Transaction(props: {
           <DocumentTextIcon className='w-10 h-10 md:w-8 md:h-8' />
           <div className='flex flex-col ml-2 pt-1 md:pt-0 md:w-48'>
             <span className='px-2 md:px-4'>
-              <props.blockWithTransactions.Render jointClass='text-(--link-color) w-[10rem]'>
+              <props.blockWithTransactions.Render className='text-(--link-color) w-[10rem]'>
                 {
                   () =>
                     <PopoverLink
@@ -40,7 +40,7 @@ export default function Transaction(props: {
                 loadingPulseColor='bg-(--grey-fg-color)'
               />
               &nbsp;&nbsp;
-              <props.blockWithTransactions.Render jointClass='text-(--grey-fg-color) w-[3rem]'>
+              <props.blockWithTransactions.Render className='text-(--grey-fg-color) w-[3rem]'>
                 { () => ethValue }
               </props.blockWithTransactions.Render>
             </span>
@@ -54,7 +54,7 @@ export default function Transaction(props: {
               loadingPulseColor='bg-(--grey-fg-color)'
             />
             &nbsp;&nbsp;
-            <props.blockWithTransactions.Render jointClass='text-(--link-color) w-[11.25rem]'>
+            <props.blockWithTransactions.Render className='text-(--link-color) w-[11.25rem]'>
               {
                 () =>
                   <PopoverLink
@@ -72,7 +72,7 @@ export default function Transaction(props: {
               loadingPulseColor='bg-(--grey-fg-color)'
             />
             &nbsp;&nbsp;
-            <props.blockWithTransactions.Render jointClass='text-(--link-color) w-[11.25rem]'>
+            <props.blockWithTransactions.Render className='text-(--link-color) w-[11.25rem]'>
               {
                 () => transaction?.to ?
                   <PopoverLink

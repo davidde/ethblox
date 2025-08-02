@@ -60,7 +60,7 @@ export default function GastrackerCard({ title, pricesData }: {
         {title}
       </p>
       <div className={`text-lg tracking-wide ${colorClass}`}>
-        <pricesData.Render jointClass='h-[3rem]' loadingMessage='Loading ...'>
+        <pricesData.Render className='h-[3rem]' loadingMessage='Loading ...'>
           {
             () =>
               <>

@@ -41,12 +41,12 @@ export default function Block(props: {
           <div className='flex md:flex-col ml-2 pt-1 md:pt-0 md:w-[8rem] px-2 md:px-4'>
             <span className='leading-5 mr-2 md:mr-0'>
               <props.latestBlockData.Render
-                jointClass='text-(--link-color) w-[5em]'
+                className='text-(--link-color) w-[5em]'
               >
               {
-                (data, jointClass) =>
+                (data, className) =>
                   <Link href={`/${props.network}/block?number=${blockNumber}`}
-                        className={`${jointClass} hover:text-(--hover-fg-color)`}>
+                        className={`${className} hover:text-(--hover-fg-color)`}>
                     {blockNumber}
                   </Link>
               }
@@ -55,7 +55,7 @@ export default function Block(props: {
             <span className='text-sm text-(--grey-fg-color)'>
               <blockData.Render
                 field='timestamp'
-                jointClass='w-[6em]'
+                className='w-[6em]'
               />
             </span>
           </div>
@@ -70,7 +70,7 @@ export default function Block(props: {
           <span className='px-2 md:px-4 leading-5'>
             <blockData.Render
               field='transactions'
-              jointClass='w-[8rem]'
+              className='w-[8rem]'
               loadingPulseColor='bg-(--grey-fg-color)'
             />
           </span>
@@ -81,7 +81,7 @@ export default function Block(props: {
             />
             &nbsp;&nbsp;
             <blockData.Render
-              jointClass='w-[11rem]'
+              className='w-[11rem]'
               loadingPulseColor='bg-(--link-color)'
             >
             {
