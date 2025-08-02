@@ -1,6 +1,6 @@
 import { useDataState, FetchError } from '@/lib/data-state';
 import { getBlockRewardUrl, getEtherValueFromWei } from '@/lib/utilities';
-import ErrorWithRefetch from '@/components/common/indicators/error-with-refetch';
+import ErrorIndicator from '@/components/common/indicators/error-indicator';
 import ValueWithRefetch from '@/components/common/indicators/value-with-refetch';
 import { BigNumber } from 'alchemy-sdk';
 
@@ -18,7 +18,7 @@ export default function BlockReward(props: {
     args: [getBlockRewardUrl(props.network, props.blockNumber)],
   });
 
-  let errorFallback = <ErrorWithRefetch refetch={blockRewardData.fetch} />;
+  let errorFallback = <ErrorIndicator refetch={blockRewardData.fetch} />;
   // Latest Block often doesn't have a reward yet:
   if (props.id === 0 && blockRewardData.error && blockRewardData.error instanceof FetchError) {
     errorFallback = <ValueWithRefetch refetch={blockRewardData.fetch} value='TBD'/>;

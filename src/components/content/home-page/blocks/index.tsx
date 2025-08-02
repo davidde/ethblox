@@ -2,7 +2,7 @@
 
 import { DataState } from '@/lib/data-state';
 import Block from './block';
-import ErrorWithRefetch from '@/components/common/indicators/error-with-refetch';
+import ErrorIndicator from '@/components/common/indicators/error-indicator';
 
 
 export default function Blocks(props: {
@@ -15,7 +15,7 @@ export default function Blocks(props: {
       <h2 className='text-[1.15rem] font-bold p-2 pl-4 md:p-3 md:pl-4 border-b border-(--border-color)'>Latest Blocks</h2>
       {
         props.latestBlockData.error ?
-          <ErrorWithRefetch
+          <ErrorIndicator
             error='Error getting latest block'
             className='pl-4 py-2'
             refetch={props.latestBlockData.fetch}

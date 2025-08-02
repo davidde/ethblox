@@ -4,7 +4,7 @@ import { useAlchemy } from '@/lib/utilities';
 import { useDataState, DataState } from '@/lib/data-state';
 import type { Alchemy, BlockWithTransactions } from 'alchemy-sdk';
 import Transaction from './transaction';
-import ErrorWithRefetch from '@/components/common/indicators/error-with-refetch';
+import ErrorIndicator from '@/components/common/indicators/error-indicator';
 
 
 export default function Transactions(props: {
@@ -20,13 +20,13 @@ export default function Transactions(props: {
 
   let transactionsDisplay;
   if (props.latestBlockData.error) {
-    transactionsDisplay = <ErrorWithRefetch
+    transactionsDisplay = <ErrorIndicator
                             error='Error getting latest block'
                             className='pl-4 py-2'
                             refetch={props.latestBlockData.fetch}
                           />;
   } else if (blockWithTransactionsData.error) {
-    transactionsDisplay = <ErrorWithRefetch
+    transactionsDisplay = <ErrorIndicator
                             error='Error getting latest transactions'
                             className='pl-4 py-2'
                             refetch={blockWithTransactionsData.fetch}

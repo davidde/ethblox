@@ -1,7 +1,7 @@
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import LoadingPulse from '@/components/common/indicators/loading-pulse';
 import LoadingIndicator from '@/components/common/indicators/loading-indicator';
-import ErrorWithRefetch from '@/components/common/indicators/error-with-refetch';
+import ErrorIndicator from '@/components/common/indicators/error-indicator';
 import type {
   DataStateConstructor,
   FetchConfig,
@@ -100,7 +100,7 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
               { cause: err }
             );
             console.error(error);
-            value = <ErrorWithRefetch refetch={fetch} error='RenderError' className={jointClass} />
+            value = <ErrorIndicator refetch={fetch} error='RenderError' className={jointClass} />
           }
           return value;
         } else if (field) {
@@ -116,7 +116,7 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
           return <span className={jointClass}>{ staticString }</span>;
         }
         else if (showFallback) {
-          return errorFallback ?? <ErrorWithRefetch refetch={fetch} error={error} className={jointClass} />;
+          return errorFallback ?? <ErrorIndicator refetch={fetch} error={error} className={jointClass} />;
         } return;
     }
   }
