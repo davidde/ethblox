@@ -77,7 +77,7 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
   }
 
   const Render = <K extends keyof T>(conf: RenderConfig<T, K> = {}): ReactNode => {
-    const { valueCallback, field, staticContent, error, loadingMessage, loadingPulseColor,
+    const { valueCallback, children, field, staticContent, error, loadingMessage, loadingPulseColor,
       showFallback = true, showLoadingFallback = true, showErrorFallback = true,
       loadingFallback, errorFallback, showErrorSubstitute, errorSubstitute, jointClass } = conf;
 
@@ -89,7 +89,25 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
           else return <LoadingPulse loadingPulseColor={loadingPulseColor} className={jointClass} content={staticContent} />;
         } return;
       case 'value':
-        if (valueCallback) {
+        if (typeof children === 'function') {
+          let value;
+          try {
+            value = children(dataRoot.value, jointClass);
+          } catch (err) {
+            // Most likely some data that should have been present in the response was absent,
+            // but we cannot be sure, so we'll just display an ErrorIndicator with refetch button,
+            // without setting the entire DataState to an ErrorState:
+            const error = new RenderError(`'children' render prop pattern function failed.
+             Some fields may be incorrectly missing from the response.
+             Response: ${JSON.stringify(dataRoot.value)}`,
+              { cause: err }
+            );
+            console.error(error);
+            value = <ErrorIndicator error='RenderError' refetch={fetch} className={jointClass} />
+          }
+          return value;
+        }
+        else if (valueCallback) {
           let value;
           try {
             value = valueCallback(dataRoot.value, jointClass);
@@ -102,10 +120,11 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
               { cause: err }
             );
             console.error(error);
-            value = <ErrorIndicator refetch={fetch} error='RenderError' className={jointClass} />
+            value = <ErrorIndicator error='RenderError' refetch={fetch} className={jointClass} />
           }
           return value;
-        } else if (field) {
+        }
+        else if (field) {
           return <span className={jointClass}>{ String(dataRoot.value[field]) }</span>;
         } else if (staticContent) {
           return <span className={jointClass}>{ staticContent }</span>;
@@ -120,7 +139,7 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
         else if (showFallback) {
           if (showErrorFallback && errorFallback) return errorFallback;
           if (showErrorSubstitute) return <RefetchIndicator message={errorSubstitute} refetch={fetch} />;
-          else return <ErrorIndicator refetch={fetch} error={error} className={jointClass} />;
+          else return <ErrorIndicator error={error} refetch={fetch} className={jointClass} />;
         } return;
     }
   }

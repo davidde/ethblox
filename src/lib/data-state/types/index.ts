@@ -60,12 +60,13 @@ export type DataStateMethods<T> = {
 
 // Options to configure the `DataState`'s Render method that displays
 // either the `ValueState`'s value, the `ErrorState`'s error, or a LoadingIndicator.
-export type RenderConfig<T, K extends keyof T> = {  
+export type RenderConfig<T, K extends keyof T> = {
   // Optional callback function for transforming the DataState's value before rendering it:
   // `Pick<T, K>` constructs a NEW type by selecting a set of properties K from a type T.
   // This guarantees that the data object we pass in will only contain keys specified in K.
   // (Can optionally use the jointClass provided to the render function, see below)
   valueCallback?: (data: Pick<T, K>, jointClass?: string) => ReactNode;
+  children?: (data: Pick<T, K>, jointClass?: string) => ReactNode;
   // Optionally render a specific key/field of the DataState's value (IFF it is present):
   // If valueCallback() is provided, it will take precedence over field!
   field?: K;
