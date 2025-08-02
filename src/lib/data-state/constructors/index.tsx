@@ -9,6 +9,7 @@ import type {
 } from '../types';
 import { fetchJson } from './helpers';
 import * as DataRoot from './data-root';
+import { RenderError } from '../types/errors';
 
 
 /*********************************************************************
@@ -86,7 +87,23 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
           else return <LoadingPulse loadingPulseColor={loadingPulseColor} className={jointClass} />;
         } return;
       case 'value':
-        if (valueCallback) return valueCallback(jointClass);
+        if (valueCallback) {
+          let value;
+          try {
+            value = valueCallback(jointClass);
+          } catch (err) {
+            // Most likely some data that should have been present in the response was absent,
+            // so we'll just offer a refetch button for trying again:
+            const error = new RenderError(`Value callback function failed.
+             Some fields may be incorrectly missing from the response.
+             Response: ${JSON.stringify(dataRoot.value)}`,
+              { cause: err }
+            );
+            console.error(error);
+            value = <ErrorWithRefetch refetch={fetch} error='RenderError' className={jointClass} />
+          }
+          return value;
+        }
         else return field ?
           <span className={jointClass}>{ String(dataRoot.value[field]) }</span>
           :
