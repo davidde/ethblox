@@ -1,4 +1,4 @@
-import RefetchIndicator from './refetch-indicator';
+import RefetchButton from './refetch-button';
 
 
 export default function ErrorIndicator(props: {
@@ -7,12 +7,12 @@ export default function ErrorIndicator(props: {
   className?: string,
 }) {
   return (
-    <span className={props.className}>
-      <span className='inline-block text-red-800'>
+    <span className={`${props.className} inline-block`}>
+      <span className='text-red-800'>
         {props.error ?? 'Error'}
       </span>
       {
-        props.refetch ? <RefetchIndicator refetch={props.refetch} /> : ''
+        props.refetch ? <RefetchButton refetch={props.refetch} /> : ''
       }
     </span>
   );

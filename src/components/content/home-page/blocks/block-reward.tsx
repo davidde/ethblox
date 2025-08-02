@@ -1,6 +1,5 @@
 import { useDataState, FetchError } from '@/lib/data-state';
 import { getBlockRewardUrl, getEtherValueFromWei } from '@/lib/utilities';
-import ValueWithRefetch from '@/components/common/indicators/value-with-refetch';
 import { BigNumber } from 'alchemy-sdk';
 
 

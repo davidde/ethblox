@@ -1,24 +1,17 @@
-import { useState } from 'react';
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import RefetchButton from './refetch-button';
 
 
-export default function RefetchIndicator(props: { refetch: () => Promise<any> }) {
-  const [isLoading, setIsLoading] = useState(false);
-  const spin = isLoading ? 'animate-spin cursor-default' : 'cursor-pointer';
-
-  const handleClick = async () => {
-    setIsLoading(true);
-    try {
-      await props.refetch(); // Handles its own errors
-    } finally {
-      setIsLoading(false); // Always runs!
-    }
-  };
-
+export default function RefetchIndicator(props: {
+  refetch: () => Promise<any>,
+  message?: string,
+  className?: string
+}) {
   return (
-    <ArrowPathIcon
-      className={`w-[1em] h-[1em] inline-block mb-[0.25em] ml-[0.75em] ${spin}`}
-      onClick={handleClick}
-    />
+    <span className={`${props.className} inline-block`}>
+      <span>
+        {props.message ?? 'TBD'}
+      </span>
+      <RefetchButton refetch={props.refetch} />
+    </span>
   );
 }

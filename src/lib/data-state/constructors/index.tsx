@@ -2,7 +2,7 @@ import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 're
 import LoadingPulse from '@/components/common/indicators/loading-pulse';
 import LoadingIndicator from '@/components/common/indicators/loading-indicator';
 import ErrorIndicator from '@/components/common/indicators/error-indicator';
-import ValueWithRefetch from '@/components/common/indicators/value-with-refetch';
+import RefetchIndicator from '@/components/common/indicators/refetch-indicator';
 import type {
   DataStateConstructor,
   FetchConfig,
@@ -119,7 +119,7 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
         }
         else if (showFallback) {
           if (showErrorFallback && errorFallback) return errorFallback;
-          if (showErrorSubstitute) return <ValueWithRefetch value={errorSubstitute ?? 'TBD'} refetch={fetch} />;
+          if (showErrorSubstitute) return <RefetchIndicator message={errorSubstitute} refetch={fetch} />;
           else return <ErrorIndicator refetch={fetch} error={error} className={jointClass} />;
         } return;
     }
