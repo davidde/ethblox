@@ -27,7 +27,7 @@ export default function BlockReward(props: {
   return (
     <span className='pl-2 md:pl-4'>
       <blockRewardData.Render
-        staticString='Block Reward:'
+        staticContent='Block Reward:'
         loadingPulseColor='bg-(--grey-fg-color)'
       />
       &nbsp;&nbsp;

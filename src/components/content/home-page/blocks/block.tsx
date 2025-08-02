@@ -72,7 +72,7 @@ export default function Block(props: {
           </span>
           <span className='pl-2 md:pl-4 leading-5'>
             <blockData.Render
-              staticString='Recipient:'
+              staticContent='Recipient:'
               loadingPulseColor='bg-(--grey-fg-color)'
             />
             &nbsp;&nbsp;

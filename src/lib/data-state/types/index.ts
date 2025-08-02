@@ -69,14 +69,14 @@ export type RenderConfig<T, K extends keyof T> = {
   // Optionally render a specific key/field of the DataState's value (IFF it is present):
   // If valueCallback() is provided, it will take precedence over field!
   field?: K;
-  // Optionally provide a static string to render:
-  // This is useful for static content that should only display when other data
-  // is also available to display, and show a LoadingIndicator if not.
-  // If valueCallback() or field are provided, they will take precedence over staticString!
-  // The staticString is also used for setting the width of the LoadingPulse component,
+  // Optionally provide static content to render:
+  // This is useful for content that should only display when other data
+  // is already available to display, or show a LoadingIndicator when not ready available.
+  // If valueCallback() or field are provided, they will take precedence over staticContent!
+  // The staticContent is also used for setting the width of the LoadingPulse component,
   // so it can also be used for this even when providing a field or valueCallback that
   // will take precedence for the value that will be displayed.
-  staticString?: string;
+  staticContent?: ReactNode;
   // Optional error message to display instead of 'Error':
   error?: string;
   // Optional message to display while loading:

@@ -76,7 +76,7 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
   }
 
   const Render = <K extends keyof T>(conf: RenderConfig<T, K> = {}): ReactNode => {
-    const { valueCallback, field, staticString, error, loadingMessage, loadingPulseColor,
+    const { valueCallback, field, staticContent, error, loadingMessage, loadingPulseColor,
       showFallback = true, loadingFallback, errorFallback, jointClass } = conf;
 
     switch (dataRoot.status) {
@@ -84,7 +84,7 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
         if (showFallback) {
           if (loadingFallback) return loadingFallback;
           else if (loadingMessage) return <LoadingIndicator message={loadingMessage} className={jointClass} />;
-          else return <LoadingPulse loadingPulseColor={loadingPulseColor} className={jointClass} content={staticString} />;
+          else return <LoadingPulse loadingPulseColor={loadingPulseColor} className={jointClass} content={staticContent} />;
         } return;
       case 'value':
         if (valueCallback) {
@@ -105,15 +105,15 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
           return value;
         } else if (field) {
           return <span className={jointClass}>{ String(dataRoot.value[field]) }</span>;
-        } else if (staticString) {
-          return <span className={jointClass}>{ staticString }</span>;
+        } else if (staticContent) {
+          return <span className={jointClass}>{ staticContent }</span>;
         } else return <span className={jointClass}>{ String(dataRoot.value) }</span>;
       case 'error':
-        // When only the staticString prop was provided for the Render function,
-        // the staticString should be displayed regardless of possible errors,
-        // since the errors have nothing to do with the static string to display:
-        if (!valueCallback && !field && staticString) {
-          return <span className={jointClass}>{ staticString }</span>;
+        // When only the staticContent prop was provided for the Render function,
+        // the staticContent should be displayed regardless of possible errors,
+        // since the errors have nothing to do with the static content to be displayed:
+        if (!valueCallback && !field && staticContent) {
+          return <span className={jointClass}>{ staticContent }</span>;
         }
         else if (showFallback) {
           return errorFallback ?? <ErrorIndicator refetch={fetch} error={error} className={jointClass} />;

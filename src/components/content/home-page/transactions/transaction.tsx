@@ -35,7 +35,7 @@ export default function Transaction(props: {
             </span>
             <span className='px-2 md:pl-4'>
               <props.blockWithTransactions.Render
-                staticString='Amount:'
+                staticContent='Amount:'
                 loadingPulseColor='bg-(--grey-fg-color)'
               />
               &nbsp;&nbsp;
@@ -50,7 +50,7 @@ export default function Transaction(props: {
         <div className='flex flex-col ml-12 md:ml-4 my-2 md:my-0'>
           <span className='pl-2 md:pl-4'>
             <props.blockWithTransactions.Render
-              staticString='From:'
+              staticContent='From:'
               loadingPulseColor='bg-(--grey-fg-color)'
             />
             &nbsp;&nbsp;
@@ -67,7 +67,7 @@ export default function Transaction(props: {
           </span>
           <span className='pl-7 md:pl-9'>
             <props.blockWithTransactions.Render
-              staticString='To:'
+              staticContent='To:'
               loadingPulseColor='bg-(--grey-fg-color)'
             />
             &nbsp;&nbsp;
