@@ -90,7 +90,7 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
         if (valueCallback) {
           let value;
           try {
-            value = valueCallback(jointClass);
+            value = valueCallback(dataRoot.value, jointClass);
           } catch (err) {
             // Most likely some data that should have been present in the response was absent,
             // so we'll just offer a refetch button for trying again:

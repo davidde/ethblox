@@ -19,8 +19,6 @@ export default function BlockReward(props: {
     args: [getBlockRewardUrl(props.network, props.blockNumber)],
   });
 
-  const blockReward = blockRewardData.value ? `Ξ${getEtherValueFromWei(blockRewardData.value.blockReward, 4)}` : '';
-
   let errorFallback = <ErrorWithRefetch refetch={blockRewardData.fetch} />;
   // Latest Block often doesn't have a reward yet:
   if (props.id === 0 && blockRewardData.error && blockRewardData.error instanceof FetchError) {
@@ -36,7 +34,7 @@ export default function BlockReward(props: {
       />
       &nbsp;&nbsp;
       <blockRewardData.Render
-        valueCallback={ () => blockReward }
+        valueCallback={ (data) => `Ξ${getEtherValueFromWei(data.blockReward, 4)}` }
         errorFallback={errorFallback}
         jointClass='w-[4rem] text-(--grey-fg-color)'
       />

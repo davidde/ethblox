@@ -64,8 +64,10 @@ export type RenderConfig<T, K extends keyof T> = {
   // Optionally render a specific key/field of the DataState's value (IFF it is present):
   field?: K;
   // Optional callback function for transforming the DataState's value before rendering it:
+  // `Pick<T, K>` constructs a NEW type by selecting a set of properties K from a type T.
+  // This guarantees that the data object we pass in will only contain keys specified in K.
   // (Can optionally use the jointClass provided to the render function, see below)
-  valueCallback?: (jointClass?: string) => ReactNode;
+  valueCallback?: (data: Pick<T, K>, jointClass?: string) => ReactNode;
   // Optional error message to display instead of 'Error':
   error?: string;
   // Optional message to display while loading:
