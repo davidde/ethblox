@@ -78,14 +78,14 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
 
   const Render = <K extends keyof T>(conf: RenderConfig<T, K> = {}): ReactNode => {
     const { children, field, staticContent, showFallback = true,
-      loadingMessage, loadingPulseColor, showLoadingFallback = true, loadingFallback,
+      loadingMessage, loadingPulseColor, showLoadingCallback = true, loadingCallback,
       error, showErrorFallback = true, errorFallback, showErrorSubstitute, errorSubstitute,
       className } = conf;
 
     switch (dataRoot.status) {
       case 'loading':
         if (showFallback) {
-          if (showLoadingFallback && loadingFallback) return loadingFallback;
+          if (showLoadingCallback && loadingCallback) return loadingCallback(className);
           else if (loadingMessage) return <LoadingIndicator message={loadingMessage} className={className} />;
           else return <LoadingPulse loadingPulseColor={loadingPulseColor} className={className} content={staticContent} />;
         } return;
