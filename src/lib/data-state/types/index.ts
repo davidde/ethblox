@@ -81,21 +81,24 @@ export type RenderConfig<T, K extends keyof T> = {
   // so it can also be used for this even when providing a field or children(), which
   // will take precedence for the value that will be displayed.
   staticContent?: ReactNode;
-  // Optional error message to display instead of 'Error':
-  error?: string;
+
+  // Optionally don't display fallback components like Loading- or ErrorIndicators:
+  // (`showFallback` takes precedence over both showLoading and showError!)
+  showFallback?: boolean;
+
   // Optional message to display while loading:
   loadingMessage?: string;
   // Optionally className for just the LoadingPulse component, e.g. for setting its color:
   // (The LoadingPulse component will only display when the above
   // loadingMessage is NOT set, otherwise only the message will appear)
   loadingPulseColor?: string;
-  // Optionally don't display fallback components like Loading- or ErrorIndicators:
-  // (`showFallback` takes precedence over both showLoading and showError!)
-  showFallback?: boolean;
   // Optionally display a loadingFallback (true by default):
   showLoadingFallback?: boolean;
   // Optionally display another component instead of the default LoadingIndicator:
   loadingFallback?: ReactNode;
+
+  // Optional error message to display instead of 'Error':
+  error?: string;
   // Optionally display an errorFallback (true by default):
   showErrorFallback?: boolean;
   // Optionally display another component instead of the default ErrorIndicator:
@@ -104,6 +107,7 @@ export type RenderConfig<T, K extends keyof T> = {
   showErrorSubstitute?: boolean;
   // The message to display instead of the error:
   errorSubstitute?: string;
+
   // Optional shared className for all displayed components.
   // This is useful for layout/positioning that has to be the same for whatever
   // component that is eventually displayed, like Loading- or ErrorIndicators:

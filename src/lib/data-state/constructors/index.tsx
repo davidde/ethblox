@@ -77,9 +77,10 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
   }
 
   const Render = <K extends keyof T>(conf: RenderConfig<T, K> = {}): ReactNode => {
-    const { children, field, staticContent, error, loadingMessage, loadingPulseColor,
-      showFallback = true, showLoadingFallback = true, showErrorFallback = true,
-      loadingFallback, errorFallback, showErrorSubstitute, errorSubstitute, className } = conf;
+    const { children, field, staticContent, showFallback = true,
+      loadingMessage, loadingPulseColor, showLoadingFallback = true, loadingFallback,
+      error, showErrorFallback = true, errorFallback, showErrorSubstitute, errorSubstitute,
+      className } = conf;
 
     switch (dataRoot.status) {
       case 'loading':
