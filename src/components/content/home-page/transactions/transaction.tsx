@@ -5,7 +5,6 @@ import {  BlockWithTransactions } from 'alchemy-sdk';
 import { truncateAddress, truncateTransaction, getEtherValueFromWei } from '@/lib/utilities';
 import PopoverLink from '@/components/common/popover-link';
 import { DataState } from '@/lib/data-state';
-import LoadingPulseStatic from '@/components/common/indicators/loading-pulse-static';
 
 
 export default function Transaction(props: {
@@ -35,10 +34,9 @@ export default function Transaction(props: {
                 />
             </span>
             <span className='px-2 md:pl-4'>
-              <LoadingPulseStatic
-                content='Amount:'
-                dataState={props.blockWithTransactions}
-                className='text-(--grey-fg-color)'
+              <props.blockWithTransactions.Render
+                staticString='Amount:'
+                loadingPulseColor='bg-(--grey-fg-color)'
               />
               &nbsp;&nbsp;
               <props.blockWithTransactions.Render
@@ -51,10 +49,9 @@ export default function Transaction(props: {
 
         <div className='flex flex-col ml-12 md:ml-4 my-2 md:my-0'>
           <span className='pl-2 md:pl-4'>
-            <LoadingPulseStatic
-              content='From:'
-              dataState={props.blockWithTransactions}
-              className='text-(--grey-fg-color)'
+            <props.blockWithTransactions.Render
+              staticString='From:'
+              loadingPulseColor='bg-(--grey-fg-color)'
             />
             &nbsp;&nbsp;
             <props.blockWithTransactions.Render
@@ -69,10 +66,9 @@ export default function Transaction(props: {
             />
           </span>
           <span className='pl-7 md:pl-9'>
-            <LoadingPulseStatic
-              content='To:'
-              dataState={props.blockWithTransactions}
-              className='text-(--grey-fg-color)'
+            <props.blockWithTransactions.Render
+              staticString='To:'
+              loadingPulseColor='bg-(--grey-fg-color)'
             />
             &nbsp;&nbsp;
             <props.blockWithTransactions.Render

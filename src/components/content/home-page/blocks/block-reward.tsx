@@ -1,6 +1,5 @@
 import { useDataState, FetchError } from '@/lib/data-state';
 import { getBlockRewardUrl, getEtherValueFromWei } from '@/lib/utilities';
-import LoadingPulseStatic from '@/components/common/indicators/loading-pulse-static';
 import ErrorWithRefetch from '@/components/common/indicators/error-with-refetch';
 import ValueWithRefetch from '@/components/common/indicators/value-with-refetch';
 import { BigNumber } from 'alchemy-sdk';
@@ -27,10 +26,9 @@ export default function BlockReward(props: {
 
   return (
     <span className='pl-2 md:pl-4'>
-      <LoadingPulseStatic
-        content='Block Reward:'
-        dataState={blockRewardData}
-        className='text-(--grey-fg-color)'
+      <blockRewardData.Render
+        staticString='Block Reward:'
+        loadingPulseColor='bg-(--grey-fg-color)'
       />
       &nbsp;&nbsp;
       <blockRewardData.Render

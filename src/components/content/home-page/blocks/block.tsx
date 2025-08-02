@@ -11,7 +11,6 @@ import {
 import { useDataState, DataState } from '@/lib/data-state';
 import Link from 'next/link';
 import PopoverLink from '../../../common/popover-link';
-import LoadingPulseStatic from '@/components/common/indicators/loading-pulse-static';
 import BlockReward from './block-reward';
 
 
@@ -72,9 +71,8 @@ export default function Block(props: {
             />
           </span>
           <span className='pl-2 md:pl-4 leading-5'>
-            <LoadingPulseStatic
-              content='Recipient:'
-              dataState={blockData}
+            <blockData.Render
+              staticString='Recipient:'
               loadingPulseColor='bg-(--grey-fg-color)'
             />
             &nbsp;&nbsp;

@@ -1,7 +1,7 @@
 export default function LoadingPulse(props: {
-  loadingPulseColor?: string, // Takes background from currentcolor by default!
+  loadingPulseColor?: string, // Takes background color from currentcolor (i.e. text color) by default!
+  content?: string // `content` is just used to determine width, but not actually displayed!
   className?: string,
-  content?: string
 }) {
   const color = props.loadingPulseColor ?? 'bg-[currentcolor]';
 

@@ -76,7 +76,7 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
   }
 
   const Render = <K extends keyof T>(conf: RenderConfig<T, K> = {}): ReactNode => {
-    const { field, valueCallback, error, loadingMessage, loadingPulseColor,
+    const { valueCallback, field, staticString, error, loadingMessage, loadingPulseColor,
       showFallback = true, loadingFallback, errorFallback, jointClass } = conf;
 
     switch (dataRoot.status) {
@@ -84,7 +84,7 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
         if (showFallback) {
           if (loadingFallback) return loadingFallback;
           else if (loadingMessage) return <LoadingIndicator message={loadingMessage} className={jointClass} />;
-          else return <LoadingPulse loadingPulseColor={loadingPulseColor} className={jointClass} />;
+          else return <LoadingPulse loadingPulseColor={loadingPulseColor} className={jointClass} content={staticString} />;
         } return;
       case 'value':
         if (valueCallback) {
@@ -103,13 +103,19 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
             value = <ErrorWithRefetch refetch={fetch} error='RenderError' className={jointClass} />
           }
           return value;
-        }
-        else return field ?
-          <span className={jointClass}>{ String(dataRoot.value[field]) }</span>
-          :
-          <span className={jointClass}>{ String(dataRoot.value) }</span>;
+        } else if (field) {
+          return <span className={jointClass}>{ String(dataRoot.value[field]) }</span>;
+        } else if (staticString) {
+          return <span className={jointClass}>{ staticString }</span>;
+        } else return <span className={jointClass}>{ String(dataRoot.value) }</span>;
       case 'error':
-        if (showFallback) {
+        // When only the staticString prop was provided for the Render function,
+        // the staticString should be displayed regardless of possible errors,
+        // since the errors have nothing to do with the static string to display:
+        if (!valueCallback && !field && staticString) {
+          return <span className={jointClass}>{ staticString }</span>;
+        }
+        else if (showFallback) {
           return errorFallback ?? <ErrorWithRefetch refetch={fetch} error={error} className={jointClass} />;
         } return;
     }

@@ -60,14 +60,23 @@ export type DataStateMethods<T> = {
 
 // Options to configure the `DataState`'s Render method that displays
 // either the `ValueState`'s value, the `ErrorState`'s error, or a LoadingIndicator.
-export type RenderConfig<T, K extends keyof T> = {
-  // Optionally render a specific key/field of the DataState's value (IFF it is present):
-  field?: K;
+export type RenderConfig<T, K extends keyof T> = {  
   // Optional callback function for transforming the DataState's value before rendering it:
   // `Pick<T, K>` constructs a NEW type by selecting a set of properties K from a type T.
   // This guarantees that the data object we pass in will only contain keys specified in K.
   // (Can optionally use the jointClass provided to the render function, see below)
   valueCallback?: (data: Pick<T, K>, jointClass?: string) => ReactNode;
+  // Optionally render a specific key/field of the DataState's value (IFF it is present):
+  // If valueCallback() is provided, it will take precedence over field!
+  field?: K;
+  // Optionally provide a static string to render:
+  // This is useful for static content that should only display when other data
+  // is also available to display, and show a LoadingIndicator if not.
+  // If valueCallback() or field are provided, they will take precedence over staticString!
+  // The staticString is also used for setting the width of the LoadingPulse component,
+  // so it can also be used for this even when providing a field or valueCallback that
+  // will take precedence for the value that will be displayed.
+  staticString?: string;
   // Optional error message to display instead of 'Error':
   error?: string;
   // Optional message to display while loading:
