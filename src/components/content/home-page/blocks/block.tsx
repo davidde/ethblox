@@ -41,12 +41,16 @@ export default function Block(props: {
           <div className='flex md:flex-col ml-2 pt-1 md:pt-0 md:w-[8rem] px-2 md:px-4'>
             <span className='leading-5 mr-2 md:mr-0'>
               <props.latestBlockData.Render
-                valueCallback={(data, jointClass) => <Link href={`/${props.network}/block?number=${blockNumber}`}
-                                                           className={`${jointClass} hover:text-(--hover-fg-color)`}>
-                                                        {blockNumber}
-                                                     </Link>}
                 jointClass='text-(--link-color) w-[5em]'
-              />
+              >
+              {
+                (data, jointClass) =>
+                  <Link href={`/${props.network}/block?number=${blockNumber}`}
+                        className={`${jointClass} hover:text-(--hover-fg-color)`}>
+                    {blockNumber}
+                  </Link>
+              }
+              </props.latestBlockData.Render>
             </span>
             <span className='text-sm text-(--grey-fg-color)'>
               <blockData.Render
@@ -77,16 +81,19 @@ export default function Block(props: {
             />
             &nbsp;&nbsp;
             <blockData.Render
-              valueCallback={ ({ recipientHashFull, recipientHashShort }) =>
+              jointClass='w-[11rem]'
+              loadingPulseColor='bg-(--link-color)'
+            >
+            {
+              ({ recipientHashFull, recipientHashShort }) =>
                 <PopoverLink
                   href={`/${props.network}/address?hash=${recipientHashFull}`}
                   content={recipientHashShort}
                   popover={recipientHashFull}
                   className='left-[-37%] top-[-2.6rem] w-78 py-1.5 px-2.5'
-                />}
-              jointClass='w-[11rem]'
-              loadingPulseColor='bg-(--link-color)'
-            />
+                />
+              }
+            </blockData.Render>
           </span>
         </div>
       </div>

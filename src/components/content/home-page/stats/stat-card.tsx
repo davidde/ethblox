@@ -20,10 +20,9 @@ export default function StatCard<T>(props: {
           </p>
         </div>
         <div className='pl-12'>
-          <props.dataState.Render
-            valueCallback={props.valueCallback}
-            loadingMessage='Loading ...'
-          />
+          <props.dataState.Render loadingMessage='Loading ...'>
+            {props.valueCallback}
+          </props.dataState.Render>
         </div>
       </div>
     </div>

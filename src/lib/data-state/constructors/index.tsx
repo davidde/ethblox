@@ -77,7 +77,7 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
   }
 
   const Render = <K extends keyof T>(conf: RenderConfig<T, K> = {}): ReactNode => {
-    const { valueCallback, children, field, staticContent, error, loadingMessage, loadingPulseColor,
+    const { children, field, staticContent, error, loadingMessage, loadingPulseColor,
       showFallback = true, showLoadingFallback = true, showErrorFallback = true,
       loadingFallback, errorFallback, showErrorSubstitute, errorSubstitute, jointClass } = conf;
 
@@ -106,25 +106,7 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
             value = <ErrorIndicator error='RenderError' refetch={fetch} className={jointClass} />
           }
           return value;
-        }
-        else if (valueCallback) {
-          let value;
-          try {
-            value = valueCallback(dataRoot.value, jointClass);
-          } catch (err) {
-            // Most likely some data that should have been present in the response was absent,
-            // so we'll just offer a refetch button for trying again:
-            const error = new RenderError(`Value callback function failed.
-             Some fields may be incorrectly missing from the response.
-             Response: ${JSON.stringify(dataRoot.value)}`,
-              { cause: err }
-            );
-            console.error(error);
-            value = <ErrorIndicator error='RenderError' refetch={fetch} className={jointClass} />
-          }
-          return value;
-        }
-        else if (field) {
+        } else if (field) {
           return <span className={jointClass}>{ String(dataRoot.value[field]) }</span>;
         } else if (staticContent) {
           return <span className={jointClass}>{ staticContent }</span>;
@@ -133,12 +115,12 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
         // When only the staticContent prop was provided for the Render function,
         // the staticContent should be displayed regardless of possible errors,
         // since the errors have nothing to do with the static content to be displayed:
-        if (!valueCallback && !field && staticContent) {
+        if (!children && !field && staticContent) {
           return <span className={jointClass}>{ staticContent }</span>;
         }
         else if (showFallback) {
           if (showErrorFallback && errorFallback) return errorFallback;
-          if (showErrorSubstitute) return <RefetchIndicator message={errorSubstitute} refetch={fetch} />;
+          if (showErrorSubstitute) return <RefetchIndicator message={errorSubstitute} refetch={fetch} className={jointClass} />;
           else return <ErrorIndicator error={error} refetch={fetch} className={jointClass} />;
         } return;
     }

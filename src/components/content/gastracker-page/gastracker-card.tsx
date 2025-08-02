@@ -60,13 +60,19 @@ export default function GastrackerCard({ title, pricesData }: {
         {title}
       </p>
       <div className={`text-lg tracking-wide ${colorClass}`}>
-        <p>
-          <pricesData.Render valueCallback={ () => gasPriceGwei } />
-        </p>
-        <p className='text-sm'>
-          <pricesData.Render showFallback={false}
-            valueCallback={ () => gasPriceUsd } />
-        </p>
+        <pricesData.Render jointClass='h-[3rem]' loadingMessage='Loading ...'>
+          {
+            () =>
+              <>
+                <p>
+                  { gasPriceGwei }
+                </p>
+                <p className='text-sm'>
+                  { gasPriceUsd }
+                </p>
+              </>
+          }
+        </pricesData.Render>
       </div>
     </div>
   );

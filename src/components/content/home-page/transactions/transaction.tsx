@@ -22,16 +22,17 @@ export default function Transaction(props: {
           <DocumentTextIcon className='w-10 h-10 md:w-8 md:h-8' />
           <div className='flex flex-col ml-2 pt-1 md:pt-0 md:w-48'>
             <span className='px-2 md:px-4'>
-              <props.blockWithTransactions.Render
-                valueCallback={() =>
-                  <PopoverLink
-                    href={`/${props.network}/transaction?hash=${transaction?.hash}`}
-                    content={truncateTransaction(transaction!.hash, 18)}
-                    popover={transaction!.hash}
-                    className='-left-full top-[-2.6rem] w-120 py-1.5 px-2.5'
-                  />}
-                jointClass='text-(--link-color) w-[10rem]'
-                />
+              <props.blockWithTransactions.Render jointClass='text-(--link-color) w-[10rem]'>
+                {
+                  () =>
+                    <PopoverLink
+                      href={`/${props.network}/transaction?hash=${transaction?.hash}`}
+                      content={truncateTransaction(transaction!.hash, 18)}
+                      popover={transaction!.hash}
+                      className='-left-full top-[-2.6rem] w-120 py-1.5 px-2.5'
+                    />
+                }
+              </props.blockWithTransactions.Render>
             </span>
             <span className='px-2 md:pl-4'>
               <props.blockWithTransactions.Render
@@ -39,10 +40,9 @@ export default function Transaction(props: {
                 loadingPulseColor='bg-(--grey-fg-color)'
               />
               &nbsp;&nbsp;
-              <props.blockWithTransactions.Render
-                valueCallback={() => ethValue}
-                jointClass='text-(--grey-fg-color) w-[3rem]'
-              />
+              <props.blockWithTransactions.Render jointClass='text-(--grey-fg-color) w-[3rem]'>
+                { () => ethValue }
+              </props.blockWithTransactions.Render>
             </span>
           </div>
         </div>
@@ -54,16 +54,17 @@ export default function Transaction(props: {
               loadingPulseColor='bg-(--grey-fg-color)'
             />
             &nbsp;&nbsp;
-            <props.blockWithTransactions.Render
-              valueCallback={() =>
-                <PopoverLink
-                  href={`/${props.network}/address?hash=${transaction?.from}`}
-                  content={truncateAddress(transaction!.from, 21)}
-                  popover={transaction!.from}
-                  className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
-                />}
-              jointClass='text-(--link-color) w-[11.25rem]'
-            />
+            <props.blockWithTransactions.Render jointClass='text-(--link-color) w-[11.25rem]'>
+              {
+                () =>
+                  <PopoverLink
+                    href={`/${props.network}/address?hash=${transaction?.from}`}
+                    content={truncateAddress(transaction!.from, 21)}
+                    popover={transaction!.from}
+                    className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
+                  />
+              }
+            </props.blockWithTransactions.Render>
           </span>
           <span className='pl-7 md:pl-9'>
             <props.blockWithTransactions.Render
@@ -71,17 +72,18 @@ export default function Transaction(props: {
               loadingPulseColor='bg-(--grey-fg-color)'
             />
             &nbsp;&nbsp;
-            <props.blockWithTransactions.Render
-              valueCallback={() => transaction?.to ?
+            <props.blockWithTransactions.Render jointClass='text-(--link-color) w-[11.25rem]'>
+              {
+                () => transaction?.to ?
                   <PopoverLink
                     href={`/${props.network}/address?hash=${transaction.to}`}
                     content={truncateAddress(transaction.to, 21)}
                     popover={transaction.to}
                     className='left-[-35%] top-[-2.6rem] w-78 py-1.5 px-2.5'
                   />
-                  : <span>/</span>}
-              jointClass='text-(--link-color) w-[11.25rem]'
-            />
+                  : <span>/</span>
+              }
+            </props.blockWithTransactions.Render>
           </span>
         </div>
       </div>

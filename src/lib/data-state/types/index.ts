@@ -61,21 +61,24 @@ export type DataStateMethods<T> = {
 // Options to configure the `DataState`'s Render method that displays
 // either the `ValueState`'s value, the `ErrorState`'s error, or a LoadingIndicator.
 export type RenderConfig<T, K extends keyof T> = {
-  // Optional callback function for transforming the DataState's value before rendering it:
+  // Optionally provide a callback function as the only child of the Render component,
+  // to transform the DataState's value before rendering it. If you specify the data
+  // parameter, you can access all fields contained in the DataState's value.
+  // You can also specify jointClass as the second parameter, to use the jointClass
+  // prop passed to the component inside this function. (See last prop below;
+  // the benefit of doing this is that this class is ALSO set on fallback components.)
   // `Pick<T, K>` constructs a NEW type by selecting a set of properties K from a type T.
   // This guarantees that the data object we pass in will only contain keys specified in K.
-  // (Can optionally use the jointClass provided to the render function, see below)
-  valueCallback?: (data: Pick<T, K>, jointClass?: string) => ReactNode;
   children?: (data: Pick<T, K>, jointClass?: string) => ReactNode;
   // Optionally render a specific key/field of the DataState's value (IFF it is present):
-  // If valueCallback() is provided, it will take precedence over field!
+  // If children() is provided, it will take precedence over field!
   field?: K;
   // Optionally provide static content to render:
   // This is useful for content that should only display when other data
   // is already available to display, or show a LoadingIndicator when not ready available.
-  // If valueCallback() or field are provided, they will take precedence over staticContent!
+  // If children() or field are provided, they will take precedence over staticContent!
   // The staticContent is also used for setting the width of the LoadingPulse component,
-  // so it can also be used for this even when providing a field or valueCallback that
+  // so it can also be used for this even when providing a field or children(), which
   // will take precedence for the value that will be displayed.
   staticContent?: ReactNode;
   // Optional error message to display instead of 'Error':
