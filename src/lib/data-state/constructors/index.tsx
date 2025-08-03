@@ -4,11 +4,12 @@ import LoadingIndicator from '@/components/common/indicators/loading-indicator';
 import ErrorIndicator from '@/components/common/indicators/error-indicator';
 import RefetchIndicator from '@/components/common/indicators/refetch-indicator';
 import type {
+  DataState,
   DataStateConstructor,
   FetchConfig,
   RenderConfig,
 } from '../types';
-import { fetchJson } from './helpers';
+import { fetchJson, isObject, pickFields } from './helpers';
 import * as DataRoot from './data-root';
 import { RenderError } from '../types/errors';
 
@@ -25,13 +26,13 @@ Constructors for the DataState type:
 // Create a `DataState<T>` type from a FetchConfig object, and initialize it as a LoadingRoot.
 // This function needs to create all DataStateMethods to pass on to the DataState!
 // Contrary to `useDataState()`, this constructor does NOT actually run the fetch!
-export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: FetchConfig<T, A, R>) => {
+export const useConfig: DataStateConstructor = <T, A extends any[], R, P>(config: FetchConfig<T, A, R>) => {
   // Initialize a LoadingRoot as root variant for the DataState:
   // Calling `DataState.loading()` inside `useState()` is required to
   // get a LoadingRoot (DataRoot<undefined>) instead of an `undefined`.
   // This is incorrect usage: `useState<DataState<T>>()`!
   const [dataRoot, setRoot] = useState(DataRoot.loading<T>());
-  const setLoading = () => setRoot(DataRoot.loading<T>());
+  const setLoading = () => setRoot(DataRoot.loading());
   const setValue = (dataValue: T) => setRoot(DataRoot.value(dataValue));
   const setError = (unknownError: unknown, prefix?: string) => setRoot(DataRoot.error(unknownError, prefix));
 
@@ -60,9 +61,9 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
       if (fetcher) response = await fetcher(...args);
       else response = await fetchJson(args[0] as string);
 
-      const result = postProcess ? postProcess(response) : response;
+      const result = (postProcess ? postProcess(response) : response) as T;
 
-      setRoot(DataRoot.value(result as T));
+      setRoot(DataRoot.value(result));
     } catch (err) {
       setRoot(DataRoot.error(err));
     }
@@ -123,7 +124,38 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
     }
   }
 
-  return { ...dataRoot, setRoot, setLoading, setValue, setError, fetch, useInit, Render };
+  const useSubset = <T extends object, K extends keyof T>(keys: K[]): DataState<Pick<T, K>> => {
+    const subsetPostProcess = (response: R): Pick<T, K> => {
+      const result = (postProcess ? postProcess(response) : response) as unknown as T;
+      return pickFields<T, K>(result, keys);
+    };
+
+    const subsetConfig = {
+      fetcher: fetcher,
+      args: args,
+      postProcess: subsetPostProcess,
+    };
+
+    const subsetData = useConfig<Pick<T, K>, A, any>(subsetConfig);
+    const subsetValue = isObject(dataRoot.value) ?
+      pickFields<T, K>(dataRoot.value as unknown as T, keys) : undefined;
+
+    switch (dataRoot.status) {
+      case 'loading':
+        break;
+      case 'value':
+        if (subsetValue) subsetData.setRoot(DataRoot.value(subsetValue));
+        break;
+      case 'error':
+        if (!subsetValue) subsetData.setRoot(DataRoot.error(new Error('Cannot create DataState subset() from primitive type')));
+        else subsetData.setRoot(DataRoot.error(dataRoot.error));
+        break;
+    }
+
+    return subsetData;
+  }
+
+  return { ...dataRoot, setRoot, setLoading, setValue, setError, fetch, useInit, Render, useSubset };
 };
 
 // End-user hook that creates a DataState<T> object from a FetchConfig

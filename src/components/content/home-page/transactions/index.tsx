@@ -18,6 +18,10 @@ export default function Transactions(props: {
     args: [alchemy, props.latestBlockData.value],
   });
 
+  // console.log('blockWithTransactionsData = ', blockWithTransactionsData);
+  // const txsData = blockWithTransactionsData.useSubset(['transactions']);
+  // console.log('txData = ', txsData);
+
   let transactionsDisplay;
   if (props.latestBlockData.error) {
     transactionsDisplay = <ErrorIndicator
@@ -37,7 +41,7 @@ export default function Transactions(props: {
                               key={i}
                               id={i}
                               network={props.network}
-                              blockWithTransactions={blockWithTransactionsData}
+                              blockWithTransactionsData={blockWithTransactionsData}
                             />
                           );
   }

@@ -26,8 +26,8 @@ export type LoadingRootConstructor = <T,>() => DataRoot<T>;
 export type ValueRootConstructor = <T,>(dataValue: T) => DataRoot<T>;
 export type ErrorRootConstructor = <T,>(unknownError: unknown, errorPrefix?: string) => DataRoot<T>;
 
-// Methods that extend the DataRoot<T> into a full DataState<T> type:
-export type DataStateMethods<T> = {
+// Base DataState Methods that extend the DataRoot<T> into a full DataState<T> type:
+export type BaseDataStateMethods<T> = {
   // This sets the DataRoot value using React's useState.
   // CAREFUL: `setRoot` requires using `useEffect`, `useCallback` or event handlers!
   // Do NOT use it directly in a component's body or this will cause an infinite rerender loop!
@@ -52,9 +52,19 @@ export type DataStateMethods<T> = {
   // provided a value callback function (e.g. to render a subfield of the DataState),
   // and render that, or otherwise default to rendering the DataState's value directly.
   Render: <K extends keyof T>(options?: RenderConfig<T, K>) => ReactNode;
-  // subset: <X>() => DataState<X>;
   // compose: <X, Y>(dataState: DataState<X>) => DataState<Y>;
 };
+
+// Conditional DataState methods that should only be present if the DataState holds an object:
+export type ConditionalDataStateMethods<T> = T extends object ?
+  {
+    // Create a DataState that is a subset of another:
+    useSubset: <K extends keyof T>(keys: K[]) => DataState<Pick<T, K>>;
+  }
+  :
+  {};
+
+export type DataStateMethods<T> = BaseDataStateMethods<T> & ConditionalDataStateMethods<T>;
 
 // Options to configure the `DataState`'s Render method that displays
 // either the `ValueState`'s value, the `ErrorState`'s error, or a LoadingIndicator.
@@ -86,9 +96,10 @@ export type RenderConfig<T, K extends keyof T> = {
 
   // Optional message to display while loading:
   loadingMessage?: string;
-  // Optionally className for just the LoadingPulse component, e.g. for setting its color:
+  // Optional className for just the LoadingPulse component, e.g. for setting its color,
+  // which it takes from currentcolor (i.e. text color) by default:
   // (The LoadingPulse component will only display when the above
-  // loadingMessage is NOT set, otherwise only the message will appear)
+  // loadingMessage is NOT set, otherwise only the message will appear.)
   loadingPulseColor?: string;
   // Optionally display a fallback component while loading:
   // (True by default, so you only need to provide the `loadingCallback()`
@@ -118,7 +129,7 @@ export type RenderConfig<T, K extends keyof T> = {
   className?: string;
 }
 
-type DataState<T> = DataRoot<T> & DataStateMethods<T>;
+export type DataState<T> = DataRoot<T> & DataStateMethods<T>;
 
 // FetchConfig is used to initialize a DataState<T>, which is a DataRoot<T>,
 // together with its fetching function for potentially refetching it:

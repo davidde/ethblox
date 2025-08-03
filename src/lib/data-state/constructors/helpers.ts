@@ -15,3 +15,18 @@ export async function fetchJson<T>(url: string): Promise<T> {
 
   return result as T;
 }
+
+// Helper function to create a subset from an object:
+export function pickFields<T extends object, K extends keyof T>(object: T, keys: K[]): Pick<T, K> {
+  return keys.reduce((acc, key) => {
+    if (object.hasOwnProperty(key)) {
+      acc[key] = object[key];
+    }
+    return acc;
+  }, {} as Pick<T, K>);
+}
+
+// Type guard to safely check if a value is an object:
+export function isObject(value: any): value is object {
+  return typeof value === 'object' && value !== null;
+}
