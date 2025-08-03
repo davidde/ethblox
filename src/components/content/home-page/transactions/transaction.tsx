@@ -13,7 +13,8 @@ export default function Transaction(props: {
   blockWithTransactionsData: DataState<BlockWithTransactions>,
 }) {
   const txData = props.blockWithTransactionsData.useSubset(
-    data => ({ ...data.transactions[props.id] })
+    (data, id) => ({ ...data.transactions[id] }),
+    [props.id]
   );
 
   return (

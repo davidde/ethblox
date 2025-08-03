@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { DependencyList, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import LoadingPulse from '@/components/common/indicators/loading-pulse';
 import LoadingIndicator from '@/components/common/indicators/loading-indicator';
 import ErrorIndicator from '@/components/common/indicators/error-indicator';
@@ -37,8 +37,9 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R, P>(config
   const setError = (unknownError: unknown, prefix?: string) => setRoot(DataRoot.error(unknownError, prefix));
 
   // Stabilize args and default to empty array if no args provided:
-
-  const args = useMemo(() => config.args || [] as unknown as A, config.args || [] as unknown as A);
+  const args = useMemo(() => config.args || [] as unknown as A,
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+    config.args || [] as unknown as A);
 
   // Stabilize fetcher: only create it once and don't update it.
   // Even if the parent re-creates the fetcher each render (e.g. when defined
@@ -123,11 +124,20 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R, P>(config
   }
 
   // Create a new DataState containing a subset of the fields of another:
-  const useSubset = <S,>(selector: (data: T) => S): DataState<S> => {
-    const subsetPostProcess = (response: R): S => {
+  const useSubset = <S, B extends any[]>(
+    selectorFn: (data: T, ...args: B) => S,
+    selectorArgs: B,
+  ): DataState<S> => {
+    // Stabilize the selector function once - it never changes:
+    const stableSelector = useRef(selectorFn).current;
+    // Stabilize the arguments:
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const stableArgs = useMemo(() => selectorArgs, selectorArgs);
+
+    const subsetPostProcess = useCallback((response: R): S => {
       const result = (postProcess ? postProcess(response) : response) as unknown as T;
-      return selector(result);
-    };
+      return stableSelector(result, ...stableArgs);
+    }, [stableArgs, postProcess, stableSelector]);
 
     const subsetConfig = {
       fetcher: fetcher,
@@ -144,7 +154,7 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R, P>(config
           break;
         case 'value':
           try {
-            const selectedValue = selector(dataRoot.value);
+            const selectedValue = stableSelector(dataRoot.value, ...stableArgs);
             subsetData.setRoot(DataRoot.value(selectedValue));
           } catch (err) {
             // Handle selector errors gracefully:
@@ -159,7 +169,8 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R, P>(config
           subsetData.setRoot(DataRoot.error(dataRoot.error));
           break;
       }
-    }, [dataRoot]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [dataRoot, stableArgs]);
 
     return subsetData;
   }

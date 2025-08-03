@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, SetStateAction } from 'react';
+import { DependencyList, Dispatch, ReactNode, SetStateAction } from 'react';
 
 
 export type LoadingRoot = {
@@ -53,7 +53,9 @@ export type DataStateMethods<T> = {
   // and render that, or otherwise default to rendering the DataState's value directly.
   Render: <K extends keyof T>(options?: RenderConfig<T, K>) => ReactNode;
   // Create a new DataState containing a subset of the fields of another:
-  useSubset: <S>(selector: (data: T) => S) => DataState<S>;
+  useSubset: <S, A extends any[]>(
+    selectorFn: (data: T, ...args: A) => S,
+    args: A) => DataState<S>;
   // compose: <X, Y>(dataState: DataState<X>) => DataState<Y>;
 };
 
