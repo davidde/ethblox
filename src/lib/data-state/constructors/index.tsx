@@ -36,11 +36,9 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R, P>(config
   const setValue = (dataValue: T) => setRoot(DataRoot.value(dataValue));
   const setError = (unknownError: unknown, prefix?: string) => setRoot(DataRoot.error(unknownError, prefix));
 
-  // Default to empty array if no args provided:
-  let args = config.args || [] as unknown as A;
-  // Stabilize args:
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  args = useMemo(() => args, args);
+  // Stabilize args and default to empty array if no args provided:
+
+  const args = useMemo(() => config.args || [] as unknown as A, config.args || [] as unknown as A);
 
   // Stabilize fetcher: only create it once and don't update it.
   // Even if the parent re-creates the fetcher each render (e.g. when defined
@@ -124,10 +122,11 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R, P>(config
     }
   }
 
-  const useSubset = <T extends object, K extends keyof T>(keys: K[]): DataState<Pick<T, K>> => {
-    const subsetPostProcess = (response: R): Pick<T, K> => {
+  // Create a new DataState containing a subset of the fields of another:
+  const useSubset = <S,>(selector: (data: T) => S): DataState<S> => {
+    const subsetPostProcess = (response: R): S => {
       const result = (postProcess ? postProcess(response) : response) as unknown as T;
-      return pickFields<T, K>(result, keys);
+      return selector(result);
     };
 
     const subsetConfig = {
@@ -136,24 +135,28 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R, P>(config
       postProcess: subsetPostProcess,
     };
 
-    // Construct a new subset DataState to return:
-    const subsetData = useConfig<Pick<T, K>, A, any>(subsetConfig);
+    // Construct the new subset DataState to return:
+    const subsetData = useConfig<S, A, R>(subsetConfig);
 
     useEffect(() => {
-      // Check if the parent DataState is an object, and NOT
-      // a primitive value from which we cannot create a subset:
-      const isObj = isObject(dataRoot.value);
-      const subsetValue = isObj ? pickFields<T, K>(dataRoot.value as unknown as T, keys) : undefined;
-
       switch (dataRoot.status) {
         case 'loading':
           break;
         case 'value':
-          if (subsetValue) subsetData.setRoot(DataRoot.value(subsetValue));
+          try {
+            const selectedValue = selector(dataRoot.value);
+            subsetData.setRoot(DataRoot.value(selectedValue));
+          } catch (err) {
+            // Handle selector errors gracefully:
+            subsetData.setRoot(DataRoot.error(
+              new Error(`DataState subset() selector function failed:
+                ${err instanceof Error ? err.message : 'Unknown error'}`,
+              { cause: err })
+            ));
+          }
           break;
         case 'error':
-          if (!subsetValue) subsetData.setRoot(DataRoot.error(new Error('Cannot create DataState subset() from primitive type')));
-          else subsetData.setRoot(DataRoot.error(dataRoot.error));
+          subsetData.setRoot(DataRoot.error(dataRoot.error));
           break;
       }
     }, [dataRoot]);

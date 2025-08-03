@@ -26,8 +26,8 @@ export type LoadingRootConstructor = <T,>() => DataRoot<T>;
 export type ValueRootConstructor = <T,>(dataValue: T) => DataRoot<T>;
 export type ErrorRootConstructor = <T,>(unknownError: unknown, errorPrefix?: string) => DataRoot<T>;
 
-// Base DataState Methods that extend the DataRoot<T> into a full DataState<T> type:
-export type BaseDataStateMethods<T> = {
+// DataState Methods that extend the DataRoot<T> into a full DataState<T> type:
+export type DataStateMethods<T> = {
   // This sets the DataRoot value using React's useState.
   // CAREFUL: `setRoot` requires using `useEffect`, `useCallback` or event handlers!
   // Do NOT use it directly in a component's body or this will cause an infinite rerender loop!
@@ -52,19 +52,10 @@ export type BaseDataStateMethods<T> = {
   // provided a value callback function (e.g. to render a subfield of the DataState),
   // and render that, or otherwise default to rendering the DataState's value directly.
   Render: <K extends keyof T>(options?: RenderConfig<T, K>) => ReactNode;
+  // Create a new DataState containing a subset of the fields of another:
+  useSubset: <S>(selector: (data: T) => S) => DataState<S>;
   // compose: <X, Y>(dataState: DataState<X>) => DataState<Y>;
 };
-
-// Conditional DataState methods that should only be present if the DataState holds an object:
-export type ConditionalDataStateMethods<T> = T extends object ?
-  {
-    // Create a DataState that is a subset of another:
-    useSubset: <K extends keyof T>(keys: K[]) => DataState<Pick<T, K>>;
-  }
-  :
-  {};
-
-export type DataStateMethods<T> = BaseDataStateMethods<T> & ConditionalDataStateMethods<T>;
 
 // Options to configure the `DataState`'s Render method that displays
 // either the `ValueState`'s value, the `ErrorState`'s error, or a LoadingIndicator.
