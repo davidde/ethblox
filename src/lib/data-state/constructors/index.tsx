@@ -9,7 +9,7 @@ import type {
   FetchConfig,
   RenderConfig,
 } from '../types';
-import { fetchJson, isObject, pickFields } from './helpers';
+import { fetchJson } from './helpers';
 import * as DataRoot from './data-root';
 import { RenderError } from '../types/errors';
 
