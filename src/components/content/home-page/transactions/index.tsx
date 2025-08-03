@@ -18,9 +18,9 @@ export default function Transactions(props: {
     args: [alchemy, props.latestBlockData.value],
   });
 
-  // console.log('blockWithTransactionsData = ', blockWithTransactionsData);
-  // const txsData = blockWithTransactionsData.useSubset(['transactions']);
-  // console.log('txData = ', txsData);
+  console.log('blockWithTransactionsData = ', blockWithTransactionsData);
+  const txsData = blockWithTransactionsData.useSubset(['transactions']);
+  console.log('txData = ', txsData);
 
   let transactionsDisplay;
   if (props.latestBlockData.error) {

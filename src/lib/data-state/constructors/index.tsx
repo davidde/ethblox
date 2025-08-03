@@ -136,21 +136,27 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R, P>(config
       postProcess: subsetPostProcess,
     };
 
+    // Construct a new subset DataState to return:
     const subsetData = useConfig<Pick<T, K>, A, any>(subsetConfig);
-    const subsetValue = isObject(dataRoot.value) ?
-      pickFields<T, K>(dataRoot.value as unknown as T, keys) : undefined;
 
-    switch (dataRoot.status) {
-      case 'loading':
-        break;
-      case 'value':
-        if (subsetValue) subsetData.setRoot(DataRoot.value(subsetValue));
-        break;
-      case 'error':
-        if (!subsetValue) subsetData.setRoot(DataRoot.error(new Error('Cannot create DataState subset() from primitive type')));
-        else subsetData.setRoot(DataRoot.error(dataRoot.error));
-        break;
-    }
+    useEffect(() => {
+      // Check if the parent DataState is an object, and NOT
+      // a primitive value from which we cannot create a subset:
+      const isObj = isObject(dataRoot.value);
+      const subsetValue = isObj ? pickFields<T, K>(dataRoot.value as unknown as T, keys) : undefined;
+
+      switch (dataRoot.status) {
+        case 'loading':
+          break;
+        case 'value':
+          if (subsetValue) subsetData.setRoot(DataRoot.value(subsetValue));
+          break;
+        case 'error':
+          if (!subsetValue) subsetData.setRoot(DataRoot.error(new Error('Cannot create DataState subset() from primitive type')));
+          else subsetData.setRoot(DataRoot.error(dataRoot.error));
+          break;
+      }
+    }, [dataRoot]);
 
     return subsetData;
   }
