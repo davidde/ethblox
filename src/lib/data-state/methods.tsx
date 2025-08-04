@@ -1,51 +1,30 @@
-import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import LoadingPulse from '@/components/common/indicators/loading-pulse';
-import LoadingIndicator from '@/components/common/indicators/loading-indicator';
+import { Dispatch, ReactNode, SetStateAction, useCallback, useEffect, useMemo, useRef } from 'react';
+import { DataRoot, DataState, FetchConfig, RenderConfig } from './types';
 import ErrorIndicator from '@/components/common/indicators/error-indicator';
+import LoadingIndicator from '@/components/common/indicators/loading-indicator';
+import LoadingPulse from '@/components/common/indicators/loading-pulse';
 import RefetchIndicator from '@/components/common/indicators/refetch-indicator';
-import type {
-  DataState,
-  DataStateConstructor,
-  FetchConfig,
-  RenderConfig,
-} from '../types';
-import { fetchJson } from '../helpers';
-import * as DataRoot from './data-root';
-import { RenderError } from '../types/errors';
+import { useConfig } from './constructors/data-state';
+import { fetchJson } from './helpers';
+import { RenderError } from './types/errors';
+import { createLoadingRoot, createValueRoot, createErrorRoot } from './constructors/data-root';
 
 
-/*********************************************************************
-Constructors for the DataState type:
-* `useConfig()` is the actual DataState constructor that
-  uses a FetchConfig object to initialize the DataState.
-* `useDataState()` is an end-user hook that calls `useConfig()`,
-  and then additionally runs `useInit()` to run the fetch and
-  populate the DataState with actual data.
-*********************************************************************/
-
-
-// Create a `DataState<T>` type from a FetchConfig object, and initialize it as a LoadingRoot.
-// This function needs to create all DataStateMethods to pass on to the DataState!
-// Contrary to `useDataState()`, this constructor does NOT actually run the fetch!
-export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: FetchConfig<T, A, R>) => {
-  // Initialize a LoadingRoot as root variant for the DataState:
-  // Calling `DataState.loading()` inside `useState()` is required to
-  // get a LoadingRoot (DataRoot<undefined>) instead of an `undefined`.
-  // This is incorrect usage: `useState<DataState<T>>()`!
-  // Also, the input for setRoot() needs to be a DataRoot<T>, so correct usage is:
-  // `dataState.setRoot(DataRoot.value(myValue));`
-  const [dataRoot, setRoot] = useState(DataRoot.loading<T>());
-
-  const setLoading = () => setRoot(DataRoot.loading());
-  const setValue = (dataValue: T) => setRoot(DataRoot.value(dataValue));
-  const setError = (unknownError: unknown, prefix?: string) => setRoot(DataRoot.error(unknownError, prefix));
+export function createDataStateMethods<T, A extends any[], R>(
+  dataRoot: DataRoot<T>,
+  setDataRoot: Dispatch<SetStateAction<DataRoot<T>>>,
+  config: FetchConfig<T, A, R>
+) {
+  const setLoading = () => setDataRoot(createLoadingRoot());
+  const setValue = (dataValue: T) => setDataRoot(createValueRoot(dataValue));
+  const setError = (unknownError: unknown, prefix?: string) => setDataRoot(createErrorRoot(unknownError, prefix));
 
   // Stabilize args and default to empty array if no args provided:
   const args = useMemo(() => config.args || [] as unknown as A,
   // eslint-disable-next-line react-hooks/exhaustive-deps
     config.args || [] as unknown as A);
 
-  // Stabilize fetcher: only create it once and don't update it.
+  // Stabilize fetcher/postProcess: only create them once and don't update them.
   // Even if the parent re-creates the fetcher each render (e.g. when defined
   // inline), this fetcher remains the same as on its first initialization.
   // This means that when it closes over variables that might change,
@@ -54,7 +33,7 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
   const fetcher = useRef(config.fetcher).current;
   const postProcess = useRef(config.postProcess).current;
 
-  // Attach setRoot to fetcher so fetching can update the DataState:
+  // Attach setDataRoot to fetcher so fetching can update the DataState:
   const fetch = useCallback(async () => {
     try {
       // Skip fetching if one of the arguments is still undefined:
@@ -66,9 +45,9 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
 
       const result = (postProcess ? postProcess(response) : response) as T;
 
-      setRoot(DataRoot.value(result));
+      setDataRoot(createValueRoot(result));
     } catch (err) {
-      setRoot(DataRoot.error(err));
+      setDataRoot(createErrorRoot(err));
     }
   }, [fetcher, args, postProcess]);
 
@@ -181,15 +160,5 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
     return subsetData;
   }
 
-  return { ...dataRoot, setLoading, setValue, setError, fetch, useInit, Render, useSubset };
-};
-
-// End-user hook that creates a DataState<T> object from a FetchConfig
-// and directly runs the fetch to populate it with data:
-// (useConfig() also creates a DataState, but doesn't actually run the fetch)
-export const useDataState: DataStateConstructor = (config) => {
-  const state = useConfig(config);
-  state.useInit();
-
-  return state;
+  return { setLoading, setValue, setError, fetch, useInit, Render, useSubset };
 }
