@@ -30,7 +30,7 @@ export type ErrorRootConstructor = <T,>(unknownError: unknown, errorPrefix?: str
 // and returning a modified object containing only the selected fields.
 // S is the type of the resulting selection, I is the input type, and A are the
 // OPTIONAL arguments from outside the caller to be used for transforming the data:
-type Selector<S, I, A extends any[]> = (input: I, ...args: A) => S;
+type Selector<S, I, A extends any[] = []> = (input: I, ...args: A) => S;
 
 // DataState Methods that extend the DataRoot<T> into a full DataState<T> type:
 export type DataStateMethods<T> = {
@@ -138,9 +138,9 @@ export type FetchConfig<T, A extends any[] = any[], R = T> = {
   fetcher?: (...args: A) => Promise<R>; // R is the raw Response type!
   // Optionally provide arguments for the fetcher:
   args?: A;
-  // Optional postprocessing function to transform fetched data
-  // before returning to DataState<T>:
-  postProcess?: (response: R) => T;
+  // Optional postprocessing function to transform fetched data from
+  // raw Response type R to DataState type T before creating DataState<T>:
+  postProcess?: Selector<T, R>;
 };
 
 export type DataStateConstructor = <T, A extends any[] = any[], R = T>(
