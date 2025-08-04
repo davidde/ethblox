@@ -1,5 +1,5 @@
 import { Dispatch, ReactNode, SetStateAction, useCallback, useEffect, useMemo, useRef } from 'react';
-import { DataRoot, DataState, FetchConfig, RenderConfig } from './types';
+import { DataRoot, DataState, FetchConfig, Fetcher, RenderConfig } from './types';
 import ErrorIndicator from '@/components/common/indicators/error-indicator';
 import LoadingIndicator from '@/components/common/indicators/loading-indicator';
 import LoadingPulse from '@/components/common/indicators/loading-pulse';
@@ -13,7 +13,7 @@ import { createLoadingRoot, createValueRoot, createErrorRoot } from './construct
 export function useDataStateMethods<T, A extends any[] = any[]>(
   dataRoot: DataRoot<T>,
   setDataRoot: Dispatch<SetStateAction<DataRoot<T>>>,
-  config: FetchConfig<T, A>
+  config: FetchConfig<T, A>,
 ) {
   const setLoading = () => setDataRoot(createLoadingRoot());
   const setValue = (dataValue: T) => setDataRoot(createValueRoot(dataValue));
@@ -43,6 +43,7 @@ export function useDataStateMethods<T, A extends any[] = any[]>(
       else response = await fetchJson(args[0] as string);
 
       setDataRoot(createValueRoot(response));
+      return response;
     } catch (err) {
       setDataRoot(createErrorRoot(err));
     }
@@ -110,7 +111,7 @@ export function useDataStateMethods<T, A extends any[] = any[]>(
     transformer: (data: T, ...args: B) => U,
     transformerArgs?: B,
   ): DataState<U> => {
-    // Stabilize the selector function once - it never changes:
+    // Stabilize the transformer function once - it never changes:
     const stableTransformer = useRef(transformer).current;
     // Stabilize the arguments:
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -122,7 +123,7 @@ export function useDataStateMethods<T, A extends any[] = any[]>(
     };
 
     // Construct the new subset DataState to return:
-    const subsetData = useConfig<U, A>(transformConfig);
+    const transformedData = useConfig<U, T>(transformConfig);
 
     useEffect(() => {
       switch (dataRoot.status) {
@@ -131,25 +132,50 @@ export function useDataStateMethods<T, A extends any[] = any[]>(
         case 'value':
           try {
             const transformedValue = stableTransformer(dataRoot.value, ...stableArgs);
-            subsetData.setValue(transformedValue);
+            transformedData.setValue(transformedValue);
           } catch (err) {
-            // Handle selector errors gracefully:
-            subsetData.setError(
-              new Error(`DataState subset() selector function failed:
-                ${err instanceof Error ? err.message : 'Unknown error'}`,
+            // Handle transformer errors gracefully:
+            transformedData.setError(
+              new Error(`DataState useTransform() transformer function failed:
+              ${err instanceof Error ? err.message : 'Unknown error'}`,
               { cause: err })
             );
           }
           break;
         case 'error':
-          subsetData.setError(dataRoot.error);
+          transformedData.setError(dataRoot.error);
           break;
       }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dataRoot, stableArgs]);
 
-    return subsetData;
+    return transformedData;
   }
 
-  return { setLoading, setValue, setError, fetch, useInit, Render, useTransform };
+  const useCompose = <O,>(otherDataState: DataState<O>): DataState<any> => {
+    const composedFetcher = async () => await Promise.all([fetch(), otherDataState.fetch()]);
+
+    const fetchConfig = {
+      fetcher: composedFetcher,
+      args: args,
+    };
+
+    // Construct the new subset DataState to return:
+    const composedData = useConfig<[T | undefined, O | undefined]>(fetchConfig)
+      .useTransform(
+        ( [thisData, otherData] ) => {
+          if (!thisData || !otherData) return null;
+          if (thisData && otherData) return [thisData, otherData];
+        }
+      );
+
+    useEffect(() => {
+      
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [dataRoot]);
+
+    return composedData;
+  }
+
+  return { setLoading, setValue, setError, fetch, useInit, Render, useTransform, useCompose };
 }

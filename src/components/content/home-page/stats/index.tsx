@@ -62,6 +62,22 @@ export default function Stats() {
       currency: 'USD',
     }) : undefined;
 
+  //   const ethMarketCapData = pricesAndTxsData.useTransform(
+  //     (pricesAndTxsV, ethSupplyDV) => {
+  //       const ethPrice = +pricesAndTxsV.coin_price;
+  //       const ethSupply = ethSupplyDV ? +ethSupplyDV.available_supply : undefined;
+  //       const ethMarketCapFormatted = (ethPrice && ethSupply) ?
+  //         (ethPrice * ethSupply).toLocaleString('en-US', {
+  //           style: 'currency',
+  //           currency: 'USD',
+  //         }) : undefined;
+  //       return {
+  //         ethMarketCap: ethMarketCapFormatted,
+  //       };
+  //     },
+  //     [ethSupplyData.value]
+  //   );
+
   // Since ethMarketCapFormatted is dependent on both fetches / DataStates, we need a new
   // DataState for it to correctly render when it is in Error or Loading states.
   // Contrary to `useDataState`, `DataState.useConfig()` just creates the (undefined) DataState

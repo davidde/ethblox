@@ -26,6 +26,8 @@ export type LoadingRootConstructor = <T,>() => DataRoot<T>;
 export type ValueRootConstructor = <T,>(dataValue: T) => DataRoot<T>;
 export type ErrorRootConstructor = <T,>(unknownError: unknown, errorPrefix?: string) => DataRoot<T>;
 
+export type DataState<T> = DataRoot<T> & DataStateMethods<T>;
+
 // DataState Methods that extend the DataRoot<T> into a full DataState<T> type:
 export type DataStateMethods<T> = {
   // These methods set the DataRoot value using React's useState.
@@ -36,7 +38,7 @@ export type DataStateMethods<T> = {
   setError: (error: unknown, prefix?: string) => void;
   // This is the fetch function that is used to initialize the DataState,
   // and can be called to refetch when an error occurred.
-  fetch: () => Promise<void>;
+  fetch: () => Promise<T | undefined>;
   // Populate the DataRoot with data from an initial fetch in useEffect():
   useInit: () => void;
   // The DataState.Render() method can be called at all times; in Value-, Error-,
@@ -53,10 +55,7 @@ export type DataStateMethods<T> = {
   ) => DataState<U>;
   // Create a new DataState by composing the values from 2 different DataStates:
   // (E.g. When some data transformation requires data from 2 different fetches)
-  // useCompose: <U, C>(
-  //   otherDataState: DataState<U>,
-  //   combiner: (thisData: T, otherData: U) => C,
-  // ) => DataState<C>;
+  useCompose: <U, O>(otherDataState: DataState<O>) => DataState<U>;
 };
 
 // Options to configure the `DataState`'s Render method that displays
@@ -122,14 +121,14 @@ export type RenderConfig<T, K extends keyof T> = {
   className?: string;
 }
 
-export type DataState<T> = DataRoot<T> & DataStateMethods<T>;
+export type Fetcher<T, A extends any[] = []> = (...args: A) => Promise<T>;
 
 // FetchConfig is used to initialize a DataState<T>, which is a DataRoot<T>,
 // together with its fetching function for potentially refetching it:
 export type FetchConfig<T, A extends any[] = []> = {
   // `fetcher` takes any async function, and can be omitted
   // if the fetcher is the standard Fetch API:
-  fetcher?: (...args: A) => Promise<T>;
+  fetcher?: Fetcher<T, A>;
   // Optionally provide arguments for the fetcher:
   args?: A;
 };
@@ -154,6 +153,7 @@ export type TransformConfig<T, I, A extends any[] = any[]> = {
 
 // A DataState is either initialized from a fetcher function,
 // or transformed from an input object:
+// Configs still need to be separated into different functions!
 export type DataStateConstructor = <T, I = T, A extends any[] = any[]>(
   config: FetchConfig<T, A> | TransformConfig<T, I, A>
 ) => DataState<T>;
