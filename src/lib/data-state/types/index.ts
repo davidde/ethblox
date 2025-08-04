@@ -28,15 +28,9 @@ export type ErrorRootConstructor = <T,>(unknownError: unknown, errorPrefix?: str
 
 // DataState Methods that extend the DataRoot<T> into a full DataState<T> type:
 export type DataStateMethods<T> = {
-  // This sets the DataRoot value using React's useState.
-  // CAREFUL: `setRoot` requires using `useEffect`, `useCallback` or event handlers!
-  // Do NOT use it directly in a component's body or this will cause an infinite rerender loop!
-  // The input needs to be a DataRoot<T>, so usage is:
-  // dataState.setRoot(DataState.value(myValue));
-  setRoot: Dispatch<SetStateAction<DataRoot<T>>>;
-  // The setLoading(), setValue() and setError() methods are convenience wrappers
-  // for the above setRoot(), and allow directly passing a value or error instead
-  // of `setRoot(DataState.value(value))` or `setRoot(DataState.error(error))`:
+  // These methods set the DataRoot value using React's useState.
+  // CAREFUL: Requires using `useEffect`, `useCallback` or event handlers!
+  // Do NOT use it directly in a component's body or they will cause an infinite rerender loop!
   setLoading: () => void;
   setValue: (value: T) => void;
   setError: (error: unknown, prefix?: string) => void;
@@ -55,8 +49,14 @@ export type DataStateMethods<T> = {
   // Create a new DataState containing a subset of the fields of another:
   useSubset: <S, A extends any[]>(
     selectorFn: (data: T, ...args: A) => S,
-    args: A) => DataState<S>;
-  // compose: <X, Y>(dataState: DataState<X>) => DataState<Y>;
+    args: A,
+  ) => DataState<S>;
+  // Create a new DataState by composing the values from 2 different DataStates:
+  // (E.g. When some data transformation requires data from 2 different fetches)
+  // useCompose: <U, C>(
+  //   otherDataState: DataState<U>,
+  //   combiner: (thisData: T, otherData: U) => C,
+  // ) => DataState<C>;
 };
 
 // Options to configure the `DataState`'s Render method that displays

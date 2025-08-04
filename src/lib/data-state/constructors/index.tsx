@@ -26,12 +26,15 @@ Constructors for the DataState type:
 // Create a `DataState<T>` type from a FetchConfig object, and initialize it as a LoadingRoot.
 // This function needs to create all DataStateMethods to pass on to the DataState!
 // Contrary to `useDataState()`, this constructor does NOT actually run the fetch!
-export const useConfig: DataStateConstructor = <T, A extends any[], R, P>(config: FetchConfig<T, A, R>) => {
+export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: FetchConfig<T, A, R>) => {
   // Initialize a LoadingRoot as root variant for the DataState:
   // Calling `DataState.loading()` inside `useState()` is required to
   // get a LoadingRoot (DataRoot<undefined>) instead of an `undefined`.
   // This is incorrect usage: `useState<DataState<T>>()`!
+  // Also, the input for setRoot() needs to be a DataRoot<T>, so correct usage is:
+  // `dataState.setRoot(DataRoot.value(myValue));`
   const [dataRoot, setRoot] = useState(DataRoot.loading<T>());
+
   const setLoading = () => setRoot(DataRoot.loading());
   const setValue = (dataValue: T) => setRoot(DataRoot.value(dataValue));
   const setError = (unknownError: unknown, prefix?: string) => setRoot(DataRoot.error(unknownError, prefix));
@@ -70,13 +73,15 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R, P>(config
 
   // Get an actual value by doing initial fetch in useEffect():
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const useInit = () => useEffect(() => { fetch() }, [fetch]);
+  const useInit = () => useEffect( () => { fetch() }, [fetch] );
 
   const Render = <K extends keyof T>(conf: RenderConfig<T, K> = {}): ReactNode => {
-    const { children, field, staticContent, showFallback = true,
+    const {
+      children, field, staticContent, showFallback = true,
       loadingMessage, loadingPulseColor, showLoadingCallback = true, loadingCallback,
       error, showErrorCallback = true, errorCallback, showErrorSubstitute, errorSubstitute,
-      className } = conf;
+      className
+    } = conf;
 
     switch (dataRoot.status) {
       case 'loading':
@@ -137,7 +142,7 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R, P>(config
     const subsetPostProcess = useCallback((response: R): S => {
       const result = (postProcess ? postProcess(response) : response) as unknown as T;
       return stableSelector(result, ...stableArgs);
-    }, [stableArgs, postProcess, stableSelector]);
+    }, [stableArgs, stableSelector]);
 
     const subsetConfig = {
       fetcher: fetcher,
@@ -155,18 +160,18 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R, P>(config
         case 'value':
           try {
             const selectedValue = stableSelector(dataRoot.value, ...stableArgs);
-            subsetData.setRoot(DataRoot.value(selectedValue));
+            subsetData.setValue(selectedValue);
           } catch (err) {
             // Handle selector errors gracefully:
-            subsetData.setRoot(DataRoot.error(
+            subsetData.setError(
               new Error(`DataState subset() selector function failed:
                 ${err instanceof Error ? err.message : 'Unknown error'}`,
               { cause: err })
-            ));
+            );
           }
           break;
         case 'error':
-          subsetData.setRoot(DataRoot.error(dataRoot.error));
+          subsetData.setError(dataRoot.error);
           break;
       }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -175,7 +180,7 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R, P>(config
     return subsetData;
   }
 
-  return { ...dataRoot, setRoot, setLoading, setValue, setError, fetch, useInit, Render, useSubset };
+  return { ...dataRoot, setLoading, setValue, setError, fetch, useInit, Render, useSubset };
 };
 
 // End-user hook that creates a DataState<T> object from a FetchConfig

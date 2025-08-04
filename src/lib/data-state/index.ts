@@ -1,13 +1,9 @@
 import type {
   DataRoot,
-  LoadingRootConstructor,
-  ValueRootConstructor,
-  ErrorRootConstructor,
   DataStateConstructor,
   DataStateMethods,
 } from './types';
 import * as constructors from './constructors';
-import * as rootConstructors from './constructors/data-root';
 
 
 export * from './types';
@@ -20,9 +16,6 @@ export * from './constructors/helpers';
 export type DataState<T> = DataRoot<T> & DataStateMethods<T>;
 
 export namespace DataState {
-  export const loading: LoadingRootConstructor = rootConstructors.loading;
-  export const value: ValueRootConstructor = rootConstructors.value;
-  export const error: ErrorRootConstructor = rootConstructors.error;
   export const useConfig: DataStateConstructor = constructors.useConfig;
 }
 
