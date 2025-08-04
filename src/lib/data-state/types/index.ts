@@ -26,6 +26,12 @@ export type LoadingRootConstructor = <T,>() => DataRoot<T>;
 export type ValueRootConstructor = <T,>(dataValue: T) => DataRoot<T>;
 export type ErrorRootConstructor = <T,>(unknownError: unknown, errorPrefix?: string) => DataRoot<T>;
 
+// Function to transform an object by selecting/transforming the input object
+// and returning a modified object containing only the selected fields.
+// S is the type of the resulting selection, I is the input type, and A are the
+// OPTIONAL arguments from outside the caller to be used for transforming the data:
+type Selector<S, I, A extends any[]> = (input: I, ...args: A) => S;
+
 // DataState Methods that extend the DataRoot<T> into a full DataState<T> type:
 export type DataStateMethods<T> = {
   // These methods set the DataRoot value using React's useState.
@@ -48,7 +54,7 @@ export type DataStateMethods<T> = {
   Render: <K extends keyof T>(options?: RenderConfig<T, K>) => ReactNode;
   // Create a new DataState containing a subset of the fields of another:
   useSubset: <S, A extends any[]>(
-    selectorFn: (data: T, ...args: A) => S,
+    selector: Selector<S, T, A>,
     args?: A,
   ) => DataState<S>;
   // Create a new DataState by composing the values from 2 different DataStates:
@@ -129,7 +135,7 @@ export type DataState<T> = DataRoot<T> & DataStateMethods<T>;
 export type FetchConfig<T, A extends any[] = any[], R = T> = {
   // `fetcher` takes any async function, and can be omitted
   // if the fetcher is the standard Fetch API:
-  fetcher?: (...args: A) => Promise<R>;
+  fetcher?: (...args: A) => Promise<R>; // R is the raw Response type!
   // Optionally provide arguments for the fetcher:
   args?: A;
   // Optional postprocessing function to transform fetched data
