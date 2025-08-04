@@ -3,12 +3,12 @@ import type {
   DataStateConstructor,
   DataStateMethods,
 } from './types';
-import * as constructors from './constructors';
+import * as constructors from './constructors/data-state';
 
 
 export * from './types';
 export * from './types/errors';
-export * from './constructors/helpers';
+export * from './helpers';
 
 // Note there is a duplicate DataState<T> definition in `./types.ts`,
 // because Typescript does not seem capable of exporting a type from

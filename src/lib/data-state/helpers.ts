@@ -1,4 +1,4 @@
-import { FetchError } from '../types/errors';
+import { FetchError } from './types/errors';
 
 
 // To be used as a wrapper for fetch() inside useDataState inline fetcher definition:
@@ -15,3 +15,4 @@ export async function fetchJson<T>(url: string): Promise<T> {
 
   return result as T;
 }
+

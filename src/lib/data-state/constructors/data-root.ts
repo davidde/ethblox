@@ -14,6 +14,7 @@ more specific variants like LoadingRoot, ValueRoot or ErrorRoot.
 This way, we can re-assign other variants afterwards if required!
 *********************************************************************/
 
+
 // Create LoadingRoot from nothing and return as DataRoot<T>:
 export const loading: LoadingRootConstructor = () => ({
   status: 'loading',

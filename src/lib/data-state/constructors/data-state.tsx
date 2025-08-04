@@ -1,4 +1,4 @@
-import { DependencyList, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import LoadingPulse from '@/components/common/indicators/loading-pulse';
 import LoadingIndicator from '@/components/common/indicators/loading-indicator';
 import ErrorIndicator from '@/components/common/indicators/error-indicator';
@@ -9,7 +9,7 @@ import type {
   FetchConfig,
   RenderConfig,
 } from '../types';
-import { fetchJson } from './helpers';
+import { fetchJson } from '../helpers';
 import * as DataRoot from './data-root';
 import { RenderError } from '../types/errors';
 
@@ -22,6 +22,7 @@ Constructors for the DataState type:
   and then additionally runs `useInit()` to run the fetch and
   populate the DataState with actual data.
 *********************************************************************/
+
 
 // Create a `DataState<T>` type from a FetchConfig object, and initialize it as a LoadingRoot.
 // This function needs to create all DataStateMethods to pass on to the DataState!
