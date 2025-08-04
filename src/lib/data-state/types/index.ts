@@ -1,4 +1,4 @@
-import { DependencyList, Dispatch, ReactNode, SetStateAction } from 'react';
+import { ReactNode } from 'react';
 
 
 export type LoadingRoot = {
@@ -26,12 +26,6 @@ export type LoadingRootConstructor = <T,>() => DataRoot<T>;
 export type ValueRootConstructor = <T,>(dataValue: T) => DataRoot<T>;
 export type ErrorRootConstructor = <T,>(unknownError: unknown, errorPrefix?: string) => DataRoot<T>;
 
-// Function to transform an object by selecting/transforming the input object
-// and returning a modified object containing only the selected fields.
-// S is the type of the resulting selection, I is the input type, and A are the
-// OPTIONAL arguments from outside the caller to be used for transforming the data:
-type Selector<S, I, A extends any[] = []> = (input: I, ...args: A) => S;
-
 // DataState Methods that extend the DataRoot<T> into a full DataState<T> type:
 export type DataStateMethods<T> = {
   // These methods set the DataRoot value using React's useState.
@@ -53,10 +47,10 @@ export type DataStateMethods<T> = {
   // and render that, or otherwise default to rendering the DataState's value directly.
   Render: <K extends keyof T>(options?: RenderConfig<T, K>) => ReactNode;
   // Create a new DataState containing a subset of the fields of another:
-  useSubset: <S, A extends any[]>(
-    selector: Selector<S, T, A>,
+  useTransform: <U, A extends any[]>(
+    transformer: Transformer<U, T, A>,
     args?: A,
-  ) => DataState<S>;
+  ) => DataState<U>;
   // Create a new DataState by composing the values from 2 different DataStates:
   // (E.g. When some data transformation requires data from 2 different fetches)
   // useCompose: <U, C>(
@@ -132,17 +126,34 @@ export type DataState<T> = DataRoot<T> & DataStateMethods<T>;
 
 // FetchConfig is used to initialize a DataState<T>, which is a DataRoot<T>,
 // together with its fetching function for potentially refetching it:
-export type FetchConfig<T, A extends any[] = any[], R = T> = {
+export type FetchConfig<T, A extends any[] = []> = {
   // `fetcher` takes any async function, and can be omitted
   // if the fetcher is the standard Fetch API:
-  fetcher?: (...args: A) => Promise<R>; // R is the raw Response type!
+  fetcher?: (...args: A) => Promise<T>;
   // Optionally provide arguments for the fetcher:
   args?: A;
-  // Optional postprocessing function to transform fetched data from
-  // raw Response type R to DataState type T before creating DataState<T>:
-  postProcess?: Selector<T, R>;
 };
 
-export type DataStateConstructor = <T, A extends any[] = any[], R = T>(
-  config: FetchConfig<T, A, R>
+// Function to transform an object by selecting/transforming the input object
+// and returning a modified object containing only the selected fields.
+// S is the type of the resulting selection, I is the input type, and A are the
+// OPTIONAL arguments from outside the caller to be used for transforming the data:
+type Transformer<T, I, A extends any[] = any[]> = (input: I, ...args: A) => T;
+
+// Config for selecting/transforming an input object and returning
+// a new, modified object containing only the selected/transformed fields.
+// T is the type of the resulting transformation, I is the input type,
+// and A are the OPTIONAL arguments from outside the caller to be used
+// for transforming the data:
+export type TransformConfig<T, I, A extends any[] = any[]> = {
+  // Transformer does the actual transformation by returning a selection of fields:
+  transformer: Transformer<T, I, A>;
+  // Optionally provide arguments for the transformer:
+  args?: A;
+};
+
+// A DataState is either initialized from a fetcher function,
+// or transformed from an input object:
+export type DataStateConstructor = <T, I = T, A extends any[] = any[]>(
+  config: FetchConfig<T, A> | TransformConfig<T, I, A>
 ) => DataState<T>;

@@ -10,10 +10,10 @@ import { RenderError } from './types/errors';
 import { createLoadingRoot, createValueRoot, createErrorRoot } from './constructors/data-root';
 
 
-export function useDataStateMethods<T, A extends any[], R>(
+export function useDataStateMethods<T, A extends any[] = any[]>(
   dataRoot: DataRoot<T>,
   setDataRoot: Dispatch<SetStateAction<DataRoot<T>>>,
-  config: FetchConfig<T, A, R>
+  config: FetchConfig<T, A>
 ) {
   const setLoading = () => setDataRoot(createLoadingRoot());
   const setValue = (dataValue: T) => setDataRoot(createValueRoot(dataValue));
@@ -31,7 +31,6 @@ export function useDataStateMethods<T, A extends any[], R>(
   // it always KEEPS the FIRST VERSION that it received!
   // Those variables have to be provided as ARGUMENTS!
   const fetcher = useRef(config.fetcher).current;
-  const postProcess = useRef(config.postProcess).current;
 
   // Attach setDataRoot to fetcher so fetching can update the DataState:
   const fetch = useCallback(async () => {
@@ -39,17 +38,15 @@ export function useDataStateMethods<T, A extends any[], R>(
       // Skip fetching if one of the arguments is still undefined:
       if (args?.some(arg => arg === undefined)) return;
 
-      let response: R;
+      let response: T;
       if (fetcher) response = await fetcher(...args);
       else response = await fetchJson(args[0] as string);
 
-      const result = (postProcess ? postProcess(response) : response) as T;
-
-      setDataRoot(createValueRoot(result));
+      setDataRoot(createValueRoot(response));
     } catch (err) {
       setDataRoot(createErrorRoot(err));
     }
-  }, [fetcher, args, postProcess, setDataRoot]);
+  }, [fetcher, args, setDataRoot]);
 
   // Get an actual value by doing initial fetch in useEffect():
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -109,29 +106,23 @@ export function useDataStateMethods<T, A extends any[], R>(
   }
 
   // Create a new DataState containing a subset of the fields of another:
-  const useSubset = <S, B extends any[]>(
-    selectorFn: (data: T, ...args: B) => S,
-    selectorArgs?: B,
-  ): DataState<S> => {
+  const useTransform = <U, B extends any[]>(
+    transformer: (data: T, ...args: B) => U,
+    transformerArgs?: B,
+  ): DataState<U> => {
     // Stabilize the selector function once - it never changes:
-    const stableSelector = useRef(selectorFn).current;
+    const stableTransformer = useRef(transformer).current;
     // Stabilize the arguments:
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const stableArgs = useMemo(() => selectorArgs || [] as unknown as B, selectorArgs || [] as unknown as B);
+    const stableArgs = useMemo(() => transformerArgs || [] as unknown as B, transformerArgs || [] as unknown as B);
 
-    const subsetPostProcess = useCallback((response: R): S => {
-      const result = (postProcess ? postProcess(response) : response) as unknown as T;
-      return stableSelector(result, ...stableArgs);
-    }, [stableArgs, stableSelector]);
-
-    const subsetConfig = {
-      fetcher: fetcher,
-      args: args,
-      postProcess: subsetPostProcess,
+    const transformConfig = {
+      transformer: stableTransformer,
+      args: stableArgs,
     };
 
     // Construct the new subset DataState to return:
-    const subsetData = useConfig<S, A, R>(subsetConfig);
+    const subsetData = useConfig<U, A>(transformConfig);
 
     useEffect(() => {
       switch (dataRoot.status) {
@@ -139,8 +130,8 @@ export function useDataStateMethods<T, A extends any[], R>(
           break;
         case 'value':
           try {
-            const selectedValue = stableSelector(dataRoot.value, ...stableArgs);
-            subsetData.setValue(selectedValue);
+            const transformedValue = stableTransformer(dataRoot.value, ...stableArgs);
+            subsetData.setValue(transformedValue);
           } catch (err) {
             // Handle selector errors gracefully:
             subsetData.setError(
@@ -160,5 +151,5 @@ export function useDataStateMethods<T, A extends any[], R>(
     return subsetData;
   }
 
-  return { setLoading, setValue, setError, fetch, useInit, Render, useSubset };
+  return { setLoading, setValue, setError, fetch, useInit, Render, useTransform };
 }

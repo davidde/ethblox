@@ -12,7 +12,7 @@ export default function Transaction(props: {
   network: string,
   blockWithTransactionsData: DataState<BlockWithTransactions>,
 }) {
-  const txData = props.blockWithTransactionsData.useSubset(
+  const txData = props.blockWithTransactionsData.useTransform(
     (data, id) => ({ ...data.transactions[id] }),
     [props.id]
   );

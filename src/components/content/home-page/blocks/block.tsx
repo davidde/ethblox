@@ -22,16 +22,17 @@ export default function Block(props: {
   const alchemy = useAlchemy(props.network);
   const blockNumber = props.latestBlockData.value && props.latestBlockData.value - props.id;
 
-  const blockData = useDataState<BlockP, [Alchemy, number?], Block>({
+  const blockData = useDataState<Block>({
     fetcher: (alchemy, num) => alchemy.core.getBlock(num!),
     args: [alchemy, blockNumber],
-    postProcess: (response) => ({
+  }).useTransform(
+    (response) => ({
       timestamp: `(${getBlockAgeFromSecs(getSecsFromUnixSecs(response.timestamp))} ago)`,
       transactions: `${response.transactions.length} transactions`,
       recipientHashFull: response.miner,
       recipientHashShort: truncateAddress(response.miner, 20),
-    }),
-  });
+    })
+  );
 
   return (
     <div className='min-h-[8.5rem] md:min-h-[5.8rem] p-2 md:p-3 border-b border-(--border-color) last:border-0'>
@@ -84,14 +85,14 @@ export default function Block(props: {
               className='w-[11rem]'
               loadingPulseColor='bg-(--link-color)'
             >
-            {
-              ({ recipientHashFull, recipientHashShort }) =>
-                <PopoverLink
-                  href={`/${props.network}/address?hash=${recipientHashFull}`}
-                  content={recipientHashShort}
-                  popover={recipientHashFull}
-                  className='left-[-37%] top-[-2.6rem] w-78 py-1.5 px-2.5'
-                />
+              {
+                ({ recipientHashFull, recipientHashShort }) =>
+                  <PopoverLink
+                    href={`/${props.network}/address?hash=${recipientHashFull}`}
+                    content={recipientHashShort}
+                    popover={recipientHashFull}
+                    className='left-[-37%] top-[-2.6rem] w-78 py-1.5 px-2.5'
+                  />
               }
             </blockData.Render>
           </span>

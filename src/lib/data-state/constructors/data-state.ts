@@ -20,7 +20,7 @@ Constructors for the DataState type:
 // Create a `DataState<T>` type from a FetchConfig object, and initialize it as a LoadingRoot.
 // This function needs to create all DataStateMethods to pass on to the DataState!
 // Contrary to `useDataState()`, this constructor does NOT actually run the fetch!
-export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: FetchConfig<T, A, R>) => {
+export const useConfig: DataStateConstructor = <T, A extends any[] = any[]>(config: FetchConfig<T, A>) => {
   // Initialize a LoadingRoot as root variant for the DataState:
   // Calling `DataState.loading()` inside `useState()` is required to
   // get a LoadingRoot (DataRoot<undefined>) instead of an `undefined`.
