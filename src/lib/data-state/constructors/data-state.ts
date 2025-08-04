@@ -3,7 +3,7 @@ import type {
   DataStateConstructor,
   FetchConfig,
 } from '../types';
-import { createDataStateMethods } from '../methods';
+import { useDataStateMethods } from '../methods';
 import { createLoadingRoot } from './data-root';
 
 
@@ -30,7 +30,7 @@ export const useConfig: DataStateConstructor = <T, A extends any[], R>(config: F
   const [dataRoot, setDataRoot] = useState(createLoadingRoot<T>());
 
   // Create the DataStateMethods to extend the DataRoot<T> into a full DataState<T>:
-  const dataStateMethods = createDataStateMethods(dataRoot, setDataRoot, config);
+  const dataStateMethods = useDataStateMethods(dataRoot, setDataRoot, config);
 
   return { ...dataRoot, ...dataStateMethods };
 };

@@ -10,7 +10,7 @@ import { RenderError } from './types/errors';
 import { createLoadingRoot, createValueRoot, createErrorRoot } from './constructors/data-root';
 
 
-export function createDataStateMethods<T, A extends any[], R>(
+export function useDataStateMethods<T, A extends any[], R>(
   dataRoot: DataRoot<T>,
   setDataRoot: Dispatch<SetStateAction<DataRoot<T>>>,
   config: FetchConfig<T, A, R>
@@ -49,7 +49,7 @@ export function createDataStateMethods<T, A extends any[], R>(
     } catch (err) {
       setDataRoot(createErrorRoot(err));
     }
-  }, [fetcher, args, postProcess]);
+  }, [fetcher, args, postProcess, setDataRoot]);
 
   // Get an actual value by doing initial fetch in useEffect():
   // eslint-disable-next-line react-hooks/exhaustive-deps
