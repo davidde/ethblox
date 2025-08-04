@@ -111,13 +111,13 @@ export function createDataStateMethods<T, A extends any[], R>(
   // Create a new DataState containing a subset of the fields of another:
   const useSubset = <S, B extends any[]>(
     selectorFn: (data: T, ...args: B) => S,
-    selectorArgs: B,
+    selectorArgs?: B,
   ): DataState<S> => {
     // Stabilize the selector function once - it never changes:
     const stableSelector = useRef(selectorFn).current;
     // Stabilize the arguments:
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const stableArgs = useMemo(() => selectorArgs, selectorArgs);
+    const stableArgs = useMemo(() => selectorArgs || [] as unknown as B, selectorArgs || [] as unknown as B);
 
     const subsetPostProcess = useCallback((response: R): S => {
       const result = (postProcess ? postProcess(response) : response) as unknown as T;

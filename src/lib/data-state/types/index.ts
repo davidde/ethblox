@@ -49,7 +49,7 @@ export type DataStateMethods<T> = {
   // Create a new DataState containing a subset of the fields of another:
   useSubset: <S, A extends any[]>(
     selectorFn: (data: T, ...args: A) => S,
-    args: A,
+    args?: A,
   ) => DataState<S>;
   // Create a new DataState by composing the values from 2 different DataStates:
   // (E.g. When some data transformation requires data from 2 different fetches)
