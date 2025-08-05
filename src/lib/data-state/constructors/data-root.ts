@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import type {
-  DataRoot,
   DataRootConstructor,
 } from '../types';
-import { createErrorRoot, createLoadingRoot, createValueRoot } from './root';
+import { newErrorRoot, newLoadingRoot, newValueRoot } from './root';
 
 
 /*********************************************************************
@@ -14,16 +13,16 @@ its own setters using `useState`.
 
 export const useDataRoot: DataRootConstructor = <T>() => {
   // Initialize a LoadingRoot as root variant for the DataRoot:
-  // Calling `createLoadingRoot()` inside `useState()` is required to
+  // Calling `newLoadingRoot()` inside `useState()` is required to
   // get a LoadingRoot (DataRoot<undefined>) instead of an `undefined`.
   // This is incorrect usage: `useState<Root<T>>()`!
   // Also, the input for setRoot() needs to be a Root<T>, so correct usage is:
-  // `dataRoot.setRoot(createValueRoot(myValue));`
-  const [root, setRoot] = useState(createLoadingRoot<T>());
+  // `dataRoot.setRoot(newValueRoot(myValue));`
+  const [root, setRoot] = useState(newLoadingRoot<T>());
 
-  const setLoading = () => setRoot(createLoadingRoot());
-  const setValue = (dataValue: T) => setRoot(createValueRoot(dataValue));
-  const setError = (unknownError: unknown, prefix?: string) => setRoot(createErrorRoot(unknownError, prefix));
+  const setLoading = () => setRoot(newLoadingRoot());
+  const setValue = (dataValue: T) => setRoot(newValueRoot(dataValue));
+  const setError = (unknownError: unknown, prefix?: string) => setRoot(newErrorRoot(unknownError, prefix));
 
   return { ...root, setRoot, setLoading, setValue, setError }
 };

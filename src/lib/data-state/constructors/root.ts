@@ -16,7 +16,7 @@ This way, we can re-assign other variants afterwards if required!
 
 
 // Create LoadingRoot from nothing and return as DataRoot<T>:
-export const createLoadingRoot: LoadingRootConstructor = () => ({
+export const newLoadingRoot: LoadingRootConstructor = () => ({
   status: 'loading',
   value: undefined,
   error: undefined,
@@ -24,7 +24,7 @@ export const createLoadingRoot: LoadingRootConstructor = () => ({
 });
 
 // Create ValueRoot<T> from dataValue and return as DataRoot<T>:
-export const createValueRoot: ValueRootConstructor = (dataValue) => ({
+export const newValueRoot: ValueRootConstructor = (dataValue) => ({
   status: 'value',
   value: dataValue,
   error: undefined,
@@ -32,7 +32,7 @@ export const createValueRoot: ValueRootConstructor = (dataValue) => ({
 });
 
 // Create ErrorRoot from `unknown` error and return as DataRoot<T>:
-export const createErrorRoot: ErrorRootConstructor = (unknownError, errorPrefix?) => {
+export const newErrorRoot: ErrorRootConstructor = (unknownError, errorPrefix?) => {
   let errorInstance: Error;
 
   if (unknownError instanceof Error) {

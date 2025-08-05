@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef } from 'react';
 import { DataState, FetchConfig } from '../types';
 import { fetchJson } from '../helpers';
-import { createLoadingRoot, createValueRoot, createErrorRoot } from '../constructors/root';
+import { newLoadingRoot, newValueRoot, newErrorRoot } from '../constructors/root';
 
 
 export function useFetcher<T, A extends any[] = any[]>(
@@ -26,7 +26,7 @@ export function useFetcher<T, A extends any[] = any[]>(
   // Attach setRoot to fetcher so fetching can update the DataState:
   const fetch = useCallback(async () => {
     // Skip fetching if one of the arguments is still undefined:
-    if (args?.some(arg => arg === undefined)) return createLoadingRoot<T>();
+    if (args?.some(arg => arg === undefined)) return newLoadingRoot<T>();
 
     let result;
     try {
@@ -34,9 +34,9 @@ export function useFetcher<T, A extends any[] = any[]>(
       if (fetcher) response = await fetcher(...args);
       else response = await fetchJson(args[0] as string);
 
-      result = createValueRoot(response);
+      result = newValueRoot(response);
     } catch (err) {
-      result = createErrorRoot<T>(err);
+      result = newErrorRoot<T>(err);
     }
     setRoot(result);
     return result;

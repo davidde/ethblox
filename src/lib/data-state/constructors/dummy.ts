@@ -1,7 +1,7 @@
 import { useMethodSetter } from '../methods';
 import { Root, DummyConstructor, Transformer, FetchConfig, DataState, DataRoot } from '../types';
 import { useDataRoot } from './data-root';
-import { createLoadingRoot } from './root';
+import { newLoadingRoot } from './root';
 
 
 // Initialize a `DataState<T>` type in LoadingState with empty shell methods:
@@ -19,7 +19,7 @@ export const useDummy: DummyConstructor = <T>() => {
 function getDummyMethods<T>() {
   return {
     // No-op methods for initialization:
-    fetch: async (): Promise<Root<T>> => createLoadingRoot<T>(),
+    fetch: async (): Promise<Root<T>> => newLoadingRoot<T>(),
     useLoad: () => useDummy<T>(),
     Render: () => null,
     useTransform: <U>() => useDummy<U>(),

@@ -46,7 +46,7 @@ export type DataRootMethods<T> = {
   // CAREFUL: Requires using `useEffect`, `useCallback` or event handlers!
   // Do NOT use it directly in a component's body or they will cause an infinite rerender loop!
   // The input for setRoot() needs to be a Root<T>, so usage is:
-  // dataState.setRoot(createValueRoot(myValue));
+  // dataState.setRoot(newValueRoot(myValue));
   setRoot: Dispatch<SetStateAction<Root<T>>>;
   // The setLoading(), setValue() and setError() methods are convenience wrappers
   // for the above setRoot(), and allow directly passing a value or error instead
