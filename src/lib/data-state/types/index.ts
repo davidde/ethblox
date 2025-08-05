@@ -176,7 +176,7 @@ export type FetchConfig<T, A extends any[] = []> = {
 // and returning a modified object containing only the selected fields.
 // S is the type of the resulting selection, I is the input type, and A are the
 // OPTIONAL arguments from outside the caller to be used for transforming the data:
-type Transformer<T, I, A extends any[] = any[]> = (input: I, ...args: A) => T;
+export type Transformer<T, I, A extends any[] = any[]> = (input: I, ...args: A) => T;
 
 // Config for selecting/transforming an input object and returning
 // a new, modified object containing only the selected/transformed fields.

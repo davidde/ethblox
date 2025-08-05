@@ -1,9 +1,10 @@
+import { Root } from '@/lib/data-state/types';
 import RefetchButton from './refetch-button';
 
 
-export default function ErrorIndicator(props: {
+export default function ErrorIndicator<T = any>(props: {
   error?: string,
-  refetch?: () => Promise<any>,
+  refetch?: () => Promise<Root<T>>,
   className?: string,
 }) {
   return (

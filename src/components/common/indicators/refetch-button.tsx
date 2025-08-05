@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import { Root } from '@/lib/data-state/types';
 
 
-export default function RefetchButton(props: {
-  refetch: () => Promise<any>,
+export default function RefetchButton<T>(props: {
+  refetch: () => Promise<Root<T>>,
   className?: string,
 }) {
   const [isLoading, setIsLoading] = useState(false);

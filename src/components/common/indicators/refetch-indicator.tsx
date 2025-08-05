@@ -1,8 +1,9 @@
+import { Root } from '@/lib/data-state/types';
 import RefetchButton from './refetch-button';
 
 
-export default function RefetchIndicator(props: {
-  refetch: () => Promise<any>,
+export default function RefetchIndicator<T>(props: {
+  refetch: () => Promise<Root<T>>,
   message?: string,
   className?: string
 }) {
