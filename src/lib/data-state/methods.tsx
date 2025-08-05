@@ -11,11 +11,9 @@ import { createLoadingRoot, createValueRoot, createErrorRoot } from './construct
 
 
 export function useDataStateMethods<T, A extends any[] = any[]>(
-  dataRoot: DataRoot<T>,
+  dataState: DataState<T>,
   config: FetchConfig<T, A>,
 ) {
-  const setRoot = dataRoot.setRoot;
-
   // Stabilize args and default to empty array if no args provided:
   const args = useMemo(() => config.args || [] as unknown as A,
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -39,12 +37,12 @@ export function useDataStateMethods<T, A extends any[] = any[]>(
       if (fetcher) response = await fetcher(...args);
       else response = await fetchJson(args[0] as string);
 
-      setRoot(createValueRoot(response));
+      dataState.setRoot(createValueRoot(response));
       return response;
     } catch (err) {
-      setRoot(createErrorRoot(err));
+      dataState.setRoot(createErrorRoot(err));
     }
-  }, [fetcher, args, setRoot]);
+  }, [fetcher, args, dataState.setRoot]);
 
   // Get an actual value by doing initial fetch in useEffect():
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -58,7 +56,7 @@ export function useDataStateMethods<T, A extends any[] = any[]>(
       className
     } = conf;
 
-    switch (dataRoot.status) {
+    switch (dataState.status) {
       case 'loading':
         if (showFallback) {
           if (showLoadingCallback && loadingCallback) return loadingCallback(className);
@@ -69,14 +67,14 @@ export function useDataStateMethods<T, A extends any[] = any[]>(
         if (typeof children === 'function') {
           let value;
           try {
-            value = children(dataRoot.value, className);
+            value = children(dataState.value, className);
           } catch (err) {
             // Most likely some data that should have been present in the response was absent,
             // but we cannot be sure, so we'll just display an ErrorIndicator with refetch button,
             // without setting the entire DataState to an ErrorState:
             const error = new RenderError(`'children' render prop pattern function failed.
              Some fields may be incorrectly missing from the response.
-             Response: ${JSON.stringify(dataRoot.value)}`,
+             Response: ${JSON.stringify(dataState.value)}`,
               { cause: err }
             );
             console.error(error);
@@ -84,10 +82,10 @@ export function useDataStateMethods<T, A extends any[] = any[]>(
           }
           return value;
         } else if (field) {
-          return <span className={className}>{ String(dataRoot.value[field]) }</span>;
+          return <span className={className}>{ String(dataState.value[field]) }</span>;
         } else if (staticContent) {
           return <span className={className}>{ staticContent }</span>;
-        } else return <span className={className}>{ String(dataRoot.value) }</span>;
+        } else return <span className={className}>{ String(dataState.value) }</span>;
       case 'error':
         // When only the staticContent prop was provided for the Render function,
         // the staticContent should be displayed regardless of possible errors,
@@ -123,12 +121,12 @@ export function useDataStateMethods<T, A extends any[] = any[]>(
     const transformedData = useConfig<U, T>(transformConfig);
 
     useEffect(() => {
-      switch (dataRoot.status) {
+      switch (dataState.status) {
         case 'loading':
           break;
         case 'value':
           try {
-            const transformedValue = stableTransformer(dataRoot.value, ...stableArgs);
+            const transformedValue = stableTransformer(dataState.value, ...stableArgs);
             transformedData.setValue(transformedValue);
           } catch (err) {
             // Handle transformer errors gracefully:
@@ -140,11 +138,11 @@ export function useDataStateMethods<T, A extends any[] = any[]>(
           }
           break;
         case 'error':
-          transformedData.setError(dataRoot.error);
+          transformedData.setError(dataState.error);
           break;
       }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dataRoot, stableArgs]);
+    }, [dataState, stableArgs]);
 
     return transformedData;
   }
@@ -169,10 +167,10 @@ export function useDataStateMethods<T, A extends any[] = any[]>(
   //   useEffect(() => {
       
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  //   }, [dataRoot]);
+  //   }, [dataState]);
 
   //   return composedData;
   // }
 
-  return { fetch, useInit, Render, useTransform, }; // useCompose };
+  return { fetch, useInit, Render,  }; // useTransform, useCompose };
 }
