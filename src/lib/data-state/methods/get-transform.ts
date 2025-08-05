@@ -1,6 +1,5 @@
 import { useRef, useMemo, useEffect } from 'react';
 import { DataState } from '..';
-import { useFetch } from '../constructors/data-state';
 
 
 export function getTransform<T>(dataState: DataState<T>) {
@@ -21,7 +20,7 @@ export function getTransform<T>(dataState: DataState<T>) {
     };
 
     // Construct the new subset DataState to return:
-    const transformedData = useFetch<U, T>(transformConfig);
+    const transformedData = dataState.useFetch<U, T>(transformConfig);
 
     useEffect(() => {
       switch (dataState.status) {

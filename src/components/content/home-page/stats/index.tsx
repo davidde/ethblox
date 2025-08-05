@@ -9,7 +9,7 @@ import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import StatCard from './stat-card';
 import { getGasPriceGwei, getGasPriceUsd } from '@/lib/utilities';
-import { useDataState, DataState } from '@/lib/data-state';
+import { useDataState, useDummy } from '@/lib/data-state';
 
 
 type EthSupplyData = {
@@ -82,7 +82,7 @@ export default function Stats() {
   // DataState for it to correctly render when it is in Error or Loading states.
   // Contrary to `useDataState`, `DataState.useFetch()` just creates the (undefined) DataState
   // (LoadingRoot) from the fetcher, without actually running the fetcher:
-  const ethMarketCapData = DataState.useFetch<any>({
+  const ethMarketCapData = useDummy().useFetch<any>({
     fetcher: async () => await Promise.all([pricesAndTxsData.fetch(), ethSupplyData.fetch()])
   });
 

@@ -69,6 +69,7 @@ export type DataState<T> = DataRoot<T> & DataStateMethods<T>;
 
 // DataState Methods that extend the DataRoot<T> into a full DataState<T> type:
 export type DataStateMethods<T> = {
+  useFetch: DataStateConstructor,
   // These methods set the DataRoot value using React's useState.
   // CAREFUL: Requires using `useEffect`, `useCallback` or event handlers!
   // Do NOT use it directly in a component's body or they will cause an infinite rerender loop!
@@ -79,7 +80,7 @@ export type DataStateMethods<T> = {
   // and can be called to refetch when an error occurred.
   fetch: () => Promise<Root<T>>;
   // Populate the DataRoot with data from an initial fetch in useEffect():
-  useLoad: () => void;
+  useLoad: () => DataState<T>;
   // The DataState.Render() method can be called at all times; in Value-, Error-,
   // as well as LoadingState! It will render the apropriate component,
   // either the value, an ErrorIndicator, or a LoadingIndicator.
@@ -194,7 +195,7 @@ export type TransformConfig<T, I, A extends any[] = any[]> = {
 // or transformed from an input object:
 // Configs still need to be separated into different functions!
 export type DataStateConstructor = <T, I = T, A extends any[] = any[]>(
-  config: FetchConfig<T, A> | TransformConfig<T, I, A>
+  config: FetchConfig<T, A>
 ) => DataState<T>;
 
 

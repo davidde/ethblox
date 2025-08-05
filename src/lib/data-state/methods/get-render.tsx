@@ -2,8 +2,7 @@ import ErrorIndicator from '@/components/common/indicators/error-indicator';
 import LoadingIndicator from '@/components/common/indicators/loading-indicator';
 import LoadingPulse from '@/components/common/indicators/loading-pulse';
 import RefetchIndicator from '@/components/common/indicators/refetch-indicator';
-import { ReactNode, useRef, useMemo, useEffect } from 'react';
-import { useFetch } from '../constructors/data-state';
+import { ReactNode } from 'react';
 import { DataState, RenderConfig } from '../types';
 import { RenderError } from '../types/errors';
 

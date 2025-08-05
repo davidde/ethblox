@@ -12,6 +12,7 @@ import { useDataState, DataState } from '@/lib/data-state';
 import Link from 'next/link';
 import PopoverLink from '../../../common/popover-link';
 import BlockReward from './block-reward';
+import { useDummy } from '@/lib/data-state/constructors/dummy';
 
 
 export default function Block(props: {
@@ -22,10 +23,10 @@ export default function Block(props: {
   const alchemy = useAlchemy(props.network);
   const blockNumber = props.latestBlockData.value && props.latestBlockData.value - props.id;
 
-  const blockData = useDataState<Block>({
-    fetcher: (alchemy, num) => alchemy.core.getBlock(num!),
-    args: [alchemy, blockNumber],
-  })
+  // const blockData = useDataState<Block>({
+  //   fetcher: (alchemy, num) => alchemy.core.getBlock(num!),
+  //   args: [alchemy, blockNumber],
+  // })
   // .useTransform(
   //   (response) => ({
   //     timestamp: `(${getBlockAgeFromSecs(getSecsFromUnixSecs(response.timestamp))} ago)`,
@@ -34,6 +35,12 @@ export default function Block(props: {
   //     recipientHashShort: truncateAddress(response.miner, 20),
   //   })
   // );
+
+  const blockData = useDummy().useFetch<Block>({
+    fetcher: (alchemy, num) => alchemy.core.getBlock(num!),
+    args: [alchemy, blockNumber],
+  }).useLoad();
+
 
   return (
     <div className='min-h-[8.5rem] md:min-h-[5.8rem] p-2 md:p-3 border-b border-(--border-color) last:border-0'>
