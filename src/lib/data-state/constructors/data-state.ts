@@ -26,9 +26,9 @@ export const useFetch: DataStateConstructor = <T, A extends any[] = any[]>(confi
   const dataState = useDummy<T>();
 
   // Create the DataStateMethods to extend the DataRoot<T> into a full DataState<T>:
-  const dataStateMethods = useMethodSetter(dataState, config);
+  useMethodSetter(dataState, config);
 
-  return { ...dataState, ...dataStateMethods };
+  return { ...dataState };
 };
 
 // End-user hook that creates a DataState<T> object from a FetchConfig

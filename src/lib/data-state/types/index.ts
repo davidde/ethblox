@@ -88,10 +88,10 @@ export type DataStateMethods<T> = {
   // and render that, or otherwise default to rendering the DataState's value directly.
   Render: <K extends keyof T>(options?: RenderConfig<T, K>) => ReactNode;
   // Create a new DataState containing a subset of the fields of another:
-  // useTransform: <U, A extends any[]>(
-  //   transformer: Transformer<U, T, A>,
-  //   args?: A,
-  // ) => DataState<U>;
+  useTransform: <U, A extends any[]>(
+    transformer: Transformer<U, T, A>,
+    args?: A,
+  ) => DataState<U>;
   // // Create a new DataState by composing the values from 2 different DataStates:
   // // (E.g. When some data transformation requires data from 2 different fetches)
   // useCompose: <U, O>(otherDataState: DataState<O>) => DataState<U>;

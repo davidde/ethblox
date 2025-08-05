@@ -1,4 +1,4 @@
-import { DataRoot, DummyConstructor, Root } from '../types';
+import { Root, DummyConstructor, Transformer } from '../types';
 import { useDataRoot } from './data-root';
 import { createLoadingRoot } from './root';
 
@@ -6,8 +6,12 @@ import { createLoadingRoot } from './root';
 function useDummyMethods<T>() {
   return {
     fetch: async (): Promise<Root<T>> => createLoadingRoot<T>(),
-    useLoad: () => undefined,
+    useLoad: () => null,
     Render: () => null,
+    useTransform: <U, A extends any[]>(
+      transformer: Transformer<U, T, A>,
+      args?: A,
+    ) => useDummy<U>(),
   }
 }
 
