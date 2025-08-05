@@ -4,7 +4,7 @@ import type {
   DummyConstructor,
   FetchConfig,
 } from '../types';
-import { useDataStateMethods } from '../methods';
+import { useMethodSetter } from '../methods';
 import { useDataRoot } from './data-root';
 import { useDummy } from './dummy';
 
@@ -26,7 +26,7 @@ export const useFetch: DataStateConstructor = <T, A extends any[] = any[]>(confi
   const dataState = useDummy<T>();
 
   // Create the DataStateMethods to extend the DataRoot<T> into a full DataState<T>:
-  const dataStateMethods = useDataStateMethods(dataState, config);
+  const dataStateMethods = useMethodSetter(dataState, config);
 
   return { ...dataState, ...dataStateMethods };
 };
