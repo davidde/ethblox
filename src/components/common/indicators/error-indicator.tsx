@@ -4,7 +4,7 @@ import RefetchButton from './refetch-button';
 
 export default function ErrorIndicator<T = any>(props: {
   error?: string,
-  refetch?: () => Promise<Root<T>>,
+  refetch?: () => Promise<any>,
   className?: string,
 }) {
   return (

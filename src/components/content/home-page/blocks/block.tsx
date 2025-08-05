@@ -36,16 +36,12 @@ export default function Block(props: {
   //   })
   // );
 
-  let blockData = useDummy<Block>();
-  console.log('isDummy 1 = ', blockData.isDummy());
-
-  blockData = blockData.useFetch<Block>({
+  let blockData = useDummy<Block>().useFetch<Block>({
     fetcher: (alchemy, num) => alchemy.core.getBlock(num!),
     args: [alchemy, blockNumber],
   })
-  console.log('isDummy 2 = ', blockData.isDummy());
-  blockData = blockData.useLoad()
-  // .useTransform(
+  .useLoad()
+  // let processedData = blockData.useTransform(
   //   (response) => ({
   //     timestamp: `(${getBlockAgeFromSecs(getSecsFromUnixSecs(response.timestamp))} ago)`,
   //     transactions: `${response.transactions.length} transactions`,

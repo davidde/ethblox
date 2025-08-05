@@ -19,7 +19,7 @@ export const useDummy: DummyConstructor = <T>(isDummy: boolean = true) => {
 function getDummyMethods<T>() {
   return {
     // No-op methods for initialization:
-    fetch: async (): Promise<Root<T>> => newLoadingRoot<T>(),
+    fetch: async (): Promise<void> => undefined,
     useLoad: () => useDummy<T>(),
     Render: () => null,
     useTransform: <U>() => useDummy<U>(),

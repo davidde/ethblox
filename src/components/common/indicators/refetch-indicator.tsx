@@ -3,7 +3,7 @@ import RefetchButton from './refetch-button';
 
 
 export default function RefetchIndicator<T>(props: {
-  refetch: () => Promise<Root<T>>,
+  refetch: () => Promise<any>,
   message?: string,
   className?: string
 }) {

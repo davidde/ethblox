@@ -4,7 +4,7 @@ import { Root } from '@/lib/data-state/types';
 
 
 export default function RefetchButton<T>(props: {
-  refetch: () => Promise<Root<T>>,
+  refetch: () => Promise<any>,
   className?: string,
 }) {
   const [isLoading, setIsLoading] = useState(false);

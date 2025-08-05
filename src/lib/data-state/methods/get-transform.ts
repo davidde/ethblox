@@ -1,5 +1,7 @@
 import { useRef, useMemo, useEffect } from 'react';
-import { DataState } from '..';
+import { DataState, useDummy } from '..';
+import { getLoad } from './get-load';
+import { getRender } from './get-render';
 
 
 export function getTransform<T>(dataState: DataState<T>) {
@@ -14,13 +16,19 @@ export function getTransform<T>(dataState: DataState<T>) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const stableArgs = useMemo(() => transformerArgs || [] as unknown as B, transformerArgs || [] as unknown as B);
 
-    const transformConfig = {
-      transformer: stableTransformer,
-      args: stableArgs,
-    };
+    // Construct a new DataState to transform and return:
+    const newData = useDummy<U>();
+    newData.fetch = dataState.fetch;
+    newData.useLoad = getLoad<U>(newData);
+    newData.Render = getRender<U>(newData);
 
-    // Construct the new subset DataState to return:
-    const transformedData = dataState.useFetch<U, T>(transformConfig);
+    // const transformConfig = {
+    //   transformer: stableTransformer,
+    //   args: stableArgs,
+    // };
+
+    // // Construct the new subset DataState to return:
+    // const transformedData = dataState.useFetch<U, T>(transformConfig);
 
     useEffect(() => {
       switch (dataState.status) {
@@ -29,10 +37,10 @@ export function getTransform<T>(dataState: DataState<T>) {
         case 'value':
           try {
             const transformedValue = stableTransformer(dataState.value, ...stableArgs);
-            transformedData.setValue(transformedValue);
+            newData.setValue(transformedValue);
           } catch (err) {
             // Handle transformer errors gracefully:
-            transformedData.setError(
+            newData.setError(
               new Error(`DataState useTransform() transformer function failed:
               ${err instanceof Error ? err.message : 'Unknown error'}`,
               { cause: err })
@@ -40,13 +48,14 @@ export function getTransform<T>(dataState: DataState<T>) {
           }
           break;
         case 'error':
-          transformedData.setError(dataState.error);
+          newData.setError(dataState.error);
           break;
       }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dataState, stableArgs]);
 
-    return transformedData;
+    }, [dataState, stableArgs, newData.setValue, newData.setError]);
+
+    return newData;
   }
 
   return useTransform;

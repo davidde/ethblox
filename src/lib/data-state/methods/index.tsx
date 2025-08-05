@@ -15,7 +15,7 @@ export function useMethodSetter<T, A extends any[] = any[]>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
     config.args || [] as unknown as A);
 
-  // Stabilize fetcher/postProcess: only create them once and don't update them.
+  // Stabilize fetcher: only create it once and don't update it.
   // Even if the parent re-creates the fetcher each render (e.g. when defined
   // inline), this fetcher remains the same as on its first initialization.
   // This means that when it closes over variables that might change,
@@ -30,7 +30,7 @@ export function useMethodSetter<T, A extends any[] = any[]>(
     const result = await fetch();
 
     setRoot(result);
-    return result;
+    // return result;
   }, [fetcher, args, setRoot]);
 
   dataState.useLoad = getLoad(dataState);
