@@ -4,7 +4,7 @@ import { fetchJson } from '../helpers';
 import { createLoadingRoot, createValueRoot, createErrorRoot } from '../constructors/root';
 
 
-export function getFetch<T, A extends any[] = any[]>(
+export function useFetcher<T, A extends any[] = any[]>(
   dataState: DataState<T>,
   config: FetchConfig<T, A>,
 ) {
@@ -21,6 +21,8 @@ export function getFetch<T, A extends any[] = any[]>(
   // Those variables have to be provided as ARGUMENTS!
   const fetcher = useRef(config.fetcher).current;
 
+  const setRoot = dataState.setRoot; // For passing to deps array
+
   // Attach setRoot to fetcher so fetching can update the DataState:
   const fetch = useCallback(async () => {
     // Skip fetching if one of the arguments is still undefined:
@@ -36,9 +38,9 @@ export function getFetch<T, A extends any[] = any[]>(
     } catch (err) {
       result = createErrorRoot<T>(err);
     }
-    dataState.setRoot(result);
+    setRoot(result);
     return result;
-  }, [fetcher, args, dataState.setRoot]);
+  }, [fetcher, args, setRoot]);
 
   return fetch;
 }

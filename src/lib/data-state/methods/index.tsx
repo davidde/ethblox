@@ -9,7 +9,7 @@ import { fetchJson } from '../helpers';
 import { RenderError } from '../types/errors';
 import { createLoadingRoot, createValueRoot, createErrorRoot } from '../constructors/root';
 import { getRender } from './get-render';
-import { getFetch } from './get-fetch';
+import { useFetcher } from './use-fetcher';
 import { getLoad } from './get-load';
 import { getTransform } from './get-transform';
 
@@ -18,7 +18,7 @@ export function useMethodSetter<T, A extends any[] = any[]>(
   dataState: DataState<T>,
   config: FetchConfig<T, A>,
 ) {
-  dataState.fetch = getFetch(dataState, config);
+  dataState.fetch = useFetcher(dataState, config);
   dataState.useLoad = getLoad(dataState);
   dataState.Render = getRender(dataState);
   dataState.useTransform = getTransform(dataState);

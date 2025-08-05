@@ -3,15 +3,12 @@ import { useDataRoot } from './data-root';
 import { createLoadingRoot } from './root';
 
 
-function useDummyMethods<T>() {
+function setDummyMethods<T>() {
   return {
     fetch: async (): Promise<Root<T>> => createLoadingRoot<T>(),
     useLoad: () => null,
     Render: () => null,
-    useTransform: <U, A extends any[]>(
-      transformer: Transformer<U, T, A>,
-      args?: A,
-    ) => useDummy<U>(),
+    useTransform: <U>() => useDummy<U>(),
   }
 }
 
@@ -21,7 +18,7 @@ export const useDummy: DummyConstructor = <T>() => {
   const dataRoot = useDataRoot<T>();
 
   // Create the DataStateMethods to extend the DataRoot<T> into a full DataState<T>:
-  const dataStateMethods = useDummyMethods<T>();
+  const dataStateMethods = setDummyMethods<T>();
 
   return { ...dataRoot, ...dataStateMethods };
 };
