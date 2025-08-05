@@ -10,7 +10,7 @@ import { Dispatch, ReactNode, SetStateAction } from 'react';
 export type LoadingRoot = {
   status: 'loading';
   value: undefined;
-  error: undefined;
+  error: undefined | null;
   loading: true;
 };
 export type ValueRoot<T> = {
@@ -28,7 +28,7 @@ export type ErrorRoot = {
 
 export type Root<T> = LoadingRoot | ValueRoot<T> | ErrorRoot;
 
-export type LoadingRootConstructor = <T,>() => Root<T>;
+export type LoadingRootConstructor = <T,>(isDummy?: boolean) => Root<T>;
 export type ValueRootConstructor = <T,>(dataValue: T) => Root<T>;
 export type ErrorRootConstructor = <T,>(unknownError: unknown, errorPrefix?: string) => Root<T>;
 
@@ -54,9 +54,10 @@ export type DataRootMethods<T> = {
   setLoading: () => void;
   setValue: (value: T) => void;
   setError: (error: unknown, prefix?: string) => void;
+  isDummy: () => boolean;
 }
 
-export type DataRootConstructor = <T>() => DataRoot<T>;
+export type DataRootConstructor = <T>(isDummy?: boolean) => DataRoot<T>;
 
 
 /***********************************************
@@ -199,4 +200,4 @@ export type DataStateConstructor = <T, I = T, A extends any[] = any[]>(
 ) => DataState<T>;
 
 
-export type DummyConstructor = <T>() => DataState<T>;
+export type DummyConstructor = <T>(isDummy?: boolean) => DataState<T>;

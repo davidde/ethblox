@@ -5,9 +5,9 @@ import { newLoadingRoot } from './root';
 
 
 // Initialize a `DataState<T>` type in LoadingState with empty shell methods:
-export const useDummy: DummyConstructor = <T>() => {
-  // Initialize a DataRoot<T> in Loading state:
-  const dummy = useDataRoot<T>();
+export const useDummy: DummyConstructor = <T>(isDummy: boolean = true) => {
+  // Initialize a DataRoot<T> in dummy Loading state (isDummy = true):
+  const dummy = useDataRoot<T>(isDummy);
 
   // Create dummy no-op DataStateMethods:
   const dummyMethods = getDummyMethods<T>();
@@ -29,8 +29,8 @@ function getDummyMethods<T>() {
     // has a working `fetch()` function, but is still initialized as LoadingRoot.
     // Contrary to `useDataState()`, this constructor does NOT actually run the fetch!
     useFetch: <T, A extends any[]>(config: FetchConfig<T, A>) => {
-      // Initialize a dummy DataState<T>:
-      const dataState = useDummy<T>();
+      // Initialize a dummy DataState<T> (with isDummy parameter = false):
+      const dataState = useDummy<T>(false);
 
       // Set all REAL DataStateMethods on it:
       useMethodSetter(dataState, config);

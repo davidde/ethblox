@@ -35,6 +35,7 @@ export function useMethodSetter<T, A extends any[] = any[]>(
 
   dataState.useLoad = getLoad(dataState);
   dataState.Render = getRender(dataState);
+  
   dataState.useTransform = getTransform(dataState);
 
 

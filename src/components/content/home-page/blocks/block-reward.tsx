@@ -25,7 +25,7 @@ export default function BlockReward(props: {
       &nbsp;&nbsp;
       <blockRewardData.Render
         // Latest Block often doesn't have a reward yet, so don't show explicit red error:
-        showErrorSubstitute={props.id === 0 && blockRewardData.error && blockRewardData.error instanceof FetchError}
+        showErrorSubstitute={props.id === 0 && Boolean(blockRewardData.error) && blockRewardData.error instanceof FetchError}
         className='w-[4rem] text-(--grey-fg-color)'
       >
         { (data) => `Ξ${getEtherValueFromWei(data.blockReward, 4)}` }

@@ -16,12 +16,12 @@ This way, we can re-assign other variants afterwards if required!
 
 
 // Create LoadingRoot from nothing and return as DataRoot<T>:
-export const newLoadingRoot: LoadingRootConstructor = () => ({
-  status: 'loading',
-  value: undefined,
-  error: undefined,
-  loading: true,
-});
+export const newLoadingRoot: LoadingRootConstructor = (isDummy: boolean = false) => ({
+    status: 'loading',
+    value: undefined,
+    error: isDummy ? null : undefined, // Null values here indicates a dummy DataState
+    loading: true,
+  });
 
 // Create ValueRoot<T> from dataValue and return as DataRoot<T>:
 export const newValueRoot: ValueRootConstructor = (dataValue) => ({
