@@ -6,7 +6,7 @@ import { createLoadingRoot } from './root';
 function useDummyMethods<T>() {
   return {
     fetch: async (): Promise<Root<T>> => createLoadingRoot<T>(),
-    useInit: async () => undefined,
+    useLoad: () => undefined,
     Render: () => null,
   }
 }

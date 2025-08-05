@@ -80,9 +80,9 @@ export default function Stats() {
 
   // Since ethMarketCapFormatted is dependent on both fetches / DataStates, we need a new
   // DataState for it to correctly render when it is in Error or Loading states.
-  // Contrary to `useDataState`, `DataState.useConfig()` just creates the (undefined) DataState
+  // Contrary to `useDataState`, `DataState.useFetch()` just creates the (undefined) DataState
   // (LoadingRoot) from the fetcher, without actually running the fetcher:
-  const ethMarketCapData = DataState.useConfig<any>({
+  const ethMarketCapData = DataState.useFetch<any>({
     fetcher: async () => await Promise.all([pricesAndTxsData.fetch(), ethSupplyData.fetch()])
   });
 

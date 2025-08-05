@@ -79,7 +79,7 @@ export type DataStateMethods<T> = {
   // and can be called to refetch when an error occurred.
   fetch: () => Promise<Root<T>>;
   // Populate the DataRoot with data from an initial fetch in useEffect():
-  useInit: () => void;
+  useLoad: () => void;
   // The DataState.Render() method can be called at all times; in Value-, Error-,
   // as well as LoadingState! It will render the apropriate component,
   // either the value, an ErrorIndicator, or a LoadingIndicator.

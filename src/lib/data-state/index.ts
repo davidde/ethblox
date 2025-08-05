@@ -16,7 +16,7 @@ export * from './helpers';
 export type DataState<T> = DataRoot<T> & DataStateMethods<T>;
 
 export namespace DataState {
-  export const useConfig: DataStateConstructor = constructors.useConfig;
+  export const useFetch: DataStateConstructor = constructors.useFetch;
 }
 
 export const useDataState: DataStateConstructor = constructors.useDataState;

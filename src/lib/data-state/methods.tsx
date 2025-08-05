@@ -4,7 +4,7 @@ import ErrorIndicator from '@/components/common/indicators/error-indicator';
 import LoadingIndicator from '@/components/common/indicators/loading-indicator';
 import LoadingPulse from '@/components/common/indicators/loading-pulse';
 import RefetchIndicator from '@/components/common/indicators/refetch-indicator';
-import { useConfig } from './constructors/data-state';
+import { useFetch } from './constructors/data-state';
 import { fetchJson } from './helpers';
 import { RenderError } from './types/errors';
 import { createLoadingRoot, createValueRoot, createErrorRoot } from './constructors/root';
@@ -48,7 +48,7 @@ export function useDataStateMethods<T, A extends any[] = any[]>(
 
   // Get an actual value by doing initial fetch in useEffect():
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const useInit = () => useEffect( () => { fetch() }, [fetch] );
+  const useLoad = () => useEffect( () => { fetch() }, [fetch] );
 
   const Render = <K extends keyof T>(conf: RenderConfig<T, K> = {}): ReactNode => {
     const {
@@ -120,7 +120,7 @@ export function useDataStateMethods<T, A extends any[] = any[]>(
     };
 
     // Construct the new subset DataState to return:
-    const transformedData = useConfig<U, T>(transformConfig);
+    const transformedData = useFetch<U, T>(transformConfig);
 
     useEffect(() => {
       switch (dataState.status) {
@@ -158,7 +158,7 @@ export function useDataStateMethods<T, A extends any[] = any[]>(
   //   };
 
   //   // Construct the new subset DataState to return:
-  //   const composedData = useConfig<[T | undefined, O | undefined]>(fetchConfig)
+  //   const composedData = useFetch<[T | undefined, O | undefined]>(fetchConfig)
   //     .useTransform(
   //       ( [thisData, otherData] ) => {
   //         if (!thisData || !otherData) return null;
@@ -174,5 +174,5 @@ export function useDataStateMethods<T, A extends any[] = any[]>(
   //   return composedData;
   // }
 
-  return { fetch, useInit, Render,  }; // useTransform, useCompose };
+  return { fetch, useLoad, Render,  }; // useTransform, useCompose };
 }
