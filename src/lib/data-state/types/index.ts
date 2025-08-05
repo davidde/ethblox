@@ -1,5 +1,11 @@
-import { ReactNode } from 'react';
+import { Dispatch, ReactNode, SetStateAction } from 'react';
 
+
+/***********************************************
+ *
+ *                  Root TYPES
+ *
+ ***********************************************/
 
 export type LoadingRoot = {
   status: 'loading';
@@ -20,11 +26,44 @@ export type ErrorRoot = {
   loading: false;
 };
 
-export type DataRoot<T> = LoadingRoot | ValueRoot<T> | ErrorRoot;
+export type Root<T> = LoadingRoot | ValueRoot<T> | ErrorRoot;
 
-export type LoadingRootConstructor = <T,>() => DataRoot<T>;
-export type ValueRootConstructor = <T,>(dataValue: T) => DataRoot<T>;
-export type ErrorRootConstructor = <T,>(unknownError: unknown, errorPrefix?: string) => DataRoot<T>;
+export type LoadingRootConstructor = <T,>() => Root<T>;
+export type ValueRootConstructor = <T,>(dataValue: T) => Root<T>;
+export type ErrorRootConstructor = <T,>(unknownError: unknown, errorPrefix?: string) => Root<T>;
+
+
+/***********************************************
+ *
+ *                DataRoot TYPES
+ *
+ ***********************************************/
+
+export type DataRoot<T> = Root<T> & DataRootMethods<T>;
+
+export type DataRootMethods<T> = {
+  // These methods set the DataRoot value using React's useState.
+  // CAREFUL: Requires using `useEffect`, `useCallback` or event handlers!
+  // Do NOT use it directly in a component's body or they will cause an infinite rerender loop!
+  // The input for setRoot() needs to be a Root<T>, so usage is:
+  // dataState.setRoot(createValueRoot(myValue));
+  setRoot: Dispatch<SetStateAction<Root<T>>>;
+  // The setLoading(), setValue() and setError() methods are convenience wrappers
+  // for the above setRoot(), and allow directly passing a value or error instead
+  // of `setRoot(DataState.value(value))` or `setRoot(DataState.error(error))`:
+  setLoading: () => void;
+  setValue: (value: T) => void;
+  setError: (error: unknown, prefix?: string) => void;
+}
+
+export type DataRootConstructor = <T>() => DataRoot<T>;
+
+
+/***********************************************
+ *
+ *              DataState TYPES
+ *
+ ***********************************************/
 
 export type DataState<T> = DataRoot<T> & DataStateMethods<T>;
 
@@ -53,9 +92,9 @@ export type DataStateMethods<T> = {
     transformer: Transformer<U, T, A>,
     args?: A,
   ) => DataState<U>;
-  // Create a new DataState by composing the values from 2 different DataStates:
-  // (E.g. When some data transformation requires data from 2 different fetches)
-  useCompose: <U, O>(otherDataState: DataState<O>) => DataState<U>;
+  // // Create a new DataState by composing the values from 2 different DataStates:
+  // // (E.g. When some data transformation requires data from 2 different fetches)
+  // useCompose: <U, O>(otherDataState: DataState<O>) => DataState<U>;
 };
 
 // Options to configure the `DataState`'s Render method that displays

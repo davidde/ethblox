@@ -1,55 +1,29 @@
+import { useState } from 'react';
 import type {
-  ErrorRootConstructor,
-  LoadingRootConstructor,
-  ValueRootConstructor
+  DataRoot,
+  DataRootConstructor,
 } from '../types';
+import { createErrorRoot, createLoadingRoot, createValueRoot } from './root';
 
 
 /*********************************************************************
-Constructors for the DataRoot type:
-`loading()`, `value()` and `error()` return *DataRoots*,
-to be used for initializing or setting a full DataState!
-These functions need to return as DataRoot<T>, and NOT as their
-more specific variants like LoadingRoot, ValueRoot or ErrorRoot.
-This way, we can re-assign other variants afterwards if required!
+Constructor for the DataRoot type, which is essentially a Root with
+its own setters using `useState`.
 *********************************************************************/
 
 
-// Create LoadingRoot from nothing and return as DataRoot<T>:
-export const createLoadingRoot: LoadingRootConstructor = () => ({
-  status: 'loading',
-  value: undefined,
-  error: undefined,
-  loading: true,
-});
+export const useDataRoot: DataRootConstructor = <T>() => {
+  // Initialize a LoadingRoot as root variant for the DataRoot:
+  // Calling `createLoadingRoot()` inside `useState()` is required to
+  // get a LoadingRoot (DataRoot<undefined>) instead of an `undefined`.
+  // This is incorrect usage: `useState<Root<T>>()`!
+  // Also, the input for setRoot() needs to be a Root<T>, so correct usage is:
+  // `dataRoot.setRoot(createValueRoot(myValue));`
+  const [root, setRoot] = useState(createLoadingRoot<T>());
 
-// Create ValueRoot<T> from dataValue and return as DataRoot<T>:
-export const createValueRoot: ValueRootConstructor = (dataValue) => ({
-  status: 'value',
-  value: dataValue,
-  error: undefined,
-  loading: false,
-});
+  const setLoading = () => setRoot(createLoadingRoot());
+  const setValue = (dataValue: T) => setRoot(createValueRoot(dataValue));
+  const setError = (unknownError: unknown, prefix?: string) => setRoot(createErrorRoot(unknownError, prefix));
 
-// Create ErrorRoot from `unknown` error and return as DataRoot<T>:
-export const createErrorRoot: ErrorRootConstructor = (unknownError, errorPrefix?) => {
-  let errorInstance: Error;
-
-  if (unknownError instanceof Error) {
-    if (errorPrefix) unknownError.message = `${errorPrefix} ${unknownError.message}`;
-    errorInstance = unknownError as Error;
-  }
-  else { // `String(unknownError)` could technically still fail if someone throws bad objects:
-    errorInstance = errorPrefix ?
-      new Error(`${errorPrefix} ${String(unknownError)}`) : new Error(String(unknownError));
-  }
-
-  console.error(errorInstance);
-
-  return {
-    status: 'error',
-    value: undefined,
-    error: errorInstance,
-    loading: false,
-  };
+  return { ...root, setRoot, setLoading, setValue, setError }
 };

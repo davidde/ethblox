@@ -7,17 +7,14 @@ import RefetchIndicator from '@/components/common/indicators/refetch-indicator';
 import { useConfig } from './constructors/data-state';
 import { fetchJson } from './helpers';
 import { RenderError } from './types/errors';
-import { createLoadingRoot, createValueRoot, createErrorRoot } from './constructors/data-root';
+import { createLoadingRoot, createValueRoot, createErrorRoot } from './constructors/root';
 
 
 export function useDataStateMethods<T, A extends any[] = any[]>(
   dataRoot: DataRoot<T>,
-  setDataRoot: Dispatch<SetStateAction<DataRoot<T>>>,
   config: FetchConfig<T, A>,
 ) {
-  const setLoading = () => setDataRoot(createLoadingRoot());
-  const setValue = (dataValue: T) => setDataRoot(createValueRoot(dataValue));
-  const setError = (unknownError: unknown, prefix?: string) => setDataRoot(createErrorRoot(unknownError, prefix));
+  const setRoot = dataRoot.setRoot;
 
   // Stabilize args and default to empty array if no args provided:
   const args = useMemo(() => config.args || [] as unknown as A,
@@ -32,7 +29,7 @@ export function useDataStateMethods<T, A extends any[] = any[]>(
   // Those variables have to be provided as ARGUMENTS!
   const fetcher = useRef(config.fetcher).current;
 
-  // Attach setDataRoot to fetcher so fetching can update the DataState:
+  // Attach setRoot to fetcher so fetching can update the DataState:
   const fetch = useCallback(async () => {
     try {
       // Skip fetching if one of the arguments is still undefined:
@@ -42,12 +39,12 @@ export function useDataStateMethods<T, A extends any[] = any[]>(
       if (fetcher) response = await fetcher(...args);
       else response = await fetchJson(args[0] as string);
 
-      setDataRoot(createValueRoot(response));
+      setRoot(createValueRoot(response));
       return response;
     } catch (err) {
-      setDataRoot(createErrorRoot(err));
+      setRoot(createErrorRoot(err));
     }
-  }, [fetcher, args, setDataRoot]);
+  }, [fetcher, args, setRoot]);
 
   // Get an actual value by doing initial fetch in useEffect():
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -152,30 +149,30 @@ export function useDataStateMethods<T, A extends any[] = any[]>(
     return transformedData;
   }
 
-  const useCompose = <O,>(otherDataState: DataState<O>): DataState<any> => {
-    const composedFetcher = async () => await Promise.all([fetch(), otherDataState.fetch()]);
+  // const useCompose = <O,>(otherDataState: DataState<O>): DataState<any> => {
+  //   const composedFetcher = async () => await Promise.all([fetch(), otherDataState.fetch()]);
 
-    const fetchConfig = {
-      fetcher: composedFetcher,
-      args: args,
-    };
+  //   const fetchConfig = {
+  //     fetcher: composedFetcher,
+  //     args: args,
+  //   };
 
-    // Construct the new subset DataState to return:
-    const composedData = useConfig<[T | undefined, O | undefined]>(fetchConfig)
-      .useTransform(
-        ( [thisData, otherData] ) => {
-          if (!thisData || !otherData) return null;
-          if (thisData && otherData) return [thisData, otherData];
-        }
-      );
+  //   // Construct the new subset DataState to return:
+  //   const composedData = useConfig<[T | undefined, O | undefined]>(fetchConfig)
+  //     .useTransform(
+  //       ( [thisData, otherData] ) => {
+  //         if (!thisData || !otherData) return null;
+  //         if (thisData && otherData) return [thisData, otherData];
+  //       }
+  //     );
 
-    useEffect(() => {
+  //   useEffect(() => {
       
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dataRoot]);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  //   }, [dataRoot]);
 
-    return composedData;
-  }
+  //   return composedData;
+  // }
 
-  return { setLoading, setValue, setError, fetch, useInit, Render, useTransform, useCompose };
+  return { fetch, useInit, Render, useTransform, }; // useCompose };
 }
