@@ -11,7 +11,7 @@ export type DataState<T> = DataRoot<T> & DataStateMethods<T>;
 
 export * from './types';
 export * from './types/errors';
-export * from './helpers';
+export { fetchJson } from './methods/get-fetch';
 
 // export namespace DataState {
   
