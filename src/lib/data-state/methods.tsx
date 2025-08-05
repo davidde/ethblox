@@ -29,19 +29,21 @@ export function useDataStateMethods<T, A extends any[] = any[]>(
 
   // Attach setRoot to fetcher so fetching can update the DataState:
   const fetch = useCallback(async () => {
-    try {
-      // Skip fetching if one of the arguments is still undefined:
-      if (args?.some(arg => arg === undefined)) return;
+    // Skip fetching if one of the arguments is still undefined:
+    if (args?.some(arg => arg === undefined)) return createLoadingRoot<T>();
 
+    let result;
+    try {
       let response: T;
       if (fetcher) response = await fetcher(...args);
       else response = await fetchJson(args[0] as string);
 
-      dataState.setRoot(createValueRoot(response));
-      return response;
+      result = createValueRoot(response);
     } catch (err) {
-      dataState.setRoot(createErrorRoot(err));
+      result = createErrorRoot<T>(err);
     }
+    dataState.setRoot(result);
+    return result;
   }, [fetcher, args, dataState.setRoot]);
 
   // Get an actual value by doing initial fetch in useEffect():

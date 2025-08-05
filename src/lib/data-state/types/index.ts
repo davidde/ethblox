@@ -77,7 +77,7 @@ export type DataStateMethods<T> = {
   setError: (error: unknown, prefix?: string) => void;
   // This is the fetch function that is used to initialize the DataState,
   // and can be called to refetch when an error occurred.
-  fetch: () => Promise<T | undefined>;
+  fetch: () => Promise<Root<T>>;
   // Populate the DataRoot with data from an initial fetch in useEffect():
   useInit: () => void;
   // The DataState.Render() method can be called at all times; in Value-, Error-,
