@@ -114,13 +114,13 @@ export function useDataStateMethods<T, A extends any[] = any[]>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const stableArgs = useMemo(() => transformerArgs || [] as unknown as B, transformerArgs || [] as unknown as B);
 
-    const transformConfig = {
-      transformer: stableTransformer,
-      args: stableArgs,
-    };
+    // const transformConfig = {
+    //   transformer: stableTransformer,
+    //   args: stableArgs,
+    // };
 
     // Construct the new subset DataState to return:
-    const transformedData = useConfig<U, T>(transformConfig);
+    const transformedData = useConfig<U, T>({transformer: stableTransformer, args: stableArgs,});
 
     useEffect(() => {
       switch (dataRoot.status) {
@@ -144,7 +144,8 @@ export function useDataStateMethods<T, A extends any[] = any[]>(
           break;
       }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dataRoot, stableArgs]);
+    
+    }, [dataRoot.status, dataRoot.value, dataRoot.error, stableArgs, transformedData.setValue, transformedData.setError]);
 
     return transformedData;
   }

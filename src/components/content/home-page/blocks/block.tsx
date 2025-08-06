@@ -26,14 +26,14 @@ export default function Block(props: {
     fetcher: (alchemy, num) => alchemy.core.getBlock(num!),
     args: [alchemy, blockNumber],
   })
-  // .useTransform(
-  //   (response) => ({
-  //     timestamp: `(${getBlockAgeFromSecs(getSecsFromUnixSecs(response.timestamp))} ago)`,
-  //     transactions: `${response.transactions.length} transactions`,
-  //     recipientHashFull: response.miner,
-  //     recipientHashShort: truncateAddress(response.miner, 20),
-  //   })
-  // );
+  .useTransform(
+    (response) => ({
+      timestamp: `(${getBlockAgeFromSecs(getSecsFromUnixSecs(response.timestamp))} ago)`,
+      transactions: `${response.transactions.length} transactions`,
+      recipientHashFull: response.miner,
+      recipientHashShort: truncateAddress(response.miner, 20),
+    })
+  );
 
   return (
     <div className='min-h-[8.5rem] md:min-h-[5.8rem] p-2 md:p-3 border-b border-(--border-color) last:border-0'>
