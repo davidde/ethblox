@@ -20,7 +20,7 @@ export default function RefetchButton<T>(props: {
   };
 
   return (
-    <button onClick={handleClick}>
+    <button onClick={handleClick} aria-label='Refetch button'>
       <ArrowPathIcon className={`w-[1em] h-[1em] ${spin} ${props.className}`} />
     </button>
   );
