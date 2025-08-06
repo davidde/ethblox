@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useNetwork } from '@/components/common/network-context';
 
 
-export default function EthNetworkToggle(props: { className?: string }) {
+export default function NetworkPicker(props: { className?: string }) {
   const [ mounted, setMounted ] = useState(false);
   const { network } = useNetwork();
   const sepolia = network === 'sepolia';
@@ -23,7 +23,8 @@ export default function EthNetworkToggle(props: { className?: string }) {
   return (
     <Menu>
       <MenuButton className={`${props.className}
-        bg-(image:--eth-logo-url) bg-contain bg-no-repeat bg-right`} />
+        bg-(image:--eth-logo-url) bg-contain bg-no-repeat bg-right`}
+        aria-label='Network picker' />
       <MenuItems
         className='bg-(--main-bg-color)
                    border-2 border-(--border-color)

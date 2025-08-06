@@ -9,7 +9,7 @@ type Props = {
   className?: string
 }
 
-export default function DarkmodeToggle(props: Props) {
+export default function ThemeToggle(props: Props) {
   const { resolvedTheme, setTheme } = useTheme();
   const [ mounted, setMounted ] = useState(false);
 
@@ -45,7 +45,7 @@ export default function DarkmodeToggle(props: Props) {
   }
 
   return (
-    <button className={props.className} onClick={toggleTheme} >
+    <button className={props.className} onClick={toggleTheme} aria-label='Theme toggle'>
       {
         resolvedTheme === 'dark' ?
         <SunIcon />

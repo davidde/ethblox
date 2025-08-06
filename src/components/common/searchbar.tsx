@@ -37,6 +37,7 @@ export default function Searchbar(props: { className?: string }) {
       />
       <Button
         type='submit'
+        aria-label='search'
         className='w-11 h-10 leading-8 align-middle text-center rounded-lg ml-4 cursor-pointer
                    bg-(--link-color) dark:bg-(--hover-bg-color) hover:bg-(--hover-fg-color)
                    text-(--main-bg-color) dark:text-(--hover-fg-color) hover:text-white'
