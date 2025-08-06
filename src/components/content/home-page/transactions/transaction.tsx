@@ -12,15 +12,15 @@ export default function Transaction(props: {
   network: string,
   blockWithTransactionsData: DataState<BlockWithTransactions>,
 }) {
-  // const txData = props.blockWithTransactionsData.useTransform(
-  //   (data, id) => ({ ...data.transactions[id] }),
-  //   [props.id]
-  // );
+  const txData = props.blockWithTransactionsData.useTransform(
+    (data, id) => ({ ...data.transactions[id] }),
+    [props.id]
+  );
 
   return (
     <div className='md:min-h-[4.825rem] p-2 md:p-3 border-b border-(--border-color) last:border-0'>
       <div className='flex flex-col md:flex-row'>
-        {/* <div className='flex'>
+        <div className='flex'>
           <DocumentTextIcon className='w-10 h-10 md:w-8 md:h-8' />
           <div className='flex flex-col ml-2 pt-1 md:pt-0 md:w-48'>
             <span className='px-2 md:px-4'>
@@ -87,7 +87,7 @@ export default function Transaction(props: {
               }
             </txData.Render>
           </span>
-        </div> */}
+        </div>
       </div>
     </div>
   );

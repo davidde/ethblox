@@ -26,5 +26,5 @@ export const useDataRoot: DataRootConstructor = <T>(isDummyFlag: boolean = false
 
   const isDummy = () => root.error === null;
 
-  return { ...root, setRoot, setLoading, setValue, setError, isDummy }
+  return { ...root, root, setRoot, setLoading, setValue, setError, isDummy }
 };

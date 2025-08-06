@@ -42,6 +42,8 @@ export type ErrorRootConstructor = <T,>(unknownError: unknown, errorPrefix?: str
 export type DataRoot<T> = Root<T> & DataRootMethods<T>;
 
 export type DataRootMethods<T> = {
+  // The Root state without any of the methods that can cause rerenders:
+  root: Root<T>;
   // These methods set the DataRoot value using React's useState.
   // CAREFUL: Requires using `useEffect`, `useCallback` or event handlers!
   // Do NOT use it directly in a component's body or they will cause an infinite rerender loop!
@@ -196,7 +198,7 @@ export type TransformConfig<T, I, A extends any[] = any[]> = {
 // or transformed from an input object:
 // Configs still need to be separated into different functions!
 export type DataStateConstructor = <T, I = T, A extends any[] = any[]>(
-  config: FetchConfig<T, A>
+  config: FetchConfig<T, A> | TransformConfig<T, I, A>
 ) => DataState<T>;
 
 

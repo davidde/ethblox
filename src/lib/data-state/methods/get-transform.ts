@@ -21,14 +21,16 @@ export function getTransform<T>(dataState: DataState<T>) {
 
     // Construct the new subset DataState to return:
     const transformedData = dataState.useFetch<U, T>(transformConfig);
+    // Root doesn't contain methods, so won't cause unnecessary rerenders:
+    const root = dataState.root;
 
     useEffect(() => {
-      switch (dataState.status) {
+      switch (root.status) {
         case 'loading':
           break;
         case 'value':
           try {
-            const transformedValue = stableTransformer(dataState.value, ...stableArgs);
+            const transformedValue = stableTransformer(root.value, ...stableArgs);
             transformedData.setValue(transformedValue);
           } catch (err) {
             // Handle transformer errors gracefully:
@@ -40,11 +42,11 @@ export function getTransform<T>(dataState: DataState<T>) {
           }
           break;
         case 'error':
-          transformedData.setError(dataState.error);
+          transformedData.setError(root.error);
           break;
       }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dataState, stableArgs]);
+    }, [root, stableArgs]);
 
     return transformedData;
   }
