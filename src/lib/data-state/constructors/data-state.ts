@@ -5,6 +5,7 @@ import type {
 } from '../types';
 import { useDataStateMethods } from '../methods';
 import { useDataRoot } from './data-root';
+import { createLoadingRoot } from './root';
 
 
 /*********************************************************************
@@ -22,12 +23,13 @@ Constructors for the DataState type:
 // Contrary to `useDataState()`, this constructor does NOT actually run the fetch!
 export const useConfig: DataStateConstructor = <T, A extends any[] = any[]>(config: FetchConfig<T, A>) => {
   // Initialize a DataRoot<T> in Loading state:
-  const dataRoot = useDataRoot<T>();
+  // const dataRoot = useDataRoot<T>();
+  const [root, setRoot] = useState(createLoadingRoot<T>());
 
   // Create the DataStateMethods to extend the DataRoot<T> into a full DataState<T>:
-  const dataStateMethods = useDataStateMethods(dataRoot, config);
+  const dataStateMethods = useDataStateMethods<T>(root, setRoot, config);
 
-  return { ...dataRoot, ...dataStateMethods };
+  return { ...root, ...dataStateMethods };
 };
 
 // End-user hook that creates a DataState<T> object from a FetchConfig
