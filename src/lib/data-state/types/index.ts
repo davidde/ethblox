@@ -42,8 +42,8 @@ export type ErrorRootConstructor = <T,>(unknownError: unknown, errorPrefix?: str
 export type DataRoot<T> = Root<T> & DataRootMethods<T>;
 
 export type DataRootMethods<T> = {
-  // The Root state without any of the methods that can cause rerenders:
-  root: Root<T>;
+  // Get the Root state without any of the methods that can cause rerenders:
+  getRoot: () => Root<T>;
   // These methods set the DataRoot value using React's useState.
   // CAREFUL: Requires using `useEffect`, `useCallback` or event handlers!
   // Do NOT use it directly in a component's body or they will cause an infinite rerender loop!

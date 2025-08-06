@@ -22,7 +22,7 @@ export function getTransform<T>(dataState: DataState<T>) {
     // Construct the new subset DataState to return:
     const transformedData = dataState.useFetch<U, T>(transformConfig);
     // Root doesn't contain methods, so won't cause unnecessary rerenders:
-    const root = dataState.root;
+    const root = dataState.getRoot();
 
     useEffect(() => {
       switch (root.status) {

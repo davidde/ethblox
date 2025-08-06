@@ -20,11 +20,13 @@ export const useDataRoot: DataRootConstructor = <T>(isDummyFlag: boolean = false
   // `dataRoot.setRoot(newValueRoot(myValue));`
   const [root, setRoot] = useState(newLoadingRoot<T>(isDummyFlag));
 
+  const getRoot = () => root;
+
   const setLoading = () => setRoot(newLoadingRoot(isDummyFlag));
   const setValue = (dataValue: T) => setRoot(newValueRoot(dataValue));
   const setError = (unknownError: unknown, prefix?: string) => setRoot(newErrorRoot(unknownError, prefix));
 
   const isDummy = () => root.error === null;
 
-  return { ...root, root, setRoot, setLoading, setValue, setError, isDummy }
+  return { ...root, getRoot, setRoot, setLoading, setValue, setError, isDummy }
 };
