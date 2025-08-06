@@ -94,6 +94,17 @@ export default function NodeBanner(props: { className?: string }) {
       lineColor = window.getComputedStyle(dark).getPropertyValue('--banner-line-color');
     }
 
+    const gradient = context.createRadialGradient(
+      canvas.current.width / 2, // x0: Center x
+      canvas.current.height / 2, // y0: Center y
+      0, // r0: Start radius (point)
+      canvas.current.width / 2, // x1: End x
+      canvas.current.height / 2,// y1: End y
+      canvas.current.width / 5  // r1: End radius
+    );
+    gradient.addColorStop(0, 'rgba(255, 255, 255, 0)'); // Bright center
+    gradient.addColorStop(0, 'rgba(255, 255, 255, 0)'); // Transparent edge
+
     // Set up all canvas and node data:
     function setupCanvasData() {
       if (!canvas.current) return;
@@ -113,12 +124,29 @@ export default function NodeBanner(props: { className?: string }) {
         nodes.push(node);
       }
     }
-  
+
     // Loop function to animate the canvas:
     function loop() {
-      // Clear the canvas from nodes and lines:
+      // Clear the entire canvas every frame:
+      context.clearRect(0, 0, width, height); 
+
+      const gradient = context.createRadialGradient(
+        width / 2.7, // x0: x position of inner circle’s center (focus point)
+        height / 2.4, // y0: y position of inner circle’s center (focus point)
+        0, // r0: Radius of the inner circle (start radius)
+        width / 2.7, // x1: x position of outer circle’s center
+        height / 2.4,// y1: y position of the outer circle’s center
+        width / 5  // r1: Radius of the outer circle (end radius)
+      );
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 0.1)'); // Bright center
+      gradient.addColorStop(1, 'rgba(255, 255, 255, 0)'); // Fade to transparent
+
+      // Redraw the gradient background every frame:
       context.fillStyle = bgColor;
       context.fillRect(0, 0, width, height);
+      context.fillStyle = gradient;
+      context.fillRect(0, 0, width, height);
+
       // Move all nodes:
       for (let i = 0; i < nodes.length; i++) nodes[i].move();
       // Draw the lines again:
@@ -213,13 +241,13 @@ export default function NodeBanner(props: { className?: string }) {
   }
 
   return (
-    <div className={`${props.className} bg-(--banner-bg-color) w-full
+    <div className={`${props.className} bg-(--banner-bg-color) w-full 
                 h-(--node-banner-height-px) -mt-(--content-y-margin)`}>
       {/* The following 2 spans are required to make the conditional
           `window.getComputedStyle()` on line 90 work properly: */}
       <span className='hidden light' />
       <span className='hidden dark' />
-      <canvas ref={canvas} />
+      <canvas ref={canvas} className='bg-(image:--bg-image-light-glow-circle)' />
     </div>
   );
 }

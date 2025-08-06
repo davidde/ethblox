@@ -39,8 +39,8 @@ export default function Searchbar(props: { className?: string }) {
         type='submit'
         aria-label='search'
         className='w-11 h-10 leading-8 align-middle text-center rounded-lg ml-4 cursor-pointer
-                   bg-(--link-color) dark:bg-(--hover-bg-color) hover:bg-(--hover-fg-color)
-                   text-(--main-bg-color) dark:text-(--hover-fg-color) hover:text-white'
+                   bg-(--button-color) dark:bg-(--button-color) hover:bg-(--button-hover-color)
+                   text-(--button-fg-color) dark:text-(--button-fg-color) hover:text-white'
       >
         <MagnifyingGlassIcon
           className='inline-block w-6 h-6 text-center'
