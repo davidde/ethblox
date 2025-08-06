@@ -149,7 +149,7 @@ export function useDataStateMethods<T, A extends any[] = any[]>(
       }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     
-    }, [root.status, root.value, root.error, stableArgs, transformedData.setValue, transformedData.setError]);
+    }, [root, stableArgs]);
 
     return transformedData;
   }
