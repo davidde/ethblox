@@ -1,5 +1,5 @@
 import { useMethodSetter } from '../methods';
-import { Root, DummyConstructor, Transformer, FetchConfig, DataState, DataRoot } from '../types';
+import { Root, DummyConstructor, FetchConfig } from '../types';
 import { useDataRoot } from './data-root';
 import { newLoadingRoot } from './root';
 

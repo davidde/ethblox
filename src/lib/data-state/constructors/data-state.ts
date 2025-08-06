@@ -1,22 +1,16 @@
-import { useState } from 'react';
 import type {
   DataStateConstructor,
-  DummyConstructor,
   FetchConfig,
 } from '../types';
-import { useMethodSetter } from '../methods';
-import { useDataRoot } from './data-root';
 import { useDummy } from './dummy';
 
 
-/*********************************************************************
-Constructors for the DataState type:
-* `useFetch()` is the actual DataState constructor that
-  uses a FetchConfig object to initialize the DataState.
-* `useDataState()` is an end-user hook that calls `useFetch()`,
-  and then additionally runs `useLoad()` to run the fetch and
-  populate the DataState with actual data.
-*********************************************************************/
+/******************************************************************************
+Constructor for the DataState type:
+`useDataState()` is an end-user hook that calls `useDummy()` to initialize
+a dummy DataState, then sets its fetcher using the `useFetch()` hook, and then
+runs `useLoad()` to run the fetch and populate the DataState with actual data.
+*******************************************************************************/
 
 
 // End-user hook that creates a DataState<T> object from a FetchConfig

@@ -7,7 +7,7 @@ import { newErrorRoot, newLoadingRoot, newValueRoot } from './root';
 
 /*********************************************************************
 Constructor for the DataRoot type, which is essentially a Root with
-its own setters using `useState`.
+its own setter using `useState`.
 *********************************************************************/
 
 

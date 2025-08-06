@@ -7,8 +7,8 @@ import type {
 
 /*********************************************************************
 Constructors for the Root<T> type:
-`loading()`, `value()` and `error()` return *Roots*,
-to be used for initializing or setting a DataRoot!
+`newLoadingRoot()`, `newValueRoot()` and `newErrorRoot()` return *Roots*,
+to be used for initializing or setting a DataRoot/DataState!
 These functions need to return as Root<T>, and NOT as their
 more specific variants like LoadingRoot, ValueRoot or ErrorRoot.
 This way, we can re-assign other variants afterwards if required!
