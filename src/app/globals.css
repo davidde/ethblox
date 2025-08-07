@@ -103,6 +103,7 @@
     --banner-bg-color: rgb(194, 202, 226);
     --banner-node-color: rgb(164, 150, 209);
     --banner-line-color: rgb(131, 133, 255);
+    --banner-linear-gradient-to-color: rgb(234, 234, 247);
     --grey-fg-color: rgb(85, 81, 81);
     --dark-grey-fg-color: var(--grey-fg-color);
     --border-color: rgb(178, 192, 210);
@@ -130,6 +131,7 @@
     --banner-bg-color: #060606;
     --banner-node-color: rgb(20, 66, 23);
     --banner-line-color: rgb(68, 134, 90);
+    --banner-linear-gradient-to-color: #070707;
     --grey-fg-color: #909090;
     --dark-grey-fg-color: #606060;
     --border-color: rgb(0, 40, 8);
