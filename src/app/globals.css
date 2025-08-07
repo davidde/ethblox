@@ -104,6 +104,7 @@
     --banner-node-color: rgb(164, 150, 209);
     --banner-line-color: rgb(131, 133, 255);
     --grey-fg-color: rgb(85, 81, 81);
+    --dark-grey-fg-color: var(--grey-fg-color);
     --border-color: rgb(178, 192, 210);
     --link-color: rgb(131, 78, 216);
     --hover-fg-color: rgb(173, 102, 236);
@@ -114,6 +115,7 @@
     --button-color: var(--link-color);
     --button-hover-color: var(--hover-fg-color);
     --button-fg-color: var(--main-bg-color);
+    --searchbar-bg-color: var(--main-bg-color);
 
     --loading-text-color: var(--banner-bg-color);
     --loading-glow-color: var(--grey-fg-color);
@@ -121,24 +123,26 @@
   }
 
   .dark {
-    --main-bg-color: #101010;
+    --main-bg-color: #090909;
     --main-fg-color: #a5a5a5;
     --comp-bg-color: black;
     --card-bg-color: rgb(2, 18, 5);
-    --banner-bg-color: #090909;
+    --banner-bg-color: #060606;
     --banner-node-color: rgb(20, 66, 23);
     --banner-line-color: rgb(68, 134, 90);
     --grey-fg-color: #909090;
-    --border-color: rgb(1, 30, 7);
+    --dark-grey-fg-color: #606060;
+    --border-color: rgb(0, 40, 8);
     --link-color: rgb(11, 153, 61);
     --hover-fg-color: rgb(32, 222, 67);
     --hover-bg-color: rgb(7, 59, 16);
     --gradient-from-color: rgb(3, 91, 43);
     --gradient-via-color: rgb(60, 195, 155);
     --gradient-to-color: rgb(4, 208, 14);
-    --button-color: rgb(3, 62, 23);
-    --button-hover-color: rgb(9, 96, 38);
-    --button-fg-color: rgb(123, 228, 143);
+    --button-color: rgb(22, 130, 58);
+    --button-hover-color: rgb(43, 213, 100);
+    --button-fg-color: rgb(158, 251, 175);
+    --searchbar-bg-color: #191919;
 
     --loading-text-color: var(--banner-bg-color);
     --loading-glow-color: var(--grey-fg-color);

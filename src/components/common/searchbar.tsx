@@ -32,8 +32,8 @@ export default function Searchbar(props: { className?: string }) {
         onChange={e => setSearchTerm(e.target.value.trim())}
         className='block w-full h-10 rounded-lg p-2
                     focus:outline-hidden data-focus:outline-2 data-focus:-outline-offset-2
-                    data-focus:outline-(--link-color) bg-(--main-bg-color)
-                    border-2 border-(--border-color) dark:placeholder-[#364236]'
+                    data-focus:outline-(--link-color) bg-(--searchbar-bg-color)
+                    border border-(--border-color) dark:placeholder-(--dark-grey-fg-color)'
       />
       <Button
         type='submit'
