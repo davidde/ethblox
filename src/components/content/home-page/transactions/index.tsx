@@ -43,7 +43,8 @@ export default function Transactions(props: {
   }
   return (
     <div className='border border-(--border-color) bg-(--comp-bg-color)
-                    rounded-lg w-full md:w-[48%] max-w-xl md:min-w-132 mt-4 md:mt-8 md:mr-12'>
+                    shadow-xl/20 dark:shadow-[#484848] rounded-lg
+                    w-full md:w-[48%] max-w-xl md:min-w-132 mt-4 md:mt-8 md:mr-12'>
       <h2 className='text-[1.15rem] font-bold p-2 pl-4 md:p-3 md:pl-4 border-b border-(--border-color)'>
         Latest Transactions
       </h2>

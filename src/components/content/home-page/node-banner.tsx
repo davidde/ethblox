@@ -228,6 +228,7 @@ export default function NodeBanner(props: { className?: string }) {
 
   return (
     <div className={`${props.className} bg-(--banner-bg-color) w-full
+                shadow-xl/12 dark:shadow-xl/5 dark:shadow-[#484848]
                 h-(--node-banner-height-px) -mt-(--content-y-margin)`}>
       {/* The following 2 spans are required to make the conditional
           `window.getComputedStyle()` on line 90 work properly: */}
