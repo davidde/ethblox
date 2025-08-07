@@ -78,32 +78,17 @@ export default function NodeBanner(props: { className?: string }) {
     let drawLineThreshold: number;
     let speed: number;
     let bgColor: string, nodeColor: string, lineColor: string;
+    let gradientCircleTransparency: string, gradientCircleColor: string;
 
     // This conditional fixes the CSS vars update on theme switch;
     // when getting the CSS vars directly from document.documentElement,
     // it uses the CSS vars of the old theme that was switched away from!
-    if (resolvedTheme === 'light') {
-      const light = document.querySelector('.light')!;
-      bgColor = window.getComputedStyle(light).getPropertyValue('--banner-bg-color')
-      nodeColor = window.getComputedStyle(light).getPropertyValue('--banner-node-color');
-      lineColor = window.getComputedStyle(light).getPropertyValue('--banner-line-color');
-    } else {
-      const dark = document.querySelector('.dark')!;
-      bgColor = window.getComputedStyle(dark).getPropertyValue('--banner-bg-color')
-      nodeColor = window.getComputedStyle(dark).getPropertyValue('--banner-node-color');
-      lineColor = window.getComputedStyle(dark).getPropertyValue('--banner-line-color');
-    }
-
-    const gradient = context.createRadialGradient(
-      canvas.current.width / 2, // x0: Center x
-      canvas.current.height / 2, // y0: Center y
-      0, // r0: Start radius (point)
-      canvas.current.width / 2, // x1: End x
-      canvas.current.height / 2,// y1: End y
-      canvas.current.width / 5  // r1: End radius
-    );
-    gradient.addColorStop(0, 'rgba(255, 255, 255, 0)'); // Bright center
-    gradient.addColorStop(0, 'rgba(255, 255, 255, 0)'); // Transparent edge
+    const theme = resolvedTheme === 'light' ? document.querySelector('.light')! : document.querySelector('.dark')!;
+    bgColor = window.getComputedStyle(theme).getPropertyValue('--banner-bg-color')
+    nodeColor = window.getComputedStyle(theme).getPropertyValue('--banner-node-color');
+    lineColor = window.getComputedStyle(theme).getPropertyValue('--banner-line-color');
+    // Alpha of bright center circle of radial gradient:
+    gradientCircleTransparency = resolvedTheme === 'light' ? '1' : '0.12';
 
     // Set up all canvas and node data:
     function setupCanvasData() {
@@ -130,15 +115,16 @@ export default function NodeBanner(props: { className?: string }) {
       // Clear the entire canvas every frame:
       context.clearRect(0, 0, width, height); 
 
+      // Create gradient for canvas background:
       const gradient = context.createRadialGradient(
-        width / 2.7, // x0: x position of inner circle’s center (focus point)
+        width / 3, // x0: x position of inner circle’s center (focus point)
         height / 2.4, // y0: y position of inner circle’s center (focus point)
         0, // r0: Radius of the inner circle (start radius)
-        width / 2.7, // x1: x position of outer circle’s center
+        width / 3, // x1: x position of outer circle’s center
         height / 2.4,// y1: y position of the outer circle’s center
         width / 5  // r1: Radius of the outer circle (end radius)
-      );
-      gradient.addColorStop(0, 'rgba(255, 255, 255, 0.1)'); // Bright center
+      ); // rgb(213, 218, 231)
+      gradient.addColorStop(0, `rgba(255, 255, 255, ${gradientCircleTransparency})`); // Bright center
       gradient.addColorStop(1, 'rgba(255, 255, 255, 0)'); // Fade to transparent
 
       // Redraw the gradient background every frame:
@@ -241,13 +227,13 @@ export default function NodeBanner(props: { className?: string }) {
   }
 
   return (
-    <div className={`${props.className} bg-(--banner-bg-color) w-full 
+    <div className={`${props.className} bg-(--banner-bg-color) w-full
                 h-(--node-banner-height-px) -mt-(--content-y-margin)`}>
       {/* The following 2 spans are required to make the conditional
           `window.getComputedStyle()` on line 90 work properly: */}
       <span className='hidden light' />
       <span className='hidden dark' />
-      <canvas ref={canvas} className='bg-(image:--bg-image-light-glow-circle)' />
+      <canvas ref={canvas} />
     </div>
   );
 }
