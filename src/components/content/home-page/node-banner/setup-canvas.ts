@@ -1,6 +1,3 @@
-import { RefObject } from 'react';
-
-
 // Settings:
 const nodeSize = 3; // medium node radius in pixels
 const lineWidth = 2; // node connection line width in pixels
