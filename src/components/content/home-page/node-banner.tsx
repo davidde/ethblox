@@ -88,7 +88,7 @@ export default function NodeBanner(props: { className?: string }) {
     nodeColor = window.getComputedStyle(theme).getPropertyValue('--banner-node-color');
     lineColor = window.getComputedStyle(theme).getPropertyValue('--banner-line-color');
     // Alpha of bright center circle of radial gradient:
-    gradientCircleTransparency = resolvedTheme === 'light' ? '1' : '0.12';
+    gradientCircleTransparency = resolvedTheme === 'light' ? '1' : '0.13';
 
     // Set up all canvas and node data:
     function setupCanvasData() {
@@ -127,16 +127,16 @@ export default function NodeBanner(props: { className?: string }) {
       gradient.addColorStop(0, `rgba(255, 255, 255, ${gradientCircleTransparency})`); // Bright center
       gradient.addColorStop(1, 'rgba(255, 255, 255, 0)'); // Fade to transparent
 
-      // Redraw the gradient background every frame:
-      context.fillStyle = bgColor;
-      context.fillRect(0, 0, width, height);
-      context.fillStyle = gradient;
-      context.fillRect(0, 0, width, height);
-
       // Move all nodes:
       for (let i = 0; i < nodes.length; i++) nodes[i].move();
       // Draw the lines again:
       drawLines();
+
+      // Redraw the gradient background every frame:
+      // (After nodes and lines, so they appear under it)
+      context.fillStyle = gradient;
+      context.fillRect(0, 0, width, height);
+
       // Repeat the loop:
       requestAnimationFrame(loop);
     }
