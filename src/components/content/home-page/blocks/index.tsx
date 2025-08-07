@@ -11,7 +11,7 @@ export default function Blocks(props: {
 }) {
   return (
     <div className='border border-(--border-color) bg-(--comp-bg-color)
-                    shadow-xl/20 dark:shadow-[#484848] rounded-lg
+                    shadow-xl/20 dark:shadow-[#3a3a3a] rounded-lg
                     w-full md:w-[48%] max-w-xl md:min-w-132 my-4 md:my-8 md:mr-12'>
       <h2 className='text-[1.15rem] font-bold p-2 pl-4 md:p-3 md:pl-4 border-b border-(--border-color)'>Latest Blocks</h2>
       {

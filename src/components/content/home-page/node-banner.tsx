@@ -117,11 +117,11 @@ export default function NodeBanner(props: { className?: string }) {
 
       // Create gradient for canvas background:
       const gradient = context.createRadialGradient(
-        width / 3, // x0: x position of inner circle’s center (focus point)
-        height / 2.4, // y0: y position of inner circle’s center (focus point)
+        width / 3.1, // x0: x position of inner circle’s center (focus point)
+        height / 2.6, // y0: y position of inner circle’s center (focus point)
         0, // r0: Radius of the inner circle (start radius)
-        width / 3, // x1: x position of outer circle’s center
-        height / 2.4,// y1: y position of the outer circle’s center
+        width / 3.1, // x1: x position of outer circle’s center
+        height / 2.6,// y1: y position of the outer circle’s center
         width / 5  // r1: Radius of the outer circle (end radius)
       ); // rgb(213, 218, 231)
       gradient.addColorStop(0, `rgba(255, 255, 255, ${gradientCircleTransparency})`); // Bright center
@@ -228,7 +228,7 @@ export default function NodeBanner(props: { className?: string }) {
 
   return (
     <div className={`${props.className} bg-(--banner-bg-color) w-full
-                shadow-xl/12 dark:shadow-xl/5 dark:shadow-[#484848]
+                shadow-xl/12 dark:shadow-xl/10 dark:shadow-[#3a3a3a]
                 h-(--node-banner-height-px) -mt-(--content-y-margin)`}>
       {/* The following 2 spans are required to make the conditional
           `window.getComputedStyle()` on line 90 work properly: */}

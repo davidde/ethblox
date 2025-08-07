@@ -102,7 +102,7 @@ export default function Stats() {
 
   return (
     <div className='border border-(--border-color) bg-(--comp-bg-color)
-                    shadow-xl/20 dark:shadow-[#484848]
+                    shadow-xl/20 dark:shadow-[#3a3a3a]
                     rounded-lg w-full max-w-xl md:max-w-300 my-4 md:my-8 md:mr-12 py-2 md:py-0'>
       <div className='flex flex-col md:flex-row justify-between'>
         <StatCard
