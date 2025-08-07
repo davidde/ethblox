@@ -96,11 +96,11 @@
   }
 
   .light {
-    --main-bg-color: rgb(250, 250, 252);
+    --main-bg-color: rgb(238, 238, 251);
     --main-fg-color: black;
-    --comp-bg-color: rgb(235, 238, 244);
+    --comp-bg-color: rgb(221, 228, 240);
     --card-bg-color: rgb(223, 228, 238);
-    --banner-bg-color: rgb(213, 218, 231);
+    --banner-bg-color: rgb(194, 202, 226);
     --banner-node-color: rgb(164, 150, 209);
     --banner-line-color: rgb(131, 133, 255);
     --grey-fg-color: rgb(85, 81, 81);
