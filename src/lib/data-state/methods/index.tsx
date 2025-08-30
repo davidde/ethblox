@@ -6,16 +6,16 @@ import { getTransform } from './get-transform';
 import { useMemo, useRef, useCallback } from 'react';
 
 
-export function useMethodSetter<T, A extends any[] = any[]>(
+export function useMethodSetter<T>(
   dataState: DataState<T>,
-  config: FetchConfig<T, A>,
+  config: FetchConfig<any, any[]>,
 ) {
   // Stabilize args and default to empty array if no args provided:
-  const args = useMemo(() => config.args || [] as unknown as A,
+  const args = useMemo(() => config.args || [] as unknown as any[],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    config.args || [] as unknown as A);
+    config.args || [] as unknown as any[]);
 
-  // Stabilize fetcher/postProcess: only create them once and don't update them.
+  // Stabilize fetcher: only create it once and don't update it.
   // Even if the parent re-creates the fetcher each render (e.g. when defined
   // inline), this fetcher remains the same as on its first initialization.
   // This means that when it closes over variables that might change,
@@ -33,6 +33,7 @@ export function useMethodSetter<T, A extends any[] = any[]>(
     return result;
   }, [fetcher, args, setRoot]);
 
+  dataState.getFetchConfig = () => config;
   dataState.useLoad = getLoad(dataState);
   dataState.Render = getRender(dataState);
   dataState.useTransform = getTransform(dataState);

@@ -9,7 +9,7 @@ export const useDummy: DummyConstructor = <T>(isDummy: boolean = true) => {
   // Initialize a DataRoot<T> in dummy Loading state (isDummy = true):
   const dummy = useDataRoot<T>(isDummy);
 
-  // Create dummy no-op DataStateMethods:
+  // Create dummy no-op DataStateMethods for initialization:
   const dummyMethods = getDummyMethods<T>();
 
   // Return the DataRoot<T> with its dummy DataStateMethods as a DataState<T>:
@@ -37,5 +37,7 @@ function getDummyMethods<T>() {
 
       return dataState;
     },
+
+    getFetchConfig: (): FetchConfig<T, any[]> => ({}),
   }
 }

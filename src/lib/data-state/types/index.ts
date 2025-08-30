@@ -73,6 +73,7 @@ export type DataState<T> = DataRoot<T> & DataStateMethods<T>;
 // DataState Methods that extend the DataRoot<T> into a full DataState<T> type:
 export type DataStateMethods<T> = {
   useFetch: DataStateConstructor,
+  getFetchConfig: () => FetchConfig<T, any[]>,
   // These methods set the DataRoot value using React's useState.
   // CAREFUL: Requires using `useEffect`, `useCallback` or event handlers!
   // Do NOT use it directly in a component's body or they will cause an infinite rerender loop!
@@ -164,11 +165,11 @@ export type RenderConfig<T, K extends keyof T> = {
   className?: string;
 }
 
-export type Fetcher<T, A extends any[] = []> = (...args: A) => Promise<T>;
+export type Fetcher<T, A extends any[] = any[]> = (...args: A) => Promise<T>;
 
 // FetchConfig is used to initialize a DataState<T>, which is a DataRoot<T>,
 // together with its fetching function for potentially refetching it:
-export type FetchConfig<T, A extends any[] = []> = {
+export type FetchConfig<T, A extends any[] = any[]> = {
   // `fetcher` takes any async function, and can be omitted
   // if the fetcher is the standard Fetch API:
   fetcher?: Fetcher<T, A>;
@@ -197,8 +198,8 @@ export type TransformConfig<T, I, A extends any[] = any[]> = {
 // A DataState is either initialized from a fetcher function,
 // or transformed from an input object:
 // Configs still need to be separated into different functions!
-export type DataStateConstructor = <T, I = T, A extends any[] = any[]>(
-  config: FetchConfig<T, A> | TransformConfig<T, I, A>
+export type DataStateConstructor = <T, A extends any[] = any[]>(
+  config: FetchConfig<T, A>
 ) => DataState<T>;
 
 

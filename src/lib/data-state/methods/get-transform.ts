@@ -1,5 +1,6 @@
-import { useRef, useMemo, useEffect } from 'react';
-import { DataState } from '..';
+import { useRef, useMemo, useEffect, useCallback } from 'react';
+import { DataState, Root, useDummy } from '..';
+import { useMethodSetter } from '.';
 
 
 export function getTransform<T>(dataState: DataState<T>) {
@@ -14,27 +15,26 @@ export function getTransform<T>(dataState: DataState<T>) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const stableArgs = useMemo(() => transformerArgs || [] as unknown as B, transformerArgs || [] as unknown as B);
 
-    const transformConfig = {
-      transformer: stableTransformer,
-      args: stableArgs,
-    };
+    // Construct the new DataState to return:
+    const newDataState = useDummy<U>(false);
+    // Set all DataStateMethods on it:
+    useMethodSetter(newDataState, dataState.getFetchConfig());
 
-    // Construct the new subset DataState to return:
-    const transformedData = dataState.useFetch<U, T>(transformConfig);
     // Root doesn't contain methods, so won't cause unnecessary rerenders:
     const root = dataState.getRoot();
 
-    useEffect(() => {
+    const transform = useCallback((root: Root<T>) => {
       switch (root.status) {
         case 'loading':
+          newDataState.setLoading();
           break;
         case 'value':
           try {
             const transformedValue = stableTransformer(root.value, ...stableArgs);
-            transformedData.setValue(transformedValue);
+            newDataState.setValue(transformedValue);
           } catch (err) {
             // Handle transformer errors gracefully:
-            transformedData.setError(
+            newDataState.setError(
               new Error(`DataState useTransform() transformer function failed:
               ${err instanceof Error ? err.message : 'Unknown error'}`,
               { cause: err })
@@ -42,13 +42,26 @@ export function getTransform<T>(dataState: DataState<T>) {
           }
           break;
         case 'error':
-          transformedData.setError(root.error);
+          newDataState.setError(root.error);
           break;
       }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+      return newDataState.getRoot();
     }, [root, stableArgs]);
 
-    return transformedData;
+    const newFetcher = async (): Promise<Root<U>> => {
+      const newRoot = await dataState.fetch();
+      return transform(newRoot) as Root<U>;
+    };
+
+    newDataState.fetch = newFetcher;
+
+    useEffect(() => {
+      transform(root);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [root, transform]);
+
+    return newDataState;
   }
 
   return useTransform;
