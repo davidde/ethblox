@@ -49,12 +49,12 @@ export function getTransform<T>(dataState: DataState<T>) {
       return newDataState.getRoot();
     }, [root, stableArgs]);
 
-    const newFetcher = async (): Promise<Root<U>> => {
+    const newFetch = useCallback(async (): Promise<Root<U>> => {
       const newRoot = await dataState.fetch();
       return transform(newRoot) as Root<U>;
-    };
+    }, [dataState.fetch, transform]);
 
-    newDataState.fetch = newFetcher;
+    newDataState.fetch = newFetch;
 
     useEffect(() => {
       transform(root);

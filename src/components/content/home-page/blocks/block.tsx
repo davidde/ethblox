@@ -12,7 +12,6 @@ import { useDataState, DataState } from '@/lib/data-state';
 import Link from 'next/link';
 import PopoverLink from '../../../common/popover-link';
 import BlockReward from './block-reward';
-import { useDummy } from '@/lib/data-state/constructors/dummy';
 
 
 export default function Block(props: {

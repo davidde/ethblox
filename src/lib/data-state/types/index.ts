@@ -99,7 +99,7 @@ export type DataStateMethods<T> = {
   ) => DataState<U>;
   // // Create a new DataState by composing the values from 2 different DataStates:
   // // (E.g. When some data transformation requires data from 2 different fetches)
-  // useCompose: <U, O>(otherDataState: DataState<O>) => DataState<U>;
+  useCompose: <U, O>(otherDataState: DataState<O>) => DataState<U>;
 };
 
 // Options to configure the `DataState`'s Render method that displays

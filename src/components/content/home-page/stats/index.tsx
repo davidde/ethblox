@@ -9,7 +9,7 @@ import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import StatCard from './stat-card';
 import { getGasPriceGwei, getGasPriceUsd } from '@/lib/utilities';
-import { useDataState, useDummy } from '@/lib/data-state';
+import { DataState, useDataState, useDummy } from '@/lib/data-state';
 
 
 type EthSupplyData = {
@@ -62,43 +62,9 @@ export default function Stats() {
       currency: 'USD',
     }) : undefined;
 
-  //   const ethMarketCapData = pricesAndTxsData.useTransform(
-  //     (pricesAndTxsV, ethSupplyDV) => {
-  //       const ethPrice = +pricesAndTxsV.coin_price;
-  //       const ethSupply = ethSupplyDV ? +ethSupplyDV.available_supply : undefined;
-  //       const ethMarketCapFormatted = (ethPrice && ethSupply) ?
-  //         (ethPrice * ethSupply).toLocaleString('en-US', {
-  //           style: 'currency',
-  //           currency: 'USD',
-  //         }) : undefined;
-  //       return {
-  //         ethMarketCap: ethMarketCapFormatted,
-  //       };
-  //     },
-  //     [ethSupplyData.value]
-  //   );
-
   // Since ethMarketCapFormatted is dependent on both fetches / DataStates, we need a new
   // DataState for it to correctly render when it is in Error or Loading states.
-  // Contrary to `useDataState`, `DataState.useFetch()` just creates the (undefined) DataState
-  // (LoadingRoot) from the fetcher, without actually running the fetcher:
-  const ethMarketCapData = useDummy().useFetch<any>({
-    fetcher: async () => await Promise.all([pricesAndTxsData.fetch(), ethSupplyData.fetch()])
-  });
-
-  // Give it a correct value if both fetches have already succeeded or an error if not:
-  // (This requires `useEffect` because of setValue/setError)
-  useEffect(() => {
-    if (ethMarketCapFormatted) {
-      ethMarketCapData.setValue(ethMarketCapFormatted);
-    }
-    if (pricesAndTxsData.error || ethSupplyData.error) {
-      ethMarketCapData.setError('Price or supply fetch failed');
-    }
-  // Dont include `ethMarketCapData` as a dependency as `react-hooks` says,
-  // or it'll cause an infinite loop!
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ethMarketCapFormatted]);
+  const ethMarketCapData: DataState<[PricesAndTxsData, EthSupplyData]> = pricesAndTxsData.useCompose(ethSupplyData);
 
   return (
     <div className='border border-(--border-color) bg-(--comp-bg-color)

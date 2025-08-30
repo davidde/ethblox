@@ -1,3 +1,4 @@
+import { DataState } from '..';
 import { useMethodSetter } from '../methods';
 import { Root, DummyConstructor, FetchConfig } from '../types';
 import { useDataRoot } from './data-root';
@@ -23,6 +24,7 @@ function getDummyMethods<T>() {
     useLoad: () => useDummy<T>(),
     Render: () => null,
     useTransform: <U>() => useDummy<U>(),
+    useCompose: <U>() => useDummy<U>(),
 
     // `useFetch()` DOES actually need to work so a working DataState can be initialized with it.
     // This function creates a functional `DataState<T>` type from a FetchConfig object,

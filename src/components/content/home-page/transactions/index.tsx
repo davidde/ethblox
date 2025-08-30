@@ -2,7 +2,7 @@
 
 import { useAlchemy } from '@/lib/utilities';
 import { useDataState, DataState } from '@/lib/data-state';
-import type { Alchemy, BlockWithTransactions } from 'alchemy-sdk';
+import type { BlockWithTransactions } from 'alchemy-sdk';
 import Transaction from './transaction';
 import ErrorIndicator from '@/components/common/indicators/error-indicator';
 
