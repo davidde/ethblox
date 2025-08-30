@@ -1,4 +1,3 @@
-import { DataState } from '..';
 import { useMethodSetter } from '../methods';
 import { Root, DummyConstructor, FetchConfig } from '../types';
 import { useDataRoot } from './data-root';

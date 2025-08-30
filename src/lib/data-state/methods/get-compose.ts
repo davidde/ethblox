@@ -45,13 +45,14 @@ export function getCompose<T>(dataState: DataState<T>) {
       }
 
       return composedData.getRoot();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const newFetch = useCallback(async () => {
       const composedFetch = await Promise.all([dataState.fetch(), otherDataState.fetch()]);
 
       return compose(composedFetch[0], composedFetch[1]);
-    }, [dataState.fetch, otherDataState.fetch, composedData]);
+    }, [otherDataState, compose]);
 
     composedData.fetch = newFetch;
     const thisRoot = dataState.getRoot();

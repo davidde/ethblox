@@ -47,12 +47,13 @@ export function getTransform<T>(dataState: DataState<T>) {
       }
 
       return newDataState.getRoot();
-    }, [root, stableArgs]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [root, stableTransformer, stableArgs]);
 
     const newFetch = useCallback(async (): Promise<Root<U>> => {
       const newRoot = await dataState.fetch();
       return transform(newRoot) as Root<U>;
-    }, [dataState.fetch, transform]);
+    }, [transform]);
 
     newDataState.fetch = newFetch;
 
