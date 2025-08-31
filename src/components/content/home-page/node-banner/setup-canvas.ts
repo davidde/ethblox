@@ -20,6 +20,7 @@ const drawLineThresholdMobile = 90;
 export function setupCanvas(
   canvas: HTMLCanvasElement,
   nodesRef: RefObject<NodeData[]>,
+  nodeColor: string,
 ) {
   const width = window.innerWidth; // Set node canvas width
   const height = Number(window.getComputedStyle(document.body).getPropertyValue('--node-banner-height'));
@@ -48,7 +49,8 @@ export function setupCanvas(
       randomInt(0, height),
       speed,
       nodeAmount,
-      nodeSize
+      nodeSize,
+      nodeColor,
     );
     nodesRef.current.push(node);
   }

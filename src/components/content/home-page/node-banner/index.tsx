@@ -51,7 +51,7 @@ export default function NodeBanner(props: { className?: string }) {
     }
 
     // Set up canvas:
-    let canvasData: CanvasData = setupCanvas(canvas, nodesRef);
+    let canvasData: CanvasData = setupCanvas(canvas, nodesRef, colorData.nodeColor);
 
     // Set up animation loop:
     let loop = setupLoop(context, canvasData, colorData);
@@ -60,7 +60,7 @@ export default function NodeBanner(props: { className?: string }) {
     // Resize event listener:
     function handleResize() {
       loop.stop();
-      canvasData = setupCanvas(canvas, nodesRef);
+      canvasData = setupCanvas(canvas, nodesRef, colorData.nodeColor);
       loop = setupLoop(context, canvasData, colorData);
       loop.start();
     }

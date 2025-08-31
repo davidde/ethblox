@@ -37,7 +37,7 @@ export function setupLoop(
     context.fillRect(0, 0, width, height);
 
     // Draw all nodes:
-    drawNodes(context, nodes, colorData.nodeColor);
+    drawNodes(context, nodes);
     // Update all nodes:
     updateNodes(nodes, width, height);
     // Draw the lines:

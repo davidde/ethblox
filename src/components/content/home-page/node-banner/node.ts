@@ -2,7 +2,7 @@ import { hexToRgbNums, randomInt, rgbToRgbNums } from '@/lib/utilities';
 
 
 // Give nodes random colors when true, nodeColor when false:
-const useRandomColor = false;
+let useRandomColor = false;
 // Color array for random color setting:
 const COLORS = ['#4f91f9', '#a7f94f', '#f94f4f', '#f9f74f', '#8930ff', '#fc4edf', '#ff9c51'];
 
@@ -13,16 +13,17 @@ export type NodeData = {
   speedX: number;
   speedY: number;
   size: number;
-  color?: string;
+  color: string;
 };
 
 export function createNode(
   id: number,
-  startX: number,
-  startY: number,
+  x: number,
+  y: number,
   speed: number,
   nodeAmount: number,
-  nodeSize: number
+  nodeSize: number,
+  nodeColor: string,
 ): NodeData {
   let speedX: number;
   let speedY: number;
@@ -40,17 +41,17 @@ export function createNode(
   const size = id > Math.floor(nodeAmount * 0.75) ? nodeSize + 1.5 :
                id <= Math.floor(nodeAmount * 0.25) ? nodeSize - 1 : nodeSize;
 
-  return { id: id, x: startX, y: startY, speedX, speedY, size };
+  // Set random color from array if `useRandomColor` is true:
+  const color = useRandomColor ? COLORS[Math.floor(Math.random() * COLORS.length)] : nodeColor;
+
+  return { id, x, y, speedX, speedY, size, color };
 }
 
 export function drawNodes(
   context: CanvasRenderingContext2D,
   nodes: NodeData[],
-  nodeColor: string,
 ) {
   for (const node of nodes) {
-    // Set random color from array if colored is true:
-    node.color = useRandomColor ? COLORS[Math.floor(Math.random() * COLORS.length)] : nodeColor;
     context.fillStyle = node.color;
 
     // Draw the nodes:
