@@ -1,11 +1,5 @@
 import { CanvasData, ColorData } from '.';
-import { updateNodes } from './node';
-
-
-// Give nodes random colors when true, nodeColor when false:
-const useRandomColor = false;
-// Color array for random color setting:
-const COLORS = ['#4f91f9', '#a7f94f', '#f94f4f', '#f9f74f', '#8930ff', '#fc4edf', '#ff9c51'];
+import { drawLines, drawNodes, updateNodes } from './node';
 
 
 // Loop function to animate the canvas:
@@ -16,6 +10,7 @@ export function setupLoop(
 ) {
   let frameId: number | null = null;
   const { width, height } = canvasData;
+  const nodes = canvasData.nodesRef.current;
 
   // Create linear gradient for canvas background:
   const linearGradient = context.createLinearGradient(0, 0, 0, height);
@@ -42,11 +37,11 @@ export function setupLoop(
     context.fillRect(0, 0, width, height);
 
     // Draw all nodes:
-    drawNodes();
+    drawNodes(context, nodes, colorData.nodeColor);
     // Update all nodes:
-    updateNodes(canvasData.nodesRef.current, width, height);
+    updateNodes(nodes, width, height);
     // Draw the lines:
-    drawLines();
+    drawLines(context, nodes, colorData.lineColor, canvasData.lineWidth, canvasData.drawLineThreshold);
 
     // Redraw the circle gradient background every frame:
     // (After nodes and lines, so they appear under it)
@@ -57,63 +52,6 @@ export function setupLoop(
 
     // Repeat the loop, and save frame ID:
     frameId = requestAnimationFrame(loop);
-  }
-
-  function drawNodes() {
-    for (const node of canvasData.nodesRef.current) {
-      // Set random color from array if colored is true:
-      node.color = useRandomColor? COLORS[Math.floor(Math.random() * COLORS.length)] : colorData.nodeColor;
-      context.fillStyle = node.color;
-
-      // Draw the nodes:
-      context.beginPath();
-      // x position, y position, radius, startAngle, endAngle:
-      context.arc(node.x, node.y, node.size, 0, 2 * Math.PI);
-      context.closePath();
-      context.fill();
-    }
-  }
-
-  // Draw the lines between the nodes:
-  function drawLines() {
-    // Get the rgb values for the color of the line:
-    let rgbValues = colorData.lineColor.startsWith('rgb') ? rgbToRgbNums(colorData.lineColor) : hexToRgbNums(colorData.lineColor);
-    const nodes = canvasData.nodesRef.current;
-
-    for (let i = 0; i < nodes.length; i++) {
-      if (useRandomColor) rgbValues = nodes[i].color?.startsWith('rgb') ?
-        rgbToRgbNums(nodes[i].color) : hexToRgbNums(nodes[i].color);
-
-      // Get the origin point:
-      let x1 = nodes[i].x;
-      let y1 = nodes[i].y;
-
-      // Get the destination point in a subloop that only loops the remaining canvasData.nodes, to avoid duplicate lines:
-      for (let j = i+1; j < nodes.length; j++) {
-        // Get the destination point:
-        let x2 = nodes[j].x;
-        let y2 = nodes[j].y;
-
-        // Calculate the distance between the origin and target points:
-        let dist = distance(x1, x2, y1, y2);
-
-        // If the distance is less than the threshold, draw the line:
-        if (dist < canvasData.drawLineThreshold) {
-          let finalOpacity = 1 - (dist / canvasData.drawLineThreshold);
-          context.strokeStyle = `rgba(${rgbValues!.r}, ${rgbValues!.g}, ${rgbValues!.b}, ${finalOpacity})`;
-          line(x1, y1, x2, y2);
-        }
-      }
-    }
-  }
-
-  // Draw line given a set of two points (as x1, y1, x2 and y2):
-  function line(x1: number, y1: number, x2: number, y2: number) {
-    context.lineWidth = canvasData.lineWidth;
-    context.beginPath();
-    context.moveTo(x1, y1);
-    context.lineTo(x2, y2);
-    context.stroke();
   }
 
   return {
@@ -129,33 +67,4 @@ export function setupLoop(
       }
     },
   };
-}
-
-// Calculate the distance between two points:
-function distance(x1: number, x2: number, y1: number, y2: number) {
-  return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-}
-
-// Convert from hex string to rgb number:
-function hexToRgbNums(hex?: string) {
-  if (!hex) return null;
-
-  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result ? {
-      r: parseInt(result[1], 16),
-      g: parseInt(result[2], 16),
-      b: parseInt(result[3], 16)
-  } : null;
-}
-
-// Convert from rgb() string to rgb number:
-function rgbToRgbNums(rgb?: string) {
-  if (!rgb) return null;
-
-  var result = /^rgb\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)$/i.exec(rgb);
-  return result ? {
-      r: parseInt(result[1]),
-      g: parseInt(result[2]),
-      b: parseInt(result[3])
-  } : null;
 }

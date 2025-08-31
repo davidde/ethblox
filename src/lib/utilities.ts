@@ -129,3 +129,27 @@ export function fakeInitialError(fail: RefObject<boolean>, error?: string) {
 export function randomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
+
+// Convert from hex string to rgb number:
+export function hexToRgbNums(hex?: string) {
+  if (!hex) return null;
+
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+  } : null;
+}
+
+// Convert from rgb() string to rgb number:
+export function rgbToRgbNums(rgb?: string) {
+  if (!rgb) return null;
+
+  var result = /^rgb\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)$/i.exec(rgb);
+  return result ? {
+      r: parseInt(result[1]),
+      g: parseInt(result[2]),
+      b: parseInt(result[3])
+  } : null;
+}
