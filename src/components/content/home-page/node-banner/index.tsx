@@ -52,7 +52,6 @@ export default function NodeBanner(props: { className?: string }) {
 
     // Set up canvas:
     let canvasData: CanvasData = setupCanvas(canvas, nodesRef);
-    console.log(canvasData.width, canvasData.height);
 
     // Set up animation loop:
     let loop = setupLoop(context, canvasData, colorData);
