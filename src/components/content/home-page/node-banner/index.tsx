@@ -51,18 +51,26 @@ export default function NodeBanner(props: { className?: string }) {
     }
 
     // Set up canvas:
-    const canvasData: CanvasData = setupCanvas(canvas, nodesRef);
+    let canvasData: CanvasData = setupCanvas(canvas, nodesRef);
+    console.log(canvasData.width, canvasData.height);
 
     // Set up animation loop:
-    let frameId: number = setupLoop(context, canvasData, colorData);
+    let loop = setupLoop(context, canvasData, colorData);
+    loop.start();
 
     // Resize event listener:
-    window.addEventListener('resize', () => setupCanvas(canvas, nodesRef));
-    return () => {
-      window.removeEventListener('resize', () => setupCanvas(canvas, nodesRef));
-      cancelAnimationFrame(frameId);
+    function handleResize() {
+      loop.stop();
+      canvasData = setupCanvas(canvas, nodesRef);
+      loop = setupLoop(context, canvasData, colorData);
+      loop.start();
     }
-  }, [resolvedTheme])
+    window.addEventListener('resize', handleResize);
+    return () => {
+      loop.stop();
+      window.removeEventListener('resize', handleResize);
+    }
+  }, [resolvedTheme]);
 
   return (
     <div className={`${props.className} w-full bg-(--banner-bg-color)

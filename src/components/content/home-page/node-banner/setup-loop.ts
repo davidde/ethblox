@@ -14,21 +14,24 @@ export function setupLoop(
   canvasData: CanvasData,
   colorData: ColorData,
 ) {
+  let frameId: number | null = null;
+  const { width, height } = canvasData;
+
   // Create linear gradient for canvas background:
-  let linearGradient = context.createLinearGradient(0, 0, 0, canvasData.height);
+  const linearGradient = context.createLinearGradient(0, 0, 0, height);
   // Create radial gradient for canvas background:
-  let radialGradient = context.createRadialGradient(
-    canvasData.width / 3.1, // x0: x position of inner circle’s center (focus point)
-    canvasData.height / 2.6, // y0: y position of inner circle’s center (focus point)
+  const radialGradient = context.createRadialGradient(
+    width / 3.1, // x0: x position of inner circle’s center (focus point)
+    height / 2.6, // y0: y position of inner circle’s center (focus point)
     0, // r0: Radius of the inner circle (start radius)
-    canvasData.width / 3.1, // x1: x position of outer circle’s center
-    canvasData.height / 2.6,// y1: y position of the outer circle’s center
-    canvasData.width / 5 // r1: Radius of the outer circle (end radius)
+    width / 3.1, // x1: x position of outer circle’s center
+    height / 2.6,// y1: y position of the outer circle’s center
+    width / 5 // r1: Radius of the outer circle (end radius)
   );
 
   function loop() {
     // Clear the entire canvas every frame:
-    context.clearRect(0, 0, canvasData.width, canvasData.height); 
+    context.clearRect(0, 0, width, height);
 
     // Redraw the linear gradient background every frame:
     // (Before canvasData.nodes and lines, so they appear on top of it)
@@ -36,12 +39,12 @@ export function setupLoop(
     linearGradient.addColorStop(0.8, colorData.bgColor); // Start color transition at 80%
     linearGradient.addColorStop(1.0, colorData.linearGradientToColor);
     context.fillStyle = linearGradient;
-    context.fillRect(0, 0, canvasData.width, canvasData.height);
+    context.fillRect(0, 0, width, height);
 
     // Draw all nodes:
     drawNodes();
-    // Update the nodes:
-    updateNodes(canvasData.nodesRef.current, canvasData.width, canvasData.height);
+    // Update all nodes:
+    updateNodes(canvasData.nodesRef.current, width, height);
     // Draw the lines:
     drawLines();
 
@@ -50,10 +53,10 @@ export function setupLoop(
     radialGradient.addColorStop(0, `rgba(255, 255, 255, ${colorData.radialGradientTransparency})`); // Bright center
     radialGradient.addColorStop(1, 'rgba(255, 255, 255, 0)'); // Fade to transparent
     context.fillStyle = radialGradient;
-    context.fillRect(0, 0, canvasData.width, canvasData.height);
+    context.fillRect(0, 0, width, height);
 
-    // Repeat the loop, and return frame ID:
-    return requestAnimationFrame(loop);
+    // Repeat the loop, and save frame ID:
+    frameId = requestAnimationFrame(loop);
   }
 
   function drawNodes() {
@@ -113,7 +116,19 @@ export function setupLoop(
     context.stroke();
   }
 
-  return loop();
+  return {
+    start() {
+      if (frameId == null) {
+        loop();
+      }
+    },
+    stop() {
+      if (frameId != null) {
+        cancelAnimationFrame(frameId);
+        frameId = null;
+      }
+    },
+  };
 }
 
 // Calculate the distance between two points:
