@@ -124,3 +124,8 @@ export function fakeInitialError(fail: RefObject<boolean>, error?: string) {
     throw new Error(error ?? 'Faked one-time test error!');
   }
 }
+
+// Return random int from min to max inclusive:
+export function randomInt(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}

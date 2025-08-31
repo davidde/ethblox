@@ -1,4 +1,5 @@
 import { CanvasData, ColorData } from '.';
+import { updateNodes } from './node';
 
 
 // Give nodes random colors when true, nodeColor when false:
@@ -25,9 +26,6 @@ export function setupLoop(
     canvasData.width / 5 // r1: Radius of the outer circle (end radius)
   );
 
-  // Set up loop:
-  requestAnimationFrame(loop);
-
   function loop() {
     // Clear the entire canvas every frame:
     context.clearRect(0, 0, canvasData.width, canvasData.height); 
@@ -42,8 +40,8 @@ export function setupLoop(
 
     // Draw all nodes:
     drawNodes();
-    // Move the nodes:
-    for (let i = 0; i < canvasData.nodes.length; i++) canvasData.nodes[i].move();
+    // Update the nodes:
+    updateNodes(canvasData.nodesRef.current, canvasData.width, canvasData.height);
     // Draw the lines:
     drawLines();
 
@@ -54,12 +52,12 @@ export function setupLoop(
     context.fillStyle = radialGradient;
     context.fillRect(0, 0, canvasData.width, canvasData.height);
 
-    // Repeat the loop:
-    requestAnimationFrame(loop);
+    // Repeat the loop, and return frame ID:
+    return requestAnimationFrame(loop);
   }
 
   function drawNodes() {
-    for (const node of canvasData.nodes) {
+    for (const node of canvasData.nodesRef.current) {
       // Set random color from array if colored is true:
       node.color = useRandomColor? COLORS[Math.floor(Math.random() * COLORS.length)] : colorData.nodeColor;
       context.fillStyle = node.color;
@@ -77,20 +75,21 @@ export function setupLoop(
   function drawLines() {
     // Get the rgb values for the color of the line:
     let rgbValues = colorData.lineColor.startsWith('rgb') ? rgbToRgbNums(colorData.lineColor) : hexToRgbNums(colorData.lineColor);
+    const nodes = canvasData.nodesRef.current;
 
-    for (let i = 0; i < canvasData.nodes.length; i++) {
-      if (useRandomColor) rgbValues = canvasData.nodes[i].color?.startsWith('rgb') ?
-        rgbToRgbNums(canvasData.nodes[i].color) : hexToRgbNums(canvasData.nodes[i].color);
+    for (let i = 0; i < nodes.length; i++) {
+      if (useRandomColor) rgbValues = nodes[i].color?.startsWith('rgb') ?
+        rgbToRgbNums(nodes[i].color) : hexToRgbNums(nodes[i].color);
 
       // Get the origin point:
-      let x1 = canvasData.nodes[i].x;
-      let y1 = canvasData.nodes[i].y;
+      let x1 = nodes[i].x;
+      let y1 = nodes[i].y;
 
       // Get the destination point in a subloop that only loops the remaining canvasData.nodes, to avoid duplicate lines:
-      for (let j = i+1; j < canvasData.nodes.length; j++) {
+      for (let j = i+1; j < nodes.length; j++) {
         // Get the destination point:
-        let x2 = canvasData.nodes[j].x;
-        let y2 = canvasData.nodes[j].y;
+        let x2 = nodes[j].x;
+        let y2 = nodes[j].y;
 
         // Calculate the distance between the origin and target points:
         let dist = distance(x1, x2, y1, y2);
@@ -113,6 +112,8 @@ export function setupLoop(
     context.lineTo(x2, y2);
     context.stroke();
   }
+
+  return loop();
 }
 
 // Calculate the distance between two points:

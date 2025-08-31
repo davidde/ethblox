@@ -1,9 +1,10 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, RefObject } from 'react';
 import { useTheme } from 'next-themes';
-import { setupCanvas, Node } from './setup-canvas';
+import { setupCanvas } from './setup-canvas';
 import { setupLoop } from './setup-loop';
+import { NodeData } from './node';
 
 
 export type CanvasData = {
@@ -11,7 +12,7 @@ export type CanvasData = {
   height: number;
   drawLineThreshold: number;
   lineWidth: number;
-  nodes: Node[];
+  nodesRef: RefObject<NodeData[]>;
 }
 
 export type ColorData = {
@@ -27,6 +28,7 @@ export default function NodeBanner(props: { className?: string }) {
   const { resolvedTheme } = useTheme(); // theme is required to update NodeBanner colors on theme switch
   // Canvas ref is null before render:
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const nodesRef = useRef<NodeData[]>([]);
 
   useEffect(() => {
     // Canvas ref is null before render:
@@ -49,14 +51,17 @@ export default function NodeBanner(props: { className?: string }) {
     }
 
     // Set up canvas:
-    const canvasData: CanvasData = setupCanvas(canvas);
+    const canvasData: CanvasData = setupCanvas(canvas, nodesRef);
 
     // Set up animation loop:
-    setupLoop(context, canvasData, colorData);
+    let frameId: number = setupLoop(context, canvasData, colorData);
 
     // Resize event listener:
-    window.addEventListener('resize', () => setupCanvas(canvas));
-    return () => window.removeEventListener('resize', () => setupCanvas(canvas));
+    window.addEventListener('resize', () => setupCanvas(canvas, nodesRef));
+    return () => {
+      window.removeEventListener('resize', () => setupCanvas(canvas, nodesRef));
+      cancelAnimationFrame(frameId);
+    }
   }, [resolvedTheme])
 
   return (
