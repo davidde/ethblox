@@ -1,8 +1,23 @@
 import { hexToRgbNums, randomInt, rgbToRgbNums } from '@/lib/utilities';
 
 
+const HOLIDAYS = [
+  '01-01', // New Year's Day
+  '05-01', // Labour Day
+  '07-21', // Nationale Feestdag Belgie
+  '08-15', // O.L.V. Hemelvaart
+  '11-01', // Allerheiligen
+  '11-11', // Wapenstilstand
+  '12-25', // Christmas
+];
+function isHoliday(date: Date = new Date()): boolean {
+  // Get date as MM-DD:
+  const dateString = date.toISOString().split('T')[0].substring(5);
+  return HOLIDAYS.includes(dateString);
+}
+
 // Give nodes random colors when true, nodeColor when false:
-let useRandomColor = false;
+const useRandomColors = isHoliday();
 // Color array for random color setting:
 const COLORS = ['#4f91f9', '#a7f94f', '#f94f4f', '#f9f74f', '#8930ff', '#fc4edf', '#ff9c51'];
 
@@ -41,8 +56,8 @@ export function createNode(
   const size = id > Math.floor(nodeAmount * 0.75) ? nodeSize + 1.5 :
                id <= Math.floor(nodeAmount * 0.25) ? nodeSize - 1 : nodeSize;
 
-  // Set random color from array if `useRandomColor` is true:
-  const color = useRandomColor ? COLORS[Math.floor(Math.random() * COLORS.length)] : nodeColor;
+  // Set random color from array if `useRandomColors` is true:
+  const color = useRandomColors ? COLORS[Math.floor(Math.random() * COLORS.length)] : nodeColor;
 
   return { id, x, y, speedX, speedY, size, color };
 }
@@ -90,7 +105,7 @@ export function drawLines(
   let rgbValues = lineColor.startsWith('rgb') ? rgbToRgbNums(lineColor) : hexToRgbNums(lineColor);
 
   for (let i = 0; i < nodes.length; i++) {
-    if (useRandomColor) rgbValues = nodes[i].color?.startsWith('rgb') ?
+    if (useRandomColors) rgbValues = nodes[i].color?.startsWith('rgb') ?
       rgbToRgbNums(nodes[i].color) : hexToRgbNums(nodes[i].color);
 
     // Get the origin point:
